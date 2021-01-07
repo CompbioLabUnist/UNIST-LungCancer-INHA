@@ -99,7 +99,7 @@ Output/WGS/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WGS/FastQC buil
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/WGS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WGS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3| cut --delimiter . --fields 1))))
-	$(DOCKER) python3 $(addprefix /,$^)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step01: Output/WGS/FastQC/summary.png
 .PHONY += step01
@@ -112,7 +112,7 @@ Output/WTS/FastQC/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/WTS/FastQC build.lo
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WTS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3| cut --delimiter . --fields 1))))
-	$(DOCKER) python3 $(addprefix /,$^)
+	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step02: Output/WTS/FastQC/summary.png
 .PHONY += step02
