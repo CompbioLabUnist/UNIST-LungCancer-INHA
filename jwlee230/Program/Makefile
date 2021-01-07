@@ -79,14 +79,40 @@ stop:
 # SGE
 run: | log Output build.log
 	echo "make -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Colon_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
+	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += run
 
 parallel_run: | log Output build.log
 	echo "make -j $(CPUS) -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Colon_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
+	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += parallel_run
 
-# Actual2021-01-07T14:33:40+0900
-latest: step00
+# Actual
+latest: step01
 .PHONY += latest
+
+# Step 01 (FastQC for WGS)
+Output/WGS/FastQC:
+	mkdir -p $@
+
+Output/WGS/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WGS/FastQC build.log
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+
+Output/WGS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WGS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3| cut --delimiter . --fields 1))))
+	$(DOCKER) python3 $(addprefix /,$^)
+
+step01: Output/WGS/FastQC/summary.png
+.PHONY += step01
+
+# Step 02 (FastQC for WTS)
+Output/WTS/FastQC:
+	mkdir -p $@
+
+Output/WTS/FastQC/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/WTS/FastQC build.log
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WTS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3| cut --delimiter . --fields 1))))
+	$(DOCKER) python3 $(addprefix /,$^)
+
+step02: Output/WTS/FastQC/summary.png
+.PHONY += step02
