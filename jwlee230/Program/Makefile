@@ -88,7 +88,7 @@ parallel_run: | log Output build.log
 .PHONY += parallel_run
 
 # Actual
-latest: step01
+latest: step02
 .PHONY += latest
 
 # Step 01 (FastQC for WGS)
