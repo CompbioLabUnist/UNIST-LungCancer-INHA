@@ -83,7 +83,7 @@ run: | log Output build.log
 .PHONY += run
 
 parallel_run: | log Output build.log
-	echo "make -j $(CPUS) -C $(PWD) latest" > tmp.sh
+	echo "make -j $(CPUS) -C $(PWD) CPUS=1 MEMS=5G latest" > tmp.sh
 	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += parallel_run
 
