@@ -9,7 +9,7 @@ TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data --volume $(abspath Python):/Python
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
 GATK_OPTS = --java-options "$(JAVA_OPTS)"
@@ -94,7 +94,7 @@ parallel_run: | log Output build.log
 .PHONY += parallel_run
 
 # Actual
-latest: step02
+latest: step03
 .PHONY += latest
 
 # Step 01 (FastQC for WGS)
@@ -128,7 +128,7 @@ Output/WGS/BAM:
 	mkdir -p $@
 
 Output/WGS/BAM/%.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/BAM build.log
-	$(DOCKER) bwa mem -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -M -v 3 $(addprefix /,$^) 1> $@ 2> $@.stderr
+	$(DOCKER) bwa mem -M -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -v 3 $(addprefix /,$(filter %.fasta,$^)) $(sort $(addprefix /,$(filter %.fastq.gz,$^))) 1> $@ 2> $@.stderr
 
 Output/WGS/BAM/%.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.sam | build.log
 	$(DOCKER) samtools view -b -h -S --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
