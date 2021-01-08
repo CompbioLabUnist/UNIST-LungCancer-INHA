@@ -130,7 +130,7 @@ Output/WGS/BAM:
 
 Output/WGS/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/BAM build.log
 	$(DOCKER) bwa mem -M -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -v 3 $(addprefix /,$(filter %.fasta,$^)) $(sort $(addprefix /,$(filter %.fastq.gz,$^))) 1> $@ 2> $@.stderr
-	grep --basic-regexp --invert-match "^\[" $@.stdout > $@
+	sed --in-place "/^\[*$$/d" $@
 
 Output/WGS/BAM/%.BWA.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.BWA.sam | build.log
 	$(DOCKER) samtools view -b -h -S --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -139,7 +139,7 @@ Output/WGS/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Out
 	$(DOCKER) bowtie2 -x $(addprefix /,$(filter %.fasta,$^)) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -b $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --preserve-tags
 
 Output/WGS/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m $(MEMS) --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools sort -l 9 -m $(MEMS) --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.bam.bai: Output/WGS/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
