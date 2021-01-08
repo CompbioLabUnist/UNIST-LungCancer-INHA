@@ -136,7 +136,7 @@ Output/WGS/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/
 Output/WGS/BAM/%.BWA.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.BWA.sam | build.log
 	$(DOCKER) samtools view -b -h -S --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/Bowtie2 build.log
+Output/WGS/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/BAM build.log
 	$(DOCKER) bowtie2 -x $(addprefix /,$(filter %.fasta,$^)) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -b $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --preserve-tags
 
 Output/WGS/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.bam | build.log
