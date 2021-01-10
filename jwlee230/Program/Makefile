@@ -12,7 +12,7 @@ DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
-GATK_OPTS = --java-options "$(JAVA_OPTS)"
+GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 
 # Files
@@ -139,13 +139,13 @@ Output/WGS/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Out
 	$(DOCKER) bowtie2 -x $(addprefix /,$(filter %.fasta,$^)) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -b $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --preserve-tags
 
 Output/WGS/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m $(MEMS) --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.bam.bai: Output/WGS/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.st.bam Output/WGS/BAM/%.st.bam.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT=$(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE=$(addprefix /,$(filter %.fasta,$^)) --OUTPUT=$(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED=true --COMPRESSION_LEVEL=9 --CREATE_INDEX=true --VALIDATION_STRINGENCY=SILENT --VERBOSITY=INFO 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.dm.bam.bai: Output/WGS/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -159,10 +159,10 @@ clean-step03:
 
 # Step 04 (WGS - fq.gz >> bam; single-threading)
 Output/WGS/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WGS/BAM/%.st.dm.bam Output/WGS/BAM/%.st.dm.bam.bai | build.log
-	$(DOCKER) gatk $(GATK_OPTS) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(REFERENCE_KNOWN_VCF),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(REFERENCE_KNOWN_VCF),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.dm.rc.bam: Output/WGS/BAM/%.st.dm.bam Output/WGS/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
-	$(DOCKER) gatk $(GATK_OPTS) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 step04: $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WGS_ID)))
 .PHONY += step04
