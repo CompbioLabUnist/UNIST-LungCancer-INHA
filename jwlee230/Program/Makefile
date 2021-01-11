@@ -7,6 +7,7 @@ MEMS = 500G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
+CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python
@@ -124,7 +125,7 @@ Output/WTS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WTS
 step02: Output/WTS/FastQC/summary.png
 .PHONY += step02
 
-# Step 03 (WES - fq.gz >> bam; BAM with multi-threading)
+# Step 03 (WES - fq.gz >> bam; multi-threading)
 Output/WES/BAM:
 	mkdir -p $@
 
@@ -166,3 +167,9 @@ Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm
 
 step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID)))
 .PHONY += step04
+
+# Step ## (WTS - fq.gz >> bam; multi-threading) - STAR & Bowtie2
+# Step ## (WTS - fq.gz >> bam; single-threading)
+# Step ## (Sequenza; single-threading)
+# Step ## (Picard - CollectMultipleMetrics; single-threading)
+# Step ## (samtools depth; single-threading)
