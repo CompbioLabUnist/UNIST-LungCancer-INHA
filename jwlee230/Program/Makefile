@@ -2,8 +2,8 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 50
-MEMS = 250G
+CPUS = 100
+MEMS = 500G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -98,7 +98,7 @@ parallel_run: | log Output build.log
 latest: step03
 .PHONY += latest
 
-# Step 01 (FastQC for WGS)
+# Step 01 (FastQC for WGS; single-threading)
 Output/WGS/FastQC:
 	mkdir -p $@
 
@@ -111,7 +111,7 @@ Output/WGS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WGS
 step01: Output/WGS/FastQC/summary.png
 .PHONY += step01
 
-# Step 02 (FastQC for WTS)
+# Step 02 (FastQC for WTS; single-threading)
 Output/WTS/FastQC:
 	mkdir -p $@
 
