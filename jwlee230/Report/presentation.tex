@@ -1,0 +1,68 @@
+% !TeX spellcheck = en_US
+% !TeX encoding = UTF-8
+\documentclass{beamer}
+
+\mode<presentation> { \usetheme{Madrid} }
+
+\usepackage{graphicx, graphics}
+\usepackage[notocbib]{apacite}
+\usepackage[style=iso]{datetime2}
+\usepackage{enumerate}
+\DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
+
+\AtBeginSection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\title{Lung Cancer}
+
+\author
+{
+    Jaewoong Lee
+}
+
+\institute[UNIST]
+{
+    Ulsan National Institute of Science and Technology
+    \medskip
+    \newline
+    \textit{jwlee230@unist.ac.kr}
+}
+\date{\today}
+
+\begin{document}
+    \begin{frame}
+        \titlepage
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Overview}
+        \tableofcontents
+    \end{frame}
+
+    \section{Introduction}
+
+    \section{Materials}
+
+    \section{Methods}
+
+    \section{Results}
+
+    \section{Proceedings}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{References}
+        \bibliographystyle{apacite}
+        \bibliography{reference}
+    \end{frame}
+\end{document}
