@@ -96,7 +96,7 @@ parallel_run: | log Output build.log
 .PHONY += parallel_run
 
 # Actual
-latest: step01
+latest: step03
 .PHONY += latest
 
 # Step 01 (FastQC for WES; single-threading)
