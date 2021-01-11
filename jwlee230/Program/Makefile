@@ -19,7 +19,7 @@ PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
-WGS_ID = $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1)
+WES_ID = $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1)
 
 # General
 all:
@@ -95,20 +95,20 @@ parallel_run: | log Output build.log
 .PHONY += parallel_run
 
 # Actual
-latest: step03
+latest: step01
 .PHONY += latest
 
-# Step 01 (FastQC for WGS; single-threading)
-Output/WGS/FastQC:
+# Step 01 (FastQC for WES; single-threading)
+Output/WES/FastQC:
 	mkdir -p $@
 
-Output/WGS/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WGS/FastQC build.log
+Output/WES/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WES/FastQC build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WGS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
+Output/WES/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WES/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step01: Output/WGS/FastQC/summary.png
+step01: Output/WES/FastQC/summary.png
 .PHONY += step01
 
 # Step 02 (FastQC for WTS; single-threading)
@@ -124,45 +124,45 @@ Output/WTS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WTS
 step02: Output/WTS/FastQC/summary.png
 .PHONY += step02
 
-# Step 03 (WGS - fq.gz >> bam; BAM with multi-threading)
-Output/WGS/BAM:
+# Step 03 (WES - fq.gz >> bam; BAM with multi-threading)
+Output/WES/BAM:
 	mkdir -p $@
 
-Output/WGS/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/BAM build.log
+Output/WES/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES/BAM build.log
 	$(DOCKER) bwa mem -M -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -v 3 $(addprefix /,$(filter %.fasta,$^)) $(sort $(addprefix /,$(filter %.fastq.gz,$^))) 1> $@ 2> $@.stderr
 	sed --in-place "/^\[.*/d" $@
 
-Output/WGS/BAM/%.BWA.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.BWA.sam | build.log
+Output/WES/BAM/%.BWA.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.BWA.sam | build.log
 	$(DOCKER) samtools view -b -h -S --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WGS/BAM build.log
+Output/WES/BAM/%.Bowtie2.bam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES/BAM build.log
 	$(DOCKER) bowtie2 -x $(addprefix /,$(filter %.fasta,$^)) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -b $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --preserve-tags
 
-Output/WGS/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.bam | build.log
+Output/WES/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.bam | build.log
 	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.st.bam.bai: Output/WGS/BAM/%.st.bam | build.log
+Output/WES/BAM/%.st.bam.bai: Output/WES/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.bam.bai,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.bam.bai,$(WGS_ID)))
+step03: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam.bai,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.bam.bai,$(WES_ID)))
 .PHONY += step03
 
 clean-step03:
-	rm -fv $(filter-out %.st.dm.bam,$(shell find /Output/WGS/BAM -size +1G))
+	rm -fv $(filter-out %.st.dm.bam,$(shell find /Output/WES/BAM -size +1G))
 .PHONY += clean-step03
 
-# Step 04 (WGS - fq.gz >> bam; single-threading)
-Output/WGS/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.st.bam Output/WGS/BAM/%.st.bam.bai | build.log
+# Step 04 (WES - fq.gz >> bam; single-threading)
+Output/WES/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bam.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.st.dm.bam.bai: Output/WGS/BAM/%.st.dm.bam | build.log
+Output/WES/BAM/%.st.dm.bam.bai: Output/WES/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WGS/BAM/%.st.dm.bam Output/WGS/BAM/%.st.dm.bam.bai | build.log
+Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.bam.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(REFERENCE_KNOWN_VCF),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WGS/BAM/%.st.dm.rc.bam: Output/WGS/BAM/%.st.dm.bam Output/WGS/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
+Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-step04: $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WGS_ID)))
+step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID)))
 .PHONY += step04
