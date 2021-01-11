@@ -144,20 +144,20 @@ Output/WGS/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.bam | build.log
 Output/WGS/BAM/%.st.bam.bai: Output/WGS/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+step03: $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.bam.bai,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.bam.bai,$(WGS_ID)))
+.PHONY += step03
+
+clean-step03:
+	rm -fv $(filter-out %.st.dm.bam,$(shell find /Output/WGS/BAM -size +1G))
+.PHONY += clean-step03
+
+# Step 04 (WGS - fq.gz >> bam; single-threading)
 Output/WGS/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WGS/BAM/%.st.bam Output/WGS/BAM/%.st.bam.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
 
 Output/WGS/BAM/%.st.dm.bam.bai: Output/WGS/BAM/%.st.dm.bam | build.log
-	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.dm.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .BWA.st.dm.bam.bai,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.dm.bam,$(WGS_ID))) $(addprefix Output/WGS/BAM/,$(addsuffix .Bowtie2.st.dm.bam.bai,$(WGS_ID)))
-.PHONY += step03
-
-clean-step03:
-	$(DOCKER) rm -fv $(filter-out %.st.dm.bam,$(shell find /Output/WGS/BAM -size +1G))
-.PHONY += clean-step03
-
-# Step 04 (WGS - fq.gz >> bam; single-threading)
 Output/WGS/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WGS/BAM/%.st.dm.bam Output/WGS/BAM/%.st.dm.bam.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(REFERENCE_KNOWN_VCF),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
