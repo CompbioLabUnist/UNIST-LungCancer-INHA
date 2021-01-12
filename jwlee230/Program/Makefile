@@ -92,8 +92,8 @@ stop:
 # SGE
 run: | log Output build.log
 	echo "make -j 50 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$(MEMS) -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(CPUS) -o $(abspath log) -e $(abspath log) tmp.sh
-.PHONY += parallel_run
+	qsub -cwd -l h_vmem=500G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 50 -o $(abspath log) -e $(abspath log) tmp.sh
+.PHONY += run
 
 # Actual
 latest: step03
@@ -161,11 +161,10 @@ step03: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(
 .PHONY += step03
 
 clean-step03:
-	rm -fv $(filter-out %.st.dm.bam,$(shell find /Output/WES/BAM -size +1G))
+	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES/BAM -size +1G))
 .PHONY += clean-step03
 
 # Step ## (WTS - fq.gz >> bam) - STAR & Bowtie2
-# Step ## (WTS - fq.gz >> bam)
-# Step ## (Sequenza
+# Step ## (Sequenza)
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (samtools depth)
