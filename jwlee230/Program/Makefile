@@ -106,10 +106,10 @@ Output/WES/FastQC:
 Output/WES/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WES/FastQC build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/WES/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WES/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
+Output/WES/FastQC/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/WES/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step01: Output/WES/FastQC/summary.png
+step01: Output/WES/FastQC/FastQC_WES.png
 .PHONY += step01
 
 # Step 02 (FastQC for WTS; single-threading)
@@ -119,10 +119,10 @@ Output/WTS/FastQC:
 Output/WTS/FastQC/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/WTS/FastQC build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/FastQC/summary.png: Python/aggregate_fastqc.py $(addprefix Output/WTS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
+Output/WTS/FastQC/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/WTS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/WTS/FastQC/summary.png
+step02: Output/WTS/FastQC/FastQC_WTS.png
 .PHONY += step02
 
 # Step 03 (WES - fq.gz >> bam; multi-threading)
@@ -167,6 +167,8 @@ Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm
 
 step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID)))
 .PHONY += step04
+
+# Step 05 (Distribution of raw data)
 
 # Step ## (WTS - fq.gz >> bam; multi-threading) - STAR & Bowtie2
 # Step ## (WTS - fq.gz >> bam; single-threading)
