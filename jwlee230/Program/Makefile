@@ -20,7 +20,12 @@ PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
-WES_ID = $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1)
+WES_FILES = $(sort $(shell ls -1 Data/RawData/*.fastq.gz))
+WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
+WTS_FILES = $(sort $(shell ls -1 Data/WTS/*.fastq.gz))
+WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
+VCF_FILES = $(sort $(shell ls -1 Data/VCF/*.vcf))
+VCF_ID = $(sort $(shell ls -1 Data/VCF/*.vcf | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
 
 # General
 all:
@@ -167,8 +172,6 @@ Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm
 
 step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID)))
 .PHONY += step04
-
-# Step 05 (Distribution of raw data)
 
 # Step ## (WTS - fq.gz >> bam; multi-threading) - STAR & Bowtie2
 # Step ## (WTS - fq.gz >> bam; single-threading)
