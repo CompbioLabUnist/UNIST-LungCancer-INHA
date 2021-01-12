@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if list(filter(lambda x: not x.endswith(".zip"), args.input)):
+        raise ValueError("INPUT must end with .zip!!")
     if not args.output.endswith(".png"):
         raise ValueError("Output file must end with .png!!")
 
