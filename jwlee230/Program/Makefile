@@ -2,8 +2,8 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
-MEMS = 10G
+CPUS = 10
+MEMS = 20G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -91,8 +91,8 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j 50 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=500G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 50 -o $(abspath log) -e $(abspath log) tmp.sh
+	echo "make -j 10 -C $(PWD) latest" > tmp.sh
+	qsub -cwd -l h_vmem=200G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 100 -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += run
 
 # Actual
