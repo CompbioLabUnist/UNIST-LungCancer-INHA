@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 10
-MEMS = 20G
+MEMS = 10G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -91,8 +91,8 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j 10 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=200G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 100 -o $(abspath log) -e $(abspath log) tmp.sh
+	echo "make -j 15 -C $(PWD) latest" > tmp.sh
+	qsub -cwd -l h_vmem=200G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += run
 
 # Actual
@@ -157,7 +157,7 @@ Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Outpu
 Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID)))
+step03: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID))))
 .PHONY += step03
 
 clean-step03:

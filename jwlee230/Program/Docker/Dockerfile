@@ -2,7 +2,6 @@ FROM ubuntu:20.04
 LABEL maintainer="jwlee230@unist.ac.kr"
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-RUN groupadd --gid 1001 jwlee230 && adduser --home /jwlee230 --shell /bin/bash --uid 1001 --gid 1001 jwlee230
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev
 
@@ -57,7 +56,5 @@ ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
-
-USER jwlee230:jwlee230
 
 CMD ["/bin/bash"]
