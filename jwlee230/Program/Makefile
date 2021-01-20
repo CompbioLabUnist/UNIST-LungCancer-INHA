@@ -145,7 +145,7 @@ Output/WES/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.bam | build.log
 Output/WES/BAM/%.st.bam.bai: Output/WES/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step03: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.bam,$(WES_ID))))
+step03: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))))
 .PHONY += step03
 
 # Step 04 (WES -fq.gz >> bam; single-threading)
@@ -161,14 +161,16 @@ Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Outpu
 Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-step04: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .Bowtie2.st.dm.rc.bam,$(WES_ID))))
+step04: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))))
 .PHONY += step04
 
 clean-step04:
 	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES/BAM -size +1G))
 .PHONY += clean-step04
 
-# Step ## (WTS - fq.gz >> bam) - STAR & Bowtie2
+# Step ## (WTS - fq.gz >> bam) - STAR
+# Step ## (R-sem)
 # Step ## (Sequenza)
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (samtools depth)
+# Step ## (PureCN)
