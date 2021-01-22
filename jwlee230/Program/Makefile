@@ -95,7 +95,7 @@ run: | log Output build.log
 .PHONY += run
 
 # Actual
-latest: step03
+latest: step04
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
@@ -191,6 +191,13 @@ Output/WES/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam
 
 step08: $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID))))
 .PHONY += step08
+
+# Step 09 (Panel of Normal: Aggregate VCF files)
+Output/WES/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID)))) | build.log
+	$(DOCKER) gatk CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
+
+step09: Output/WES/PanelOfNormal/PON.vcf
+.PHONY += step09
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
