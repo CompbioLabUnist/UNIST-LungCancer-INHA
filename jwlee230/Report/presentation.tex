@@ -53,6 +53,10 @@
     \section{Introduction}
     \begin{frame}
         \frametitle{Objectives}
+
+        \begin{itemize}
+            \item Find different mutation between WES \& WTS in Lung cancer \& pre-cancer.
+        \end{itemize}
     \end{frame}
 
     \section{Materials}
@@ -68,11 +72,29 @@
 
     \section{Methods}
     \begin{frame}
+        \frametitle{Data pre-processing for variant discovery}
+
+        \begin{figure}
+            \includegraphics[width=0.3 \linewidth]{figures/Workflow/mapping.png}
+            \caption{Data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Somatic short variant discovery}
 
         \begin{figure}
             \includegraphics[width=0.7 \linewidth]{figures/Workflow/somatic_short_variants.png}
             \caption{Somatic short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{RNA-seq short variant discovery}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
+            \caption{RNA-seq short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
         \end{figure}
     \end{frame}
 

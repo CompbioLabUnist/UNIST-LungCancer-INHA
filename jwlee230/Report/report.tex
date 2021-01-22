@@ -44,21 +44,25 @@
     \section{Materials}
 
     \section{Methods}
-        \subsection{Genome Analysis Toolkit}
-            Genome analysis toolkit (GATK) is a software package for variant discovery among sequencing data \cite{gatk1, gatk2}.
+        \subsection{General Usage}
+            \subsubsection{Genome Analysis Toolkit}
+                Genome analysis toolkit (GATK) is a software package for variant discovery among sequencing data \cite{gatk1, gatk2}.
+
+            \subsubsection{Samtools}
+                Samtools is a suite software packages for discovering in high-throughput sequencing data \cite{samtools1}.
 
         \subsection{Alignment}
             \subsubsection{Burrows-Wheeler Aligner}
                 Burrows-Wheeler Aligner (BWA) is a software package for aligning short-read sequences unto a large reference genome \cite{bwa1}. BWA-MEM is one of the contained algorithms in BWA software package, is a novel algorithm for mapping sequence reads on a large reference genome \cite{bwa2}.
 
-            \subsubsection{Bowtie2}
-                Bowtie 2 is an efficient and fast software package for aligning sequencing reads against long reference sequences \cite{bowtie1}.
-
             \subsubsection{STAR}
                 STAR is a swift universal RNA-seq alignment tool \cite{star1}.
 
-            \subsubsection{Samtools}
-                Samtools is a suite software packages for discovering in high-throughput sequencing data \cite{samtools1}.
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.2 \linewidth]{figures/Workflow/mapping.png}
+                \caption{Data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
+            \end{figure}
 
         \subsection{Quality Check}
             \subsubsection{FastQC}
@@ -67,7 +71,7 @@
             \subsubsection{Sequenza}
                 Sequenza is a software package to investigate genomic sequencing data, such as cellularity and ploidy estimation, from paired normal-tumor samples \cite{sequenza1}.
 
-        \subsection{Workflow}
+        \subsection{SNV Detection Workflow}
 
             \begin{figure}[p]
                 \centering
