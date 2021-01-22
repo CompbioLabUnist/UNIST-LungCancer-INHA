@@ -95,7 +95,7 @@ run: | log Output build.log
 .PHONY += run
 
 # Actual
-latest: step04
+latest: step05
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
@@ -183,25 +183,46 @@ clean-step07:
 .PHONY += clean-step07
 
 # Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
-Output/WES/PanelOfNormal:
+Output/PanelOfNormal:
 	mkdir -p $@
 
-Output/WES/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/WES/PanelOfNormal build.log
+Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/PanelOfNormal build.log
 	$(DOCKER) gatk Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step08: $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID))))
 .PHONY += step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/WES/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID)))) | build.log
+Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID)))) | build.log
 	$(DOCKER) gatk CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
 
-step09: Output/WES/PanelOfNormal/PON.vcf
+step09: Output/PanelOfNormal/PON.vcf
 .PHONY += step09
+
+# Step 10 (WES - samtools depth)
+Output/WES/Depth:
+	mkdir -p $@
+
+Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/WES/Depth build.log
+	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+
+step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .tsv,$(WES_ID))))
+.PHONY += step10
+
+# Step 11 (Sequenza: Make reference)
+Output/Sequenza:
+	mkdir -p $@
+
+Output/Sequenza/hg38.wig.gz: $(REFERENCE_FASTA) | Output/Sequenza build.log
+	$(DOCKER) sequenza-utils gc_wiggle --fasta $(addprefix /,$^) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step11: Output/Sequenza/hg38.wig.gz
+.PHONY += step11
+
+# Step 12 (Sequenza: Normal - Tumor pairs)
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
-# Step ## (Sequenza)
+# Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
-# Step ## (samtools depth)
 # Step ## (PureCN)
