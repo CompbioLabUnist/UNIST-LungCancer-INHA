@@ -21,10 +21,10 @@ REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
 WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
+WES_NORMAL_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | grep "N" | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
 WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
 VCF_ID = $(sort $(shell ls -1 Data/VCF/*.vcf | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
 BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
-BAM_NORMAL_ID = $(sort $(shell ls -1 Data/BAM/*.bam | grep "N" | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
 
 # General
 all:
@@ -90,14 +90,12 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j 1 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=50G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 10 -o $(abspath log) -e $(abspath log) tmp.sh
-	# echo "make -j 15 -C $(PWD) latest" > tmp.sh
-	# qsub -cwd -l h_vmem=750G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
+	echo "make -j 15 -C $(PWD) latest" > tmp.sh
+	qsub -cwd -l h_vmem=750G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += run
 
 # Actual
-latest: step08
+latest: step03
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
@@ -188,7 +186,7 @@ clean-step07:
 Output/WES/PanelOfNormal:
 	mkdir -p $@
 
-Output/WES/PanelOfNormal/%.vcf: Data/hg19/ucsc.hg19.fasta Data/BAM/%.mergelanes.dedup.realign.recal.bam Data/BAM/%.mergelanes.dedup.realign.recal.bai | Output/WES/PanelOfNormal build.log
+Output/WES/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/WES/PanelOfNormal build.log
 	$(DOCKER) gatk Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step08: $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID))))
