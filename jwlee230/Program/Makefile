@@ -2,8 +2,8 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 5
-MEMS = 10G
+CPUS = 10
+MEMS = 50G
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -20,12 +20,11 @@ PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
-WES_FILES = $(sort $(shell ls -1 Data/RawData/*.fastq.gz))
 WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
-WTS_FILES = $(sort $(shell ls -1 Data/WTS/*.fastq.gz))
 WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
-VCF_FILES = $(sort $(shell ls -1 Data/VCF/*.vcf))
 VCF_ID = $(sort $(shell ls -1 Data/VCF/*.vcf | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
+BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
+BAM_NORMAL_ID = $(sort $(shell ls -1 Data/BAM/*.bam | grep "N" | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
 
 # General
 all:
@@ -91,12 +90,14 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j 30 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=300G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
+	echo "make -j 1 -C $(PWD) latest" > tmp.sh
+	qsub -cwd -l h_vmem=50G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 10 -o $(abspath log) -e $(abspath log) tmp.sh
+	# echo "make -j 15 -C $(PWD) latest" > tmp.sh
+	# qsub -cwd -l h_vmem=750G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY += run
 
 # Actual
-latest: step03
+latest: step08
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
@@ -150,38 +151,48 @@ step04: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.bam,$(WES_ID))))
 Output/WES/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.bam | build.log
 	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.bam.bai: Output/WES/BAM/%.st.bam | build.log
+Output/WES/BAM/%.st.bai: Output/WES/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam.bai,$(WES_ID))))
+step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bai,$(WES_ID))))
 .PHONY += step05
 
 # Step 04 (WES: st.bam >> st.dm.bam)
-Output/WES/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bam.bai | build.log
+Output/WES/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm.bam.bai: Output/WES/BAM/%.st.dm.bam | build.log
+Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam.bai,$(WES_ID))))
+step06: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID))))
 .PHONY += step06
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
-Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.bam.bai | build.log
-	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(REFERENCE_KNOWN_VCF),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm.rc.bam.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
+Output/WES/BAM/%.st.dm.rc.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
 	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step07: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam.bai,$(WES_ID))))
+step07: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID))))
 .PHONY += step07
 
 clean-step07:
 	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES/BAM -size +1G))
 .PHONY += clean-step07
+
+# Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
+Output/WES/PanelOfNormal:
+	mkdir -p $@
+
+Output/WES/PanelOfNormal/%.vcf: Data/hg19/ucsc.hg19.fasta Data/BAM/%.mergelanes.dedup.realign.recal.bam Data/BAM/%.mergelanes.dedup.realign.recal.bai | Output/WES/PanelOfNormal build.log
+	$(DOCKER) gatk Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step08: $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID))))
+.PHONY += step08
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
