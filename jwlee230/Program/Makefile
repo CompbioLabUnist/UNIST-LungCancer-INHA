@@ -155,7 +155,7 @@ Output/WES/BAM/%.st.bai: Output/WES/BAM/%.st.bam | build.log
 step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bai,$(WES_ID))))
 .PHONY += step05
 
-# Step 04 (WES: st.bam >> st.dm.bam)
+# Step 06 (WES: st.bam >> st.dm.bam)
 Output/WES/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
 
