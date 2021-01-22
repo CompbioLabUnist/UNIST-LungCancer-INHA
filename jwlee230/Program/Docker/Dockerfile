@@ -3,7 +3,7 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev
+RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix
 
 # TOOL directory
 RUN mkdir /Tools
