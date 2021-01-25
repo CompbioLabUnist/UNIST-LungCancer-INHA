@@ -51,7 +51,7 @@ Docker/Tools/bwa.tar.bz2: | Docker/Tools
 TOOLS += Docker/Tools/bwa.tar.bz2
 
 Docker/Tools/picard.jar: | Docker/Tools
-	wget "https://github.com/broadinstitute/picard/releases/download/2.24.0/picard.jar" -O $@
+	wget "https://github.com/broadinstitute/picard/releases/download/2.24.1/picard.jar" -O $@
 TOOLS += Docker/Tools/picard.jar
 
 Docker/Tools/FastQC.zip: | Docker/Tools
@@ -95,7 +95,7 @@ run: | log Output build.log
 .PHONY += run
 
 # Actual
-latest: step05
+latest: step06
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
@@ -156,11 +156,20 @@ step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $
 .PHONY += step05
 
 # Step 06 (WES: st.bam >> st.dm.bam)
-Output/WES/BAM/%.st.dm.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --COMPRESSION_LEVEL 9 --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT 1> $@.stdout 2> $@.stderr
+Output/WES/BAM/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9
+
+Output/WES/BAM/%.st.dm-tmp.sam: Output/WES/BAM/%.st.dm-tmp.bam | build.log
+	$(DOCKER) samtools view -h -o $(addprefix /,$@) $(addprefix /,$<)
+
+Output/WES/BAM/%.st.dm.sam: Output/WES/BAM/%.st.dm-tmp.sam | build.log
+	$(DOCKER) sed "s/\r//" $(addprefix /,$<) > $@
+
+Output/WES/BAM/%.st.dm.bam: Output/WES/BAM/%.st.dm.sam | build.log
+	$(DOCKER) samtools view -b -o $(addprefix /,$@) $(addprefix /,$<)
 
 Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
-	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step06: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID))))
 .PHONY += step06
@@ -173,7 +182,7 @@ Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm.rc.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
-	$(DOCKER) samtools index -b $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step07: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID))))
 .PHONY += step07
