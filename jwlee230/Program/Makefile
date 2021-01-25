@@ -157,10 +157,10 @@ step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $
 
 # Step 06 (WES: st.bam >> st.dm.bam)
 Output/WES/BAM/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm-tmp.sam: Output/WES/BAM/%.st.dm-tmp.bam | build.log
-	$(DOCKER) samtools view -h -o $(addprefix /,$@) $(addprefix /,$<)
+	$(DOCKER) samtools view -h -o $(addprefix /,$@) $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm.sam: Output/WES/BAM/%.st.dm-tmp.sam | build.log
 	$(DOCKER) sed "s/\r//" $(addprefix /,$<) > $@
