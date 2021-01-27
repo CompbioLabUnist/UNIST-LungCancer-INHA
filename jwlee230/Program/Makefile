@@ -20,11 +20,12 @@ PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
-WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
-WES_NORMAL_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | grep "N" | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
-WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter _ --fields 1))
-VCF_ID = $(sort $(shell ls -1 Data/VCF/*.vcf | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
-BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))
+WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+[PCADMN]\d?"))
+WES_NORMAL_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+N"))
+WES_TUMOR_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+[PCADM]\d?"))
+WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+[PCADMN]"))
+WTS_NORMAL_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+N"))
+WTS_TUMOR_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "(cn)?\d+[PCADM]"))
 
 # General
 all:
@@ -99,29 +100,29 @@ latest: step06
 .PHONY += latest
 
 # Step 01 (FastQC for WES)
-Output/WES/FastQC:
+Output/FastQC/WES:
 	mkdir -p $@
 
-Output/WES/FastQC/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/WES/FastQC build.log
-	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+Output/FastQC/WES/%_fastqc.zip: Data/RawData/%*.fastq.gz | Output/FastQC/WES build.log
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/FastQC/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/WES/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
+Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step01: Output/WES/FastQC/FastQC_WES.png
+step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(WES_ID))) Output/FastQC/WES/FastQC_WES.png
 .PHONY += step01
 
 # Step 02 (FastQC for WTS)
-Output/WTS/FastQC:
+Output/FastQC/WTS:
 	mkdir -p $@
 
-Output/WTS/FastQC/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/WTS/FastQC build.log
-	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%*.fastq.gz | Output/FastQC/WTS build.log
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/FastQC/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/WTS/FastQC/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
+Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
 	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step02: Output/WTS/FastQC/FastQC_WTS.png
+step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) Output/FastQC/WTS/FastQC_WTS.png
 .PHONY += step02
 
 # Step 03 (WES: fq.gz >> sam)
@@ -135,14 +136,14 @@ Output/WES/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/
 Output/WES/BAM/%.Bowtie2.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES/BAM build.log
 	$(DOCKER) bowtie2 -x $(basename $(addprefix /,$(filter %.fasta,$^))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --mm 1> $@.stdout 2> $@.stderr
 
-step03: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.sam,$(WES_ID))))
+step03: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.sam,$(WES_ID)))
 .PHONY += step03
 
 # Step 04 (WES: sam >> bam)
 Output/WES/BAM/%.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step04: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.bam,$(WES_ID))))
+step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.bam,$(WES_ID)))
 .PHONY += step04
 
 # Step 05 (WES: bam >> st.bam)
@@ -152,7 +153,7 @@ Output/WES/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.bam | build.log
 Output/WES/BAM/%.st.bai: Output/WES/BAM/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step05: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bai,$(WES_ID))))
+step05: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bai,$(WES_ID)))
 .PHONY += step05
 
 # Step 06 (WES: st.bam >> st.dm.bam)
@@ -171,7 +172,7 @@ Output/WES/BAM/%.st.dm.bam: Output/WES/BAM/%.st.dm.sam | build.log
 Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID))))
+step06: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
 .PHONY += step06
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
@@ -184,7 +185,7 @@ Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm
 Output/WES/BAM/%.st.dm.rc.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step07: $(sort $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID))))
+step07: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID)))
 .PHONY += step07
 
 clean-step07:
@@ -198,11 +199,11 @@ Output/PanelOfNormal:
 Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/PanelOfNormal build.log
 	$(DOCKER) gatk Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step08: $(sort $(addprefix Output/WES/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID))))
+step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))
 .PHONY += step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .vcf,$(BAM_NORMAL_ID)))) | build.log
+Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
 	$(DOCKER) gatk CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
 
 step09: Output/PanelOfNormal/PON.vcf
@@ -215,7 +216,7 @@ Output/WES/Depth:
 Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/WES/Depth build.log
 	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .tsv,$(WES_ID))))
+step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .BWA.tsv,$(WES_ID))))
 .PHONY += step10
 
 # Step 11 (Sequenza: Make reference)
@@ -229,6 +230,12 @@ step11: Output/Sequenza/hg38.wig.gz
 .PHONY += step11
 
 # Step 12 (Sequenza: Normal - Tumor pairs)
+Output/Sequenza/%.seqz.gz: Output/WES/BAM/%.st.dm.rc.bam 
+	echo $^
+	$(DOCKER) sequenza-utils bam2seqz 
+
+step12: $(firstword $(addprefix Output/Sequenza/,$(addsuffix .BWA.seqz.gz,$(WES_TUMOR_ID))))
+.PHONY += step12
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
