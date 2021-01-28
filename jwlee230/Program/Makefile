@@ -3,7 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 10
-MEMS = 50G
+MEMS = 50
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -12,7 +13,7 @@ PAIRED_NORMAL = $(shell echo $@ | cut --delimiter / --fields 3 | grep --perl-reg
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python
-RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)"
+RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
@@ -93,7 +94,7 @@ stop:
 # SGE
 run: | log Output build.log
 	echo "make -j 15 -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=750G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp 150 -o $(abspath log) -e $(abspath log) tmp.sh
+	qsub -cwd -l h_vmem=$$(echo "$(MEMS) * $(PARALLEL)" | bc)G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $$(echo "$(CPUS) * $(PARALLEL)" | bc) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY: run
 
 # Actual
@@ -227,7 +228,10 @@ Output/Sequenza:
 Output/Sequenza/hg38.wig.gz: $(REFERENCE_FASTA) | Output/Sequenza build.log
 	$(DOCKER) sequenza-utils gc_wiggle --fasta $(addprefix /,$^) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step11: Output/Sequenza/hg38.wig.gz
+Output/Sequenza/hg37.wig.gz: Data/human_g1k_v37_decoy.fasta | Output/Sequenza build.log
+	$(DOCKER) sequenza-utils gc_wiggle --fasta $(addprefix /,$^) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step11: Output/Sequenza/hg38.wig.gz Output/Sequenza/hg37.wig.gz
 .PHONY: step11
 
 # Step 12 (Sequenza: Normal - Tumor pairs)
