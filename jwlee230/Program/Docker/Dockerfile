@@ -41,9 +41,6 @@ ADD Tools/FastQC.zip /Tools
 RUN cd /Tools && unzip FastQC.zip && cd FastQC && chmod +x fastqc
 ENV PATH=/Tools/FastQC:$PATH
 
-# Sequenza
-RUN Rscript -e "install.packages(c('optparse', 'sequenza', 'BiocManager'))"
-
 # STAR
 ADD Tools/STAR.tar.gz /Tools
 ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
@@ -52,6 +49,9 @@ ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
 ADD Tools/Bowtie2.zip /Tools
 RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
+
+# R packages
+RUN Rscript -e "install.packages(c('optparse', 'sequenza', 'BiocManager'))"
 
 VOLUME /Output
 VOLUME /Data
