@@ -51,7 +51,7 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
 
 # R packages
-RUN Rscript -e "install.packages(c('optparse', 'sequenza', 'BiocManager'))"
+RUN Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages('sequenza')"
 
 VOLUME /Output
 VOLUME /Data

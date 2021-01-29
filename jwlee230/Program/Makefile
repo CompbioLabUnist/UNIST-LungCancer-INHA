@@ -4,15 +4,15 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 10
 MEMS = 50
-PARALLEL = 15
+PARALLEL = 1
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
-PAIRED_NORMAL = $(shell echo $@ | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+")N
+PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
 GATK = gatk --java-options "$(JAVA_OPTS)"
@@ -28,6 +28,9 @@ WES_TUMOR_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / 
 WTS_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN]"))
 WTS_NORMAL_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N"))
 WTS_TUMOR_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADM]"))
+BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN](_?\d)?"))
+BAM_NORMAL_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N(_?\d)?"))
+BAM_TUMOR_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADM](_?\d)?"))
 
 # General
 all:
@@ -98,7 +101,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step06
+latest: step12
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -235,11 +238,17 @@ step11: Output/Sequenza/hg38.wig.gz Output/Sequenza/hg37.wig.gz
 .PHONY: step11
 
 # Step 12 (Sequenza: Normal - Tumor pairs)
-# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/Sequenza/%.BWA.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/BAM/%.BWA.st.dm.rc.bam $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_NORMAL_ID))) | build.log
-	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/BAM/$(PAIRED_NORMAL).BWA.st.dm.rc.bam" --tumor "/Output/WES/BAM/$*.BWA.st.dm.rc.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) --parallel $(CPUS)
+Output/Sequenza/BWA Output/Sequenza/Given:
+	mkdir -p $@
 
-step12: $(addprefix Output/Sequenza/,$(addsuffix .BWA.seqz.gz,$(WES_TUMOR_ID)))
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/BAM/%.BWA.st.bam $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
+	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/BAM/$(PAIRED_NORMAL).BWA.st.bam" --tumor "/Output/WES/BAM/$*.BWA.st.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA/%.tmp: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
+	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS)
+
+step12: $(firstword $(addprefix Output/Sequenza/BWA/,$(addsuffix .tmp,$(WES_TUMOR_ID))))
 .PHONY: step12
 
 # Step ## (WTS - fq.gz >> bam) - STAR
