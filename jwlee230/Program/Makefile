@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 10
 MEMS = 50
-PARALLEL = 1
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -245,10 +245,11 @@ Output/Sequenza/BWA Output/Sequenza/Given:
 Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/BAM/%.BWA.st.bam $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
 	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/BAM/$(PAIRED_NORMAL).BWA.st.bam" --tumor "/Output/WES/BAM/$*.BWA.st.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA/%.tmp: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
-	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS)
+Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
+	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
+	tar -zcvf $@ $*_* && rm -fv $*_*
 
-step12: $(firstword $(addprefix Output/Sequenza/BWA/,$(addsuffix .tmp,$(WES_TUMOR_ID))))
+step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
 .PHONY: step12
 
 # Step ## (WTS - fq.gz >> bam) - STAR
