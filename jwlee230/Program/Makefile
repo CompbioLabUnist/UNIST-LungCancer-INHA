@@ -238,7 +238,7 @@ step11: Output/Sequenza/hg38.wig.gz Output/Sequenza/hg37.wig.gz
 .PHONY: step11
 
 # Step 12 (Sequenza: Normal - Tumor pairs)
-Output/Sequenza/BWA Output/Sequenza/Given:
+Output/Sequenza/BWA:
 	mkdir -p $@
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
@@ -247,7 +247,7 @@ Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Ou
 
 Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
-	tar -zcvf $@ $*_* && rm -fv $*_*
+	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
 step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
 .PHONY: step12
