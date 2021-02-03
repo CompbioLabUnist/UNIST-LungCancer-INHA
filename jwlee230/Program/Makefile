@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 10
 MEMS = 50
-PARALLEL = 15
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -12,10 +12,11 @@ CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R --tmpfs /tmpfs
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
 GATK = gatk --java-options "$(JAVA_OPTS)"
+GATK_TMP = --tmp-dir /tmpfs
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 
 # Files
@@ -163,7 +164,7 @@ step05: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addpre
 
 # Step 06 (WES: st.bam >> st.dm.bam)
 Output/WES/BAM/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 --TMP_DIR /tmpfs 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm-tmp.sam: Output/WES/BAM/%.st.dm-tmp.bam | build.log
 	$(DOCKER) samtools view -h -o $(addprefix /,$@) $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
@@ -182,10 +183,10 @@ step06: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(add
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
 Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.bai | build.log
-	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
-	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
 
 Output/WES/BAM/%.st.dm.rc.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -202,14 +203,14 @@ Output/PanelOfNormal:
 	mkdir -p $@
 
 Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/PanelOfNormal build.log
-	$(DOCKER) gatk Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
 
 step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
 Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
-	$(DOCKER) gatk CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
 
 step09: Output/PanelOfNormal/PON.vcf
 .PHONY: step09
