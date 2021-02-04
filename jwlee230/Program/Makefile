@@ -153,50 +153,50 @@ step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID)))
 .PHONY: step04
 
 # Step 05 (WES: bam >> st.bam)
-Output/WES/%.st.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
+Output/WES/%.Sort.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
 	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/%.st.bai: Output/WES/%.st.bam | build.log
+Output/WES/%.Sort.bai: Output/WES/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step05: $(addprefix Output/WES/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.bai,$(WES_ID)))
+step05: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.bai,$(WES_ID)))
 .PHONY: step05
 
-# Step 06 (WES: st.bam >> st.dm.bam)
-Output/WES/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.st.bam Output/WES/%.st.bai | build.log
+# Step 06 (WES: st.bam >> st.MarkDuplicate.bam)
+Output/WES/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.Sort.bam Output/WES/%.Sort.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
-Output/WES/%.st.dm.bam: Bash/remove_CR.bash Output/WES/%.st.dm-tmp.bam | build.log
+Output/WES/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WES/%.Sort.dm-tmp.bam | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
 
-Output/WES/%.st.dm.bai: Output/WES/%.st.dm.bam | build.log
+Output/WES/%.Sort.MarkDuplicate.bai: Output/WES/%.Sort.MarkDuplicate.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
+step06: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.bai,$(WES_ID)))
 .PHONY: step06
 
-# Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
-Output/WES/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/%.st.dm.bam Output/WES/%.st.dm.bai | build.log
+# Step 07 (WES: st.MarkDuplicate.bam >> st.MarkDuplicate.BQSR.bam)
+Output/WES/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/%.st.dm.rc.bam: Output/WES/%.st.dm.bam Output/WES/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
+Output/WES/%.Sort.MarkDuplicate.BQSR.bam: Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.BQSR.table $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/%.st.dm.rc.bai: Output/WES/%.st.dm.rc.bam | build.log
+Output/WES/%.Sort.MarkDuplicate.BQSR.bai: Output/WES/%.Sort.MarkDuplicate.BQSR.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step07: $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID)))
+step07: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bai,$(WES_ID)))
 .PHONY: step07
 
 clean-step07:
-	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES -size +1G))
+	rm -fv $(filter-out %.Sort.MarkDuplicate.BQSR.bam,$(shell find /Output/WES -size +1G))
 .PHONY: clean-step07
 
 # Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
 Output/PanelOfNormal:
 	mkdir -p $@
 
-Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/%.st.dm.rc.bam Output/WES/%.st.dm.rc.bai | Output/PanelOfNormal build.log
+Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal build.log
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))
@@ -213,7 +213,7 @@ step09: Output/PanelOfNormal/PON.vcf
 Output/WES/Depth:
 	mkdir -p $@
 
-Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.st.dm.rc.bam Output/WES/%.st.dm.rc.bai | Output/WES/Depth build.log
+Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/WES/Depth build.log
 	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .BWA.tsv,$(WES_ID))))
@@ -237,8 +237,8 @@ Output/Sequenza/BWA:
 	mkdir -p $@
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/%.BWA.st.dm.rc.bam $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
-	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.st.dm.rc.bam" --tumor "/Output/WES/$*.BWA.st.dm.rc.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
+	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --tumor "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
