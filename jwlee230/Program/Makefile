@@ -17,9 +17,7 @@ VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
-GATK_TMP = --tmp-dir $(TMPFS)
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
-PICARD_TMP = --TMP_DIR $(TMPFS)
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -99,12 +97,12 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j 15 -C $(PWD) latest" > tmp.sh
+	echo "make -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
 	qsub -cwd -l h_vmem=$$(echo "$(MEMS) * $(PARALLEL)" | bc)G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $$(echo "$(CPUS) * $(PARALLEL)" | bc) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY: run
 
 # Actual
-latest: step01 step02 step06
+latest: step03
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -134,79 +132,79 @@ step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) Outpu
 .PHONY: step02
 
 # Step 03 (WES: fq.gz >> sam)
-Output/WES/BAM:
+Output/WES:
 	mkdir -p $@
 
-Output/WES/BAM/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES/BAM build.log
-	$(DOCKER) bwa mem -M -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -v 3 $(addprefix /,$(filter %.fasta,$^)) $(sort $(addprefix /,$(filter %.fastq.gz,$^))) 1> $@ 2> $@.stderr
+Output/WES/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES build.log
+	$(DOCKER) bwa mem -M -t $(CPUS) -R "@RG\tID:$(@F)\tPL:ILLUMINA\tLB:$(@F)\tSM:$(@F)\tCN:UNIST" -v 3 $(addprefix /,$(filter %.fasta,$^)) $(sort $(addprefix /,$(filter %.fastq.gz,$^))) 1> $@.stdout 2> $@.stderr
 	$(DOCKER) sed --in-place "/^\[.*/d" $(addprefix /,$@)
 
-Output/WES/BAM/%.Bowtie2.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES/BAM build.log
+Output/WES/%.Bowtie2.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES build.log
 	$(DOCKER) bowtie2 -x $(basename $(addprefix /,$(filter %.fasta,$^))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --mm 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.sam,$(WES_ID)))
+step03: $(addprefix Output/WES/,$(addsuffix .BWA.sam,$(WES_ID)))
 .PHONY: step03
 
 # Step 04 (WES: sam >> bam)
-Output/WES/BAM/%.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.sam | build.log
+Output/WES/%.bam: $(REFERENCE_FASTA) Output/WES/%.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step04: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.bam,$(WES_ID)))
+step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID)))
 .PHONY: step04
 
 # Step 05 (WES: bam >> st.bam)
-Output/WES/BAM/%.st.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.bam | build.log
+Output/WES/%.st.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
 	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.bai: Output/WES/BAM/%.st.bam | build.log
+Output/WES/%.st.bai: Output/WES/%.st.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step05: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bai,$(WES_ID)))
+step05: $(addprefix Output/WES/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.bai,$(WES_ID)))
 .PHONY: step05
 
 # Step 06 (WES: st.bam >> st.dm.bam)
-Output/WES/BAM/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 $(PICARD_TMP) 1> $@.stdout 2> $@.stderr
+Output/WES/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.st.bam Output/WES/%.st.bai | build.log
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm.bam: Bash/remove_CR.bash Output/WES/BAM/%.st.dm-tmp.bam | build.log
+Output/WES/%.st.dm.bam: Bash/remove_CR.bash Output/WES/%.st.dm-tmp.bam | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
 
-Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
+Output/WES/%.st.dm.bai: Output/WES/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
+step06: $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
 .PHONY: step06
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
-Output/WES/BAM/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.bai | build.log
-	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
+Output/WES/%.st.dm.rc.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/%.st.dm.bam Output/WES/%.st.dm.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm.rc.bam: Output/WES/BAM/%.st.dm.bam Output/WES/BAM/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
-	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
+Output/WES/%.st.dm.rc.bam: Output/WES/%.st.dm.bam Output/WES/%.st.dm.rc.table $(REFERENCE_FASTA) | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm.rc.bai: Output/WES/BAM/%.st.dm.rc.bam | build.log
+Output/WES/%.st.dm.rc.bai: Output/WES/%.st.dm.rc.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step07: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID)))
+step07: $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bai,$(WES_ID)))
 .PHONY: step07
 
 clean-step07:
-	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES/BAM -size +1G))
+	rm -fv $(filter-out %.st.dm.rc.bam,$(shell find /Output/WES -size +1G))
 .PHONY: clean-step07
 
 # Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
 Output/PanelOfNormal:
 	mkdir -p $@
 
-Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/PanelOfNormal build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
+Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/%.st.dm.rc.bam Output/WES/%.st.dm.rc.bai | Output/PanelOfNormal build.log
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
 Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
-	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) $(GATK_TMP) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
 
 step09: Output/PanelOfNormal/PON.vcf
 .PHONY: step09
@@ -215,7 +213,7 @@ step09: Output/PanelOfNormal/PON.vcf
 Output/WES/Depth:
 	mkdir -p $@
 
-Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/BAM/%.st.dm.rc.bam Output/WES/BAM/%.st.dm.rc.bai | Output/WES/Depth build.log
+Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.st.dm.rc.bam Output/WES/%.st.dm.rc.bai | Output/WES/Depth build.log
 	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .BWA.tsv,$(WES_ID))))
@@ -239,8 +237,8 @@ Output/Sequenza/BWA:
 	mkdir -p $@
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/BAM/%.BWA.st.bam $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
-	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/BAM/$(PAIRED_NORMAL).BWA.st.bam" --tumor "/Output/WES/BAM/$*.BWA.st.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/%.BWA.st.dm.rc.bam $(addprefix Output/WES/,$(addsuffix .BWA.st.dm.rc.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
+	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.st.dm.rc.bam" --tumor "/Output/WES/$*.BWA.st.dm.rc.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
