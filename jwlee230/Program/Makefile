@@ -10,14 +10,16 @@ TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
+TMPFS = /tmpfs
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R --tmpfs /tmpfs
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
-JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)
+JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
-GATK_TMP = --tmp-dir /tmpfs
+GATK_TMP = --tmp-dir $(TMPFS)
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
+PICARD_TMP = --TMP_DIR $(TMPFS)
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -110,10 +112,10 @@ Output/FastQC/WES:
 	mkdir -p $@
 
 Output/FastQC/WES/%_fastqc.zip: Data/RawData/%*.fastq.gz | Output/FastQC/WES build.log
-	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(WES_ID))) | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(WES_ID))) Output/FastQC/WES/FastQC_WES.png
 .PHONY: step01
@@ -123,10 +125,10 @@ Output/FastQC/WTS:
 	mkdir -p $@
 
 Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%*.fastq.gz | Output/FastQC/WTS build.log
-	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1))))
-	$(DOCKER) python3 $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) Output/FastQC/WTS/FastQC_WTS.png
 .PHONY: step02
@@ -164,21 +166,15 @@ step05: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.bam,$(WES_ID))) $(addpre
 
 # Step 06 (WES: st.bam >> st.dm.bam)
 Output/WES/BAM/%.st.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/BAM/%.st.bam Output/WES/BAM/%.st.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 --TMP_DIR /tmpfs 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 $(PICARD_TMP) 1> $@.stdout 2> $@.stderr
 
-Output/WES/BAM/%.st.dm-tmp.sam: Output/WES/BAM/%.st.dm-tmp.bam | build.log
-	$(DOCKER) samtools view -h -o $(addprefix /,$@) $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
-
-Output/WES/BAM/%.st.dm.sam: Output/WES/BAM/%.st.dm-tmp.sam | build.log
-	$(DOCKER) sed "s/\r//" $(addprefix /,$<) > $@
-
-Output/WES/BAM/%.st.dm.bam: Output/WES/BAM/%.st.dm.sam | build.log
-	$(DOCKER) samtools view -b -o $(addprefix /,$@) $(addprefix /,$<)
+Output/WES/BAM/%.st.dm.bam: Bash/remove_CR.bash Output/WES/BAM/%.st.dm-tmp.bam | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
 
 Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
+step06: $(firstword $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))))# $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
 .PHONY: step06
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)

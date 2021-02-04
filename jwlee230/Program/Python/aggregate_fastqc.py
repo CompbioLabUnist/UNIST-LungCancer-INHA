@@ -2,6 +2,7 @@
 aggregate_fastqc.py: aggregate FastQC results into a single figure
 """
 import argparse
+import os
 import zipfile
 import matplotlib
 import matplotlib.pyplot
@@ -13,6 +14,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input ZIP files", type=str, nargs="+")
     parser.add_argument("output", help="Output PNG file", type=str)
+    parser.add_argument("--tmpfs", help="Path to temporary directory", type=str, default="/tmpfs")
 
     args = parser.parse_args()
 
@@ -25,11 +27,11 @@ if __name__ == "__main__":
 
     for file_name in args.input:
         with zipfile.ZipFile(file_name) as zip_file:
-            zip_file.extract(list(filter(lambda x: x.endswith("summary.txt"), zip_file.namelist()))[0], "/tmp/FastQC")
+            zip_file.extract(list(filter(lambda x: x.endswith("summary.txt"), zip_file.namelist()))[0], path=args.tmpfs)
 
     raw_data = list()
-    for directory in step00.directory_list("/tmp/FastQC"):
-        with open(step00.file_list(directory)[0], "r") as f:
+    for directory in step00.directory_list(args.tmpfs):
+        with open(os.path.join(directory, "summary.txt"), "r") as f:
             for line in f.readlines():
                 split_line = line.strip().split("\t")
                 raw_data.append(split_line)
