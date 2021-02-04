@@ -104,7 +104,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step12
+latest: step01 step02 step06
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -174,7 +174,7 @@ Output/WES/BAM/%.st.dm.bam: Bash/remove_CR.bash Output/WES/BAM/%.st.dm-tmp.bam |
 Output/WES/BAM/%.st.dm.bai: Output/WES/BAM/%.st.dm.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step06: $(firstword $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))))# $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
+step06: $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bam,$(WES_ID))) $(addprefix Output/WES/BAM/,$(addsuffix .BWA.st.dm.bai,$(WES_ID)))
 .PHONY: step06
 
 # Step 07 (WES: st.dm.bam >> st.dm.rc.bam)
