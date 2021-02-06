@@ -102,7 +102,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03
+latest: step06
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -154,7 +154,7 @@ step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID)))
 
 # Step 05 (WES: bam >> st.bam)
 Output/WES/%.Sort.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m 5G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools sort -l 9 -m $$(echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.bai: Output/WES/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
