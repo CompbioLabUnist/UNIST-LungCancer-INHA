@@ -102,7 +102,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step06
+latest: step07
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -152,7 +152,7 @@ Output/WES/%.bam: $(REFERENCE_FASTA) Output/WES/%.sam | build.log
 step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID)))
 .PHONY: step04
 
-# Step 05 (WES: bam >> st.bam)
+# Step 05 (WES: bam >> Sort.bam)
 Output/WES/%.Sort.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
 	$(DOCKER) samtools sort -l 9 -m $$(echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
@@ -162,7 +162,7 @@ Output/WES/%.Sort.bai: Output/WES/%.Sort.bam | build.log
 step05: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.bai,$(WES_ID)))
 .PHONY: step05
 
-# Step 06 (WES: st.bam >> st.MarkDuplicate.bam)
+# Step 06 (WES: Sort.bam >> Sort.MarkDuplicate.bam)
 Output/WES/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.Sort.bam Output/WES/%.Sort.bai | build.log
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
@@ -175,7 +175,7 @@ Output/WES/%.Sort.MarkDuplicate.bai: Output/WES/%.Sort.MarkDuplicate.bam | build
 step06: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.bai,$(WES_ID)))
 .PHONY: step06
 
-# Step 07 (WES: st.MarkDuplicate.bam >> st.MarkDuplicate.BQSR.bam)
+# Step 07 (WES: Sort.MarkDuplicate.bam >> Sort.MarkDuplicate.BQSR.bam)
 Output/WES/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
