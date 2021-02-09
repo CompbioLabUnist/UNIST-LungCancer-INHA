@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 10
+CPUS = 5
 MEMS = 50
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -142,14 +142,14 @@ Output/WES/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES 
 Output/WES/%.Bowtie2.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES build.log
 	$(DOCKER) bowtie2 -x $(basename $(addprefix /,$(filter %.fasta,$^))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) --threads $(CPUS) --rg-id $(@F) --mm 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WES/,$(addsuffix .BWA.sam,$(WES_ID)))
+step03: $(addprefix Output/WES/,$(addsuffix .BWA.sam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.sam,$(WES_ID)))
 .PHONY: step03
 
 # Step 04 (WES: sam >> bam)
 Output/WES/%.bam: $(REFERENCE_FASTA) Output/WES/%.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID)))
+step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.bam,$(WES_ID)))
 .PHONY: step04
 
 # Step 05 (WES: bam >> Sort.bam)
@@ -189,7 +189,7 @@ step07: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(W
 .PHONY: step07
 
 clean-step07:
-	rm -fv $(filter-out %.Sort.MarkDuplicate.BQSR.bam,$(shell find /Output/WES -size +1G))
+	rm -fv $(filter-out %.Sort.MarkDuplicate.BQSR.bam,$(shell find Output/WES -size +1G))
 .PHONY: clean-step07
 
 # Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
@@ -203,10 +203,10 @@ step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/PON.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
+Output/PanelOfNormal/PON.BWA.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
 	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
 
-step09: Output/PanelOfNormal/PON.vcf
+step09: Output/PanelOfNormal/PON.BWA.vcf
 .PHONY: step09
 
 # Step 10 (WES - samtools depth)
@@ -240,12 +240,16 @@ Output/Sequenza/BWA:
 Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
 	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --tumor "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID)))
+.PHONY: step12
+
+# Step 13 (Sequenza: Draw the plots)
 Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
-step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
-.PHONY: step12
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
+.PHONY: step13
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
