@@ -109,26 +109,26 @@ latest: step07
 Output/FastQC/WES:
 	mkdir -p $@
 
-Output/FastQC/WES/%_fastqc.zip: Data/RawData/%*.fastq.gz | Output/FastQC/WES build.log
+Output/FastQC/WES/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/FastQC/WES build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(WES_ID))) | build.log
+Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(WES_ID))) Output/FastQC/WES/FastQC_WES.png
+step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WES/FastQC_WES.png
 .PHONY: step01
 
 # Step 02 (FastQC for WTS)
 Output/FastQC/WTS:
 	mkdir -p $@
 
-Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%*.fastq.gz | Output/FastQC/WTS build.log
+Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/FastQC/WTS build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) | build.log
+Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(WTS_ID))) Output/FastQC/WTS/FastQC_WTS.png
+step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WTS/FastQC_WTS.png
 .PHONY: step02
 
 # Step 03 (WES: fq.gz >> sam)
