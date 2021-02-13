@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 1
 MEMS = 50
-PARALLEL = 50
+PARALLEL = 30
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -98,7 +98,7 @@ stop:
 # SGE
 run: | log Output build.log
 	echo "make -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$$(echo "$(MEMS) * $(PARALLEL)" | bc)G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $$(echo "$(CPUS) * $(PARALLEL)" | bc) -o $(abspath log) -e $(abspath log) tmp.sh
+	qsub -cwd -l h_vmem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(shell echo "$(CPUS) * $(PARALLEL)" | bc) -o $(abspath log) -e $(abspath log) tmp.sh
 .PHONY: run
 
 # Actual
@@ -154,7 +154,7 @@ step04: $(addprefix Output/WES/,$(addsuffix .BWA.bam,$(WES_ID))) $(addprefix Out
 
 # Step 05 (WES: bam >> Sort.bam)
 Output/WES/%.Sort.bam: $(REFERENCE_FASTA) Output/WES/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m $$(echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) samtools sort -l 9 -m $(shell echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.bai: Output/WES/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -193,30 +193,30 @@ clean-step07:
 .PHONY: clean-step07
 
 # Step 08 (Panel of Normal: Run Mutect2 in tumor-only mode for each normal sample)
-Output/PanelOfNormal:
+Output/PanelOfNormal/BWA:
 	mkdir -p $@
 
-Output/PanelOfNormal/%.vcf: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/PanelOfNormal/BWA/%.vcf: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal/BWA build.log
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
 
-step08: $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))
+step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID)))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/PON.BWA.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
+Output/PanelOfNormal/PON.BWA.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
 	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
 
 step09: Output/PanelOfNormal/PON.BWA.vcf
 .PHONY: step09
 
 # Step 10 (WES - samtools depth)
-Output/WES/Depth:
+Output/WESDepth:
 	mkdir -p $@
 
-Output/WES/Depth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/WES/Depth build.log
+Output/WESDepth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/WESDepth build.log
 	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-step10: $(sort $(addprefix Output/WES/Depth/,$(addsuffix .BWA.tsv,$(WES_ID))))
+step10: $(sort $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))))
 .PHONY: step10
 
 # Step 11 (Sequenza: Make reference)
