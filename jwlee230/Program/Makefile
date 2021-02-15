@@ -102,7 +102,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step09
+latest: step10
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -205,7 +205,12 @@ step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))
 # Step 09 (Panel of Normal: Aggregate VCF files)
 Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID)))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
-step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json
+	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
+
+Output/PanelOfNormal/PON.BWA.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNormal/BWA.genomicsdb/callset.json
+	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant gendb://$(addprefix /,$(dir $(filter %.json,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json Output/PanelOfNormal/PON.BWA.vcf.gz
 .PHONY: step09
 
 # Step 10 (WES - samtools depth)
@@ -248,6 +253,17 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | b
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
 step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
+.PHONY: step13
+
+# Step 13 (Mutect2)
+Output/Mutect2:
+	mkdir -p $@
+
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/Mutect2/%.vcf: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/PanelOfNormal/PON.BWA.vcf.gz Output/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2 build.log
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample $(PAIRED_NORMAL) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) $(foreach vcf,$(addprefix /,$(filter %.vcf,$^)),--germline-resource $(vcf)) 1> $@.stdout 2> $@.stderr
+
+step13: $(addprefix Output/Mutect2/,$(addsuffix .vcf,$(WES_TUMOR_ID)))
 .PHONY: step13
 
 # Step ## (WTS - fq.gz >> bam) - STAR
