@@ -102,7 +102,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step10
+latest: step14
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -255,16 +255,16 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | b
 step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
 .PHONY: step13
 
-# Step 13 (Mutect2)
+# Step 14 (Mutect2)
 Output/Mutect2:
 	mkdir -p $@
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/Mutect2/%.vcf: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/PanelOfNormal/PON.BWA.vcf.gz Output/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2 build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample $(PAIRED_NORMAL) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) $(foreach vcf,$(addprefix /,$(filter %.vcf,$^)),--germline-resource $(vcf)) 1> $@.stdout 2> $@.stderr
+Output/Mutect2/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2 build.log
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
 
-step13: $(addprefix Output/Mutect2/,$(addsuffix .vcf,$(WES_TUMOR_ID)))
-.PHONY: step13
+step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID)))
+.PHONY: step14
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
