@@ -102,7 +102,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step08
+latest: step09
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -203,10 +203,9 @@ step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/PON.BWA.vcf: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .BWA.vcf,$(WES_NORMAL_ID)))) | build.log
-	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$@) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) 1> $@.stdout 2> $@.stderr
-
-step09: Output/PanelOfNormal/PON.BWA.vcf
+Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID)))) | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
+step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json
 .PHONY: step09
 
 # Step 10 (WES - samtools depth)
