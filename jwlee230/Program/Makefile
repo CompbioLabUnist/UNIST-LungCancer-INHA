@@ -208,7 +208,7 @@ Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(sort $(ad
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
 Output/PanelOfNormal/PON.BWA.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNormal/BWA.genomicsdb/callset.json
-	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant gendb://$(addprefix /,$(dir $(filter %.json,$^))) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json Output/PanelOfNormal/PON.BWA.vcf.gz
 .PHONY: step09
