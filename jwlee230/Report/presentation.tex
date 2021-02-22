@@ -122,20 +122,24 @@
     \end{frame}
 
     \section{Results}
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{FastQC}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/FastQC/FastQC_WES.png}
+            \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WES.png}
             \caption{FastQC with WES data}
         \end{figure}
 
+        $\therefore$ Only 33P1 has more than 3 failures: 6 FAILs. \\
+        $\therefore$ 33P1 is excluded at further analysis.
+
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/FastQC/FastQC_WTS.png}
+            \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WTS.png}
             \caption{FastQC with WTS data}
         \end{figure}
 
-        $\therefore$ All PASS at \textit{per base sequence quality}!
+        $\therefore$ No sample has more than 5 failures. \\
+        $\therefore$ All sample are good to analysis.
     \end{frame}
 
     \section{Proceedings}
