@@ -3,7 +3,7 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl
+RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl
 
 # TOOL directory
 RUN mkdir /Tools
@@ -49,6 +49,9 @@ ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
 ADD Tools/Bowtie2.zip /Tools
 RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
+
+# VCF2MAF
+ADD Tools/vcf2maf.tar.gz /Tools
 
 # R packages
 RUN Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages('sequenza')"
