@@ -15,13 +15,16 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input ZIP files", type=str, nargs="+")
     parser.add_argument("output", help="Output PNG file", type=str)
     parser.add_argument("--tmpfs", help="Path to temporary directory", type=str, default="/tmpfs")
+    parser.add_argument("--threshold", help="Number of FAIL threshold", type=int, default=0)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".zip"), args.input)):
         raise ValueError("INPUT must end with .zip!!")
-    if not args.output.endswith(".png"):
+    elif not args.output.endswith(".png"):
         raise ValueError("Output file must end with .png!!")
+    elif args.threshold < 0:
+        raise ValueError("Threshold must be positive!!")
 
     args.input.sort()
 
@@ -47,6 +50,7 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
     for i, f in enumerate(file_list):
+        FAIL_count = 0
         for j, item in enumerate(item_list):
             result = list(data.loc[(data["Item"] == item) & (data["File"] == f)]["Result"])[0]
 
@@ -56,8 +60,11 @@ if __name__ == "__main__":
                 matplotlib.pyplot.scatter(i, j, s=20, marker="^", c="y")
             elif result == "FAIL":
                 matplotlib.pyplot.scatter(i, j, s=20, marker="X", c="r")
+                FAIL_count += 1
             else:
                 raise Exception("Something went wrong!!")
+        if FAIL_count > args.threshold:
+            print(f, FAIL_count)
 
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.yticks(range(len(item_list)), item_list)

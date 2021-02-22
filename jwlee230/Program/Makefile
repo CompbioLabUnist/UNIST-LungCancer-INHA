@@ -113,7 +113,7 @@ Output/FastQC/WES/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/FastQC/WES buil
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 3
 
 step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WES/FastQC_WES.png
 .PHONY: step01
@@ -126,7 +126,7 @@ Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/FastQC/WTS build.lo
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 5
 
 step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WTS/FastQC_WTS.png
 .PHONY: step02
@@ -270,5 +270,5 @@ step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID)))
 # Step ## (R-sem)
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
-# Step ## (PureCN)
+# step ## (PureCN)
 # Step ## (Histogram of file size)
