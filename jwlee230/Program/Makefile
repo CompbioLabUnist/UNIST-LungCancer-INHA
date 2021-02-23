@@ -18,11 +18,13 @@ RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
+VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 
 # Files
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
+PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
 WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN]\d?"))
 WES_NORMAL_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N"))
 WES_TUMOR_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADM]\d?"))
@@ -72,6 +74,18 @@ TOOLS += Docker/Tools/STAR.tar.gz
 Docker/Tools/Bowtie2.zip: | Docker/Tools
 	wget "https://github.com/BenLangmead/bowtie2/releases/download/v2.4.2/bowtie2-2.4.2-linux-x86_64.zip" -O $@
 TOOLS += Docker/Tools/Bowtie2.zip
+
+Docker/Tools/vcf2maf.tar.gz: | Docker/Tools
+	wget "https://github.com/mskcc/vcf2maf/archive/v1.6.19.tar.gz" -O $@
+TOOLS += Docker/Tools/vcf2maf.tar.gz
+
+Docker/Tools/VEP.zip: | Docker/Tools
+	wget "https://github.com/Ensembl/ensembl-vep/archive/release/103.zip" -O $@
+TOOLS += Docker/Tools/VEP.zip
+
+Docker/Tools/BigFile.tar.gz: | Docker/Tools
+	wget "https://github.com/ucscGenomeBrowser/kent/archive/v335_base.tar.gz" -O $@
+TOOLS += Docker/Tools/BigFile.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile $(TOOLS) | log Output
@@ -263,7 +277,10 @@ Output/Mutect2:
 Output/Mutect2/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2 build.log
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
 
-step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID)))
+Output/Mutect2/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/%.BWA.vcf | build.log
+	$(DOCKER) $(VCF2MAF) --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id $* --normal-id $(PAIRED_NORMAL) --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --ncbi-build "GRCh38" --tmp-dir $(TMPFS)
+
+step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(firstword $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))))
 .PHONY: step14
 
 # Step ## (WTS - fq.gz >> bam) - STAR

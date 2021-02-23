@@ -50,7 +50,7 @@ RUN Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "B
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
 RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j
-RUN cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE
+RUN cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 VOLUME /Output
