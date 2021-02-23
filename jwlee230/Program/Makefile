@@ -13,7 +13,7 @@ PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 TMPFS = /tmpfs
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
@@ -280,7 +280,7 @@ Output/Mutect2/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz
 Output/Mutect2/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/%.BWA.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS)
 
-step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) Output/Mutect2/14C1.BWA.maf #$(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID)))
+step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID)))
 .PHONY: step14
 
 # Step ## (WTS - fq.gz >> bam) - STAR
