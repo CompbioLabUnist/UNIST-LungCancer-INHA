@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 1
 MEMS = 50
-PARALLEL = 30
+PARALLEL = 50
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -18,7 +18,7 @@ RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
-VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
+VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl --vep-path /Tools/ensembl-vep-release-103 --vep-data /Tools --vep-forks $(CPUS) --ncbi-build "GRCh38"
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -278,9 +278,9 @@ Output/Mutect2/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/%.BWA.vcf | build.log
-	$(DOCKER) $(VCF2MAF) --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id $* --normal-id $(PAIRED_NORMAL) --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --ncbi-build "GRCh38" --tmp-dir $(TMPFS)
+	$(DOCKER) $(VCF2MAF) --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(firstword $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))))
+step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID)))
 .PHONY: step14
 
 # Step ## (WTS - fq.gz >> bam) - STAR
