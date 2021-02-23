@@ -1,17 +1,14 @@
 FROM ubuntu:20.04
 LABEL maintainer="jwlee230@unist.ac.kr"
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-
-RUN apt update && apt upgrade -y && apt install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt update && apt upgrade -y && apt install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev
 
 # TOOL directory
 RUN mkdir /Tools
 ADD Tools/* /Tools/
 
 # Python3
-RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install
-RUN ln -sf /usr/local/bin/python3 /usr/bin/python
+RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install && ln -sf /usr/local/bin/python3 /usr/bin/python
 
 # PIP
 ADD requirements.txt /Tools/requirements.txt
@@ -49,8 +46,7 @@ RUN Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "B
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
-RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j
-RUN cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE
+RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 VOLUME /Output
