@@ -3,13 +3,13 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl
+RUN apt update && apt upgrade -y && apt install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev
 
 # TOOL directory
 RUN mkdir /Tools
+ADD Tools/* /Tools/
 
 # Python3
-ADD Tools/Python.tar.xz /Tools
 RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install
 RUN ln -sf /usr/local/bin/python3 /usr/bin/python
 
@@ -18,43 +18,40 @@ ADD requirements.txt /Tools/requirements.txt
 RUN pip3 install --requirement /Tools/requirements.txt
 
 # Samtools
-ADD Tools/samtools.tar.bz2 /Tools
 RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install
 ENV PATH=/Tools/samtools-1.10:$PATH
 
 # GATK
-ADD Tools/gatk.zip /Tools
 RUN cd Tools && unzip gatk.zip
 ENV PATH=/Tools/gatk-4.1.9.0:$PATH
 
 # BWA
-ADD Tools/bwa.tar.bz2 /Tools
 RUN cd /Tools/bwa-0.7.17 && make -j
 ENV PATH=/Tools/bwa-0.7.17:$PATH
 
 # Picard
-ADD Tools/picard.jar /Tools
 ENV PICARD=/Tools/picard.jar
 
 # FastQC
-ADD Tools/FastQC.zip /Tools
 RUN cd /Tools && unzip FastQC.zip && cd FastQC && chmod +x fastqc
 ENV PATH=/Tools/FastQC:$PATH
 
 # STAR
-ADD Tools/STAR.tar.gz /Tools
 ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
 
 # Bowtie2
-ADD Tools/Bowtie2.zip /Tools
 RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
 
-# VCF2MAF
-ADD Tools/vcf2maf.tar.gz /Tools
-
 # R packages
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars
 RUN Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages('sequenza')"
+
+# VEP
+ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
+RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j
+RUN cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE
+ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 VOLUME /Output
 VOLUME /Data
