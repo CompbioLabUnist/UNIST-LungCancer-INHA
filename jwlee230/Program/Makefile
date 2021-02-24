@@ -116,7 +116,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step13
+latest: step12
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -256,7 +256,9 @@ Output/Sequenza/BWA:
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 Output/Sequenza/BWA/%.seqz.gz: $(REFERENCE_FASTA) Output/Sequenza/hg38.wig.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Sequenza/BWA build.log
-	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --tumor "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) sequenza-utils bam2seqz --normal "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --tumor "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --fasta $(addprefix /,$(filter %.fasta,$^)) -gc $(addprefix /,$(filter %.wig.gz,$^)) --output $(addprefix /,$@) --chromosome $(CHROMOSOMES) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
+	cd $(@D) && gzip --decompress --stdout $** | gawk '{if (NR!=1 && $$1 != "chromosome") {print $$0}}' | bgzip --threads $(CPUS) > $(@F)
+	$(DOCKER) tabix --force --sequence 1 --begin 2 --end 2 --skip-lines 1 $@
 
 step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID)))
 .PHONY: step12
@@ -269,7 +271,7 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | b
 Output/Sequenza/BWA/result.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS)
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) #Output/Sequenza/BWA/result.png
 .PHONY: step13
 
 # Step 14 (Mutect2)
