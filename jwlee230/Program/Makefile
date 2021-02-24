@@ -116,7 +116,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step14
+latest: step13
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -265,6 +265,9 @@ step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID)))
 Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz | build.log
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
+
+Output/Sequenza/BWA/result.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS)
 
 step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID)))
 .PHONY: step13
