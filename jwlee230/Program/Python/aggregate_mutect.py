@@ -29,6 +29,7 @@ if __name__ == "__main__":
         raw_data.append(data)
 
     mutect_data = pandas.concat(raw_data, ignore_index=True, verify_integrity=True)
+    del raw_data
     print(mutect_data)
 
     step00.make_pickle(args.output, mutect_data)

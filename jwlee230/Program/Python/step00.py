@@ -31,8 +31,8 @@ def make_pickle(path: str, data: typing.Any) -> None:
     """
     make_pickle: create a pickle
     """
-    if not path.endswith(".tar.gz"):
-        raise ValueError("Path must end with .tar.gz")
+    if not path.endswith(".tar.xz"):
+        raise ValueError("Path must end with .tar.xz")
 
     pkl = pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL)
     key = hmac.new(secret, pkl, hashlib.sha512).digest()
@@ -43,7 +43,7 @@ def make_pickle(path: str, data: typing.Any) -> None:
         with open(os.path.join(tmp_dir, "key.txt"), "wb") as f:
             f.write(key)
 
-        with tarfile.open(path, "w:gz") as tar:
+        with tarfile.open(path, "w:xz") as tar:
             tar.add(os.path.join(tmp_dir, "data.pkl"), arcname="data.pkl")
             tar.add(os.path.join(tmp_dir, "key.txt"), arcname="key.txt")
 
@@ -52,13 +52,13 @@ def read_pickle(path: str) -> typing.Any:
     """
     read_pickle: read a pickle file
     """
-    if not path.endswith(".tar.gz"):
-        raise ValueError("Path must end with .tar.gz")
+    if not path.endswith(".tar.xz"):
+        raise ValueError("Path must end with .tar.xz")
     if not tarfile.is_tarfile(path):
         raise ValueError("Path cannot be read as a tar file")
 
     with tempfile.TemporaryDirectory(dir=tmpfs) as tmp_dir:
-        with tarfile.open(path, "r:gz") as tar:
+        with tarfile.open(path, "r:xz") as tar:
             tar.extractall(tmp_dir)
 
         with open(os.path.join(tmp_dir, "data.pkl"), "rb") as f:
