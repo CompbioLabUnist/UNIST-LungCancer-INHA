@@ -10,6 +10,7 @@ import tempfile
 import typing
 
 secret = bytes("asdf", "UTF-8")
+tmpfs = "/tmpfs"
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -36,7 +37,7 @@ def make_pickle(path: str, data: typing.Any) -> None:
     pkl = pickle.dumps(data, protocol=pickle.HIGHEST_PROTOCOL)
     key = hmac.new(secret, pkl, hashlib.sha512).digest()
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
+    with tempfile.TemporaryDirectory(dir=tmpfs) as tmp_dir:
         with open(os.path.join(tmp_dir, "data.pkl"), "wb") as f:
             f.write(pkl)
         with open(os.path.join(tmp_dir, "key.txt"), "wb") as f:
@@ -56,7 +57,7 @@ def read_pickle(path: str) -> typing.Any:
     if not tarfile.is_tarfile(path):
         raise ValueError("Path cannot be read as a tar file")
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
+    with tempfile.TemporaryDirectory(dir=tmpfs) as tmp_dir:
         with tarfile.open(path, "r:gz") as tar:
             tar.extractall(tmp_dir)
 
