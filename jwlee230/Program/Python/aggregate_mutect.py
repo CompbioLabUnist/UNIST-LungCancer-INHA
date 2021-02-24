@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("output", help="Output file", type=str)
+    parser.add_argument("ID", help="Patient ID", type=str)
 
     args = parser.parse_args()
 
@@ -22,8 +23,11 @@ if __name__ == "__main__":
 
     raw_data = list()
     for ID, file_name in zip(IDs, args.input):
+        if re.findall(r"(^(cn)?\d+)", ID)[0][0] != args.ID:
+            continue
+
         print(ID)
-        data = pandas.read_csv(file_name, sep="\t", comment="#", low_memory=False)
+        data = pandas.read_csv(file_name, sep="\t", comment="#", dtype=str)
         data["ID"] = ID
         data["Patient"] = re.findall(r"(^(cn)?\d+)", ID)[0][0]
         raw_data.append(data)
@@ -31,5 +35,6 @@ if __name__ == "__main__":
     mutect_data = pandas.concat(raw_data, ignore_index=True, verify_integrity=True)
     del raw_data
     print(mutect_data)
+    mutect_data.info()
 
     step00.make_pickle(args.output, mutect_data)
