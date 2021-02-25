@@ -3,6 +3,7 @@ analysis_depth.py: analysis samtools depth
 """
 import argparse
 import multiprocessing
+import re
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     args.input.sort()
     IDs = list(map(lambda x: x.split(".")[0], list(map(lambda x: x.split("/")[-1], args.input))))
 
-    with multiprocessing.Pool(args.cpus) as pool:
+    with multiprocessing.Pool(processes=args.cpus) as pool:
         depths = pool.map(get_depth, args.input)
 
     matplotlib.use("Agg")
@@ -45,13 +46,20 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
-    for i, depth in enumerate(depths):
-        matplotlib.pyplot.bar(i, depth, color="green")
-        matplotlib.pyplot.text(i, depth, "%.3f" % depth, horizontalalignment="center", verticalalignment="bottom", color="black")
+    used_color = True
+    previous_patient = None
+    for i, (ID, depth) in enumerate(zip(IDs, depths)):
+        patient = re.findall(r"(^(cn)?\d+)", ID)[0][0]
+        if previous_patient != patient:
+            previous_patient = patient
+            used_color = False if used_color else True
 
-    matplotlib.pyplot.xticks(range(len(IDs)), IDs)
+        matplotlib.pyplot.bar(i, depth, color="green" if used_color else "blue")
+        matplotlib.pyplot.text(i, depth, "%.1f" % depth, horizontalalignment="center", verticalalignment="bottom", color="black")
+
+    matplotlib.pyplot.xticks([])
     matplotlib.pyplot.xlabel("Sample ID")
-    matplotlib.pyplot.ylabel("Depth of coverage")
+    matplotlib.pyplot.ylabel("Depth")
     matplotlib.pyplot.title("Depth of coverage")
     matplotlib.pyplot.grid(True)
 
