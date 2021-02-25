@@ -8,6 +8,7 @@ PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
+PYTHON = python3 -B
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 TMPFS = /tmpfs
@@ -127,7 +128,7 @@ Output/FastQC/WES/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/FastQC/WES buil
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 3
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 3
 
 step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WES/FastQC_WES.png
 .PHONY: step01
@@ -140,7 +141,7 @@ Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/FastQC/WTS build.lo
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 5
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 5
 
 step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WTS/FastQC_WTS.png
 .PHONY: step02
@@ -235,7 +236,7 @@ Output/WESDepth/%.tsv: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.BQSR.b
 	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WESDepth/BWA.png: Python/analysis_depth.py $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
 step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.png
 .PHONY: step10
@@ -274,7 +275,7 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
 Output/Sequenza/BWA/result.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) --tmpfs $(TMPFS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS)
 
 step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) #Output/Sequenza/BWA/result.png
 .PHONY: step13
@@ -291,7 +292,7 @@ Output/Mutect2/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/%.BWA.vcf | build.lo
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS)
 
 Output/Mutect2/%.BWA.tar.xz: Python/aggregate_mutect.py $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) python3 $(addprefix /,$^ $@) $* 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) $* 1> $@.stdout 2> $@.stderr
 
 step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.tar.xz,$(PATIENT_ID)))
 .PHONY: step14
