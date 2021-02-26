@@ -54,8 +54,7 @@ if __name__ == "__main__":
             previous_patient = patient
             used_color = False if used_color else True
 
-        matplotlib.pyplot.bar(i, depth, color="green" if used_color else "blue")
-        matplotlib.pyplot.text(i, depth, "%.1f" % depth, horizontalalignment="center", verticalalignment="bottom", color="black")
+        matplotlib.pyplot.bar(i, depth, color="tab:green" if used_color else "tab:blue")
 
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.xlabel("Sample ID")
