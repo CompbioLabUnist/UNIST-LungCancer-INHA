@@ -156,9 +156,9 @@ Output/WES/%.BWA.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES 
 	$(DOCKER) sed --in-place "/^\[.*/d" $(addprefix /,$@)
 
 Output/WES/%.Bowtie2.sam: $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/WES build.log
-	$(DOCKER) bowtie2 --threads $(CPUS) --rg-id "$(@F)" --time --qc-filter --non-deterministic -x $(basename $(addprefix /,$(filter %.fasta,$^))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@)
+	$(DOCKER) bowtie2 --threads $(CPUS) --rg-id "$(@F)" --time --qc-filter --non-deterministic -x $(basename $(notdir $(addprefix /,$(filter %.fasta,$^)))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step03: $(addprefix Output/WES/,$(addsuffix .BWA.sam,$(WES_ID))) $(firstword $(addprefix Output/WES/,$(addsuffix .Bowtie2.sam,$(WES_ID))))
+step03: $(addprefix Output/WES/,$(addsuffix .BWA.sam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.sam,$(WES_ID)))
 .PHONY: step03
 
 # Step 04 (WES: sam >> bam)
