@@ -38,7 +38,7 @@ ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
 
 # Bowtie2
 RUN cd /Tools && unzip Bowtie2.zip
-ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH
+ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
 RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages('sequenza')"
