@@ -24,6 +24,25 @@
     \end{frame}
 }
 
+\AtBeginSubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
 \title{Lung Cancer}
 
 \author
@@ -52,7 +71,11 @@
 
     \section{Introduction}
     \begin{frame}
-        \frametitle{Objectives}
+        \frametitle{Lung Cancer}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Study Objectives}
 
         \begin{itemize}
             \item Find different mutations
@@ -93,6 +116,7 @@
         \end{itemize}
     \end{frame}
 
+    \subsection{Cancer Types}
     \begin{frame}
         \frametitle{CIS + AIS}
 
@@ -154,6 +178,7 @@
     \end{frame}
 
     \section{Results}
+    \subsection{Quality Checks}
     \begin{frame}[allowframebreaks]
         \frametitle{FastQC}
 
