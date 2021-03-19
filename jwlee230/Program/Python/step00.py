@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import os
 import pickle
+import re
 import tarfile
 import tempfile
 import typing
@@ -70,3 +71,7 @@ def read_pickle(path: str) -> typing.Any:
         raise ValueError("Data is not valid")
 
     return pickle.loads(pkl)
+
+
+def get_patient(ID: str) -> str:
+    return re.findall(r"(^(cn)?\d+)", ID)[0][0]

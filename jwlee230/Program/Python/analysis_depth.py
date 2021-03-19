@@ -3,11 +3,11 @@ analysis_depth.py: analysis samtools depth
 """
 import argparse
 import multiprocessing
-import re
 import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import step00
 
 
 def get_depth(file_name: str) -> float:
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     used_color = True
     previous_patient = None
     for i, (ID, depth) in enumerate(zip(IDs, depths)):
-        patient = re.findall(r"(^(cn)?\d+)", ID)[0][0]
+        patient = step00.get_patient(ID)
         if previous_patient != patient:
             previous_patient = patient
             used_color = False if used_color else True
