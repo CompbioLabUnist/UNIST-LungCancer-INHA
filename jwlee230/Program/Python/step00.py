@@ -74,4 +74,25 @@ def read_pickle(path: str) -> typing.Any:
 
 
 def get_patient(ID: str) -> str:
+    """
+    get_patient: get patient ID from sample ID
+    """
     return re.findall(r"(^(cn)?\d+)", ID)[0][0]
+
+
+def get_paired_normal(ID: str) -> str:
+    """
+    get_paired_normal: get paired normal sample ID
+    """
+    return get_patient(ID) + "N"
+
+
+def get_sample_type(ID: str) -> str:
+    """
+    get_sample_type: get the type of sample from sample ID
+    """
+    return re.findall(r"[A-Z]", ID)[0][0]
+
+
+long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
+long_sample_type_list = sorted(["Normal", "CIS+AIS", "AAH", "Primary", "Dysplasia", "MIA"])

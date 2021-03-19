@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
+CPUS = 30
 MEMS = 100
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -278,9 +278,9 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
 Output/Sequenza/BWA/result.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) #Output/Sequenza/BWA/result.png
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA/result.png
 .PHONY: step13
 
 # Step 14 (Mutect2)
