@@ -2,7 +2,6 @@
 aggregate_mutect.py: aggregate mutect .MAF files
 """
 import argparse
-import re
 import pandas
 import step00
 
@@ -23,13 +22,13 @@ if __name__ == "__main__":
 
     raw_data = list()
     for ID, file_name in zip(IDs, args.input):
-        if re.findall(r"(^(cn)?\d+)", ID)[0][0] != args.ID:
+        if step00.get_patient(ID) != args.ID:
             continue
 
         print(ID)
         data = pandas.read_csv(file_name, sep="\t", comment="#", dtype=str)
         data["ID"] = ID
-        data["Patient"] = re.findall(r"(^(cn)?\d+)", ID)[0][0]
+        data["Patient"] = step00.get_patient(ID)
         raw_data.append(data)
 
     mutect_data = pandas.concat(raw_data, ignore_index=True, verify_integrity=True)
