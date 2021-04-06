@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 1
 MEMS = 100
-PARALLEL = 20
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -25,6 +25,7 @@ VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
+REFERENCE_DBSNP_VCF = $(REFERENCE_DIR)/dbsnp_138.hg38.vcf
 LIBRARY_BED = Data/S04380110_Regions.bed
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
 WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN]\d?"))
@@ -304,14 +305,12 @@ step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(add
 Output/HaplotypeCaller:
 	mkdir -p $@
 
-Output/HaplotypeCaller/%.BWA.vcf: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | Output/HaplotypeCaller build.log
-	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+Output/HaplotypeCaller/%.BWA.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller build.log
+	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^))1> $@.stdout 2> $@.stderr
 
-Output/HaplotypeCaller/%.BWA.maf: $(REFERENCE_FASTA) Output/HaplotypeCaller/%.BWA.vcf | build.log
-	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
-
-step15: $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID)))
+step15: $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMOR_ID)))
 .PHONY: step15
+# TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
