@@ -2,3 +2,4 @@ pandas==1.2.0
 sequenza-utils==3.0.0
 matplotlib==3.3.3
 seaborn==0.11.1
+comut==0.0.3

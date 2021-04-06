@@ -90,7 +90,7 @@ Docker/Tools/BigFile.tar.gz: | Docker/Tools
 TOOLS += Docker/Tools/BigFile.tar.gz
 
 # Docker
-build.log: Docker/Dockerfile $(TOOLS) | log Output
+build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
 	docker images | grep $(IMAGE_NAME) && docker rmi $(IMAGE_NAME) || true
 	docker build --rm --tag $(IMAGE_NAME) $(dir $(word 1,$^)) | tee $@
