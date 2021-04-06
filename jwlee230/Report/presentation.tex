@@ -43,20 +43,25 @@
     \end{frame}
 }
 
-\title{Lung Cancer}
+\title[Lung Precancer]{Lung Precancer vs. Cancer Analysis}
 
-\author
+\author[Jaewoong Lee]
 {
     Jaewoong Lee
+    \and
+    Semin Lee
 }
 
-\institute[UNIST]
+\institute[UNIST BME]
 {
+    Department of Biomedical Engineering
+    \newline
     Ulsan National Institute of Science and Technology
     \medskip
     \newline
     \textit{jwlee230@unist.ac.kr}
 }
+
 \date{\today}
 
 \begin{document}
@@ -66,12 +71,16 @@
 
     \begin{frame}
         \frametitle{Overview}
-        \tableofcontents
+        \tableofcontents[hideallsubsections]
     \end{frame}
 
     \section{Introduction}
     \begin{frame}
         \frametitle{Lung Cancer}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Precancer}
     \end{frame}
 
     \begin{frame}
@@ -85,7 +94,7 @@
             \end{itemize}
             \begin{itemize}
                 \item from cancer
-                \item from pre-cancer
+                \item from precancer
             \end{itemize}
 
             \item Pathway examine from the mutations
@@ -149,7 +158,17 @@
         \end{itemize}
     \end{frame}
 
+    \subsection{Sample Count}
+    \begin{frame}
+        \frametitle{Sample Count in WES}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Sample Count in Transcriptome}
+    \end{frame}
+
     \section{Methods}
+    \subsection{Workflows}
     \begin{frame}
         \frametitle{Data pre-processing for variant discovery}
 
@@ -184,6 +203,36 @@
             \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
             \caption{RNA-seq short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
         \end{figure}
+    \end{frame}
+
+    \subsection{Miscellaneous}
+    \begin{frame}
+        \frametitle{Used Bioinformatics Tools}
+
+        \begin{itemize}
+            \item FastQC \cite{fastqc1}
+            \item Sequenza \cite{sequenza1}
+            \item BWA \cite{bwa1, bwa2}
+            \item STAR \cite{star1}
+            \item Bowtie2 \cite{bowtie1}
+            \item Samtools \cite{samtools1}
+            \item GATK \cite{gatk1, gatk2}
+            \item Picard \cite{picard1}
+            \item VCF2MAF \cite{vcf2maf1}
+            \item VEP \cite{vep1}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Python Packages}
+
+        \begin{itemize}
+            \item Pandas \cite{pandas1, pandas2}
+            \item Sequenza-utils \cite{sequenza1}
+            \item Matplotlib \cite{matplotlib1}
+            \item Seaborn \cite{seaborn1}
+            \item CoMut \cite{comut1}
+        \end{itemize}
     \end{frame}
 
     \section{Results}

@@ -25,9 +25,13 @@
 }
 
 \title{Lung Cancer}
+
 \author{
     Jaewoong Lee
+    \and
+    Semin Lee
 }
+
 \date{\today}
 
 \begin{document}
@@ -40,59 +44,78 @@
     \newpage
 
     \section{Introduction}
+        \subsection{Lung Cancer}
+
+        \subsection{Precancer}
+
+        \subsection{Study Objectives}
 
     \section{Materials}
+        \subsection{Carcinoma \textit{in situ}}
+            Carcinoma \textit{in situ} (CIS)
+
+        \subsection{Adenocarcinoma \textit{in situ}}
+            Adenocarcinoma \textit{in situ} (AIS)
+
+        \subsection{Atypical Adenomatous Hyperplasia}
+            Atypical adenomatous hyperplasia (AAH)
+
+        \subsection{Dysplasia}
+
+        \subsection{Minimally Invasive Adenocarcinoma}
+            Minimally invasive adenocarcinoma (MIA)
+
+        \subsection{Data Structure \& Count}
 
     \section{Methods}
-        \subsection{General Usage}
-            \subsubsection{Genome Analysis Toolkit}
-                Genome analysis toolkit (GATK) is a software package for variant discovery among sequencing data \cite{gatk1, gatk2}.
-
-            \subsubsection{Samtools}
-                Samtools is a suite software packages for discovering in high-throughput sequencing data \cite{samtools1}.
-
-        \subsection{Alignment}
-            \subsubsection{Burrows-Wheeler Aligner}
-                Burrows-Wheeler Aligner (BWA) is a software package for aligning short-read sequences unto a large reference genome \cite{bwa1}. BWA-MEM is one of the contained algorithms in BWA software package, is a novel algorithm for mapping sequence reads on a large reference genome \cite{bwa2}.
-
-            \subsubsection{STAR}
-                STAR is a swift universal RNA-seq alignment tool \cite{star1}.
+        \subsection{Workflows}
 
             \begin{figure}[p]
                 \centering
-                \includegraphics[width=0.2 \linewidth]{figures/Workflow/mapping.png}
-                \caption{Data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
+                \includegraphics[width=0.3 \linewidth]{figures/Workflow/mapping.png}
+                \caption{Workflow for data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
+                \label{fig:workflow-preprocessing}
             \end{figure}
-
-        \subsection{Quality Check}
-            \subsubsection{FastQC}
-                FastQC is a software package which aims to provide a productive method to do quality control check on raw sequence data \cite{fastqc1}.
-
-            \subsubsection{Sequenza}
-                Sequenza is a software package to investigate genomic sequencing data, such as cellularity and ploidy estimation, from paired normal-tumor samples \cite{sequenza1}.
-
-        \subsection{SNV Detection Workflow}
 
             \begin{figure}[p]
                 \centering
-                \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
-                \caption{Somatic short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
+                \includegraphics[width=0.8 \linewidth]{figures/Workflow/somatic_short_variants.png}
+                \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+                \label{fig:workflow-somatic}
             \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.8 \linewidth]{figures/Workflow/germline_short_variant.png}
+                \caption{Germline short variant discovery workflow \protect\cite{gatk1, gatk2}}
+                \label{fig:workflow-germline}
+            \end{figure}
+
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
+                \caption{RNA-seq short variant discovery workflow \protect\cite{gatk1, gatk2}}
+                \label{fig:workflow-RNA}
+            \end{figure}
+
+        \subsection{List of Bioinformatics Tools}
+
+        \subsection{Python Packages}
 
     \section{Results}
-        \subsection{FastQC}
+        \subsection{Quality Check with FastQC}
 
             \begin{figure}[p]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WES.png}
-                \caption{FastQC with WES data}
+                \caption{FastQC results  with WES data}
                 \label{fig:fastqc-wes}
             \end{figure}
 
             \begin{figure}[p]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WTS.png}
-                \caption{FastQC with WTS data}
+                \caption{FastQC results with WTS data}
                 \label{fig:fastqc-wts}
             \end{figure}
 
