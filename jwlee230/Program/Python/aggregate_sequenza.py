@@ -48,8 +48,8 @@ if __name__ == "__main__":
     print(input_data)
 
     matplotlib.use("Agg")
-    matplotlib.rcParams.update({"font.size": 1000})
-    seaborn.set_theme(context="poster", style="whitegrid")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
     seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=sorted(set(input_data["type"])), style_order=sorted(set(input_data["type"])), s=1000, ax=ax)

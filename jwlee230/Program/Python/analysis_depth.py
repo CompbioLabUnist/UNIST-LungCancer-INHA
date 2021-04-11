@@ -42,7 +42,7 @@ if __name__ == "__main__":
         depths = pool.map(get_depth, args.input)
 
     matplotlib.use("Agg")
-    matplotlib.rcParams.update({"font.size": 30})
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 

@@ -43,7 +43,7 @@
     \end{frame}
 }
 
-\title[Lung Precancer]{Lung Precancer vs. Cancer Analysis}
+\title[Lung Precancer]{Lung Precancer Analysis}
 
 \author[Jaewoong Lee]
 {
@@ -77,12 +77,18 @@
     \section{Introduction}
     \begin{frame}
         \frametitle{Lung Cancer}
+
+        \begin{itemize}
+            \item Squamous cell carcinoma
+            \item Adenocarcinoma
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
         \frametitle{Precancer}
     \end{frame}
 
+    \subsection{Study Objectives}
     \begin{frame}
         \frametitle{Study Objectives}
 
@@ -236,20 +242,25 @@
     \end{frame}
 
     \section{Results}
-    \subsection{Quality Checks}
-    \begin{frame}[allowframebreaks]
-        \frametitle{FastQC}
+    \subsection{Quality Checks with FastQC}
+
+    \begin{frame}
+        \frametitle{FastQC on WES}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WES.png}
+            \includegraphics[width=\linewidth]{figures/FastQC/FastQC_WES.png}
             \caption{FastQC with WES data}
         \end{figure}
 
         $\therefore$ Only 33P1 has more than 3 failures: 6 FAILs. \\
         $\therefore$ 33P1 is excluded at further analysis.
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{FastQC on WTS}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WTS.png}
+            \includegraphics[width=\linewidth]{figures/FastQC/FastQC_WTS.png}
             \caption{FastQC with WTS data}
         \end{figure}
 
@@ -257,14 +268,14 @@
         $\therefore$ All sample are good to analysis.
     \end{frame}
 
-    \section{Proceedings}
-    \begin{frame}[allowframebreaks]
-        \frametitle{To-do Lists}
+    \subsection{Quality Checks with Sequenza}
+    \begin{frame}
+        \frametitle{Sequenza on WES}
 
-        \begin{itemize}
-            \item Alignment WES with BWA
-            \item Alignment WES with Bowtie2
-        \end{itemize}
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/Sequenza/BWA-sequenza.png}
+            \caption{Cellularity and Ploidy from Sequenza}
+        \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]

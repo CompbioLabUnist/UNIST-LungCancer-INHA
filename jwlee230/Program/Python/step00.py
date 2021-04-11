@@ -13,6 +13,8 @@ import typing
 secret = bytes("asdf", "UTF-8")
 tmpfs = "/tmpfs"
 
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30}
+
 
 def file_list(path: str) -> typing.List[str]:
     """

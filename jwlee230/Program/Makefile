@@ -119,7 +119,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step15
+latest: step10
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -129,10 +129,10 @@ Output/FastQC/WES:
 Output/FastQC/WES/%_fastqc.zip: Data/RawData/%.fastq.gz | Output/FastQC/WES build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WES/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 3
+Output/FastQC/FastQC_WES.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --threshold 3 1> $@.stdout 2> $@.stderr
 
-step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WES/FastQC_WES.png
+step01: $(addprefix Output/FastQC/WES/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/FastQC_WES.png
 .PHONY: step01
 
 # Step 02 (FastQC for WTS)
@@ -142,10 +142,10 @@ Output/FastQC/WTS:
 Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/FastQC/WTS build.log
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/FastQC/WTS/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --tmpfs $(TMPFS) --threshold 5
+Output/FastQC/FastQC_WTS.png: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --threshold 5 1> $@.stdout 2> $@.stderr
 
-step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/WTS/FastQC_WTS.png
+step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/FastQC_WTS.png
 .PHONY: step02
 
 # Step 03 (WES: fq.gz >> sam)
@@ -238,7 +238,7 @@ Output/WESDepth/%.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) Output/WES/%.Sort.MarkD
 	$(DOCKER) samtools depth -H -b $(addprefix /,$(filter %.bed,$^)) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WESDepth/BWA.png: Python/analysis_depth.py $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.png
 .PHONY: step10
@@ -278,10 +278,10 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
-Output/Sequenza/BWA/BWA-sequenza.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+Output/Sequenza/BWA-sequenza.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA/BWA-sequenza.png
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza.png
 .PHONY: step13
 
 # Step 14 (Mutect2)
