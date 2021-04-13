@@ -13,7 +13,13 @@ import typing
 secret = bytes("asdf", "UTF-8")
 tmpfs = "/tmpfs"
 
-matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30}
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 300}
+
+long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
+long_sample_type_list = sorted(["Normal", "CIS+AIS", "AAH", "Primary", "Dysplasia", "MIA"])
+sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
+
+chromosome_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX"]
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -96,5 +102,13 @@ def get_sample_type(ID: str) -> str:
     return re.findall(r"[A-Z]", ID)[0][0]
 
 
-long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
-long_sample_type_list = sorted(["Normal", "CIS+AIS", "AAH", "Primary", "Dysplasia", "MIA"])
+def get_long_sample_type(ID: str) -> str:
+    return long_sample_type_dict[get_sample_type(ID)]
+
+
+def list_first_last(li: typing.List[typing.Any], el: typing.Any) -> typing.Tuple[int, int]:
+    return li.index(el), max(loc for loc, val in enumerate(li) if val == el)
+
+
+def sorting(ID: str) -> typing.Tuple[str, int]:
+    return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)])
