@@ -51,7 +51,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(36, 36))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=sorted(set(input_data["type"])), style_order=sorted(set(input_data["type"])), s=1000, ax=ax)
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

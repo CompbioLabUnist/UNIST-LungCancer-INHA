@@ -24,8 +24,9 @@ if __name__ == "__main__":
     for ID, file_name in zip(IDs, args.input):
         if step00.get_patient(ID) != args.ID:
             continue
+        else:
+            print(ID)
 
-        print(ID)
         data = pandas.read_csv(file_name, sep="\t", comment="#", dtype=str)
         data["ID"] = ID
         data["Patient"] = step00.get_patient(ID)
