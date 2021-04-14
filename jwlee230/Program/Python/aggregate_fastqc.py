@@ -13,15 +13,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input ZIP files", type=str, nargs="+")
-    parser.add_argument("output", help="Output PNG file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--threshold", help="Number of FAIL threshold", type=int, default=0)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".zip"), args.input)):
         raise ValueError("INPUT must end with .zip!!")
-    elif not args.output.endswith(".png"):
-        raise ValueError("Output file must end with .png!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output file must end with .pdf!!")
     elif args.threshold < 0:
         raise ValueError("Threshold must be positive!!")
 
