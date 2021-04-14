@@ -38,15 +38,12 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages(c('sequenza', 'Rserve', 'MASS', 'countreg'), dep=TRUE)" && R CMD Rserve --vanilla
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager'))" && Rscript -e "BiocManager::install('copynumber')" && Rscript -e "install.packages(c('sequenza'))"
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
 RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
-
-# Witer
-RUN cd /Tools && unzip witerhg38.zip
 
 VOLUME /Output
 VOLUME /Data
