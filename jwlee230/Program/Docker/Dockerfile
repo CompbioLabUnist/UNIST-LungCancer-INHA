@@ -26,9 +26,6 @@ ENV PATH=/Tools/gatk-4.1.9.0:$PATH
 RUN cd /Tools/bwa-0.7.17 && make -j
 ENV PATH=/Tools/bwa-0.7.17:$PATH
 
-# Picard
-ENV PICARD=/Tools/picard.jar
-
 # FastQC
 RUN cd /Tools && unzip FastQC.zip && cd FastQC && chmod +x fastqc
 ENV PATH=/Tools/FastQC:$PATH
@@ -47,6 +44,9 @@ RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
 RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
+
+# Witer
+RUN cd /Tools && unzip witerhg38.zip
 
 VOLUME /Output
 VOLUME /Data
