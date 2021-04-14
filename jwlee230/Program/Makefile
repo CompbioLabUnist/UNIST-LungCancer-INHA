@@ -20,6 +20,7 @@ JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
+WITER = java $(JAVA_OPTS) -jar /Tools/
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -90,6 +91,7 @@ TOOLS += Docker/Tools/VEP.zip
 Docker/Tools/BigFile.tar.gz: | Docker/Tools
 	wget "https://github.com/ucscGenomeBrowser/kent/archive/v335_base.tar.gz" -O $@
 TOOLS += Docker/Tools/BigFile.tar.gz
+TOOLS += Docker/Tools/witerhg38.zip
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -279,30 +281,30 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
-Output/Sequenza/BWA-sequenza.png: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+Output/Sequenza/BWA-sequenza.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/Sequenza/BWA-genome.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza.png Output/Sequenza/BWA-genome.png
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza.png Output/Sequenza/BWA-genome.pdf
 .PHONY: step13
 
 # Step 14 (Mutect2)
-Output/Mutect2:
+Output/Mutect2/BWA:
 	mkdir -p $@
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/Mutect2/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2 build.log
+Output/Mutect2/BWA/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2/BWA build.log
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/%.BWA.vcf | build.log
+Output/Mutect2/BWA/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/%.BWA.tar.xz: Python/aggregate_mutect.py $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) $* 1> $@.stdout 2> $@.stderr
+Output/Mutect2/Mutect2-BWA.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step14: $(addprefix Output/Mutect2/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/,$(addsuffix .BWA.tar.xz,$(PATIENT_ID)))
+step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) Output/Mutect2/Mutect2-BWA.pdf
 .PHONY: step14
 
 # Step 15 (HaplotypeCaller)

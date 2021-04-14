@@ -26,15 +26,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Sequenza tar.gz file(s)", type=str, nargs="+")
-    parser.add_argument("output", help="Output PNG file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".tar.gz"), args.input)):
         raise ValueError("INPUT must end with .tar.gz!!")
-    elif not args.output.endswith(".png"):
-        raise ValueError("Output must end with .png!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 

@@ -19,7 +19,7 @@ def untar(file_name: str) -> pandas.DataFrame:
         print(txt_file)
         tar.extract(txt_file, path=step00.tmpfs)
 
-    data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "CNt"])
+    data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"])
     data.dropna(axis="index", inplace=True)
 
     CNV_dict = dict()
@@ -30,7 +30,7 @@ def untar(file_name: str) -> pandas.DataFrame:
 
     for i, row in data.iterrows():
         length = row["end.pos"] - row["start.pos"] + 1
-        CNV_dict[row["chromosome"]] += row["CNt"] * length
+        CNV_dict[row["chromosome"]] += row["depth.ratio"] * length
         CNV_length[row["chromosome"]] += length
 
     for c in step00.chromosome_list:
@@ -43,15 +43,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Sequenza tar.gz file(s)", type=str, nargs="+")
-    parser.add_argument("output", help="Output PNG file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".tar.gz"), args.input)):
         raise ValueError("INPUT must end with .tar.gz!!")
-    elif not args.output.endswith(".png"):
-        raise ValueError("Output must end with .png!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
-    seaborn.heatmap(data=input_data, cmap="vlag", vmin=0, center=2, vmax=4, cbar=True, xticklabels=False, yticklabels=True, linewidth=0.1, linecolor="white", ax=ax)
+    seaborn.heatmap(data=input_data, cmap="vlag", vmin=0, center=1, vmax=2, cbar=False, xticklabels=False, yticklabels=True, linewidth=0.1, linecolor="white", ax=ax)
     matplotlib.pyplot.text(0.5, input_data.shape[0] - 0.5, "Same patient", fontsize="xx-small", horizontalalignment="left", verticalalignment="bottom", color="black")
 
     patient_IDs = list(map(step00.get_patient, list(input_data.columns)))
