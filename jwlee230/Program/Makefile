@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 10
+CPUS = 1
 MEMS = 100
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -20,7 +20,6 @@ JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
-WITER = java $(JAVA_OPTS) -jar /Tools/
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -91,7 +90,6 @@ TOOLS += Docker/Tools/VEP.zip
 Docker/Tools/BigFile.tar.gz: | Docker/Tools
 	wget "https://github.com/ucscGenomeBrowser/kent/archive/v335_base.tar.gz" -O $@
 TOOLS += Docker/Tools/BigFile.tar.gz
-TOOLS += Docker/Tools/witerhg38.zip
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -122,7 +120,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step10
+latest: step14
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -301,10 +299,13 @@ Output/Mutect2/BWA/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vc
 Output/Mutect2/BWA/%.BWA.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
+Output/Mutect2/BWA/%.BWA.PASS.maf: Bash/select_pass.bash Output/Mutect2/BWA/%.BWA.maf | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 Output/Mutect2/Mutect2-BWA.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) Output/Mutect2/Mutect2-BWA.pdf
+step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.maf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID)))
 .PHONY: step14
 
 # Step 15 (HaplotypeCaller)
