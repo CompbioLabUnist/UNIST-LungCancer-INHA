@@ -51,6 +51,8 @@
     \and
     Yeonsong Choi
     \and
+    Ilsun Yun
+    \and
     Semin Lee
 }
 
@@ -127,42 +129,21 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item WES + WTS
+            \item WES + Transcriptome
             \item Normal + \{Primary, CIS + AIS, AAH, Dysplasia, MIA\}
+            \begin{itemize}
+                \item Carcinoma in situ
+                \item Adenocarcinoma in situ
+                \item Atypical adenomatous hyperplasia
+                \item Dysplasia
+                \item Minimally invasive adenocarcinoma
+            \end{itemize}
+            \item Squamouse cell carcinoma (SQC) \& Adenocarcinoma (ADC)
+            \begin{enumerate}
+                \item Normal - Dysplasia - CIS - SQC
+                \item Normal - AAH - AIS - MIA - ADC
+            \end{enumerate}
             \item Total 112 samples
-        \end{itemize}
-    \end{frame}
-
-    \subsection{Cancer Types}
-    \begin{frame}
-        \frametitle{CIS + AIS}
-
-        \begin{itemize}
-            \item Carcinoma \textit{in situ} + Adenocarcinoma \textit{in situ}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{AAH}
-
-        \begin{itemize}
-            \item Atypical adenomatous hyperplasia
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Dysplasia}
-
-        \begin{itemize}
-            \item
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{MIA}
-
-        \begin{itemize}
-            \item Minimally invasive adenocarcinoma
         \end{itemize}
     \end{frame}
 
@@ -228,6 +209,7 @@
             \item Picard \cite{picard1}
             \item VCF2MAF \cite{vcf2maf1}
             \item VEP \cite{vep1}
+            \item Witer \cite{witer1}
         \end{itemize}
     \end{frame}
 
@@ -247,6 +229,16 @@
     \subsection{Quality Checks with FastQC}
     \begin{frame}
         \frametitle{FastQC?}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/FastQC/example.png}
+            \caption{Example of FastQC Result \protect\cite{fastqc1}}
+        \end{figure}
+
+        \begin{itemize}
+            \item A quality check tool for sequence data
+            \item Give an overview that which test may be problems
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -276,6 +268,11 @@
     \subsection{Quality Checks with Sequenza}
     \begin{frame}
         \frametitle{Sequenza?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/sequenza.jpg}
+            \caption{Representative Output of the Sequenza \protect\cite{sequenza1}}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
@@ -288,18 +285,61 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Copy Number Variation on WES}
+        \frametitle{CNV of SQC}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Sequenza/BWA-genome.pdf}
-            \caption{Copy Number Variation by patients and chromosomes}
+            \includegraphics[height=0.6 \textheight]{figures/Sequenza/SQC.png}
+            \caption{CNV Plot with SQC Patients}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{CNV of ADC}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/Sequenza/ADC.png}
+            \caption{CNV Plot with ADC Patients}
         \end{figure}
     \end{frame}
 
     \subsection{Mutect2}
     \begin{frame}
         \frametitle{Mutect2?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
+            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+        \end{figure}
     \end{frame}
+
+    \begin{frame}
+        \frametitle{Witer?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/witer.jpg}
+            \caption{Witer diagram for detecting cancer-drive genes \protect\cite{witer1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in SQC}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/Mutect2-SQC.pdf}
+            \caption{Comut Plot with SQC Patients}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in ADC}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/Mutect2-ADC.pdf}
+            \caption{Comut Plot with ADC Patients}
+        \end{figure}
+    \end{frame}
+
+    \section{Discussion}
 
     \begin{frame}[allowframebreaks]
         \frametitle{References}
