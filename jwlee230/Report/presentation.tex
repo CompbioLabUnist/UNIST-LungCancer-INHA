@@ -129,7 +129,7 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item WES + Transcriptome
+            \item WES (n=289) + Transcriptome (n=166)
             \item Normal + \{Primary, CIS + AIS, AAH, Dysplasia, MIA\}
             \begin{itemize}
                 \item Carcinoma in situ
@@ -140,32 +140,22 @@
             \end{itemize}
             \item Squamouse cell carcinoma (SQC) \& Adenocarcinoma (ADC)
             \begin{enumerate}
-                \item Normal - Dysplasia - CIS - SQC
-                \item Normal - AAH - AIS - MIA - ADC
+                \item Normal - Dysplasia - CIS - SQC (n=80)
+                \item Normal - AAH - AIS - MIA - ADC (n=28)
             \end{enumerate}
-            \item Total 112 samples
         \end{itemize}
-    \end{frame}
-
-    \subsection{Sample Count}
-    \begin{frame}
-        \frametitle{Sample Count in WES}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Sample Count in Transcriptome}
     \end{frame}
 
     \section{Methods}
     \subsection{Workflows}
-    \begin{frame}
-        \frametitle{Data pre-processing for variant discovery}
-
-        \begin{figure}
-            \includegraphics[width=0.3 \linewidth]{figures/Workflow/mapping.png}
-            \caption{Data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
+%    \begin{frame}
+%        \frametitle{Data pre-processing for variant discovery}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.3 \linewidth]{figures/Workflow/mapping.png}
+%            \caption{Data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
+%        \end{figure}
+%    \end{frame}
 
     \begin{frame}
         \frametitle{Somatic short variant discovery}
@@ -176,23 +166,23 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Germline short variant discovery}
-
-        \begin{figure}
-            \includegraphics[width=0.7 \linewidth]{figures/Workflow/germline_short_variant.png}
-            \caption{Germline short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{RNA-seq short variant discovery}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
-            \caption{RNA-seq short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
+%    \begin{frame}
+%        \frametitle{Germline short variant discovery}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.7 \linewidth]{figures/Workflow/germline_short_variant.png}
+%            \caption{Germline short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
+%        \end{figure}
+%    \end{frame}
+%
+%    \begin{frame}
+%        \frametitle{RNA-seq short variant discovery}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
+%            \caption{RNA-seq short variant (SNVs + Indels) discovery workflow \protect\cite{gatk1, gatk2}}
+%        \end{figure}
+%    \end{frame}
 
     \subsection{Miscellaneous}
     \begin{frame}
@@ -253,6 +243,26 @@
         $\therefore$ 33P1 is excluded at further analysis.
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{Failure on 33P1}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/FastQC/33N.png}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/FastQC/33P1.png}
+                \\
+                \mbox{(a) 33N} & \mbox{(b) 33P1} \\
+            \end{array}$
+            \caption{Per Base Sequence Quality Results}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/FastQC/BWA.png}
+            \caption{Coverage Depth Plot}
+        \end{figure}
+    \end{frame}
+
     \begin{frame}
         \frametitle{FastQC on WTS}
 
@@ -279,17 +289,26 @@
         \frametitle{Cellularity \& Ploidy on WES}
 
         \begin{figure}
-            \includegraphics[width=0.5 \linewidth]{figures/Sequenza/BWA-sequenza.png}
+            \includegraphics[width=0.5 \linewidth]{figures/Sequenza/BWA-sequenza.pdf}
             \caption{Cellularity and Ploidy from Sequenza}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{CNV of SQC}
+        \frametitle{Genome View on Patient \#57}
 
         \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/Sequenza/SQC.png}
-            \caption{CNV Plot with SQC Patients}
+            \includegraphics[width=\linewidth]{figures/Sequenza/57D1.pdf}
+            \includegraphics[width=\linewidth]{figures/Sequenza/57C1.pdf}
+            \includegraphics[width=\linewidth]{figures/Sequenza/57P1.pdf}
+            \caption{Dysplasia-CIS-Primary tumor}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+
+        \begin{figure}
+            \includegraphics[height=\textheight]{figures/Sequenza/SQC.png}
         \end{figure}
     \end{frame}
 
@@ -303,30 +322,30 @@
     \end{frame}
 
     \subsection{Mutect2}
-    \begin{frame}
-        \frametitle{Mutect2?}
+%    \begin{frame}
+%        \frametitle{Mutect2?}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
+%            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+%        \end{figure}
+%    \end{frame}
 
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
-            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Witer?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/witer.jpg}
-            \caption{Witer diagram for detecting cancer-drive genes \protect\cite{witer1}}
-        \end{figure}
-    \end{frame}
+%    \begin{frame}
+%        \frametitle{Witer?}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.6 \linewidth]{figures/Workflow/witer.jpg}
+%            \caption{Witer diagram for detecting cancer-drive genes \protect\cite{witer1}}
+%        \end{figure}
+%    \end{frame}
 
     \begin{frame}
         \frametitle{Somatic Variant in SQC}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/Mutect2-SQC.pdf}
-            \caption{Comut Plot with SQC Patients}
+            \caption{CoMut Plot with SQC Patients}
         \end{figure}
     \end{frame}
 
@@ -335,7 +354,7 @@
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/Mutect2-ADC.pdf}
-            \caption{Comut Plot with ADC Patients}
+            \caption{CoMut Plot with ADC Patients}
         \end{figure}
     \end{frame}
 
