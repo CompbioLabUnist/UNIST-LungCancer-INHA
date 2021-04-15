@@ -16,10 +16,18 @@ tmpfs = "/tmpfs"
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 300}
 
 long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
-long_sample_type_list = sorted(["Normal", "CIS+AIS", "AAH", "Primary", "Dysplasia", "MIA"])
+long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primary"]
 sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
 
 chromosome_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX"]
+
+mutations_list = ["Nonsense_Mutation", "In_Frame_Del", "Frame_Shift_Ins", "Splice_Site", "In_Frame_Ins", "Frame_Shift_Del", "Missense_Mutation"]
+mutations_dict = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel"}
+categorical_columns = ["sample", "category", "value"]
+sample_columns = ["sample", "group"]
+mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel": {"facecolor": "blue", "hatch": "xxx"}, "Frameshift indel": "#FFD700", "Splice site": "darkviolet", "LOH": {"facecolor": "none", "edgecolor": "black", "linewidth": 3}, "Absent": {"facecolor": "grey", "alpha": 0.2}}
+collection_mapping = {"Normal": "#FFFFFF", "Dysplasia": "#404040", "AAH": "#404040", "CIS+AIS": "#808080", "MIA": "#C0C0C0", "Primary": "#000000"}
+bar_columns = ["category", "value"]
 
 
 def file_list(path: str) -> typing.List[str]:

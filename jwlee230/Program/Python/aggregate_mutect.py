@@ -5,9 +5,7 @@ import argparse
 import collections
 import multiprocessing
 from comut import comut
-from comut import fileparsers
 import matplotlib
-import matplotlib.pyplot
 import pandas
 import step00
 
@@ -22,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--gene", help="Gene number to draw", type=int, default=30)
 
     args = parser.parse_args()
 
@@ -31,22 +30,41 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif args.gene < 1:
+        raise ValueError("GENE must be positive!!")
 
     args.input.sort()
+    matplotlib.rcParams.update({"font.family": "serif"})
 
-    mut_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel": {"facecolor": "blue", "hatch": "xxx"}, "Frameshift indel": "#FFD700", "Splice site": "darkviolet", "LOH": {"facecolor": "none", "edgecolor": "black", "linewidth": 3}, "Absent": {"facecolor": "white", "alpha": 0.2}}
-
-    example_comut = comut.CoMut()
-    example_comut.samples = list(map(lambda x: x.split("/")[-1].split(".")[0], args.input))
+    my_comut = comut.CoMut()
+    my_comut.samples = sorted(list(map(lambda x: x.split("/")[-1].split(".")[0], args.input)), key=step00.sorting)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        mutation_df = fileparsers.parse_maf(pandas.concat(pool.map(read_maf, args.input[:10]), ignore_index=True, copy=False))
-    mutation_df["sample"] = list(map(lambda x: x.split(".")[0], mutation_df["sample"]))
-    print(mutation_df)
+        mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
 
-    category_counter: collections.Counter = collections.Counter(mutation_df["category"])
-    important_mutations = list(map(lambda x: x[0], category_counter.most_common(10)))
+    mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.mutations_list))]
+    mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
+    mutect_data["Variant_Classification"] = list(map(lambda x: step00.mutations_dict[x], mutect_data["Variant_Classification"]))
+    print(mutect_data)
 
-    example_comut.add_categorical_data(mutation_df, name="Mutation type", category_order=important_mutations, mapping=mut_mapping)
-    example_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(32, 18))
-    example_comut.figure.savefig(args.output)
+    counter: collections.Counter = collections.Counter(mutect_data["Hugo_Symbol"])
+    mutation_data = pandas.DataFrame(counter.most_common(args.gene), columns=["Gene", "Count"])
+    print(mutation_data)
+
+    patient_data = pandas.DataFrame()
+    patient_data["Tumor_Sample_Barcode"] = my_comut.samples
+    patient_data["Patient"] = list(map(lambda x: hash(step00.get_patient(x)), my_comut.samples))
+    patient_data["Collection_Type_category"] = "Collection type"
+    patient_data["Collection_Type_value"] = list(map(step00.get_long_sample_type, my_comut.samples))
+    patient_data["Mutation_Count"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0], my_comut.samples))
+    print(patient_data)
+
+    my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Same patient")
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Collection type", value_order=step00.long_sample_type_list, mapping=step00.collection_mapping)
+    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=mutation_data["Gene"], mapping=step00.mutation_mapping, value_order=["Missense"], priority=["Missense"])
+    my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
+    my_comut.add_side_bar_data(mutation_data.set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="Counts", paired_name="Mutation type")
+
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(32, 18))
+    my_comut.add_unified_legend()
+    my_comut.figure.savefig(args.output)
