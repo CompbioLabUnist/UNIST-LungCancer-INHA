@@ -26,8 +26,8 @@ mutations_dict = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame ind
 categorical_columns = ["sample", "category", "value"]
 sample_columns = ["sample", "group"]
 mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel": {"facecolor": "blue", "hatch": "xxx"}, "Frameshift indel": "#FFD700", "Splice site": "darkviolet", "LOH": {"facecolor": "none", "edgecolor": "black", "linewidth": 3}, "Absent": {"facecolor": "grey", "alpha": 0.2}}
-collection_mapping = {"Normal": "#FFFFFF", "Dysplasia": "#404040", "AAH": "#404040", "CIS+AIS": "#808080", "MIA": "#C0C0C0", "Primary": "#000000"}
 bar_columns = ["category", "value"]
+bar_mapping = {"value": "tab:olive"}
 
 
 def file_list(path: str) -> typing.List[str]:
