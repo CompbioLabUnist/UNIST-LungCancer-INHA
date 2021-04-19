@@ -45,9 +45,6 @@ ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
 RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
-# MutPanning
-RUN cd /Tools && unzip MutPanningJAR.zip && unzip PanCancer.zip
-
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python

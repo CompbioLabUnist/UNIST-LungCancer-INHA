@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 30
+CPUS = 1
 MEMS = 100
-PARALLEL = 1
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -94,8 +94,9 @@ Docker/Tools/BigFile.tar.gz: | Docker/Tools
 	wget "https://github.com/ucscGenomeBrowser/kent/archive/v335_base.tar.gz" -O $@
 TOOLS += Docker/Tools/BigFile.tar.gz
 
-TOOLS += Docker/Tools/MutPanningJAR.zip
-TOOLS += Docker/Tools/PanCancer.zip
+Docker/Tools/MutEnricher.tar.gz: | Docker/Tools
+	wget "https://github.com/asoltis/MutEnricher/archive/refs/tags/v1.3.1.tar.gz" -O $@
+TOOLS += Docker/Tools/MutEnricher.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -126,7 +127,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step14
+latest: step10
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -244,10 +245,10 @@ Output/WESDepth:
 Output/WESDepth/%.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) Output/WES/%.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Sort.MarkDuplicate.BQSR.bai | Output/WESDepth build.log
 	$(DOCKER) samtools depth -H -b $(addprefix /,$(filter %.bed,$^)) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WESDepth/BWA.png: Python/analysis_depth.py $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) | build.log
+Output/WESDepth/BWA.pdf: Python/analysis_depth.py $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.png
+step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.pdf
 .PHONY: step10
 
 # Step 11 (Sequenza: Make reference)
@@ -288,7 +289,7 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 Output/Sequenza/BWA-sequenza.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+Output/Sequenza/BWA-genome.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Data/hg38/hg38.chrom.sizes | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
 step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza.pdf Output/Sequenza/BWA-genome.pdf
