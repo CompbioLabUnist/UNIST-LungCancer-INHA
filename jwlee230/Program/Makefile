@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
+CPUS = 10
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 1
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -12,8 +12,6 @@ PYTHON = python3 -B
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 TMPFS = /tmpfs
-SQC_PATIENTS = 1 2 4 8 12 14 15 33 34 38 48 49 53 57 58 63 64 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn10 cn11 cn13 cn15 cn16 cn17 cn18 cn21 cn23 cn26 cn27 cn30 cn31 cn32 cn33 cn34 cn35 cn36 cn37 cn38 cn39 cn40 cn41 cn42 cn43 cn44 cn45 cn47 cn48 cn49 cn50 cn51 cn52 cn53 cn54 cn55 cn56 cn57 cn60 cn61 cn62 cn63 cn64 cn65 cn66 cn67 cn68 cn69 cn70 cn71 cn72 cn73 cn74 cn75 cn76 cn77 cn78 cn79
-ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
@@ -31,6 +29,8 @@ REFERENCE_DBSNP_VCF = $(REFERENCE_DIR)/dbsnp_138.hg38.vcf
 REFERENCE_SIZE_TSV = $(REFERENCE_DIR)/hg38.chrom.sizes
 REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
+
+# Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
 WES_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN]\d?"))
 WES_NORMAL_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N"))
@@ -41,6 +41,14 @@ WTS_TUMOR_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fi
 BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN](_?\d)?"))
 BAM_NORMAL_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N(_?\d)?"))
 BAM_TUMOR_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADM](_?\d)?"))
+
+# SQC / ADC
+SQC_PATIENTS = 1 2 4 8 12 14 15 33 34 38 48 49 53 57 58 63 64 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn10 cn11 cn13 cn15 cn16 cn17 cn18 cn21 cn23 cn26 cn27 cn30 cn31 cn32 cn33 cn34 cn35 cn36 cn37 cn38 cn39 cn40 cn41 cn42 cn43 cn44 cn45 cn47 cn48 cn49 cn50 cn51 cn52 cn53 cn54 cn55 cn56 cn57 cn60 cn61 cn62 cn63 cn64 cn65 cn66 cn67 cn68 cn69 cn70 cn71 cn72 cn73 cn74 cn75 cn76 cn77 cn78 cn79
+ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
+SQC_WES_SAMPLES = 8P1 8C1 12P1 12C1 14P1 14C1 15P1 15C1 33P1 33D1 34P1 34C1 38P1 38C1 48P1 48A1 48A2 48A3 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D1 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn7P cn7C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn18P cn18C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn30P cn30C cn31P cn31C cn32P cn32C cn33P cn33C cn34P cn34C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn40P cn40C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn47P cn47C cn48P cn48C cn49P cn49C cn50P cn50C cn51P cn51C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn60P cn60C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn71P cn71C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn76P cn76C cn78P cn78C cn79P cn79C
+SQC_WTS_SAMPLES = cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn6P cn6C cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn57P cn57C cn60P cn60C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn74P cn74C cn75P cn75C cn76P cn76C cn77P cn77C cn77D cn78P cn78C cn79P cn79C 
+ADC_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn93P cn93C cn95P cn95A cn97P cn97C cn101P cn101C cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C
+ADC_WTS_SAMPLES = cn90P cn90C cn95P cn95A cn96P cn96C cn99P cn99C cn101P cn101C cn102P cn102C cn103C cn107P cn107C cn107A1 cn109P cn110P cn110C cn111P cn111C cn112P cn112C cn113P cn113C cn115P cn115C cn115A cn116P cn116C
 
 # General
 all:
@@ -286,13 +294,16 @@ Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Out
 	$(DOCKER) Rscript --vanilla $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
 	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
 
-Output/Sequenza/BWA-sequenza.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) | build.log
+Output/Sequenza/BWA-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Sequenza/BWA-genome.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Data/hg38/hg38.chrom.sizes | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza.pdf Output/Sequenza/BWA-genome.pdf
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf
 .PHONY: step13
 
 # Step 14 (Mutect2)
@@ -312,11 +323,11 @@ Output/Mutect2/BWA/%.BWA.PASS.vcf: Bash/select_pass.bash Output/Mutect2/BWA/%.BW
 Output/Mutect2/BWA/%.BWA.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Mutect2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/merged.sqc.BWA.PASS.maf.gene.mutationburden.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) $(foreach p,$(SQC_PATIENTS),--patient $p)
+Output/Mutect2/Mutect2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/merged.sqc.BWA.PASS.maf.gene.mutationburden.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Mutect2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/merged.adc.BWA.PASS.maf.gene.mutationburden.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) $(foreach p,$(ADC_PATIENTS),--patient $p)
+Output/Mutect2/Mutect2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) Output/merged.adc.BWA.PASS.maf.gene.mutationburden.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/Mutect2/Mutect2-SQC.pdf Output/Mutect2/Mutect2-ADC.pdf
 .PHONY: step14

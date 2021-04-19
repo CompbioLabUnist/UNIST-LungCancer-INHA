@@ -21,7 +21,6 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("witer", help="Witer output", type=str)
     parser.add_argument("output", help="Output file", type=str)
-    parser.add_argument("--patient", help="Patient to draw", action="append", default=[])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--gene", help="Gene number to draw", type=int, default=30)
 
@@ -31,14 +30,11 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
-    elif not args.patient:
-        raise ValueError("Patient must be given!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif args.gene < 1:
         raise ValueError("GENE must be positive!!")
 
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in args.patient, args.input))
     matplotlib.rcParams.update({"font.family": "serif"})
 
     my_comut = comut.CoMut()

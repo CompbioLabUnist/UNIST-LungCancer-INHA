@@ -12,9 +12,9 @@ import step00
 
 
 def untar(file_name: str) -> pandas.DataFrame:
+    print("Working on", file_name)
     with tarfile.open(file_name, "r:gz") as tar:
         txt_file = list(filter(lambda x: x.endswith("_alternative_solutions.txt"), tar.getnames()))[0]
-        print(txt_file)
         tar.extract(txt_file, path=step00.tmpfs)
 
     data = pandas.read_csv(step00.tmpfs + "/" + txt_file, header=0, sep="\t")
@@ -52,6 +52,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=sorted(set(input_data["type"])), style_order=sorted(set(input_data["type"])), s=1000, ax=ax)
+    order = list(filter(lambda x: x in set(input_data["type"]), step00.long_sample_type_list))
+    seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=order, style_order=order, s=1000, ax=ax)
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
