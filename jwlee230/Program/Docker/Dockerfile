@@ -8,7 +8,7 @@ RUN mkdir /Tools
 ADD Tools/* /Tools/
 
 # Python3
-RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install
+RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install && ln -sf /usr/local/bin/python3 /usr/bin/python
 
 # PIP
 ADD requirements.txt /Tools/requirements.txt
