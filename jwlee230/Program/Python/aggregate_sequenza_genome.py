@@ -12,16 +12,29 @@ import pandas
 import seaborn
 import step00
 
+big = 10 ** 6
+
+
+def cut_ratio(value: float) -> float:
+    if 0 <= value <= 2:
+        return value
+    elif value < 0:
+        return 0
+    elif 2 < value:
+        return 2
+    else:
+        raise ValueError("Something went wrong!!")
+
 
 def untar(file_name: str) -> pandas.DataFrame:
+    print("Working on", file_name)
     with tarfile.open(file_name, "r:gz") as tar:
         txt_file = list(filter(lambda x: x.endswith("_segments.txt"), tar.getnames()))[0]
-        print(txt_file)
         tar.extract(txt_file, path=step00.tmpfs)
 
-    data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"])
-    data.dropna(axis="index", inplace=True)
+    data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"]).dropna(axis="index")
     data["sample"] = txt_file.split("_")[0]
+    data["depth.ratio"] = list(map(cut_ratio, data["depth.ratio"]))
 
     return data
 
@@ -33,6 +46,7 @@ if __name__ == "__main__":
     parser.add_argument("size", help="SIZE file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
+    parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
 
     args = parser.parse_args()
 
@@ -42,13 +56,24 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif not (0 < args.threshold < 1):
+        raise ValueError("Threshold must be (0, 1)")
 
-    args.input.sort()
+    args.input = sorted(args.input, key=lambda x: step00.sorting(x.split("/")[-1].split(".")[0]))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(untar, args.input), axis="index", copy=False, ignore_index=True)
     print(input_data)
-    exit()
+
+    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
+    sample_list = sorted(set(input_data["sample"]), key=step00.sorting)
+    primary_cancer_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", sample_list))
+    precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", sample_list))
+    print(chromosome_list)
+    print(len(sample_list), sample_list)
+
+    size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
+    print(size_data)
 
     colors = list(matplotlib.colors.TABLEAU_COLORS.keys())
     colors_length = len(colors)
@@ -57,7 +82,25 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=3, sharex=True, figsize=(18, 64))
+    fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list)), gridspec_kw={"height_ratios": [1, len(sample_list) // 5, 1], "width_ratios": list(map(lambda x: x // big, size_data.loc[chromosome_list, "length"]))})
+    for i, chromosome in enumerate(chromosome_list):
+        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // big)), index=sample_list, dtype=float)
+        for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
+            chromosome_data.loc[row["sample"], row["start.pos"] // big:row["end.pos"] // big] = row["depth.ratio"]
+
+        for j in range(chromosome_data.shape[1]):
+            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:red", edgecolor=None, linewidth=0)
+            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor=None, linewidth=0)
+        axs[0][i].set_ylim(bottom=0, top=1)
+
+        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
+        axs[1][i].set_xlabel(chromosome[3:])
+
+        for j in range(chromosome_data.shape[1]):
+            axs[2][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor=None, linewidth=0)
+            axs[2][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor=None, linewidth=0)
+        axs[2][i].set_ylim(bottom=0, top=1)
+        axs[2][i].invert_yaxis()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
