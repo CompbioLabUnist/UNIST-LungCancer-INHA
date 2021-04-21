@@ -20,6 +20,8 @@ JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
+MUTENRICHER_DIR = /Tools/MutEnricher-1.3.1
+MUTENRICHER = python3 $(MUTENRICHER_DIR)/mutEnricher.py
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -105,6 +107,10 @@ TOOLS += Docker/Tools/BigFile.tar.gz
 Docker/Tools/MutEnricher.tar.gz: | Docker/Tools
 	wget "https://github.com/asoltis/MutEnricher/archive/refs/tags/v1.3.1.tar.gz" -O $@
 TOOLS += Docker/Tools/MutEnricher.tar.gz
+
+Docker/Tools/bcftools.tar.bz2: | Docker/Tools
+	wget "https://github.com/samtools/bcftools/releases/download/1.12/bcftools-1.12.tar.bz2" -O $@
+TOOLS += Docker/Tools/bcftools.tar.bz2
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -345,6 +351,25 @@ Output/HaplotypeCaller/%.BWA.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.
 step15: $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMOR_ID)))
 .PHONY: step15
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
+
+# Step 16 (MutEnricher)
+Output/MutEnricher:
+	mkdir -p $@
+
+Output/MutEnricher/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher
+	$(DOCKER) gzip  --best --stdout --test --force $(addprefix /,$^) > $@ 
+
+Output/MutEnricher/SQC.vcf: $(addprefix Output/MutEnricher/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) | build.log
+	$(DOCKER) bcftools merge $(addprefix /,$^) --output-type v --output $(addprefix /,$@) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/ADC.vcf: $(addprefix Output/MutEnricher/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) | build.log
+	$(DOCKER) bcftools merge $(addprefix /,$^) --output-type v --output $(addprefix /,$@) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/tmp: 
+	$(DOCKER) $(MUTENRICHER) coding $(MUTENRICHER_DIR)/example_data/annotation_files/ucsc.refFlat.20170829.no_chrMY.gtf.gz 
+
+step16: Output/MutEnricher/SQC.vcf Output/MutEnricher/ADC.vcf
+.PHONY: step16
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (R-sem)
