@@ -48,6 +48,9 @@ ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 # BCFtools
 RUN cd /Tools/bcftools-1.12 && ./configure && make -j && make -j install
 
+# MutEnricher
+RUN cd /Tools/MutEnricher-1.3.1/math_funcs && python3 setup.py build_ext --inplace
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python

@@ -20,8 +20,7 @@ JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
-MUTENRICHER_DIR = /Tools/MutEnricher-1.3.1
-MUTENRICHER = python3 $(MUTENRICHER_DIR)/mutEnricher.py
+MUTENRICHER = python3 /Tools/MutEnricher-1.3.1/mutEnricher.py
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -141,7 +140,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step13
+latest: step10
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -353,22 +352,32 @@ step15: $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMO
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step 16 (MutEnricher)
-Output/MutEnricher:
+Output/MutEnricher Output/MutEnricher/BWA:
 	mkdir -p $@
 
-Output/MutEnricher/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher
-	$(DOCKER) gzip  --best --stdout --test --force $(addprefix /,$^) > $@ 
+Output/MutEnricher/BWA/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
+	$(DOCKER) bcftools view --output-type z --output $(addprefix /,$@) --threads $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) htsfile $(addprefix /,$@)
 
-Output/MutEnricher/SQC.vcf: $(addprefix Output/MutEnricher/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) | build.log
-	$(DOCKER) bcftools merge $(addprefix /,$^) --output-type v --output $(addprefix /,$@) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/BWA/%.vcf.gz.tbi: Output/MutEnricher/BWA/%.vcf.gz | build.log
+	$(DOCKER) tabix --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/ADC.vcf: $(addprefix Output/MutEnricher/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) | build.log
-	$(DOCKER) bcftools merge $(addprefix /,$^) --output-type v --output $(addprefix /,$@) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/tmp: 
-	$(DOCKER) $(MUTENRICHER) coding $(MUTENRICHER_DIR)/example_data/annotation_files/ucsc.refFlat.20170829.no_chrMY.gtf.gz 
+Output/MutEnricher/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
-step16: Output/MutEnricher/SQC.vcf Output/MutEnricher/ADC.vcf
+Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
+
+Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
+	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^)
+
+Output/MutEnricher/%_gene_enrichments.txt Output/MutEnricher/%_hotspot.txt Output/MutEnricher/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/%_gene_data.pkl Output/MutEnricher/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/%.tsv | build.log
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --exome-only --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^))
+
+step16: Output/MutEnricher/ADC.log
 .PHONY: step16
 
 # Step ## (WTS - fq.gz >> bam) - STAR
