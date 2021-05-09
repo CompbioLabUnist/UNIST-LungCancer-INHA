@@ -111,6 +111,10 @@ Docker/Tools/bcftools.tar.bz2: | Docker/Tools
 	wget "https://github.com/samtools/bcftools/releases/download/1.12/bcftools-1.12.tar.bz2" -O $@
 TOOLS += Docker/Tools/bcftools.tar.bz2
 
+Docker/Tools/RSEM.tar.gz: | Docker/Tools
+	wget "https://github.com/deweylab/RSEM/archive/v1.3.3.tar.gz" -O $@
+TOOLS += Docker/Tools/RSEM.tar.gz
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
@@ -140,7 +144,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step10
+latest: step16
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -369,15 +373,16 @@ Output/MutEnricher/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/B
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
-	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.ncbiRefSeq.gtf.gz" -O $@
+	touch $@
 
 Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
-	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^)
+	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/%_gene_enrichments.txt Output/MutEnricher/%_hotspot.txt Output/MutEnricher/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/%_gene_data.pkl Output/MutEnricher/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/%.tsv | build.log
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --exome-only --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^))
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
-step16: Output/MutEnricher/ADC.log
+step16: Output/MutEnricher/ADC.log Output/MutEnricher/SQC.log
 .PHONY: step16
 
 # Step ## (WTS - fq.gz >> bam) - STAR
