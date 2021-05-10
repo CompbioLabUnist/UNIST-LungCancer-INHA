@@ -52,8 +52,7 @@ RUN cd /Tools/bcftools-1.12 && ./configure && make -j && make -j install
 RUN cd /Tools/MutEnricher-1.3.1/math_funcs && python3 setup.py build_ext --inplace
 
 # RSEM
-RUN cd /Tools/RSEM-1.3.3 && make -j && make -j ebseq
-ENV PATH=/Tools/RSEM-1.3.3:$PATH
+RUN cd /Tools/RSEM-1.3.3 && make -j && make -j ebseq && make -j install
 
 VOLUME /Output
 VOLUME /Data
