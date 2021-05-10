@@ -145,7 +145,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step17
+latest: step18
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -381,7 +381,7 @@ Output/MutEnricher/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/B
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
-	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.ncbiRefSeq.gtf.gz" -O $@
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
 	touch $@
 
 Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
@@ -398,17 +398,30 @@ Output/RSEM:
 	mkdir -p $@
 
 Output/RSEM/hg38.gtf.gz: | Output/RSEM
-	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.ncbiRefSeq.gtf.gz" -O $@
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
 	touch $@
 
 Output/RSEM/hg38.gtf: Output/RSEM/hg38.gtf.gz | build.log
 	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<)
 
-Output/RSEM/hg38.seq: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
+Output/RSEM/hg38.seq Output/RSEM/hg38.grp: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
 	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) /$(@D)/"hg38" 1> $@.stdout 2> $@.stderr
 
 step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
 .PHONY: step17
+
+# Step 18 (RSEM: Calculate expression)
+Output/RSEM/Bowtie2 Output/RSEM/STAR:
+	mkdir -p $@
+
+Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
+	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --bowtie2 --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^))) $(addprefix /,$(basename $(filter %.grp,$^))) /$(@D)/$* 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/STAR build.log
+	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^))) $(addprefix /,$(basename $(filter %.grp,$^))) /$(@D)/$* 1> $@.stdout 2> $@.stderr
+
+step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
+.PHONY: step18
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
