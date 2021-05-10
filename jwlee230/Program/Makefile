@@ -405,7 +405,7 @@ Output/RSEM/hg38.gtf: Output/RSEM/hg38.gtf.gz | build.log
 	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<)
 
 Output/RSEM/hg38.seq: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
-	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) "hg38" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) /$(@D)/"hg38" 1> $@.stdout 2> $@.stderr
 
 step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
 .PHONY: step17
