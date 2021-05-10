@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Same patient")
     my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Collection type", value_order=step00.long_sample_type_list)
-    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=mutation_data["GeneSymbol"], mapping=step00.mutation_mapping, value_order=["Missense"], priority=["Missense"])
+    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=mutation_data["GeneSymbol"], mapping=step00.mutation_mapping, priority=["Frameshift indel"])
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
     my_comut.add_side_bar_data(mutation_data[["GeneSymbol", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
 
