@@ -119,5 +119,5 @@ def list_first_last(li: typing.List[typing.Any], el: typing.Any) -> typing.Tuple
     return li.index(el), max(loc for loc, val in enumerate(li) if val == el)
 
 
-def sorting(ID: str) -> typing.Tuple[str, int]:
-    return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)])
+def sorting(ID: str) -> typing.Tuple[str, int, str]:
+    return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
