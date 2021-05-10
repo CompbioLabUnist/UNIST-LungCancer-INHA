@@ -26,7 +26,8 @@ MUTENRICHER = python3 /Tools/MutEnricher-1.3.1/mutEnricher.py
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(wildcard $(REFERENCE_DIR)/*.vcf)
-REFERENCE_DBSNP_VCF = $(REFERENCE_DIR)/dbsnp_138.hg38.vcf
+REFERENCE_DBSNP_VCF = $(REFERENCE_DIR)/dbsnp_146.hg38.vcf
+REFERENCE_1000G_VCF = $(REFERENCE_DIR)/1000G_phase1.snps.high_confidence.hg38.vcf
 REFERENCE_SIZE_TSV = $(REFERENCE_DIR)/hg38.chrom.sizes
 REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
@@ -144,7 +145,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step16
+latest: step17
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -245,7 +246,7 @@ step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(sort $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID)))) | build.log
+Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
@@ -345,13 +346,20 @@ step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $
 .PHONY: step14
 
 # Step 15 (HaplotypeCaller)
-Output/HaplotypeCaller:
+Output/HaplotypeCaller/BWA:
 	mkdir -p $@
 
-Output/HaplotypeCaller/%.BWA.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller build.log
+Output/HaplotypeCaller/BWA/%.BWA.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller/BWA build.log
 	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
-step15: $(addprefix Output/HaplotypeCaller/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMOR_ID)))
+Output/HaplotypeCaller/HaplotypeCaller.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D))  $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
+
+Output/HaplotypeCaller/HaplotypeCaller.vcf.gz: $(REFERENCE_FASTA) Output/HaplotypeCaller/HaplotypeCaller.genomicsdb/callset.json $(REFERENCE_DBSNP_VCF) | build.log
+	$(DOCKER) $(GATK) GenotypeGVCFs --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) 1> $@.stdout 2> $@.stderr
+
+step15: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .BWA.g.vcf.gz,$(WES_TUMOR_ID))) Output/HaplotypeCaller/HaplotypeCaller.genomicsdb/callset.json Output/HaplotypeCaller/HaplotypeCaller.vcf.gz
 .PHONY: step15
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
@@ -385,8 +393,24 @@ Output/MutEnricher/%_gene_enrichments.txt Output/MutEnricher/%_hotspot.txt Outpu
 step16: Output/MutEnricher/ADC.log Output/MutEnricher/SQC.log
 .PHONY: step16
 
+# Step 17 (RSEM: Prepare reference genome)
+Output/RSEM:
+	mkdir -p $@
+
+Output/RSEM/hg38.gtf.gz: | Output/RSEM
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.ncbiRefSeq.gtf.gz" -O $@
+	touch $@
+
+Output/RSEM/hg38.gtf: Output/RSEM/hg38.gtf.gz | build.log
+	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<)
+
+Output/RSEM/hg38.seq: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
+	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) "hg38" 1> $@.stdout 2> $@.stderr
+
+step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
+.PHONY: step17
+
 # Step ## (WTS - fq.gz >> bam) - STAR
-# Step ## (R-sem)
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
 # step ## (PureCN)
