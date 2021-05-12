@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 10
+CPUS = 40
 MEMS = 100
 PARALLEL = 1
 PWD := $(shell pwd)
@@ -145,7 +145,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step18
+latest: step18 # step15
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -414,13 +414,13 @@ step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
 Output/RSEM/Bowtie2 Output/RSEM/STAR:
 	mkdir -p $@
 
-Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
-	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --bowtie2 --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^))) $(addprefix /,$(basename $(filter %.grp,$^))) /$(@D)/$* 1> $@.stdout 2> $@.stderr
+Output/RSEM/Bowtie2/%.genome.sorted.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
+	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --bowtie2 --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/STAR build.log
-	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^))) $(addprefix /,$(basename $(filter %.grp,$^))) /$(@D)/$* 1> $@.stdout 2> $@.stderr
+Output/RSEM/STAR/%.genome.sorted.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/STAR build.log
+	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
-step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
+step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.sorted.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.sorted.bam,$(WTS_ID)))
 .PHONY: step18
 
 # Step ## (WTS - fq.gz >> bam) - STAR
