@@ -423,7 +423,7 @@ Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%
 Output/RSEM/STAR/%.genome.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/STAR build.log
 	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/SQC.Bowtie2.tsv Output/RSEM/DEG/SQC.Bowtie2.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/SQC.Bowtie2.tsv Output/RSEM/DEG/SQC.Bowtie2.coldata: Python/aggregate_RSEM.py $(wildcard Output/RSEM/Bowtie2/*.genes.results) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC.Bowtie2.tsv Output/RSEM/DEG/ADC.Bowtie2.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -437,6 +437,16 @@ Output/RSEM/DEG/ADC.Bowtie2.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/ADC.Bowtie2.t
 
 step18: Output/RSEM/DEG/SQC.Bowtie2.DEG.tsv # $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) # $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 .PHONY: step18
+
+# Step 19 (DEG: Draw plots)
+Output/RSEM/Plots:
+	mkdir -p $@
+
+Output/RSEM/Plots/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.Bowtie2.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step19: Output/RSEM/Plots/SQC.volcano.pdf
+.PHONY: step19
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
