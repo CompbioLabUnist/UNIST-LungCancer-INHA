@@ -19,6 +19,8 @@ matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize"
 long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
 long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primary"]
 sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
+SQC_stage_list = ["Normal", "Dysplasia", "CIS+AIS", "Primary"]
+ADC_stage_list = ["Normal", "AAH", "CIS+AIS", "MIA", "Primary"]
 
 chromosome_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX"]
 

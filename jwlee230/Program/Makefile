@@ -442,10 +442,16 @@ step18: Output/RSEM/DEG/SQC.Bowtie2.DEG.tsv # $(addprefix Output/RSEM/Bowtie2/,$
 Output/RSEM/Plots:
 	mkdir -p $@
 
-Output/RSEM/Plots/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.Bowtie2.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step19: Output/RSEM/Plots/SQC.volcano.pdf
+Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/ADC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+step19: Output/RSEM/Plots/SQC.Bowtie2.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.violin.tar
 .PHONY: step19
 
 # Step ## (WTS - fq.gz >> bam) - STAR
