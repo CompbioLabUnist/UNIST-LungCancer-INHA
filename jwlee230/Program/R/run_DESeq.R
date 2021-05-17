@@ -20,8 +20,6 @@ main <- function(readcount, cdata, output)
     cts <- subset(cts, rowSums(cts) != 0)
     cts <- cts + 1
 
-    print(head(cts))
-    print(coldata)
     dds <- DESeq(DESeqDataSetFromMatrix(countData=cts, colData=coldata, design=~condition))
     res <- results(dds)
 
