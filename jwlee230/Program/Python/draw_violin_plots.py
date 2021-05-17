@@ -3,6 +3,7 @@ draw_violin_plots.py: draw violin plots upon DEG
 """
 import argparse
 import itertools
+import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
@@ -12,6 +13,31 @@ import seaborn
 import statannot
 import step00
 
+count_data = pandas.DataFrame()
+
+
+def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+    if ADC:
+        seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list)
+        statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.ADC_stage_list, 2), text_format="star", loc="inside", verbose=0)
+    elif SQC:
+        seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list)
+        statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.SQC_stage_list, 2), text_format="star", loc="inside", verbose=0)
+    else:
+        raise Exception("Something went wrong!!")
+
+    fig_name = gene + ".pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+
+    return fig_name
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -19,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("count", help="Count TSV file", type=str)
     parser.add_argument("DEG", help="DEG TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--pvalue", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
 
@@ -34,6 +61,8 @@ if __name__ == "__main__":
         raise ValueError("DEG must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
+    elif args.cpus < 1:
+        raise ValueError("CPUs must be positive!!")
 
     tar_files = list()
 
@@ -47,27 +76,8 @@ if __name__ == "__main__":
     up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["pvalue"] < args.pvalue), :]
     down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["pvalue"] < args.pvalue), :]
 
-    for gene in sorted(list(up_gene.index) + list(down_gene.index)):
-        print(gene)
-
-        matplotlib.use("Agg")
-        matplotlib.rcParams.update(step00.matplotlib_parameters)
-        seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
-        if args.ADC:
-            seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list)
-            statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.ADC_stage_list, 2), text_format="star", loc="inside", verbose=0)
-        elif args.SQC:
-            seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list)
-            statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.SQC_stage_list, 2), text_format="star", loc="inside", verbose=0)
-        else:
-            raise Exception("Something went wrong!!")
-
-        tar_files.append(gene + ".pdf")
-        fig.savefig(tar_files[-1])
-        matplotlib.pyplot.close(fig)
+    with multiprocessing.Pool(args.cpus) as pool:
+        tar_files += pool.starmap(run, [(gene, args.ADC, args.SQC) for gene in sorted(list(up_gene.index) + list(down_gene.index))])
 
     with tarfile.open(args.output, "w") as tar:
         for f in tar_files:
