@@ -40,7 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
     parser.add_argument("gencode", help="Gencode annotation GTF.gz file", type=str)
     parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
-    parser.add_argument("output", help="Output TASV file", type=str)
+    parser.add_argument("output", help="Output Basename file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -49,8 +49,6 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .genes.results!!")
     elif not args.gencode.endswith(".gtf.gz"):
         raise ValueError("Gencode must end with .gtf.gz!!")
-    elif not args.output.endswith(".tsv"):
-        raise ValueError("OUTPUT must end with .TSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
@@ -71,7 +69,7 @@ if __name__ == "__main__":
         input_data["gene_name"] = pool.map(ENSG_to_names, list(input_data["ENSG"]))
         input_data = input_data.loc[(input_data["gene_name"] != "")]
     del input_data["ENSG"]
+    print(input_data)
 
-    output_data = input_data.groupby("gene_name").mean()
-    print(output_data)
-    output_data.to_csv(args.output, sep="\t", index=True, header=True)
+    input_data.groupby("gene_name").mean().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
+    pandas.DataFrame(data=[(ID, step00.get_long_sample_type(ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)
