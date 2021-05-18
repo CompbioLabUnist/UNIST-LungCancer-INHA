@@ -119,9 +119,9 @@ Docker/Tools/RSEM.tar.gz: | Docker/Tools
 	wget "https://github.com/deweylab/RSEM/archive/v1.3.3.tar.gz" -O $@
 TOOLS += Docker/Tools/RSEM.tar.gz
 
-Docker/Tools/SubcloneSeeker.zip: | Docker/Tools
-	wget "https://codeload.github.com/yiq/SubcloneSeeker/zip/refs/heads/master" -O $@
-TOOLS += Docker/Tools/SubcloneSeeker.zip
+Docker/Tools/Lemon.tar.gz: | Docker/Tools
+	wget "http://lemon.cs.elte.hu/pub/sources/lemon-1.3.tar.gz" -O $@
+TOOLS += Docker/Tools/Lemon.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output

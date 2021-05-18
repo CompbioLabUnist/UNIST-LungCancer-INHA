@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer="jwlee230@unist.ac.kr"
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev
 
 # TOOL directory
 RUN mkdir /Tools
@@ -38,7 +38,7 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table'))" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'BiocManager'))" && Rscript -e "install.packages(c('sequenza'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'QuantumClone'))" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'BiocManager'))" && Rscript -e "install.packages(c('sequenza'))"
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
@@ -54,9 +54,12 @@ RUN cd /Tools/MutEnricher-1.3.1/math_funcs && python3 setup.py build_ext --inpla
 # RSEM
 RUN cd /Tools/RSEM-1.3.3 && make -j && make -j ebseq && make -j install
 
-# SubcloneSeeker
-RUN cd /Tools && unzip SubcloneSeeker.zip && cd SubcloneSeeker-master && make -j
-ENV PATH=/Tools/SubcloneSeeker/utils:$PATH
+# Lemon
+RUN cd /Tools/lemon-1.3 && mkdir build && cd build && cmake .. && make -j && make -j install
+
+# Spruce
+RUN cd /Tools && git clone "https://github.com/raphael-group/spruce.git" && cd spruce && mkdir build && cd build && cmake .. && make -j
+ENV PATH=/Tools/spruce/build:$PATH
 
 VOLUME /Output
 VOLUME /Data
