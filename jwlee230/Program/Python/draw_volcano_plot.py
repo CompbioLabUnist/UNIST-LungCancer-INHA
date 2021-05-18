@@ -38,6 +38,11 @@ if __name__ == "__main__":
     matplotlib.pyplot.scatter(NS_gene["log2FoldChange"], NS_gene["-logP"], c="tab:gray")
     matplotlib.pyplot.scatter(up_gene["log2FoldChange"], up_gene["-logP"], c="tab:red")
     matplotlib.pyplot.scatter(down_gene["log2FoldChange"], down_gene["-logP"], c="tab:blue")
+    matplotlib.pyplot.axhline(y=-1 * numpy.log10(args.pvalue), linestyle="--", color="black")
+    matplotlib.pyplot.axvline(x=numpy.log2(args.fold), linestyle="--", color="black")
+    matplotlib.pyplot.axvline(x=-1 * numpy.log2(args.fold), linestyle="--", color="black")
+
+    matplotlib.pyplot.text(x=0, y=-1 * numpy.log10(args.pvalue), s="p={0:.2f}".format(args.pvalue), horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small")
 
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlabel("log2(Fold_Change)")
