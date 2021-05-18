@@ -119,6 +119,10 @@ Docker/Tools/RSEM.tar.gz: | Docker/Tools
 	wget "https://github.com/deweylab/RSEM/archive/v1.3.3.tar.gz" -O $@
 TOOLS += Docker/Tools/RSEM.tar.gz
 
+Docker/Tools/SubcloneSeeker.zip: | Docker/Tools
+	wget "https://codeload.github.com/yiq/SubcloneSeeker/zip/refs/heads/master" -O $@
+TOOLS += Docker/Tools/SubcloneSeeker.zip
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
@@ -435,7 +439,7 @@ Output/RSEM/DEG/SQC.Bowtie2.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/SQC.Bowtie2.t
 Output/RSEM/DEG/ADC.Bowtie2.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/ADC.Bowtie2.tsv Output/RSEM/DEG/ADC.Bowtie2.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step18: Output/RSEM/DEG/SQC.Bowtie2.DEG.tsv # $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) # $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
+step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) # $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 .PHONY: step18
 
 # Step 19 (DEG: Draw plots)
@@ -451,7 +455,13 @@ Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/
 Output/RSEM/Plots/ADC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step19: Output/RSEM/Plots/SQC.Bowtie2.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.violin.tar
+Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
+
+Output/RSEM/Plots/ADC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC
+
+step19: Output/RSEM/Plots/SQC.Bowtie2.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/SQC.Bowtie2.pair.pdf
 .PHONY: step19
 
 # Step ## (WTS - fq.gz >> bam) - STAR

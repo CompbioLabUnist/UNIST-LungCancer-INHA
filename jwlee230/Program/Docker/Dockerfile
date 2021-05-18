@@ -54,6 +54,10 @@ RUN cd /Tools/MutEnricher-1.3.1/math_funcs && python3 setup.py build_ext --inpla
 # RSEM
 RUN cd /Tools/RSEM-1.3.3 && make -j && make -j ebseq && make -j install
 
+# SubcloneSeeker
+RUN cd /Tools && unzip SubcloneSeeker.zip && cd SubcloneSeeker-master && make -j
+ENV PATH=/Tools/SubcloneSeeker/utils:$PATH
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
