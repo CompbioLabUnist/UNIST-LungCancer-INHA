@@ -41,7 +41,7 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table'))" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit'))" && Rscript -e "install.packages(c('sequenza'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'Rserve'))" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit'))" && Rscript -e "install.packages(c('sequenza'))"
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"

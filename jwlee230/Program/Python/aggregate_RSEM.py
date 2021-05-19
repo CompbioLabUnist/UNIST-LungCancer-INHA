@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
-    parser.add_argument("gencode", help="Gencode annotation GTF.gz file", type=str)
+    parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
     parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
     parser.add_argument("output", help="Output Basename file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
     if list(filter(lambda x: not x.endswith(".genes.results"), args.input)):
         raise ValueError("INPUT must end with .genes.results!!")
-    elif not args.gencode.endswith(".gtf.gz"):
-        raise ValueError("Gencode must end with .gtf.gz!!")
+    elif not args.gencode.endswith(".gtf"):
+        raise ValueError("Gencode must end with .gtf!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
