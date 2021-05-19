@@ -501,7 +501,7 @@ Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefi
 Output/CibersortX/%.CibersortX.txt: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/LM22.txt | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step22: Output/CibersortX/SQC.Bowtie2.CibersortX.txt
+step22: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.Bowtie2.CibersortX.txt Output/CibersortX/ADC.Bowtie2.CibersortX.txt
 .PHONY: step22
 
 # Step ## (WTS - fq.gz >> bam) - STAR
