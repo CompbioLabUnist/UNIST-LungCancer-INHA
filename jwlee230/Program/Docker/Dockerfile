@@ -15,7 +15,7 @@ RUN pip3 install --no-cache-dir --upgrade wheel pip && pip3 install --requiremen
 # Conda
 RUN cd /Tools && bash Miniconda.sh -b
 ENV PATH=/root/anaconda2/bin:$PATH
-RUN conda install pyclone -c bioconda -c conda-forge
+RUN conda create -n pyclone -c bioconda -c conda-forge pyclone
 
 # Samtools
 RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install
