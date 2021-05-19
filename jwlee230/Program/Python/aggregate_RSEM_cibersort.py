@@ -1,11 +1,10 @@
 """
-aggregate_RSEM.py: aggregate RSEM results
+aggregate_RSEM_cibersort.py: aggregate RSEM results for cibersort
 """
 import argparse
 import gtfparse
 import multiprocessing
 import pandas
-import step00
 
 trembl_data = pandas.DataFrame()
 gencode_data = pandas.DataFrame()
@@ -39,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
     parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
-    parser.add_argument("output", help="Output Basename file", type=str)
+    parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -48,6 +47,8 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .genes.results!!")
     elif not args.gencode.endswith(".gtf"):
         raise ValueError("Gencode must end with .gtf!!")
+    elif not args.output.endswith(".tsv"):
+        raise ValueError("Output must end with .TSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
@@ -70,5 +71,4 @@ if __name__ == "__main__":
     del input_data["ENSG"]
     print(input_data)
 
-    input_data.groupby("gene_name").mean().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
-    pandas.DataFrame(data=[(ID, step00.get_long_sample_type(ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)
+    input_data.groupby("gene_name").mean().to_csv(args.output, sep="\t", index=True, header=True)

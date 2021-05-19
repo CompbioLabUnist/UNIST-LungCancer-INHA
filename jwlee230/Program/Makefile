@@ -127,7 +127,7 @@ Docker/Tools/Miniconda.sh: | Docker/Tools
 	wget "https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-x86_64.sh" -O $@
 TOOLS += Docker/Tools/Miniconda.sh
 
-TOOLS += Docker/Tools/CIBERSORT.jar
+TOOLS += Docker/Tools/CIBERSORT.zip
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -492,10 +492,16 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 Output/CibersortX:
 	mkdir -p $@
 
-Output/CibersortX/SQC.Bowtie2.tsv: Python/make_input_cibersortx.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/CibersortX/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step22: Output/CibersortX/SQC.Bowtie2.tsv
+Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/%.CibersortX.txt: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/LM22.txt | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step22: Output/CibersortX/SQC.Bowtie2.CibersortX.txt
 .PHONY: step22
 
 # Step ## (WTS - fq.gz >> bam) - STAR
