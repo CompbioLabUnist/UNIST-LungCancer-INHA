@@ -9,10 +9,13 @@ ADD Tools/* /Tools/
 
 # Python3
 RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install && ln -sf /usr/local/bin/python3 /usr/bin/python
-
-# PIP
 ADD requirements.txt /Tools/requirements.txt
 RUN pip3 install --no-cache-dir --upgrade wheel pip && pip3 install --requirement /Tools/requirements.txt --no-cache-dir
+
+# Conda
+RUN cd /Tools && bash Miniconda.sh -b
+ENV PATH=/root/miniconda/bin:$PATH
+RUN conda install pyclone -c bioconda -c conda-forge
 
 # Samtools
 RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install
