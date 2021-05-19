@@ -485,6 +485,7 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 .PHONY: step20
 
 # Step 21 (Run PyClone)
+# Step 22 (Run CIBERSORT)
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
