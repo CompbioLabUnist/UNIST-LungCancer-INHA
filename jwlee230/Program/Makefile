@@ -452,8 +452,11 @@ step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) 
 Output/RSEM/Plots:
 	mkdir -p $@
 
-Output/RSEM/Plots/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Plots build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -467,7 +470,7 @@ Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%
 Output/RSEM/Plots/ADC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC
 
-step19: Output/RSEM/Plots/SQC.Bowtie2.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/SQC.Bowtie2.pair.pdf
+step19: Output/RSEM/Plots/SQC.Bowtie2.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/ADC.Bowtie2.violin.tar
 .PHONY: step19
 
 # Step 20 (Get ready to run MesKit)
