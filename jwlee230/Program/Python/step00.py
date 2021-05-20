@@ -125,5 +125,5 @@ def sorting(ID: str) -> typing.Tuple[str, int, str]:
     return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
 
 
-def sorting_type(ID: str) -> typing.Tuple[int, str, str]:
+def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
     return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)
