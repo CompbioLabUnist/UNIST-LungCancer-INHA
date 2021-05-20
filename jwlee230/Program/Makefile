@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 10
+CPUS = 5
 MEMS = 100
-PARALLEL = 3
+PARALLEL = 2
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step04
+latest: step22-RSEM step22-CibersortX
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -490,6 +490,8 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 .PHONY: step20
 
 # Step 21 (Run PyClone)
+Output/PyClone:
+	mkdir -p $@
 
 # Step 22 (Run CIBERSORTx)
 Output/CibersortX:
@@ -501,23 +503,70 @@ Output/CibersortX/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefi
 Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%.CibersortX.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3g_NSCLC_RNASeq_bulksortedpopulation.txt | build.log
+Output/CibersortX/%.LM22.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/LM22.txt | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.CibersortX.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
+Output/CibersortX/%.scRNA.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig2a-NSCLC_PBMCs_scRNAseq_matrix.txt | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/%.Bulk.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3g_NSCLC_RNASeq_bulksortedpopulation.txt | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/%.Mixture.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3b-f-FL-arrays-mixture.txt | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.CibersortX.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
+Output/CibersortX/SQC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.CibersortX.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
+Output/CibersortX/ADC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.scRNA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.Bulk.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Bulk.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.Bulk.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Bulk.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.Mixture.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Mixture.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.Mixture.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Mixture.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.CibersortX.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
+Output/CibersortX/SQC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step22: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.heatmap.pdf Output/CibersortX/SQC.Bowtie2.CibersortX.heatmap.pdf Output/CibersortX/ADC.Bowtie2.CibersortX.violin.tar Output/CibersortX/SQC.Bowtie2.CibersortX.violin.tar
-.PHONY: step22
+Output/CibersortX/ADC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.scRNA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.Bulk.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Bulk.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.Bulk.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Bulk.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/ADC.%.Mixture.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Mixture.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.Mixture.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Mixture.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step22-RSEM: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv
+step22-CibersortX: Output/CibersortX/SQC.Bowtie2.LM22.tsv Output/CibersortX/ADC.Bowtie2.LM22.tsv Output/CibersortX/SQC.Bowtie2.scRNA.tsv Output/CibersortX/ADC.Bowtie2.scRNA.tsv Output/CibersortX/SQC.Bowtie2.Bulk.tsv Output/CibersortX/ADC.Bowtie2.Bulk.tsv Output/CibersortX/SQC.Bowtie2.Mixture.tsv Output/CibersortX/ADC.Bowtie2.Mixture.tsv
+step22: Output/CibersortX/ADC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/SQC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/ADC.Bowtie2.LM22.violin.tar Output/CibersortX/SQC.Bowtie2.LM22.violin.tar Output/CibersortX/ADC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/SQC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/ADC.Bowtie2.scRNA.violin.tar Output/CibersortX/SQC.Bowtie2.scRNA.violin.tar Output/CibersortX/ADC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Bulk.violin.tar Output/CibersortX/SQC.Bowtie2.Bulk.violin.tar Output/CibersortX/ADC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Mixture.violin.tar Output/CibersortX/SQC.Bowtie2.Mixture.violin.tar
+.PHONY: step-RSEM step22-CibersortX step22
 
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
