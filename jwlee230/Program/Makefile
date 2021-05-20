@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 30
+CPUS = 1
 MEMS = 100
-PARALLEL = 1
+PARALLEL = 30
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step08
+latest: step21
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -499,7 +499,11 @@ Output/PyClone/BWA:
 Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step21: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
+Output/PyClone/BWA/%/config.yaml: Bash/run_pyclone.bash Output/PyClone/BWA/%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D))
+	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+
+step21: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(WES_TUMOR_ID)))
 .PHONY: step21
 
 # Step 22 (Run CIBERSORTx)

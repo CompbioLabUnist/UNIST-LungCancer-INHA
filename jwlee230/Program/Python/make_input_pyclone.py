@@ -13,7 +13,7 @@ sequenza_data = pandas.DataFrame()
 def find_normal_cn(chromosome: str, start: int, end: int) -> int:
     d = sequenza_data.loc[(sequenza_data["chromosome"] == chromosome) & (sequenza_data["start.pos"] >= start) & (sequenza_data["end.pos"] <= end), "CNt"]
 
-    if d.empty and d.to_numpy()[0] != 0:
+    if d.empty or sum(d.to_numpy()) != 0:
         return 2
     else:
         return 1
@@ -22,7 +22,7 @@ def find_normal_cn(chromosome: str, start: int, end: int) -> int:
 def find_minor_cn(chromosome: str, start: int, end: int) -> int:
     d = sequenza_data.loc[(sequenza_data["chromosome"] == chromosome) & (sequenza_data["start.pos"] >= start) & (sequenza_data["end.pos"] <= end), "B"]
 
-    if d.empty and d.to_numpy()[0] != 0:
+    if d.empty or sum(d.to_numpy()) != 0:
         return 1
     else:
         return 0
@@ -59,8 +59,8 @@ if __name__ == "__main__":
 
     output_data = pandas.DataFrame()
     output_data["mutation_id"] = list(map(lambda x: x[0] + ":" + str(x[1]) + ":" + str(x[2]) + ":" + x[3] + ">" + x[4] + ":" + str(x[5]), zip(mutect_data["Chromosome"], mutect_data["Start_Position"], mutect_data["End_Position"], mutect_data["Reference_Allele"], mutect_data["Tumor_Seq_Allele2"], mutect_data["HGVSp"])))
-    output_data["ref_counts"] = mutect_data["t_ref_count"]
-    output_data["var_counts"] = mutect_data["t_alt_count"]
+    output_data["ref_counts"] = list(map(int, mutect_data["t_ref_count"]))
+    output_data["var_counts"] = list(map(int, mutect_data["t_alt_count"]))
     with multiprocessing.Pool(args.cpus) as pool:
         output_data["normal_cn"] = pool.starmap(find_normal_cn, zip(mutect_data["Chromosome"], mutect_data["Start_Position"], mutect_data["End_Position"]))
         output_data["minor_cn"] = pool.starmap(find_minor_cn, zip(mutect_data["Chromosome"], mutect_data["Start_Position"], mutect_data["End_Position"]))
