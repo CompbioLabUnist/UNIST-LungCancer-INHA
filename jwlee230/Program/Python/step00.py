@@ -21,6 +21,7 @@ long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primar
 sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
 SQC_stage_list = ["Normal", "Dysplasia", "CIS+AIS", "Primary"]
 ADC_stage_list = ["Normal", "AAH", "CIS+AIS", "MIA", "Primary"]
+simple_stage_list = ["Normal", "Precursor", "Primary"]
 
 chromosome_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX"]
 
@@ -115,6 +116,14 @@ def get_sample_type(ID: str) -> str:
 
 def get_long_sample_type(ID: str) -> str:
     return long_sample_type_dict[get_sample_type(ID)]
+
+
+def get_simple_sample_type(ID: str) -> str:
+    t = get_long_sample_type(ID)
+    if t in ["Normal", "Primary"]:
+        return t
+    else:
+        return "Precursor"
 
 
 def list_first_last(li: typing.List[typing.Any], el: typing.Any) -> typing.Tuple[int, int]:

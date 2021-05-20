@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 30
+CPUS = 10
 MEMS = 100
-PARALLEL = 1
+PARALLEL = 3
 PWD := $(shell pwd)
 TOOLS = 
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step18 # step15
+latest: step04
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -439,13 +439,13 @@ Output/RSEM/DEG/SQC.Bowtie2.tsv Output/RSEM/DEG/SQC.Bowtie2.coldata: Python/aggr
 Output/RSEM/DEG/ADC.Bowtie2.tsv Output/RSEM/DEG/ADC.Bowtie2.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/SQC.Bowtie2.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/SQC.Bowtie2.tsv Output/RSEM/DEG/SQC.Bowtie2.coldata | build.log
+Output/RSEM/DEG/SQC.%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC.Bowtie2.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/ADC.Bowtie2.tsv Output/RSEM/DEG/ADC.Bowtie2.coldata | build.log
+Output/RSEM/DEG/ADC.%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) # $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
+step18: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 .PHONY: step18
 
 # Step 19 (DEG: Draw plots)
@@ -501,16 +501,22 @@ Output/CibersortX/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefi
 Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%.CibersortX.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/LM22.txt | build.log
+Output/CibersortX/%.CibersortX.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3g_NSCLC_RNASeq_bulksortedpopulation.txt | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.CibersortX.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
+Output/CibersortX/ADC.%.CibersortX.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.CibersortX.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
+Output/CibersortX/SQC.%.CibersortX.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-step22: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.pdf Output/CibersortX/SQC.Bowtie2.CibersortX.pdf
+Output/CibersortX/ADC.%.CibersortX.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CibersortX/SQC.%.CibersortX.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step22: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.heatmap.pdf Output/CibersortX/SQC.Bowtie2.CibersortX.heatmap.pdf Output/CibersortX/ADC.Bowtie2.CibersortX.violin.tar Output/CibersortX/SQC.Bowtie2.CibersortX.violin.tar
 .PHONY: step22
 
 # Step ## (WTS - fq.gz >> bam) - STAR
