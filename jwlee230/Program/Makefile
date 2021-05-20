@@ -502,10 +502,10 @@ Output/CibersortX/%.CibersortX.tsv: Bash/run_cibersort.bash Output/CibersortX/%.
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/CibersortX/ADC.%.CibersortX.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.CibersortX.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/CibersortX/SQC.%.CibersortX.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.CibersortX.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 step22: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.tsv Output/CibersortX/ADC.Bowtie2.CibersortX.pdf Output/CibersortX/SQC.Bowtie2.CibersortX.pdf
 .PHONY: step22
