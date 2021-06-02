@@ -49,6 +49,8 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .genes.results!!")
     elif not args.gencode.endswith(".gtf"):
         raise ValueError("Gencode must end with .gtf!!")
+    elif (args.target[0] not in step00.long_sample_type_list) or (args.target[1] not in step00.long_sample_type_list):
+        raise ValueError("TARGET is not valid!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
