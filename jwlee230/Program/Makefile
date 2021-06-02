@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
+CPUS = 2
 MEMS = 100
 PARALLEL = 30
 PWD := $(shell pwd)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step21
+latest: step07 step08 step09 step10 step12 step13 step14
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -241,7 +241,7 @@ Output/WES/%.Sort.MarkDuplicate.BQSR.bam: Output/WES/%.Sort.MarkDuplicate.bam Ou
 Output/WES/%.Sort.MarkDuplicate.BQSR.bai: Output/WES/%.Sort.MarkDuplicate.BQSR.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step07: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bai,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bai,$(WES_ID)))
+step07: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.table,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bai,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.table,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bai,$(WES_ID)))
 .PHONY: step07
 
 clean-step07:
@@ -632,6 +632,7 @@ step22-CibersortX: Output/CibersortX/SQC.Bowtie2.LM22.tsv Output/CibersortX/ADC.
 step22: Output/CibersortX/ADC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/SQC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/ADC.Bowtie2.LM22.violin.tar Output/CibersortX/SQC.Bowtie2.LM22.violin.tar Output/CibersortX/ADC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/SQC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/ADC.Bowtie2.scRNA.violin.tar Output/CibersortX/SQC.Bowtie2.scRNA.violin.tar Output/CibersortX/ADC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Bulk.violin.tar Output/CibersortX/SQC.Bowtie2.Bulk.violin.tar Output/CibersortX/ADC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Mixture.violin.tar Output/CibersortX/SQC.Bowtie2.Mixture.violin.tar
 .PHONY: step-RSEM step22-CibersortX step22
 
+# Step ## (MesKit)
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
