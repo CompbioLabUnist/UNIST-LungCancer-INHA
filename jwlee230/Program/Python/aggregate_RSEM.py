@@ -40,6 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
     parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
     parser.add_argument("output", help="Output Basename file", type=str)
+    parser.add_argument("--target", help="Give compared histologies", nargs=2, required=True)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -51,6 +52,7 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
+    args.input = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) in args.target, args.input))
     args.input.sort()
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
