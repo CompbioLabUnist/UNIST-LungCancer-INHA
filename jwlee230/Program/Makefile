@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step12 step13 step14
+latest: step17 step18
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -488,22 +488,22 @@ Output/RSEM/STAR/%.genome.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fas
 	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -536,22 +536,22 @@ Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Prim
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC.STAR.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -597,6 +597,14 @@ step18: step18-preparation step18-Bowtie2 step18-Bowtie-DEG step18-STAR step18-S
 # Step 19 (DEG: Draw plots)
 Output/RSEM/Plots:
 	mkdir -p $@
+
+Output/RSEM/ADC.Up.%.venn.pdf:
+
+Output/RSEM/ADC.Down.%.venn.pdf:
+
+Output/RSEM/SQC.Up.%.venn.pdf:
+
+Output/RSEM/SQC.Down.%.venn.pdf:
 
 Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
