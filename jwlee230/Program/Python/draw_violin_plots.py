@@ -7,6 +7,7 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
 import scipy
 import seaborn
@@ -19,13 +20,15 @@ input_data = pandas.DataFrame()
 def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
     print(gene)
 
+    for stage in set(input_data["Stage"]):
+        if numpy.var(input_data.loc[(input_data["Stage"] == stage), gene]) == 0:
+            return ""
+
     for stage_a, stage_b in itertools.combinations(set(input_data["Stage"]), 2):
-        a = input_data.loc[(input_data["Stage"] == stage_a), gene]
-        b = input_data.loc[(input_data["Stage"] == stage_b), gene]
-        if a.empty or b.empty:
-            return ""
-        if scipy.stats.ttest_ind(a, b, equal_var=False)[1] >= 0.05:
-            return ""
+        if scipy.stats.ttest_ind(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene], equal_var=False)[1] < 0.01:
+            break
+    else:
+        return ""
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
