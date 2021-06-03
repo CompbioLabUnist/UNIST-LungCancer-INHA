@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     parser.add_argument("DEG", help="DEG TSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
-    parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
+    parser.add_argument("--padj", help="P-value threshold", type=float, default=0.01)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -27,12 +27,12 @@ if __name__ == "__main__":
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
-    DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id")
+    DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
     print(DEG_data)
 
-    up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
-    down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
+    up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
+    down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
     NS_gene = DEG_data.loc[((DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold)) & (DEG_data["log2FoldChange"] < numpy.log2(args.fold))) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
 
     matplotlib.use("Agg")
