@@ -7,16 +7,26 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import pandas
+import scipy
 import seaborn
 import statannot
 import step00
 
-count_data = pandas.DataFrame()
+input_data = pandas.DataFrame()
 
 
 def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
+    print(gene)
+
+    for stage_a, stage_b in itertools.combinations(set(input_data["Stage"]), 2):
+        a = input_data.loc[(input_data["Stage"] == stage_a), gene]
+        b = input_data.loc[(input_data["Stage"] == stage_b), gene]
+        if a.empty or b.empty:
+            return ""
+        if scipy.stats.ttest_ind(a, b, equal_var=False)[1] >= 0.05:
+            return ""
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -24,11 +34,11 @@ def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     if ADC:
-        seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list)
-        statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.ADC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.ADC_stage_list, 2), text_format="star", loc="inside", verbose=0)
+        seaborn.violinplot(data=input_data, x="Stage", y=gene, order=step00.ADC_stage_list, ax=ax)
+        statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=step00.ADC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.ADC_stage_list, 2), text_format="star", loc="inside", verbose=0)
     elif SQC:
-        seaborn.violinplot(data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list)
-        statannot.add_stat_annotation(ax, data=count_data, x="Stage", y=gene, order=step00.SQC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.SQC_stage_list, 2), text_format="star", loc="inside", verbose=0)
+        seaborn.violinplot(data=input_data, x="Stage", y=gene, order=step00.SQC_stage_list, ax=ax)
+        statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=step00.SQC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.SQC_stage_list, 2), text_format="star", loc="inside", verbose=0)
     else:
         raise Exception("Something went wrong!!")
 
@@ -42,8 +52,7 @@ def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("count", help="Count TSV file", type=str)
-    parser.add_argument("DEG", help="DEG TSV file", type=str)
+    parser.add_argument("count", help="Count TSV file(s)", type=str, nargs="+")
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--pvalue", help="P-value threshold", type=float, default=0.05)
@@ -55,29 +64,23 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.count.endswith(".tsv"):
+    if list(filter(lambda x: not x.endswith(".tsv"), args.count)):
         raise ValueError("Count must end with .TSV!!")
-    elif not args.DEG.endswith(".tsv"):
-        raise ValueError("DEG must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    tar_files = list()
-
-    count_data = pandas.read_csv(args.count, sep="\t", index_col="gene_name").T
-    count_data["Stage"] = list(map(step00.get_long_sample_type, list(count_data.index)))
-    print(count_data)
-
-    DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_name", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_name")
-    print(DEG_data)
-
-    up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["pvalue"] < args.pvalue), :]
-    down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["pvalue"] < args.pvalue), :]
+    for input_file in args.count:
+        input_data = input_data.append(pandas.read_csv(input_file, sep="\t", index_col="gene_name").T)
+    input_data.drop_duplicates(inplace=True)
+    input_data = input_data[[c for c in list(input_data) if len(input_data[c].unique()) > 1]]
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files += pool.starmap(run, [(gene, args.ADC, args.SQC) for gene in sorted(list(up_gene.index) + list(down_gene.index))])
+        tar_files = pool.starmap(run, [(gene, args.ADC, args.SQC) for gene in list(input_data.columns)[:-1]])
+        tar_files = list(filter(None, tar_files))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tar_files:

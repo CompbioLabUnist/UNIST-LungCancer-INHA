@@ -628,10 +628,10 @@ Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG
 Output/RSEM/Plots/SQC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.%.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/ADC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/ADC.%.tsv Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/ADC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/ADC.%.Normal-AAH.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.tsv Output/RSEM/DEG/ADC.%.Normal-MIA.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.tsv Output/RSEM/DEG/ADC.%.AAH-MIA.tsv Output/RSEM/DEG/ADC.%.AAH-Primary.tsv Output/RSEM/DEG/ADC.%.AIS-MIA.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.tsv Output/RSEM/DEG/ADC.%.MIA-Primary.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
@@ -644,8 +644,9 @@ step19-venn: Output/RSEM/Plots/ADC.Up.Bowtie2.venn.pdf Output/RSEM/Plots/ADC.Dow
 step19-pair-venn: Output/RSEM/Plots/ADC.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/ADC.Down.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC.Down.Bowtie2.pair-venn.pdf Output/RSEM/Plots/ADC.Up.STAR.pair-venn.pdf Output/RSEM/Plots/ADC.Down.STAR.pair-venn.pdf Output/RSEM/Plots/SQC.Up.STAR.pair-venn.pdf Output/RSEM/Plots/SQC.Down.STAR.pair-venn.pdf
 step19-ADC-Bowtie2-volcano: Output/RSEM/Plots/ADC.Bowtie2.Normal-AAH.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.Normal-AIS.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AAH-AIS.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AAH-Primary.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AIS-Primary.volcano.pdf 
 step19-SQC-Bowtie2-volcano: Output/RSEM/Plots/SQC.Bowtie2.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.CIS-Primary.volcano.pdf
-step19: step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano
-.PHONY: step19 step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano
+step19-violin: Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/ADC.Bowtie2.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar
+step19: step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-violin
+.PHONY: step19 step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-violin
 
 # Step 20 (Get ready to run MesKit)
 Output/MesKit:
