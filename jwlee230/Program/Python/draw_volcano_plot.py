@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     parser.add_argument("DEG", help="DEG TSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
-    parser.add_argument("--padj", help="P-value threshold", type=float, default=0.01)
+    parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
 
     group = parser.add_mutually_exclusive_group(required=True)
