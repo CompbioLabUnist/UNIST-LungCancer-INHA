@@ -25,7 +25,7 @@ def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
             return ""
 
     for stage_a, stage_b in itertools.combinations(set(input_data["Stage"]), 2):
-        if scipy.stats.ttest_ind(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene], equal_var=False)[1] < 0.01:
+        if scipy.stats.ttest_ind(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene], equal_var=False)[1] < 0.001:
             break
     else:
         return ""
