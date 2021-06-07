@@ -333,8 +333,9 @@
             \caption{FastQC with WTS data}
         \end{figure}
 
-        $\therefore$ No sample has more than 5 failures. \\
-        $\therefore$ All sample are good to analysis.
+        \begin{exampleblock}{All sample are good to analysis}
+            $\because$ No sample has more than 5 failures.
+        \end{exampleblock}
     \end{frame}
 
     \subsection{Copy Number Variations (CNVs) with Sequenza}
@@ -439,7 +440,23 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Volcano Plots with Bowtie2 in ADC}
+        \frametitle{DEG Selection Strategy}
+
+        \begin{block}{Fold Change}
+            $\log_{2}(\text{Fold Change}) > 1 \vee \log_{2}(\text{Fold Change}) < -1$
+        \end{block}
+
+        \begin{block}{P-value}
+            $\text{P-value} < 0.05$
+        \end{block}
+
+        \begin{block}{Adjusted P-value}
+            $\text{Padj} < 0.05$
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Volcano Plots with Bowtie2 in SQC}
 
         Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (SQC)
 
