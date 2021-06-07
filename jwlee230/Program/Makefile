@@ -610,16 +610,16 @@ Output/RSEM/Plots/SQC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQ
 Output/RSEM/Plots/SQC.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/ADC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/ADC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/ADC.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/ADC.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/SQC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/SQC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/SQC.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+Output/RSEM/Plots/SQC.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
