@@ -437,18 +437,28 @@
         \frametitle{Findings in Mutect2}
     \end{frame}
 
-    \subsection{Gene Expression Levels from RSEM}
+    \subsection{Gene Expression Levels from RSEM \& DESeq2}
     \begin{frame}
         \frametitle{RSEM?}
 
         \begin{figure}
             \includegraphics[width=0.2 \linewidth]{figures/Workflow/RSEM.jpg}
-            \caption{The RSEM workflow \protect\cite{RSEM1}}
+            \caption{RSEM workflow \protect\cite{RSEM1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DESeq2}
+
+        \begin{figure}
+            \includegraphics[width=0.4\linewidth]{figures/Workflow/DESeq2.png}
+            \caption{DESeq2 workflow \protect\cite{DESeq1}}
         \end{figure}
     \end{frame}
 
     \begin{frame}
         \frametitle{DEG Selection Strategy}
+        DEG: differentially expressed genes
 
         \begin{block}{Fold Change}
             $\log_{2}(\text{Fold Change}) > 1 \vee \log_{2}(\text{Fold Change}) < -1$
@@ -487,23 +497,6 @@
                 \mbox{(d) Dysplasia-CIS} & \mbox{(e) Dysplasia-Primary} & \mbox{(f) CIS-Primary} \\
             \end{array}$
             \caption{DEG Volcano Plots with Bowtie2 in SQC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Pseudo-Venn Diagram with Bowtie2 in SQC}
-
-         Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (SQC)
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Venn/SQC.Up.Bowtie2.venn.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Venn/SQC.Down.Bowtie2.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Pseudo-Venn Diagram with Bowtie2 in SQC}
         \end{figure}
     \end{frame}
 
@@ -547,23 +540,6 @@
                 \mbox{(d) AAH-AIS} & \mbox{(e) AAH-Primary} & \mbox{(f) AIS-Primary} \\
             \end{array}$
             \caption{DEG Volcano Plots with Bowtie2 in ADC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Pseudo-Venn Diagram with Bowtie2 in ADC}
-
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ Primary (ADC)
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Venn/ADC.Up.Bowtie2.venn.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Venn/ADC.Down.Bowtie2.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Pseudo-Venn Diagram with Bowtie2 in ADC }
         \end{figure}
     \end{frame}
 
