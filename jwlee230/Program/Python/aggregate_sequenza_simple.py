@@ -1,5 +1,5 @@
 """
-aggregate_sequenza_genome.py: Aggregate sequenza results as genome view
+aggregate_sequenza_simple.py: Aggregate sequenza results as simple genome view
 """
 import argparse
 import multiprocessing
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list)), gridspec_kw={"height_ratios": [1, len(sample_list) // 5, 1], "width_ratios": list(map(lambda x: x // big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"height_ratios": [1, 1], "width_ratios": list(map(lambda x: x // big, size_data.loc[chromosome_list, "length"]))})
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // big)), index=sample_list, dtype=float)
         for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
@@ -89,14 +89,11 @@ if __name__ == "__main__":
             axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor=None, linewidth=0)
         axs[0][i].set_ylim(bottom=0, top=1)
 
-        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
-        axs[1][i].set_xlabel(chromosome[3:])
-
         for j in range(chromosome_data.shape[1]):
-            axs[2][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor=None, linewidth=0)
-            axs[2][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor=None, linewidth=0)
-        axs[2][i].set_ylim(bottom=0, top=1)
-        axs[2][i].invert_yaxis()
+            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor=None, linewidth=0)
+            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor=None, linewidth=0)
+        axs[1][i].set_ylim(bottom=0, top=1)
+        axs[1][i].invert_yaxis()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

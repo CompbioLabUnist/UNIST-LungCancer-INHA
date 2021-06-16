@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 2
+CPUS = 20
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 1
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -352,6 +352,12 @@ Output/Sequenza/BWA-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(addpre
 Output/Sequenza/BWA-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Sequenza/BWA-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Sequenza/Bowtie2-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -364,7 +370,13 @@ Output/Sequenza/Bowtie2-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(ad
 Output/Sequenza/Bowtie2-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf
+Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf
 .PHONY: step13
 
 # Step 14 (Mutect2)
