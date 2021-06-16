@@ -82,16 +82,33 @@
 
     \section{Introduction}
     \subsection{Lung Cancer}
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Lung Cancer?}
 
-        \begin{exampleblock}{The most common cancer}
-            The most common form of cancer (12.3 \% of all cancers) \cite{lung3}
-        \end{exampleblock}
+        \begin{block}{The most common cancer}
+            The most common form of cancer: \\
+            12.3 \% of all cancers \cite{lung3}
+        \end{block}
 
-        \begin{exampleblock}{The most important factor}
+        \begin{block}{The most important factor}
             \textbf{Tobacco}
-        \end{exampleblock}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cancer Survival Rate in Korea}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/LungCancer/rate.png}
+            \caption{Common cancer survival rates \protect\cite{lung6}}
+        \end{figure}
+
+        \begin{block}{Survival rate (More than 5 yr)}
+            \begin{itemize}
+                \item Tyroid: 68.4 \%
+                \item Lung: 35.4 \%
+            \end{itemize}
+        \end{block}
     \end{frame}
 
     \begin{frame}
@@ -144,17 +161,14 @@
     \begin{frame}
         \frametitle{Study Objectives}
 
-        \begin{itemize}
-            \item Find different mutations
+        \begin{block}{Find different mutations}
             \begin{itemize}
-                \item between WES
-                \item between WTS
+                \item between WES vs. WTS
+                \item from cancer vs. precancer
             \end{itemize}
-            \begin{itemize}
-                \item from cancer
-                \item from precancer
-            \end{itemize}
+        \end{block}
 
+        \begin{itemize}
             \item Pathway examine from the mutations
             \begin{itemize}
                 \item of WES
