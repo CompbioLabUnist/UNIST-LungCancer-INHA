@@ -74,5 +74,5 @@ if __name__ == "__main__":
     del input_data["ENSG"]
     print(input_data)
 
-    input_data.groupby("gene_name").mean().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
+    input_data.groupby(by="gene_name").sum().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
     pandas.DataFrame(data=[(ID, step00.get_long_sample_type(ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)

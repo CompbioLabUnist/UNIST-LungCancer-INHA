@@ -4,7 +4,6 @@ draw_venn_plot_2.py: draw a venn diagram of DEG with pairwise
 import argparse
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import pandas
 import venn
 import step00
@@ -14,8 +13,8 @@ if __name__ == "__main__":
 
     parser.add_argument("DEG", help="DEG TSV file(s)", type=str, nargs="+")
     parser.add_argument("output", help="Output PDF file", type=str)
-    parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
-    parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
+    parser.add_argument("--fold", help="Fold change threshold", type=float, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--up", help="Draw ADC pathway", action="store_true", default=False)
@@ -31,11 +30,12 @@ if __name__ == "__main__":
     input_data = dict()
     for input_file in args.DEG:
         DEG_data = pandas.read_csv(input_file, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
+        print(DEG_data)
 
         if args.up:
-            DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), :]
+            DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] > args.fold) & (DEG_data["pvalue"] < args.p) & (DEG_data["padj"] < args.p), :]
         elif args.down:
-            DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), :]
+            DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] < (-1 * args.fold)) & (DEG_data["pvalue"] < args.p) & (DEG_data["padj"] < args.p), :]
         else:
             raise Exception("Something went wrong!!")
 
