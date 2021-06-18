@@ -123,13 +123,10 @@ if __name__ == "__main__":
     compare_list = []
     for patient in sample_dict:
         print(sample_dict[patient])
-        for i in range(1, len(sample_types)):
-            first_type, second_type = sample_types[i - 1], sample_types[i]
-
+        for first_type, second_type in itertools.combinations(sample_types, 2):
             if (first_type not in sample_dict[patient]) or (second_type not in sample_dict[patient]):
                 continue
-
-            compare_list += list(itertools.product(sample_dict[patient][sample_types[i - 1]], sample_dict[patient][sample_types[i]]))
+            compare_list += list(itertools.product(sample_dict[patient][first_type], sample_dict[patient][second_type]))
 
     print(len(compare_list))
 
