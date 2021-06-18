@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 30
+CPUS = 20
 MEMS = 100
 PARALLEL = 1
 PWD := $(shell pwd)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step22 #step03 step04 step05 step06 step07 step18 step19
+latest: step03 step04 step05 step06 step07 step14 step18 step19
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -712,7 +712,7 @@ Output/CibersortX/%-LM22/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv O
 
 Output/CibersortX/%-scRNA/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/scRNA.txt | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	docker run -it --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
@@ -742,6 +742,8 @@ step22-RSEM: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv
 step22-CibersortX: Output/CibersortX/SQC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt
 step22: step-RSEM step22-CibersortX
 .PHONY: step-RSEM step22-CibersortX step22
+
+# Step 23 (VAF plot)
 
 # Step ## (MesKit)
 # Step ## (WTS - fq.gz >> bam) - STAR
