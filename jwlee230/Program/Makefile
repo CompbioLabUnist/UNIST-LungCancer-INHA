@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 20
+CPUS = 30
 MEMS = 100
 PARALLEL = 1
 PWD := $(shell pwd)
@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07
+latest: step22 #step03 step04 step05 step06 step07 step18 step19
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -700,17 +700,19 @@ Output/CibersortX/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefi
 Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%.LM22.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/LM22.txt | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CibersortX/SQC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%.scRNA.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig2a-NSCLC_PBMCs_scRNAseq_matrix.txt | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CibersortX/ADC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%.Bulk.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3g_NSCLC_RNASeq_bulksortedpopulation.txt | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CibersortX/%-LM22/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/LM22.txt | build.log
+	$(DOCKER) rm -rfv $(addprefix /,$(@D))
+	docker run -it --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/CibersortX/%.Mixture.tsv: Bash/run_cibersort.bash Output/CibersortX/%.tsv Data/CIBERSORTx/Fig3b-f-FL-arrays-mixture.txt | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CibersortX/%-scRNA/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/scRNA.txt | build.log
+	$(DOCKER) rm -rfv $(addprefix /,$(@D))
+	docker run --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
@@ -722,18 +724,6 @@ Output/CibersortX/ADC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Outp
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/CibersortX/SQC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/ADC.%.Bulk.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Bulk.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/SQC.%.Bulk.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Bulk.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/ADC.%.Mixture.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Mixture.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/SQC.%.Mixture.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Mixture.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/CibersortX/ADC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
@@ -748,21 +738,9 @@ Output/CibersortX/ADC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py O
 Output/CibersortX/SQC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.Bulk.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Bulk.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/SQC.%.Bulk.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Bulk.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/ADC.%.Mixture.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.Mixture.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/CibersortX/SQC.%.Mixture.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.Mixture.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step22-RSEM: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv
-step22-CibersortX: Output/CibersortX/SQC.Bowtie2.LM22.tsv Output/CibersortX/ADC.Bowtie2.LM22.tsv Output/CibersortX/SQC.Bowtie2.scRNA.tsv Output/CibersortX/ADC.Bowtie2.scRNA.tsv Output/CibersortX/SQC.Bowtie2.Bulk.tsv Output/CibersortX/ADC.Bowtie2.Bulk.tsv Output/CibersortX/SQC.Bowtie2.Mixture.tsv Output/CibersortX/ADC.Bowtie2.Mixture.tsv
-step22: Output/CibersortX/ADC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/SQC.Bowtie2.LM22.heatmap.pdf Output/CibersortX/ADC.Bowtie2.LM22.violin.tar Output/CibersortX/SQC.Bowtie2.LM22.violin.tar Output/CibersortX/ADC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/SQC.Bowtie2.scRNA.heatmap.pdf Output/CibersortX/ADC.Bowtie2.scRNA.violin.tar Output/CibersortX/SQC.Bowtie2.scRNA.violin.tar Output/CibersortX/ADC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Bulk.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Bulk.violin.tar Output/CibersortX/SQC.Bowtie2.Bulk.violin.tar Output/CibersortX/ADC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/SQC.Bowtie2.Mixture.heatmap.pdf Output/CibersortX/ADC.Bowtie2.Mixture.violin.tar Output/CibersortX/SQC.Bowtie2.Mixture.violin.tar
+step22-RSEM: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.STAR.tsv Output/CibersortX/ADC.STAR.tsv
+step22-CibersortX: Output/CibersortX/SQC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt
+step22: step-RSEM step22-CibersortX
 .PHONY: step-RSEM step22-CibersortX step22
 
 # Step ## (MesKit)
