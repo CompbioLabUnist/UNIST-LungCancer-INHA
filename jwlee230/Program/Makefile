@@ -158,7 +158,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step14 step18 step19
+latest: step03 step04 step05 step06 step07 step14 step18 step19 step22
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -708,11 +708,11 @@ Output/CibersortX/ADC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix O
 
 Output/CibersortX/%-LM22/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/LM22.txt | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run -it --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/CibersortX/%-scRNA/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/scRNA.txt | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run -it --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
