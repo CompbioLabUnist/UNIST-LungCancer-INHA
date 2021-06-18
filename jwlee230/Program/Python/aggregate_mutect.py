@@ -35,7 +35,7 @@ if __name__ == "__main__":
     elif args.gene < 1:
         raise ValueError("GENE must be positive!!")
 
-    matplotlib.rcParams.update({"font.family": "serif"})
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     my_comut = comut.CoMut()
     my_comut.samples = sorted(list(map(lambda x: x.split("/")[-1].split(".")[0], args.input)), key=step00.sorting)

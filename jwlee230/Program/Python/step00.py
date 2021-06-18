@@ -23,8 +23,6 @@ SQC_stage_list = ("Normal", "Dysplasia", "CIS+AIS", "Primary")
 ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
 
-chromosome_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX"]
-
 mutations_list = ["Nonsense_Mutation", "In_Frame_Del", "Frame_Shift_Ins", "Splice_Site", "In_Frame_Ins", "Frame_Shift_Del", "Missense_Mutation"]
 mutations_dict = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel"}
 categorical_columns = ["sample", "category", "value"]
