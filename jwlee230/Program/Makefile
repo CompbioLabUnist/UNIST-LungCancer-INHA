@@ -34,6 +34,7 @@ REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
+GENE_CENSUS_CSV = Data/cancer_gene_census.csv
 
 # Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -158,7 +159,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step14 step18 step19 step22
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -708,11 +709,11 @@ Output/CibersortX/ADC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix O
 
 Output/CibersortX/%-LM22/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/LM22.txt | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr || true
 
 Output/CibersortX/%-scRNA/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/scRNA.txt | build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	docker run --tty --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr || true
 
 Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
@@ -744,6 +745,17 @@ step22: step-RSEM step22-CibersortX
 .PHONY: step-RSEM step22-CibersortX step22
 
 # Step 23 (VAF plot)
+Output/VAF:
+	mkdir -p $@
+
+Output/VAF/SQC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/VAF/ADC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar
+.PHONY: step23
 
 # Step ## (MesKit)
 # Step ## (WTS - fq.gz >> bam) - STAR
