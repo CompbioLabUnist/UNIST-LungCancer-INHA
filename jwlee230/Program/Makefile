@@ -752,7 +752,7 @@ Output/VAF/SQC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/VAF/ADC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar
 .PHONY: step23
