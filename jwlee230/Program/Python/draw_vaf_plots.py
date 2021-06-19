@@ -9,6 +9,7 @@ import typing
 from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
 import step00
 
@@ -37,8 +38,8 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     counter = 0
     texts = []
     for chromosome, start_position, end_position in intersected_positions:
-        first_row = first_data.loc[(first_data["Chromosome"] == chromosome) & (first_data["Start_Position"] == start_position) & (first_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF"]].to_numpy()[0]
-        second_row = second_data.loc[(second_data["Chromosome"] == chromosome) & (second_data["Start_Position"] == start_position) & (second_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF"]].to_numpy()[0]
+        first_row = first_data.loc[(first_data["Chromosome"] == chromosome) & (first_data["Start_Position"] == start_position) & (first_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]].to_numpy()[0]
+        second_row = second_data.loc[(second_data["Chromosome"] == chromosome) & (second_data["Start_Position"] == start_position) & (second_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]].to_numpy()[0]
 
         if first_row[1] not in step00.mutations_list:
             continue
@@ -50,7 +51,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
             marker = "*"
             alpha = 1.0
             s = 20 ** 2
-            texts.append(matplotlib.pyplot.text(first_row[2], second_row[2], first_row[0], fontsize="xx-small"))
+            texts.append(matplotlib.pyplot.text(first_row[2], second_row[2], "{0}: {1}".format(first_row[0], first_row[3]), fontsize=step00.matplotlib_parameters["font.size"] * 0.75))
         else:
             c = "tab:gray"
             marker = "o"
@@ -66,7 +67,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     matplotlib.pyplot.xlabel("VAF of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name)))
     matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
     matplotlib.pyplot.title("{0} vs. {1}: {2} genes".format(first_name, second_name, counter))
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 5)
 
     figure_name = "{0}+{1}.pdf".format(first_name, second_name)
     fig.savefig(figure_name)
