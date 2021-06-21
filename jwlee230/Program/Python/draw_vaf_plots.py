@@ -6,6 +6,7 @@ import itertools
 import multiprocessing
 import tarfile
 import typing
+import pprint
 from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
@@ -26,7 +27,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     first_data["VAF"] = first_data["t_alt_count"] / first_data["t_depth"]
     second_data["VAF"] = second_data["t_alt_count"] / second_data["t_depth"]
 
-    intersected_positions = sorted(set(first_data.loc[:, ["Chromosome", "Start_Position", "End_Position"]].itertuples(index=False, name=None)) & set(second_data.loc[:, ["Chromosome", "Start_Position", "End_Position"]].itertuples(index=False, name=None)))
+    intersected_positions = sorted(set(first_data.loc[:, ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None)) | set(second_data.loc[:, ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None)))
     print("{0} vs {1}: {2} genes".format(first_name, second_name, len(intersected_positions)))
 
     matplotlib.use("Agg")
@@ -34,30 +35,45 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    counter = 0
     texts = []
-    for chromosome, start_position, end_position in intersected_positions:
-        first_row = first_data.loc[(first_data["Chromosome"] == chromosome) & (first_data["Start_Position"] == start_position) & (first_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]].to_numpy()[0]
-        second_row = second_data.loc[(second_data["Chromosome"] == chromosome) & (second_data["Start_Position"] == start_position) & (second_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]].to_numpy()[0]
-
-        if first_row[1] not in step00.mutations_list:
-            continue
+    for chromosome, start_position, end_position, ref_allele, tumor_seq_allele1, tumor_seq_allele2 in intersected_positions:
+        if (d := first_data.loc[(first_data["Chromosome"] == chromosome) & (first_data["Start_Position"] == start_position) & (first_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]]).empty:
+            first_row = []
+            first_vaf = 0
         else:
-            counter += 1
+            first_row = list(d.to_numpy()[0])
+            first_vaf = first_row[2]
 
-        if first_row[0] in gene_set:
+        if (d := second_data.loc[(second_data["Chromosome"] == chromosome) & (second_data["Start_Position"] == start_position) & (second_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]]).empty:
+            second_row = []
+            second_vaf = 0
+        else:
+            second_row = list(d.to_numpy()[0])
+            second_vaf = second_row[2]
+
+        if first_row:
+            symbol, variant, mutation = first_row[0], first_row[1], first_row[3]
+        else:
+            symbol, variant, mutation = second_row[0], second_row[1], second_row[3]
+
+        if (symbol in gene_set) and (variant in step00.mutations_list):
             c = "tab:red"
             marker = "*"
             alpha = 1.0
             s = 20 ** 2
-            texts.append(matplotlib.pyplot.text(first_row[2], second_row[2], "{0}: {1}".format(first_row[0], first_row[3]), fontsize="small"))
+            texts.append(matplotlib.pyplot.text(first_vaf, second_vaf, "{0}: {1}".format(symbol, mutation), fontsize="small"))
+        elif (variant in step00.mutations_list):
+            c = "tab:gray"
+            marker = "*"
+            alpha = 0.7
+            s = 12 ** 2
         else:
             c = "tab:gray"
             marker = "o"
-            alpha = 0.5
+            alpha = 0.3
             s = 12 ** 2
 
-        matplotlib.pyplot.scatter(first_row[2], second_row[2], c=c, marker=marker, alpha=alpha, s=s, edgecolor="none")
+        matplotlib.pyplot.scatter(first_vaf, second_vaf, c=c, marker=marker, alpha=alpha, s=s, edgecolor="none")
 
     matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
     matplotlib.pyplot.grid(True)
@@ -65,7 +81,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     matplotlib.pyplot.ylim(-0.1, 1.1)
     matplotlib.pyplot.xlabel("VAF of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name)))
     matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
-    matplotlib.pyplot.title("{0} vs. {1}: {2} genes".format(first_name, second_name, counter))
+    matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
     adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 5)
 
     figure_name = "{0}+{1}.pdf".format(first_name, second_name)
@@ -106,11 +122,10 @@ if __name__ == "__main__":
             sample_dict[patient][stage] = list()
 
         sample_dict[patient][stage].append(input_file)
-    print(sample_dict)
+    pprint.pprint(sample_dict)
 
     compare_list = []
     for patient in sample_dict:
-        print(sample_dict[patient])
         for first_type, second_type in itertools.combinations(step00.long_sample_type_list, 2):
             if (first_type not in sample_dict[patient]) or (second_type not in sample_dict[patient]):
                 continue
