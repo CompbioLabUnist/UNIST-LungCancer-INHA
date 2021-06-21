@@ -9,7 +9,6 @@ import typing
 from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import pandas
 import step00
 
@@ -51,7 +50,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
             marker = "*"
             alpha = 1.0
             s = 20 ** 2
-            texts.append(matplotlib.pyplot.text(first_row[2], second_row[2], "{0}: {1}".format(first_row[0], first_row[3]), fontsize=step00.matplotlib_parameters["font.size"] * 0.75))
+            texts.append(matplotlib.pyplot.text(first_row[2], second_row[2], "{0}: {1}".format(first_row[0], first_row[3]), fontsize="small"))
         else:
             c = "tab:gray"
             marker = "o"
@@ -83,10 +82,6 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
-    group.add_argument("--SQC", help="Draw SQC pathway", action="store_true", default=False)
-
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
@@ -113,18 +108,10 @@ if __name__ == "__main__":
         sample_dict[patient][stage].append(input_file)
     print(sample_dict)
 
-    if args.ADC:
-        sample_types = list(step00.ADC_stage_list)
-    elif args.SQC:
-        sample_types = list(step00.SQC_stage_list)
-    else:
-        raise Exception("Something went wrong!!")
-    print(sample_types)
-
     compare_list = []
     for patient in sample_dict:
         print(sample_dict[patient])
-        for first_type, second_type in itertools.combinations(sample_types, 2):
+        for first_type, second_type in itertools.combinations(step00.long_sample_type_list, 2):
             if (first_type not in sample_dict[patient]) or (second_type not in sample_dict[patient]):
                 continue
             compare_list += list(itertools.product(sample_dict[patient][first_type], sample_dict[patient][second_type]))
