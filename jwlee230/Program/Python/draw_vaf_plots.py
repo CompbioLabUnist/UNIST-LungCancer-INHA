@@ -17,22 +17,28 @@ sample_dict: typing.Dict[str, typing.Dict[str, typing.List[str]]] = dict()
 gene_set = set()
 
 
-def draw_plot(first_sample: str, second_sample: str) -> str:
+def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
     first_name = first_sample.split("/")[-1].split(".")[0]
     second_name = second_sample.split("/")[-1].split(".")[0]
 
-    first_data = pandas.read_csv(first_sample, sep="\t", comment="#", low_memory=False, index_col=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"])
-    second_data = pandas.read_csv(second_sample, sep="\t", comment="#", low_memory=False, index_col=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"])
+    first_data = pandas.read_csv(first_sample, sep="\t", comment="#", low_memory=False)
+    second_data = pandas.read_csv(second_sample, sep="\t", comment="#", low_memory=False)
 
     first_data["first_VAF"] = first_data["t_alt_count"] / first_data["t_depth"]
     second_data["second_VAF"] = second_data["t_alt_count"] / second_data["t_depth"]
+
+    first_data = first_data.loc[(first_data["Chromosome"].isin(step00.chromosome_list)), :]
+    second_data = second_data.loc[(second_data["Chromosome"].isin(step00.chromosome_list)), :]
+
+    first_data.set_index(keys=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"], inplace=True, verify_integrity=True)
+    second_data.set_index(keys=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"], inplace=True, verify_integrity=True)
 
     first_data = first_data[["first_VAF"]]
     second_data = second_data[["second_VAF"]]
 
     merged_data = pandas.concat(objs=[first_data, second_data], axis="columns", join="outer", sort=True, copy=False).fillna(value=0.0)
-    merged_data["gene_census"] = list(map(lambda x: x[5] in gene_set, list(merged_data.index)))
-    merged_data["mutation"] = list(map(lambda x: x[6] in step00.mutations_list, list(merged_data.index)))
+    merged_data["gene_census"] = list(map(lambda x: x[6] in gene_set, list(merged_data.index)))
+    merged_data["mutation"] = list(map(lambda x: x[7] in step00.mutations_list, list(merged_data.index)))
 
     print("{0} vs {1}: {2}".format(first_name, second_name, merged_data.shape))
 
@@ -44,17 +50,20 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     texts = []
 
     data = merged_data.loc[~(merged_data["gene_census"]) & ~(merged_data["mutation"])]
-    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:gray", marker="o", alpha=0.3, s=12 ** 2, edgecolor="none", label="Synonymous Mutations")
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:gray", marker="o", alpha=0.3, s=12 ** 2, edgecolor="none", label="Synonymous mutations")
 
     data = merged_data.loc[~(merged_data["gene_census"]) & (merged_data["mutation"])]
-    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="black", marker="*", alpha=0.3, s=12 ** 2, edgecolor="none", label="SNPs")
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="black", marker="*", alpha=0.3, s=15 ** 2, edgecolor="none", label="Functional mutations")
 
     data = merged_data.loc[(merged_data["gene_census"]) & (merged_data["mutation"])]
-    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Meaningful genes")
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Cancer genes")
     for index, d in data.iterrows():
-        if (d["first_VAF"] == 0) or (d["second_VAF"] == 0):
-            continue
-        texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[5], index[7]), fontsize="small"))
+        if (d["first_VAF"] > 0.6) and (d["second_VAF"] == 0.0):
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="xx-small"))
+        elif (d["first_VAF"] == 0.0) and (d["second_VAF"] > 0.6):
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="xx-small"))
+        elif (d["first_VAF"] > 0.0) and (d["second_VAF"] > 0.0):
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="small"))
 
     matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
     matplotlib.pyplot.grid(True)
@@ -64,12 +73,16 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
     matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
     matplotlib.pyplot.legend(loc="upper right")
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 5)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 6)
 
     figure_name = "{0}+{1}.pdf".format(first_name, second_name)
     fig.savefig(figure_name)
     matplotlib.pyplot.close(fig)
-    return figure_name
+
+    tsv_name = "{0}+{1}.tsv".format(first_name, second_name)
+    merged_data.to_csv(tsv_name, sep="\t", header=True, index=True)
+
+    return [figure_name, tsv_name]
 
 
 if __name__ == "__main__":
@@ -116,8 +129,9 @@ if __name__ == "__main__":
     print(len(compare_list))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = pool.starmap(draw_plot, compare_list)
+        files = itertools.chain.from_iterable(pool.starmap(draw_plot, compare_list))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in figures:
+        for f in sorted(files):
+            print("Compressing:", f)
             tar.add(f, arcname=f)
