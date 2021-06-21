@@ -761,5 +761,5 @@ step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
-# step ## (PureCN)
+# Step ## (PureCN)
 # Step ## (Histogram of file size)

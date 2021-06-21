@@ -21,14 +21,20 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     first_name = first_sample.split("/")[-1].split(".")[0]
     second_name = second_sample.split("/")[-1].split(".")[0]
 
-    first_data = pandas.read_csv(first_sample, sep="\t", comment="#", low_memory=False)
-    second_data = pandas.read_csv(second_sample, sep="\t", comment="#", low_memory=False)
+    first_data = pandas.read_csv(first_sample, sep="\t", comment="#", low_memory=False, index_col=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"])
+    second_data = pandas.read_csv(second_sample, sep="\t", comment="#", low_memory=False, index_col=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"])
 
-    first_data["VAF"] = first_data["t_alt_count"] / first_data["t_depth"]
-    second_data["VAF"] = second_data["t_alt_count"] / second_data["t_depth"]
+    first_data["first_VAF"] = first_data["t_alt_count"] / first_data["t_depth"]
+    second_data["second_VAF"] = second_data["t_alt_count"] / second_data["t_depth"]
 
-    intersected_positions = sorted(set(first_data.loc[:, ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None)) | set(second_data.loc[:, ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None)))
-    print("{0} vs {1}: {2} genes".format(first_name, second_name, len(intersected_positions)))
+    first_data = first_data[["first_VAF"]]
+    second_data = second_data[["second_VAF"]]
+
+    merged_data = pandas.concat(objs=[first_data, second_data], axis="columns", join="outer", sort=True, copy=False).fillna(value=0.0)
+    merged_data["gene_census"] = list(map(lambda x: x[5] in gene_set, list(merged_data.index)))
+    merged_data["mutation"] = list(map(lambda x: x[6] in step00.mutations_list, list(merged_data.index)))
+
+    print("{0} vs {1}: {2}".format(first_name, second_name, merged_data.shape))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -36,44 +42,19 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     texts = []
-    for chromosome, start_position, end_position, ref_allele, tumor_seq_allele1, tumor_seq_allele2 in intersected_positions:
-        if (d := first_data.loc[(first_data["Chromosome"] == chromosome) & (first_data["Start_Position"] == start_position) & (first_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]]).empty:
-            first_row = []
-            first_vaf = 0
-        else:
-            first_row = list(d.to_numpy()[0])
-            first_vaf = first_row[2]
 
-        if (d := second_data.loc[(second_data["Chromosome"] == chromosome) & (second_data["Start_Position"] == start_position) & (second_data["End_Position"] == end_position), ["Hugo_Symbol", "Variant_Classification", "VAF", "HGVSp_Short"]]).empty:
-            second_row = []
-            second_vaf = 0
-        else:
-            second_row = list(d.to_numpy()[0])
-            second_vaf = second_row[2]
+    data = merged_data.loc[~(merged_data["gene_census"]) & ~(merged_data["mutation"])]
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:gray", marker="o", alpha=0.3, s=12 ** 2, edgecolor="none", label="Synonymous Mutations")
 
-        if first_row:
-            symbol, variant, mutation = first_row[0], first_row[1], first_row[3]
-        else:
-            symbol, variant, mutation = second_row[0], second_row[1], second_row[3]
+    data = merged_data.loc[~(merged_data["gene_census"]) & (merged_data["mutation"])]
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="black", marker="*", alpha=0.3, s=12 ** 2, edgecolor="none", label="SNPs")
 
-        if (symbol in gene_set) and (variant in step00.mutations_list):
-            c = "tab:red"
-            marker = "*"
-            alpha = 1.0
-            s = 20 ** 2
-            texts.append(matplotlib.pyplot.text(first_vaf, second_vaf, "{0}: {1}".format(symbol, mutation), fontsize="small"))
-        elif (variant in step00.mutations_list):
-            c = "tab:gray"
-            marker = "*"
-            alpha = 0.7
-            s = 12 ** 2
-        else:
-            c = "tab:gray"
-            marker = "o"
-            alpha = 0.3
-            s = 12 ** 2
-
-        matplotlib.pyplot.scatter(first_vaf, second_vaf, c=c, marker=marker, alpha=alpha, s=s, edgecolor="none")
+    data = merged_data.loc[(merged_data["gene_census"]) & (merged_data["mutation"])]
+    matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Meaningful genes")
+    for index, d in data.iterrows():
+        if (d["first_VAF"] == 0) or (d["second_VAF"] == 0):
+            continue
+        texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[5], index[7]), fontsize="small"))
 
     matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
     matplotlib.pyplot.grid(True)
@@ -82,6 +63,7 @@ def draw_plot(first_sample: str, second_sample: str) -> str:
     matplotlib.pyplot.xlabel("VAF of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name)))
     matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
     matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
+    matplotlib.pyplot.legend(loc="upper right")
     adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 5)
 
     figure_name = "{0}+{1}.pdf".format(first_name, second_name)
