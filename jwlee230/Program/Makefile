@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 20
+CPUS = 2
 MEMS = 100
-PARALLEL = 1
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -159,7 +159,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step23 #step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
