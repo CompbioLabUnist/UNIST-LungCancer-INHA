@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list)), gridspec_kw={"height_ratios": [1, len(sample_list) // 5, 1], "width_ratios": list(map(lambda x: x // big, size_data.loc[chromosome_list, "length"]))})
     for i, chromosome in enumerate(chromosome_list):
+        print(chromosome)
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // big)), index=sample_list, dtype=float)
         for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
             chromosome_data.loc[row["sample"], row["start.pos"] // big:row["end.pos"] // big] = row["depth.ratio"]
