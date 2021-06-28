@@ -159,7 +159,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -684,9 +684,9 @@ Output/PyClone/BWA:
 Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%/config.yaml: Bash/run_pyclone.bash Output/PyClone/BWA/%.tsv | build.log
+Output/PyClone/BWA/%/config.yaml: Output/PyClone/BWA/%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) /root/anaconda2/envs/pyclone/bin/PyClone run_analysis_pipeline --in_file $(addprefix /,$<) --working_dir $(addprefix /,$(@D)) --seed 42 1> $(@D).stdout 2> $(@D).stderr
 
 step21: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(WES_TUMOR_ID)))
 .PHONY: step21
