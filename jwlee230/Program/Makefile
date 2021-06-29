@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 2
 MEMS = 100
-PARALLEL = 20
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -159,7 +159,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19# step21 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -598,6 +598,18 @@ Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.co
 
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/ADC.Bowtie2.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC.Bowtie2.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/ADC.STAR.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC.STAR.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 step18-Bowtie2: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv

@@ -13,7 +13,7 @@ trembl_ID_set = set()
 
 
 def read_RSEM(filename: str) -> pandas.DataFrame:
-    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "expected_count"], index_col="gene_id")
+    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "TPM"], index_col="gene_id")
     data.columns = [filename.split("/")[-1].split(".")[0]]
     return data
 
