@@ -129,8 +129,10 @@ def list_first_last(li: typing.List[typing.Any], el: typing.Any) -> typing.Tuple
 
 
 def sorting(ID: str) -> typing.Tuple[str, int, str]:
+    ID = ID.split("/")[-1]
     return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
 
 
 def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
+    ID = ID.split("/")[-1]
     return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)

@@ -5,6 +5,7 @@ import argparse
 import gtfparse
 import multiprocessing
 import pandas
+import step00
 
 trembl_data = pandas.DataFrame()
 gencode_data = pandas.DataFrame()
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    args.input.sort()
+    args.input.sort(key=step00.sorting)
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
     trembl_data = trembl_data.loc[(trembl_data["db_name"] == "Uniprot/SPTREMBL"), ["xref", "gene_stable_id"]]
