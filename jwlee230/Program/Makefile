@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 2
+CPUS = 5
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 1
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -13,6 +13,7 @@ R = Rscript --vanilla
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 TMPFS = /tmpfs
+CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
@@ -35,6 +36,7 @@ LIBRARY_BED = Data/S04380110_Regions.bed
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
 GENE_CENSUS_CSV = Data/cancer_gene_census.csv
+LUNG_SINGLECELL = Output/CIBERSORTx/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
 
 # Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -159,7 +161,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19# step21 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -704,57 +706,53 @@ step21: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(add
 .PHONY: step21
 
 # Step 22 (Run CIBERSORTx)
-Output/CibersortX:
+Output/CIBERSORTx:
 	mkdir -p $@
 
-Output/CibersortX/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+Output/CIBERSORTx/SQC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+Output/CIBERSORTx/ADC.Bowtie2.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+Output/CIBERSORTx/SQC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CibersortX build.log
+Output/CIBERSORTx/ADC.STAR.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/%-LM22/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/LM22.txt | build.log
-	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run $(RUN_OPTS) --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr || true
+Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL) | build.log
+	$(DOCKER) rm -rfv $(@D)
+	docker run $(RUN_OPTS) --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/fractions $(CIBERSORTx_TOKEN) --mixture /src/data/$(notdir $(filter %.tsv,$^)) --refsample /src/data/$(notdir $(filter %.txt,$^)) --rmbatchSmode TRUE --QN TRUE --absolute TRUE --verbose TRUE --single_cell TRUE --remake TRUE 1> $(@D).stdout 2> $(@D).stderr
 
-Output/CibersortX/%-scRNA/CIBERSORTxGEP_NA_Weights.txt: Output/CibersortX/%.tsv Output/CibersortX/scRNA.txt | build.log
-	$(DOCKER) rm -rfv $(addprefix /,$(@D))
-	docker run $(RUN_OPTS) --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c" --mixture /src/data/$(notdir $(filter %.tsv,$^)) --sigmatrix /src/data/$(notdir $(filter %.txt,$^)) --threads $(CPUS) 1> $(@D).stdout 2> $(@D).stderr || true
-
-Output/CibersortX/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
+Output/CIBERSORTx/ADC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CIBERSORTx/ADC.%.tsv Output/CIBERSORTx/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.LM22.tsv | build.log
+Output/CIBERSORTx/SQC.%.LM22.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CIBERSORTx/SQC.%.tsv Output/CIBERSORTx/SQC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.scRNA.tsv | build.log
+Output/CIBERSORTx/ADC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CIBERSORTx/ADC.%.tsv Output/CIBERSORTx/ADC.%.scRNA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
+Output/CIBERSORTx/SQC.%.scRNA.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CIBERSORTx/SQC.%.tsv Output/CIBERSORTx/SQC.%.scRNA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.LM22.tsv | build.log
+Output/CIBERSORTx/ADC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/ADC.%.tsv Output/CIBERSORTx/ADC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.LM22.tsv | build.log
+Output/CIBERSORTx/SQC.%.LM22.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/SQC.%.tsv Output/CIBERSORTx/SQC.%.LM22.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/ADC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/ADC.%.tsv Output/CibersortX/ADC.%.scRNA.tsv | build.log
+Output/CIBERSORTx/ADC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/ADC.%.tsv Output/CIBERSORTx/ADC.%.scRNA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CibersortX/SQC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CibersortX/SQC.%.tsv Output/CibersortX/SQC.%.scRNA.tsv | build.log
+Output/CIBERSORTx/SQC.%.scRNA.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/SQC.%.tsv Output/CIBERSORTx/SQC.%.scRNA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step22-RSEM: Output/CibersortX/SQC.Bowtie2.tsv Output/CibersortX/ADC.Bowtie2.tsv Output/CibersortX/SQC.STAR.tsv Output/CibersortX/ADC.STAR.tsv
-step22-CibersortX: Output/CibersortX/SQC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-LM22/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.Bowtie2-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/SQC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt Output/CibersortX/ADC.STAR-scRNA/CIBERSORTxGEP_NA_Weights.txt
-step22: step-RSEM step22-CibersortX
-.PHONY: step-RSEM step22-CibersortX step22
+step22-RSEM: Output/CIBERSORTx/SQC.Bowtie2.tsv Output/CIBERSORTx/ADC.Bowtie2.tsv Output/CIBERSORTx/SQC.STAR.tsv Output/CIBERSORTx/ADC.STAR.tsv
+step22-CIBERSORTx: Output/CIBERSORTx/SQC.Bowtie2/CIBERSORTxGEP_NA_Weights.txt
+step22: step22-RSEM step22-CIBERSORTx
+.PHONY: step22-RSEM step22-CIBERSORTx step22
 
 # Step 23 (VAF plot)
 Output/VAF:
