@@ -130,8 +130,6 @@ Docker/Tools/Miniconda.sh: | Docker/Tools
 	wget "https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-x86_64.sh" -O $@
 TOOLS += Docker/Tools/Miniconda.sh
 
-TOOLS += Docker/Tools/CIBERSORT.zip
-
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
