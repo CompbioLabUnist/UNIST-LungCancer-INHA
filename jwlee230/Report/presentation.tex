@@ -597,11 +597,28 @@
 
     \subsection{Cell Deconvolution with CIBERSORTx}
     \begin{frame}
-        \frametitle{CIBERSORTx?}
+        \frametitle{Benchmarking of Cell Deconvolution Tools}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/CIBERSORTx.png}
-            \caption{CIBERSORTx workflow \protect\cite{cibersort1}}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Deconvolution.png}
+            \caption{Memory and time requirements for the cell deconvolution methods \protect\cite{deconvolution1}}
+        \end{figure}
+
+        \begin{block}{Top 3 Methods}
+            \begin{enumerate}
+                \item BisqueRNA \cite{Bisque1}
+                \item MuSiC \cite{MuSiC1}
+                \item SCDC \cite{SCDC1}
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{BisqueRNA?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Bisque.jpg}
+            \caption{Graphical overview of the Bisque decomposition methods \protect\cite{Bisque1}}
         \end{figure}
     \end{frame}
 
@@ -609,28 +626,20 @@
         \frametitle{MuSiC?}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/MuSiC.jpg}
+            \includegraphics[width=\linewidth]{figures/Workflow/MuSiC.jpg}
             \caption{Overview of MuSiC framework \protect\cite{MuSiC1}}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{CIBERSORTx with SQC}
+        \frametitle{SCDC?}
 
         \begin{figure}
-            \includegraphics[width=\linewidth]{figures/CIBERSORTx/SQC.Bowtie2.CibersortX.pdf}
-            \caption{Estimated Cell Types with SQC Samples}
+            \includegraphics[width=\linewidth]{figures/Workflow/SCDC.png}
+            \caption{Overview of deconvolution by SCDC \protect\cite{SCDC1}}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{CIBERSORTx with ADC}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/CIBERSORTx/ADC.Bowtie2.CibersortX.pdf}
-            \caption{Estimated Cell Types with ADC Samples}
-        \end{figure}
-    \end{frame}
 
     \subsection{VAF Plot}
     \begin{frame}
