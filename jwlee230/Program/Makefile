@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 5
+CPUS = 2
 MEMS = 100
-PARALLEL = 1
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -12,8 +12,6 @@ PYTHON = python3 -B
 R = Rscript --vanilla
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
-TMPFS = /tmpfs
-CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
@@ -23,6 +21,9 @@ GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 MUTENRICHER = python3 /Tools/MutEnricher-1.3.1/mutEnricher.py
+TMPFS = /tmpfs
+CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
+PYCLONE = $(DOCKER) /root/anaconda2/envs/pyclone/bin/PyClone
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -159,7 +160,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -690,18 +691,45 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 .PHONY: step20
 
 # Step 21 (Run PyClone)
-Output/PyClone/BWA:
+Output/PyClone/BWA Output/PyClone/Bowtie2:
 	mkdir -p $@
 
 Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%/config.yaml: Bash/run_pyclone.bash Output/PyClone/BWA/%.tsv | build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+Output/PyClone/Bowtie2/%.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step21: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(WES_TUMOR_ID)))
-.PHONY: step21
+Output/PyClone/BWA/%/config.yaml: Output/PyClone/BWA/%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D))
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
+
+Output/PyClone/Bowtie2/%/config.yaml: Output/PyClone/Bowtie2/%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D))
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
+
+Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.bz2 Output/PyClone/BWA/%/trace/precision.tsv.bz2: Output/PyClone/BWA/%/config.yaml | build.log
+	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(@D).trace.stdout 2> $(@D).trace.stderr
+
+Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 Output/PyClone/Bowtie2/%/trace/labels.tsv.bz2 Output/PyClone/Bowtie2/%/trace/precision.tsv.bz2: Output/PyClone/Bowtie2/%/config.yaml | build.log
+	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(@D).stdout 2> $(@D).stderr
+
+Output/PyClone/BWA/%.cluster.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/alpha.tsv.bz2 | build.log
+	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
+
+Output/PyClone/BWA/%.loci.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/alpha.tsv.bz2 | build.log
+	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
+
+Output/PyClone/Bowtie2/%.cluster.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
+	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
+
+Output/PyClone/Bowtie2/%.loci.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
+	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
+
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /trace/alpha.tsv.bz2,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .cluster.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .loci.tsv,$(WES_TUMOR_ID)))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /trace/alpha.tsv.bz2,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .cluster.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .loci.tsv,$(WES_TUMOR_ID)))
+step21: step21-BWA step21-Bowtie2
+.PHONY: step21 step21-BWA step21-Bowtie2
 
 # Step 22 (Run CIBERSORTx)
 Output/CIBERSORTx:
@@ -762,10 +790,10 @@ Output/VAF/SQC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/
 Output/VAF/ADC.BWA.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/VAF/SQC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .Bowtie2.PASS.maf,$(SQC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
+Output/VAF/SQC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(SQC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/VAF/ADC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .Bowtie2.PASS.maf,$(ADC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
+Output/VAF/ADC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(ADC_WES_SAMPLES))) $(GENE_CENSUS_CSV) | Output/VAF build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar Output/VAF/ADC.Bowtie2.tar
