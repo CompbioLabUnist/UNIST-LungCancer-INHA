@@ -702,17 +702,17 @@ Output/PyClone/Bowtie2/%.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie
 
 Output/PyClone/BWA/%/config.yaml: Output/PyClone/BWA/%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
 Output/PyClone/Bowtie2/%/config.yaml: Output/PyClone/Bowtie2/%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
 Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.bz2 Output/PyClone/BWA/%/trace/precision.tsv.bz2: Output/PyClone/BWA/%/config.yaml | build.log
-	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(@D).trace.stdout 2> $(@D).trace.stderr
+	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(dir $(@D))/$*.trace.stdout 2> $(dir $(@D))/$*.trace.stderr
 
 Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 Output/PyClone/Bowtie2/%/trace/labels.tsv.bz2 Output/PyClone/Bowtie2/%/trace/precision.tsv.bz2: Output/PyClone/Bowtie2/%/config.yaml | build.log
-	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(@D).stdout 2> $(@D).stderr
+	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> $(dir $(@D))/$*.trace.stdout 2> $(dir $(@D))/$*.trace.stderr
 
 Output/PyClone/BWA/%.cluster.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/alpha.tsv.bz2 | build.log
 	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
