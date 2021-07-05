@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 CPUS = 2
 MEMS = 100
-PARALLEL = 20
+PARALLEL = 50
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -160,7 +160,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21# step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -694,19 +694,19 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 Output/PyClone/BWA Output/PyClone/Bowtie2:
 	mkdir -p $@
 
-Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
+Output/PyClone/BWA/%.Mutect2.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/%.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+Output/PyClone/Bowtie2/%.Mutect2.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%/config.yaml: Output/PyClone/BWA/%.tsv | build.log
+Output/PyClone/BWA/%/config.yaml: $(addprefix Output/PyClone/BWA/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$(wildcard Output/PyClone/BWA/$**.Mutect2.tsv)) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
-Output/PyClone/Bowtie2/%/config.yaml: Output/PyClone/Bowtie2/%.tsv | build.log
+Output/PyClone/Bowtie2/%/config.yaml: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$^) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+	$(PYCLONE) setup_analysis --in_files $(addprefix /,$(wildcard Output/PyClone/BWA/$**.Mutect2.tsv)) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
 Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.bz2 Output/PyClone/BWA/%/trace/precision.tsv.bz2: Output/PyClone/BWA/%/config.yaml | build.log
 	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/BWA/$*.trace.stdout 2> Output/PyClone/BWA/$*.trace.stderr
@@ -714,10 +714,10 @@ Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.b
 Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 Output/PyClone/Bowtie2/%/trace/labels.tsv.bz2 Output/PyClone/Bowtie2/%/trace/precision.tsv.bz2: Output/PyClone/Bowtie2/%/config.yaml | build.log
 	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/Bowtie2/$*.trace.stdout 2> Output/PyClone/Bowtie2/$*.trace.stderr
 
-Output/PyClone/BWA/%.cluster.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/alpha.tsv.bz2 | build.log
+Output/PyClone/BWA/%.cluster.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/labels.tsv.bz2 | build.log
 	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%.loci.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/alpha.tsv.bz2 | build.log
+Output/PyClone/BWA/%.loci.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/labels.tsv.bz2 | build.log
 	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
 
 Output/PyClone/Bowtie2/%.cluster.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
@@ -726,8 +726,8 @@ Output/PyClone/Bowtie2/%.cluster.tsv: Output/PyClone/Bowtie2/%/config.yaml Outpu
 Output/PyClone/Bowtie2/%.loci.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
 	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
 
-step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /trace/alpha.tsv.bz2,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .cluster.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .loci.tsv,$(WES_TUMOR_ID)))
-step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /trace/alpha.tsv.bz2,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .cluster.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .loci.tsv,$(WES_TUMOR_ID)))
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
 step21: step21-BWA step21-Bowtie2
 .PHONY: step21 step21-BWA step21-Bowtie2
 
@@ -799,9 +799,27 @@ Output/VAF/ADC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/
 step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar Output/VAF/ADC.Bowtie2.tar
 .PHONY: step23
 
+# Step ## (BisqueRNA)
+# https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
+# https://cran.r-project.org/web/packages/BisqueRNA/vignettes/bisque.html
+Output/BisqueRNA:
+	mkdir -p $@
+
+# Step ## (MuSiC)
+# https://xuranw.github.io/MuSiC/articles/MuSiC.html
+Output/MuSiC:
+	mkdir -p $@
+
+# Step ## (SCDC)
+# https://meichendong.github.io/SCDC/
+# https://meichendong.github.io/SCDC/articles/SCDC.html
+Output/SCDC:
+	mkdir -p $@
+
 # Step ## (MesKit)
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (PureCN)
 # Step ## (Histogram of file size)
+# Step ## (Revolver)
