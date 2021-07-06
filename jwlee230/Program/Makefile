@@ -23,7 +23,7 @@ VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 MUTENRICHER = python3 /Tools/MutEnricher-1.3.1/mutEnricher.py
 TMPFS = /tmpfs
 CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
-PYCLONE = $(DOCKER) /root/anaconda2/envs/pyclone/bin/PyClone
+PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
 
 # Files
 REFERENCE_DIR = Data/hg38
@@ -706,40 +706,44 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 Output/PyClone/BWA Output/PyClone/Bowtie2:
 	mkdir -p $@
 
-Output/PyClone/BWA/%.Mutect2.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.filter.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
+Output/PyClone/BWA/%.PASS.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/%.Mutect2.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.filter.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+Output/PyClone/Bowtie2/%.PASS.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%/config.yaml: $(addprefix Output/PyClone/BWA/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$(wildcard Output/PyClone/BWA/$**.Mutect2.tsv)) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+Output/PyClone/BWA/%.weak_evidence.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.weak_evidence.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/%/config.yaml: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D))
-	$(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(wildcard Output/PyClone/Bowtie2/$**.Mutect2.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+Output/PyClone/Bowtie2/%.weak_evidence.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.weak_evidence.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/PyClone/BWA/%/config.yaml: $(wildcard Output/PyClone/BWA/$**.PASS.tsv) | build.log
+	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+
+Output/PyClone/Bowtie2/%/config.yaml: $(wildcard Output/PyClone/Bowtie2/$**.PASS.tsv) | build.log
+	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
 Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.bz2 Output/PyClone/BWA/%/trace/precision.tsv.bz2: Output/PyClone/BWA/%/config.yaml | build.log
-	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/BWA/$*.trace.stdout 2> Output/PyClone/BWA/$*.trace.stderr
+	$(DOCKER) $(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/BWA/$*.trace.stdout 2> Output/PyClone/BWA/$*.trace.stderr
 
 Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 Output/PyClone/Bowtie2/%/trace/labels.tsv.bz2 Output/PyClone/Bowtie2/%/trace/precision.tsv.bz2: Output/PyClone/Bowtie2/%/config.yaml | build.log
-	$(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/Bowtie2/$*.trace.stdout 2> Output/PyClone/Bowtie2/$*.trace.stderr
+	$(DOCKER) $(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/Bowtie2/$*.trace.stdout 2> Output/PyClone/Bowtie2/$*.trace.stderr
 
 Output/PyClone/BWA/%.cluster.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/labels.tsv.bz2 | build.log
-	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
 
 Output/PyClone/BWA/%.loci.tsv: Output/PyClone/BWA/%/config.yaml Output/PyClone/BWA/%/trace/labels.tsv.bz2 | build.log
-	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
 
 Output/PyClone/Bowtie2/%.cluster.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
-	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type cluster 1> $@.stdout 2> $@.stderr
 
 Output/PyClone/Bowtie2/%.loci.tsv: Output/PyClone/Bowtie2/%/config.yaml Output/PyClone/Bowtie2/%/trace/alpha.tsv.bz2 | build.log
-	$(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYCLONE) build_table --config_file $(addprefix /,$(filter %.yaml,$^)) --out_file $(addprefix /,$@) --table_type loci 1> $@.stdout 2> $@.stderr
 
-step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
-step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Mutect2.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix .PASS.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .weak_evidence.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .PASS.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .weak_evidence.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /trace/labels.tsv.bz2,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .loci.tsv,$(PATIENT_ID)))
 step21: step21-BWA step21-Bowtie2
 .PHONY: step21 step21-BWA step21-Bowtie2
 
