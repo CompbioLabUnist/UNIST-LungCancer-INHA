@@ -718,11 +718,13 @@ Output/PyClone/BWA/%.weak_evidence.tsv: Python/make_input_pyclone.py Output/Mute
 Output/PyClone/Bowtie2/%.weak_evidence.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.weak_evidence.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/%/config.yaml: $(wildcard Output/PyClone/BWA/$**.PASS.tsv) | build.log
-	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/PyClone/BWA/%/config.yaml: $(addprefix Output/PyClone/BWA/,$(addsuffix .PASS.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .weak_evidence.tsv,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(wildcard Output/PyClone/BWA/$**.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(wildcard Output/PyClone/BWA/$**.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
-Output/PyClone/Bowtie2/%/config.yaml: $(wildcard Output/PyClone/Bowtie2/$**.PASS.tsv) | build.log
-	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(filter %.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/PyClone/Bowtie2/%/config.yaml: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .PASS.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .weak_evidence.tsv,$(WES_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(wildcard Output/PyClone/Bowtie2/$**.PASS.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr || $(DOCKER) $(PYCLONE) setup_analysis --in_files $(addprefix /,$(sort $(wildcard Output/PyClone/Bowtie2/$**.weak_evidence.tsv))) --working_dir $(addprefix /,$(@D)) 1> $(@D).yaml.stdout 2> $(@D).yaml.stderr
 
 Output/PyClone/BWA/%/trace/alpha.tsv.bz2 Output/PyClone/BWA/%/trace/labels.tsv.bz2 Output/PyClone/BWA/%/trace/precision.tsv.bz2: Output/PyClone/BWA/%/config.yaml | build.log
 	$(DOCKER) $(PYCLONE) run_analysis --config_file $(addprefix /,$^) --seed 42 1> Output/PyClone/BWA/$*.trace.stdout 2> Output/PyClone/BWA/$*.trace.stderr
