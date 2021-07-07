@@ -27,7 +27,7 @@ if __name__ == "__main__":
     for column in ["Sample_Origin", "Cell_type", "Cell_type.refined", "Cell_subtype"]:
         print(column, ":", collections.Counter(annotation_data[column]).most_common())
 
-    expression_data = pandas.read_csv(args.expression, sep="\t", index_col="Index", usecols=["Index"] + list(annotation_data.index))
+    expression_data = pandas.read_csv(args.expression, sep="\t", index_col="Index", usecols=["Index"] + list(annotation_data.index), verbose=True)
     expression_data = expression_data[annotation_data.index].T
     expression_data["Cell_subtype"] = annotation_data["Cell_subtype"]
     print(expression_data)
