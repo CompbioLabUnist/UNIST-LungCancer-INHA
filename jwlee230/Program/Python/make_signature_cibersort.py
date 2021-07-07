@@ -11,14 +11,11 @@ if __name__ == "__main__":
     parser.add_argument("annotation", help="Annotation TSV file (not necessarily TSV)", type=str)
     parser.add_argument("expression", help="Expression TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
-    parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
 
     if not args.output.endswith(".tsv"):
         raise ValueError("Output must end with .TSV!!")
-    elif args.cpus < 1:
-        raise ValueError("CPUs must be positive!!")
 
     annotation_data = pandas.read_csv(args.annotation, sep="\t", dtype=str, verbose=True, index_col="Index").dropna(axis="index", how="any")
     annotation_data = annotation_data.loc[(annotation_data["Sample_Origin"].isin(["nLung", "tLung"]))]
