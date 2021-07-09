@@ -22,6 +22,7 @@ sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA":
 SQC_stage_list = ("Normal", "Dysplasia", "CIS+AIS", "Primary")
 ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
+stage_color_code = {"Normal": "tab:green", "Primary": "black", "Dysplasia": "tab:red", "CIS+AIS": "tab:red", "AAH": "tab:red", "MIA": "tab:red"}
 
 mutations_list = ["Nonsense_Mutation", "In_Frame_Del", "Frame_Shift_Ins", "Splice_Site", "In_Frame_Ins", "Frame_Shift_Del", "Missense_Mutation"]
 mutations_dict = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel"}
@@ -136,3 +137,7 @@ def sorting(ID: str) -> typing.Tuple[str, int, str]:
 def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
     ID = ID.split("/")[-1]
     return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)
+
+
+def get_color_by_type(ID: str) -> str:
+    return stage_color_code[get_long_sample_type(ID)]

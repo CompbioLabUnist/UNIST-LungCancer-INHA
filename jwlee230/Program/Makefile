@@ -749,9 +749,15 @@ Output/CIBERSORTx/SQC.%.violin.tar: Python/draw_violin_plot_cibersort.py Output/
 Output/CIBERSORTx/ADC.%.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/ADC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/CIBERSORTx/SQC.%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/SQC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/ADC.%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/ADC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
 step22-RSEM: Output/CIBERSORTx/SQC.Bowtie2.tsv Output/CIBERSORTx/ADC.Bowtie2.tsv Output/CIBERSORTx/SQC.STAR.tsv Output/CIBERSORTx/ADC.STAR.tsv
 step22-CIBERSORTx: Output/CIBERSORTx/GSE131907_signature.tsv Output/CIBERSORTx/SQC.Bowtie2/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/ADC.Bowtie2/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/SQC.STAR/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/ADC.STAR/CIBERSORTxGEP_NA_Weights.txt
-step22-plot: Output/CIBERSORTx/SQC.Bowtie2.heatmap.pdf Output/CIBERSORTx/ADC.Bowtie2.heatmap.pdf Output/CIBERSORTx/SQC.STAR.heatmap.pdf Output/CIBERSORTx/ADC.STAR.heatmap.pdf Output/CIBERSORTx/SQC.Bowtie2.violin.tar Output/CIBERSORTx/ADC.Bowtie2.violin.tar Output/CIBERSORTx/SQC.STAR.violin.tar Output/CIBERSORTx/ADC.STAR.violin.tar
+step22-plot: Output/CIBERSORTx/SQC.Bowtie2.heatmap.pdf Output/CIBERSORTx/ADC.Bowtie2.heatmap.pdf Output/CIBERSORTx/SQC.STAR.heatmap.pdf Output/CIBERSORTx/ADC.STAR.heatmap.pdf Output/CIBERSORTx/SQC.Bowtie2.violin.tar Output/CIBERSORTx/ADC.Bowtie2.violin.tar Output/CIBERSORTx/SQC.STAR.violin.tar Output/CIBERSORTx/ADC.STAR.violin.tar Output/CIBERSORTx/SQC.Bowtie2.cluster.pdf Output/CIBERSORTx/SQC.STAR.cluster.pdf Output/CIBERSORTx/ADC.Bowtie2.cluster.pdf Output/CIBERSORTx/ADC.STAR.cluster.pdf
 step22: step22-RSEM step22-CIBERSORTx step22-plot
 .PHONY: step22-RSEM step22-CIBERSORTx step22-plot step22
 

@@ -12,8 +12,7 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("count", help="Count TSV file", type=str)
-    parser.add_argument("cibersort", help="CIBERSORT result TSV file", type=str)
+    parser.add_argument("cibersort", help="CIBERSORT result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -22,22 +21,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.count.endswith(".tsv"):
-        raise ValueError("Count must end with .TSV!!")
-    elif not args.cibersort.endswith(".tsv"):
-        raise ValueError("CIBERSORT must end with .TSV!!")
-    elif not args.output.endswith(".pdf"):
+    if not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
-    count_data = pandas.read_csv(args.count, sep="\t", index_col="gene_name")
-    print(count_data)
-
-    cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Column")
-    cibersort_data["Patient_ID"] = list(count_data.columns)
-    cibersort_data.set_index("Patient_ID", inplace=True, verify_integrity=True)
-    cibersort_data.drop(columns=list(cibersort_data.columns)[-4:], inplace=True)
-    cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index), key=step00.sorting_by_type)).T
-    cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index)))
+    cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture").T
     print(cibersort_data)
 
     matplotlib.use("Agg")
@@ -45,6 +32,6 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     # seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="coolwarm")
-    g = seaborn.clustermap(data=cibersort_data, figsize=(cibersort_data.shape[1], cibersort_data.shape[0]), xticklabels=True, yticklabels=True, cbar=False, square=False, cmap="coolwarm")
+    g = seaborn.clustermap(data=cibersort_data, figsize=(cibersort_data.shape[1], cibersort_data.shape[0]), row_cluster=False, col_cluster=True, cbar_pos=None, col_colors=list(map(step00.get_color_by_type, cibersort_data.columns)), xticklabels=True, yticklabels=True, square=False, cmap="coolwarm")
 
     g.savefig(args.output)
