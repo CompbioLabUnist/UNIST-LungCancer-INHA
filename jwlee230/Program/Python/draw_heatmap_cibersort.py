@@ -25,9 +25,9 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
 
     cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
-    cibersort_data.drop(columns=list(cibersort_data.columns)[-4:], inplace=True)
+    print(cibersort_data)
     cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index), key=step00.sorting_by_type)).T
-    cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index)))
+    cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index), key=lambda x: sum(cibersort_data.loc[x, :]), reverse=True))
     print(cibersort_data)
 
     matplotlib.use("Agg")
