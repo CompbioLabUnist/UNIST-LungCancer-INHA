@@ -12,8 +12,7 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("count", help="Count TSV file", type=str)
-    parser.add_argument("cibersort", help="CIBERSORT result TSV file", type=str)
+    parser.add_argument("cibersort", help="CIBERSORT result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -22,19 +21,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.count.endswith(".tsv"):
-        raise ValueError("Count must end with .TSV!!")
-    elif not args.cibersort.endswith(".tsv"):
-        raise ValueError("CIBERSORT must end with .TSV!!")
-    elif not args.output.endswith(".pdf"):
+    if not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
-    count_data = pandas.read_csv(args.count, sep="\t", index_col="gene_name")
-    print(count_data)
-
-    cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Column")
-    cibersort_data["Patient_ID"] = list(count_data.columns)
-    cibersort_data.set_index("Patient_ID", inplace=True, verify_integrity=True)
+    cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
     cibersort_data.drop(columns=list(cibersort_data.columns)[-4:], inplace=True)
     cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index), key=step00.sorting_by_type)).T
     cibersort_data = cibersort_data.reindex(index=sorted(list(cibersort_data.index)))
