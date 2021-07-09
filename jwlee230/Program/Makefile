@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 5
+CPUS = 1
 MEMS = 100
-PARALLEL = 4
+PARALLEL = 100
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -12,6 +12,7 @@ PYTHON = python3 -B
 R = Rscript --vanilla
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
+PAIRED_PRIMARY = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")P$(shell echo $* | grep --perl-regexp --only-match "\d$$" > /dev/null && echo "1")
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
@@ -694,23 +695,27 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 Output/PyClone/BWA Output/PyClone/Bowtie2:
 	mkdir -p $@
 
-Output/PyClone/BWA/%.PASS.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
+Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/%.PASS.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+Output/PyClone/Bowtie2/%.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/BWA/%/cluster.tsv Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .PASS.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< $(sort $(wildcard Output/PyClone/BWA/$**.PASS.tsv)) $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+Output/PyClone/BWA/%/cluster.tsv Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/BWA/$*.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).tsv $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/Bowtie2/%/cluster.tsv Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .PASS.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< $(sort $(wildcard Output/PyClone/Bowtie2/$**.PASS.tsv)) $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+Output/PyClone/Bowtie2/%/cluster.tsv Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
-step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .PASS.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .PASS.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))
-step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(PATIENT_ID)))
-step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /cluster.tsv,$(PATIENT_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(PATIENT_ID)))
+Output/PyClone/BWA/%.cluster.pdf: Python/draw_cluster_pyclone.py Output/PyClone/BWA/%/cluster.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+
+step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /cluster.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /cluster.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
+step21-plot:
 step21: step21-preprocess step21-BWA step21-Bowtie2
 .PHONY: step21 step21-preprocess step21-BWA step21-Bowtie2
 
