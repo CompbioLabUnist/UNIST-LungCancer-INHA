@@ -32,6 +32,6 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     # seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="coolwarm")
-    g = seaborn.clustermap(data=cibersort_data, figsize=(cibersort_data.shape[1], cibersort_data.shape[0]), row_cluster=False, col_cluster=True, cbar_pos=None, col_colors=list(map(step00.get_color_by_type, cibersort_data.columns)), xticklabels=True, yticklabels=True, square=False, cmap="coolwarm")
+    g = seaborn.clustermap(data=cibersort_data, figsize=(cibersort_data.shape[1], cibersort_data.shape[0]), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(step00.get_color_by_type, cibersort_data.columns)), tree_kws={"linewidths": 2.0}, xticklabels=True, yticklabels=True, square=False, cmap="Reds")
 
     g.savefig(args.output)

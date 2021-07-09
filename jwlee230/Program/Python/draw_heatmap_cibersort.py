@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(cibersort_data.shape[1], cibersort_data.shape[0]))
 
-    seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="coolwarm")
+    seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="Reds")
 
     if args.ADC:
         matplotlib.pyplot.title("ADC")
