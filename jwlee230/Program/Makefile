@@ -21,7 +21,7 @@ JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
-MUTENRICHER = python3 /Tools/MutEnricher-1.3.1/mutEnricher.py
+MUTENRICHER = $(PYTHON) /Tools/MutEnricher-1.3.1/mutEnricher.py
 TMPFS = /tmpfs
 CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
@@ -434,7 +434,7 @@ step15: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .BWA.g.vcf.gz,$(WES_
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step 16 (MutEnricher)
-Output/MutEnricher Output/MutEnricher/BWA Output/MutEnricher/Bowtie2:
+Output/MutEnricher Output/MutEnricher/BWA Output/MutEnricher/BWA/ADC Output/MutEnricher/BWA/SQC Output/MutEnricher/Bowtie2 Output/MutEnricher/Bowtie2/ADC Output/MutEnricher/Bowtie2/SQC:
 	mkdir -p $@
 
 Output/MutEnricher/BWA/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
@@ -470,11 +470,11 @@ Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
 Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/BWA/%_gene_enrichments.txt Output/MutEnricher/BWA/%_hotspot.txt Output/MutEnricher/BWA/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%_gene_data.pkl Output/MutEnricher/BWA/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/BWA/%.tsv | build.log
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/BWA/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_hotspot.txt Output/MutEnricher/BWA/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_gene_data.pkl Output/MutEnricher/BWA/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/BWA/%.tsv | build.log Output/MutEnricher/BWA/%
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/Bowtie2/%_gene_enrichments.txt Output/MutEnricher/Bowtie2/%_hotspot.txt Output/MutEnricher/Bowtie2/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%_gene_data.pkl Output/MutEnricher/Bowtie2/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/Bowtie2/%.tsv | build.log
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_hotspot.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_data.pkl Output/MutEnricher/Bowtie2/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/Bowtie2/%.tsv | build.log Output/MutEnricher/Bowtie2/%
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -489,7 +489,7 @@ Output/Mutect2/Bowtie2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mu
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step16-preprocess: Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/gene_covariates.txt $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) Output/MutEnricher/BWA/SQC.tsv Output/MutEnricher/BWA/ADC.tsv $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) Output/MutEnricher/Bowtie2/SQC.tsv Output/MutEnricher/Bowtie2/ADC.tsv
-step16-MutEnricher: Output/MutEnricher/BWA/SQC.log Output/MutEnricher/BWA/ADC.log Output/MutEnricher/Bowtie2/ADC.log Output/MutEnricher/Bowtie2/SQC.log
+step16-MutEnricher: Output/MutEnricher/BWA/SQC/MutEnricher.log Output/MutEnricher/BWA/ADC/MutEnricher.log Output/MutEnricher/Bowtie2/ADC/MutEnricher.log Output/MutEnricher/Bowtie2/SQC/MutEnricher.log
 step16-plot: Output/Mutect2/BWA-SQC.pdf Output/Mutect2/BWA-ADC.pdf Output/Mutect2/Bowtie2-SQC.pdf Output/Mutect2/Bowtie2-ADC.pdf
 step16: step16-preprocess step16-MutEnricher
 .PHONY: step16-preprocess step16-MutEnricher step16-plot step16
@@ -800,7 +800,15 @@ Output/VAF/ADC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/
 step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar Output/VAF/ADC.Bowtie2.tar
 .PHONY: step23
 
-# Step ## (Revolver)
+# Step 24 (Revolver)
+Output/Revolver/BWA:
+	mkdir -p $@
+
+Output/Revolver/BWA/%.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/Witer/ADC.txt | build.log Output/Revolver/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
+step24: Output/Revolver/BWA/12C1.tsv
+.PHONY: step24
 
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
