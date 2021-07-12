@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     parser.add_argument("mutect", help="Mutect2 MAF file", type=str)
     parser.add_argument("sequenza", help="Sequenza tar.gz file", type=str)
-    parser.add_argument("output", help="Output TSV file", type=str)
+    parser.add_argument("output", help="Output basename file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -42,14 +42,19 @@ if __name__ == "__main__":
         raise ValueError("Mutect must end with .MAF!!")
     elif not args.sequenza.endswith(".tar.gz"):
         raise ValueError("Sequenza must end with .TAR.gz!!")
-    elif not args.output.endswith(".tsv"):
-        raise ValueError("Output must end with .TSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
     mutect_data = pandas.read_csv(args.mutect, sep="\t", comment="#", low_memory=False)
     mutect_data = mutect_data.loc[(mutect_data["Chromosome"] != "chrX") & (mutect_data["Chromosome"] != "chrY") & (mutect_data["Chromosome"] != "chrM")]
     print(mutect_data)
+
+    with tarfile.open(args.sequenza, "r:gz") as tar:
+        txt_file = list(filter(lambda x: x.endswith("_alternative_solutions.txt"), tar.getnames()))[0]
+        tar.extract(txt_file, path=step00.tmpfs)
+    solution_data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t")
+    with open(args.output + ".Cellularity.txt", "w") as f:
+        f.write("%s" % solution_data.loc[0, "cellularity"])
 
     with tarfile.open(args.sequenza, "r:gz") as tar:
         txt_file = list(filter(lambda x: x.endswith("_segments.txt"), tar.getnames()))[0]
@@ -67,4 +72,4 @@ if __name__ == "__main__":
     output_data["major_cn"] = output_data["normal_cn"] - output_data["minor_cn"]
 
     print(output_data)
-    output_data.to_csv(args.output, sep="\t", index=False)
+    output_data.to_csv(args.output + ".VAF.tsv", sep="\t", index=False)

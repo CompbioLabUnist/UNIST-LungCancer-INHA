@@ -695,27 +695,23 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 Output/PyClone/BWA Output/PyClone/Bowtie2:
 	mkdir -p $@
 
-Output/PyClone/BWA/%.tsv: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/PyClone/BWA/%.VAF.tsv Output/PyClone/BWA/%.Cellularity.txt: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) --cpus $(CPUS) 1> $(@D)/$*.preprocess.stdout 2> $(@D)/$*.preprocess.stderr
 
-Output/PyClone/Bowtie2/%.tsv: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/BWA/%/cluster.tsv Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/BWA/$*.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).tsv $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+Output/PyClone/Bowtie2/%.VAF.tsv Output/PyClone/Bowtie2/%.Cellularity.txt: Python/make_input_pyclone.py Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf Output/Sequenza/Bowtie2/%.tar.gz | Output/PyClone/Bowtie2 build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) --cpus $(CPUS) 1> $(@D)/$*.preprocess.stdout 2> $(@D)/$*.preprocess.stderr
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/Bowtie2/%/cluster.tsv Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+Output/PyClone/BWA/%/config.yaml: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/BWA/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/BWA/$*.VAF.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).VAF.tsv Output/PyClone/BWA/$*.Cellularity.txt Output/PyClone/BWA/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
-Output/PyClone/BWA/%.cluster.pdf: Python/draw_cluster_pyclone.py Output/PyClone/BWA/%/cluster.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/PyClone/Bowtie2/%/config.yaml: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.VAF.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).VAF.tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
-step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
-step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /cluster.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
-step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /cluster.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
-step21-plot:
+step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .VAF.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .VAF.tsv,$(WES_TUMOR_ID)))
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
 step21: step21-preprocess step21-BWA step21-Bowtie2
 .PHONY: step21 step21-preprocess step21-BWA step21-Bowtie2
 
@@ -785,6 +781,8 @@ Output/VAF/ADC.Bowtie2.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/
 step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar Output/VAF/ADC.Bowtie2.tar
 .PHONY: step23
 
+# Step ## (Revolver)
+
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
 # https://cran.r-project.org/web/packages/BisqueRNA/vignettes/bisque.html
@@ -808,4 +806,3 @@ Output/SCDC:
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (PureCN)
 # Step ## (Histogram of file size)
-# Step ## (Revolver)
