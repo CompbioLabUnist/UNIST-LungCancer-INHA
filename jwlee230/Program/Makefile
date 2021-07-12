@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
+CPUS = 9
 MEMS = 100
-PARALLEL = 100
+PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -161,7 +161,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step18 step19 step21 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -412,19 +412,7 @@ Output/Mutect2/BWA/%.BWA.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.P
 Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.Bowtie2.sam" --normal-id "$(PAIRED_NORMAL).Bowtie2.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Mutect2/Bowtie2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Mutect2/BWA-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) Output/Witer/ADC.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Mutect2/Bowtie2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(ADC_WES_SAMPLES))) Output/Witer/ADC.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/Mutect2/BWA-SQC.pdf Output/Mutect2/BWA-ADC.pdf $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/Mutect2/Bowtie2-SQC.pdf Output/Mutect2/Bowtie2-ADC.pdf
+step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID)))
 .PHONY: step14
 
 # Step 15 (HaplotypeCaller)
@@ -446,7 +434,7 @@ step15: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .BWA.g.vcf.gz,$(WES_
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step 16 (MutEnricher)
-Output/MutEnricher Output/MutEnricher/BWA:
+Output/MutEnricher Output/MutEnricher/BWA Output/MutEnricher/Bowtie2:
 	mkdir -p $@
 
 Output/MutEnricher/BWA/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
@@ -456,10 +444,23 @@ Output/MutEnricher/BWA/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log O
 Output/MutEnricher/BWA/%.vcf.gz.tbi: Output/MutEnricher/BWA/%.vcf.gz | build.log
 	$(DOCKER) tabix --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
+Output/MutEnricher/BWA/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
+Output/MutEnricher/BWA/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/Bowtie2/%.vcf.gz: Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log Output/MutEnricher/Bowtie2
+	$(DOCKER) bcftools view --output-type z --output $(addprefix /,$@) --threads $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) htsfile $(addprefix /,$@)
+
+Output/MutEnricher/Bowtie2/%.vcf.gz.tbi: Output/MutEnricher/Bowtie2/%.vcf.gz | build.log
+	$(DOCKER) tabix --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/Bowtie2/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/Bowtie2/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
@@ -469,11 +470,29 @@ Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
 Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/%_gene_enrichments.txt Output/MutEnricher/%_hotspot.txt Output/MutEnricher/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/%_gene_data.pkl Output/MutEnricher/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/%.tsv | build.log
+Output/MutEnricher/BWA/%_gene_enrichments.txt Output/MutEnricher/BWA/%_hotspot.txt Output/MutEnricher/BWA/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%_gene_data.pkl Output/MutEnricher/BWA/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/BWA/%.tsv | build.log
 	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
-step16: Output/MutEnricher/ADC.log Output/MutEnricher/SQC.log
-.PHONY: step16
+Output/MutEnricher/Bowtie2/%_gene_enrichments.txt Output/MutEnricher/Bowtie2/%_hotspot.txt Output/MutEnricher/Bowtie2/%_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%_gene_data.pkl Output/MutEnricher/Bowtie2/%.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/Bowtie2/%.tsv | build.log
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix $* --processors $(CPUS) --use-local --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/Bowtie2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/BWA-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(ADC_WES_SAMPLES))) Output/Witer/ADC.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/Bowtie2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(ADC_WES_SAMPLES))) Output/Witer/ADC.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step16-preprocess: Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/gene_covariates.txt $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) Output/MutEnricher/BWA/SQC.tsv Output/MutEnricher/BWA/ADC.tsv $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) Output/MutEnricher/Bowtie2/SQC.tsv Output/MutEnricher/Bowtie2/ADC.tsv
+step16-MutEnricher: Output/MutEnricher/BWA/SQC.log Output/MutEnricher/BWA/ADC.log Output/MutEnricher/Bowtie2/ADC.log Output/MutEnricher/Bowtie2/SQC.log
+step16-plot: Output/Mutect2/BWA-SQC.pdf Output/Mutect2/BWA-ADC.pdf Output/Mutect2/Bowtie2-SQC.pdf Output/Mutect2/Bowtie2-ADC.pdf
+step16: step16-preprocess step16-MutEnricher
+.PHONY: step16-preprocess step16-MutEnricher step16-plot step16
 
 # Step 17 (RSEM: Prepare reference genome)
 Output/RSEM:
