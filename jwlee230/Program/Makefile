@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 9
+CPUS = 1
 MEMS = 100
-PARALLEL = 4
+PARALLEL = 100
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -161,7 +161,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step17 step18 step19 step21 step22 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -721,16 +721,16 @@ Output/PyClone/Bowtie2/%.VAF.tsv Output/PyClone/Bowtie2/%.Cellularity.txt: Pytho
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)/$*) --cpus $(CPUS) 1> $(@D)/$*.preprocess.stdout 2> $(@D)/$*.preprocess.stderr
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/BWA/%/config.yaml: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/BWA/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/BWA/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/BWA/$*.VAF.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).VAF.tsv Output/PyClone/BWA/$*.Cellularity.txt Output/PyClone/BWA/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
-Output/PyClone/Bowtie2/%/config.yaml: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
+Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .VAF.tsv,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.VAF.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).VAF.tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
 step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .VAF.tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .VAF.tsv,$(WES_TUMOR_ID)))
-step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /config.yaml,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
-step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /config.yaml,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
+step21-BWA: $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
+step21-Bowtie2: $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
 step21: step21-preprocess step21-BWA step21-Bowtie2
 .PHONY: step21 step21-preprocess step21-BWA step21-Bowtie2
 
