@@ -163,7 +163,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23 step24
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -803,14 +803,24 @@ step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar
 .PHONY: step23
 
 # Step 24 (Revolver)
-Output/Revolver/BWA:
+Output/Revolver/BWA Output/Revolver/Bowtie2:
 	mkdir -p $@
 
-Output/Revolver/BWA/%.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/Witer/ADC.txt | build.log Output/Revolver/BWA
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/Revolver/BWA/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step24: Output/Revolver/BWA/12C1.tsv
-.PHONY: step24
+Output/Revolver/BWA/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Revolver/Bowtie2/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/Bowtie2/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Revolver/Bowtie2/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/Bowtie2/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step24-input: $(addprefix Output/Revolver/BWA/,$(addsuffix .SQC.tsv,$(SQC_WES_SAMPLES))) $(addprefix Output/Revolver/BWA/,$(addsuffix .ADC.tsv,$(ADC_WES_SAMPLES))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .SQC.tsv,$(SQC_WES_SAMPLES))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .ADC.tsv,$(ADC_WES_SAMPLES)))
+step24: step24-input
+.PHONY: step24-input step24
 
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
