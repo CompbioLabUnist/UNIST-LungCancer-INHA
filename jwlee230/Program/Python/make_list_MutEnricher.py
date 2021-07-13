@@ -1,5 +1,5 @@
 """
-make_list.py: Make VCF file list
+make_list_MutEnricher.py: Make VCF file list for MutEnricher input
 """
 import argparse
 import csv
