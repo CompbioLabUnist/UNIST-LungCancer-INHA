@@ -45,7 +45,7 @@ RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
-RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
+RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-104.3 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-104.3/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 # BCFtools
@@ -69,7 +69,7 @@ CMD cd /Tools && unzip CIBERSORT.zip
 
 # ANNOVAR
 ENV PATH=/Tools/annovar:$PATH
-RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb cytoBand hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar exac03 hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar avsnp147 hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar dbnsfp30a humandb/
+RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene hg38/
 
 VOLUME /Output
 VOLUME /Data
