@@ -67,6 +67,10 @@ ENV PATH=/Tools/spruce/build:$PATH
 # CIBERSORT
 CMD cd /Tools && unzip CIBERSORT.zip
 
+# ANNOVAR
+ENV PATH=/Tools/annovar:$PATH
+RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb cytoBand hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar exac03 hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar avsnp147 hg38/ && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar dbnsfp30a humandb/
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
