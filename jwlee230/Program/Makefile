@@ -2,9 +2,9 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 1
+CPUS = 10
 MEMS = 100
-PARALLEL = 100
+PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -35,10 +35,12 @@ REFERENCE_1000G_VCF = $(REFERENCE_DIR)/1000G_phase1.snps.high_confidence.hg38.vc
 REFERENCE_SIZE_TSV = $(REFERENCE_DIR)/hg38.chrom.sizes
 REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
+LIBRARY_BED_GZ = $(LIBRARY_BED).gz
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
 GENE_CENSUS_CSV = Data/cancer_gene_census.csv
 LUNG_SINGLECELL = Output/CIBERSORTx/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
+NONSILENT_TERMS = Data/nonsilent_terms.txt
 
 # Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -105,7 +107,7 @@ Docker/Tools/vcf2maf.tar.gz: | Docker/Tools
 TOOLS += Docker/Tools/vcf2maf.tar.gz
 
 Docker/Tools/VEP.zip: | Docker/Tools
-	wget "https://github.com/Ensembl/ensembl-vep/archive/release/103.zip" -O $@
+	wget "https://github.com/Ensembl/ensembl-vep/archive/refs/tags/release/104.3.zip" -O $@
 TOOLS += Docker/Tools/VEP.zip
 
 Docker/Tools/BigFile.tar.gz: | Docker/Tools
@@ -161,7 +163,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step17 step18 step19 step21 step22 step23
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -437,12 +439,14 @@ step15: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .BWA.g.vcf.gz,$(WES_
 Output/MutEnricher Output/MutEnricher/BWA Output/MutEnricher/BWA/ADC Output/MutEnricher/BWA/SQC Output/MutEnricher/Bowtie2 Output/MutEnricher/Bowtie2/ADC Output/MutEnricher/Bowtie2/SQC:
 	mkdir -p $@
 
-Output/MutEnricher/BWA/%.vcf.gz: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
-	$(DOCKER) bcftools view --output-type z --output $(addprefix /,$@) --threads $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
-	$(DOCKER) htsfile $(addprefix /,$@)
+Output/MutEnricher/BWA/%.hg38_multianno.vcf: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
+	$(DOCKER) table_annovar.pl $(addprefix /,$^) /Tools/annovar/hg38 --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/BWA/%.hg38_multianno.vcf | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
 
 Output/MutEnricher/BWA/%.vcf.gz.tbi: Output/MutEnricher/BWA/%.vcf.gz | build.log
-	$(DOCKER) tabix --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) tabix --preset "vcf" --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/BWA/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
@@ -450,12 +454,14 @@ Output/MutEnricher/BWA/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnrich
 Output/MutEnricher/BWA/ADC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/Bowtie2/%.vcf.gz: Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log Output/MutEnricher/Bowtie2
-	$(DOCKER) bcftools view --output-type z --output $(addprefix /,$@) --threads $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
-	$(DOCKER) htsfile $(addprefix /,$@)
+Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf: Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log Output/MutEnricher/BWA
+	$(DOCKER) table_annovar.pl $(addprefix /,$^) /Tools/annovar/hg38 --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/Bowtie2/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf | build.log Output/MutEnricher/Bowtie2
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%.vcf.gz.tbi: Output/MutEnricher/Bowtie2/%.vcf.gz | build.log
-	$(DOCKER) tabix --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) tabix --preset "vcf" --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/SQC.tsv: Python/make_list.py $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(SQC_WES_SAMPLES))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(SQC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
@@ -470,11 +476,14 @@ Output/MutEnricher/hg38.gtf.gz: | Output/MutEnricher
 Output/MutEnricher/gene_covariates.txt: Output/MutEnricher/hg38.gtf.gz $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
+Output/MutEnricher/region_covariates.txt: $(LIBRARY_BED) $(REFERENCE_FASTA) | build.log
+	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
+
 Output/MutEnricher/BWA/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_hotspot.txt Output/MutEnricher/BWA/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_gene_data.pkl Output/MutEnricher/BWA/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/BWA/%.tsv | build.log Output/MutEnricher/BWA/%
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_hotspot.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_data.pkl Output/MutEnricher/Bowtie2/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt Output/MutEnricher/hg38.gtf.gz Output/MutEnricher/Bowtie2/%.tsv | build.log Output/MutEnricher/Bowtie2/%
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/Witer/SQC.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
