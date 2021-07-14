@@ -473,10 +473,10 @@ Output/MutEnricher/gene_covariates.txt: $(KNOWN_GENE_GTF) $(REFERENCE_FASTA) | b
 	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/BWA/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_hotspot.txt Output/MutEnricher/BWA/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_gene_data.pkl Output/MutEnricher/BWA/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF) Output/MutEnricher/BWA/%.tsv | build.log Output/MutEnricher/BWA/%
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --exome-only --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_hotspot.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_data.pkl Output/MutEnricher/Bowtie2/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF) Output/MutEnricher/Bowtie2/%.tsv | build.log Output/MutEnricher/Bowtie2/%
-	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --bg-vars-type "silent" --anno-type "annovar-refGene" --exome-only --by-contig --use-local --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(SQC_WES_SAMPLES))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -807,7 +807,7 @@ Output/Revolver/BWA Output/Revolver/Bowtie2:
 	mkdir -p $@
 
 Output/Revolver/BWA/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
 Output/Revolver/BWA/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -818,7 +818,11 @@ Output/Revolver/Bowtie2/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/
 Output/Revolver/Bowtie2/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/Bowtie2/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step24-input: $(addprefix Output/Revolver/BWA/,$(addsuffix .SQC.tsv,$(SQC_WES_SAMPLES))) $(addprefix Output/Revolver/BWA/,$(addsuffix .ADC.tsv,$(ADC_WES_SAMPLES))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .SQC.tsv,$(SQC_WES_SAMPLES))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .ADC.tsv,$(ADC_WES_SAMPLES)))
+Output/Revolver/BWA/%.pdf: R/run_revolver.R Output/Revolver/BWA/%.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^))
+
+step24-input: $(addprefix Output/Revolver/BWA/,$(addsuffix .SQC.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/Revolver/BWA/,$(addsuffix .ADC.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .SQC.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .ADC.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES)))))
+step24-revolver: Output/Revolver/BWA/12C1.SQC.pdf
 step24: step24-input
 .PHONY: step24-input step24
 

@@ -96,6 +96,7 @@ def get_patient(ID: str) -> str:
     """
     get_patient: get patient ID from sample ID
     """
+    ID = ID.split("/")[-1]
     return re.findall(r"(^(cn)?\d+)", ID)[0][0]
 
 
@@ -114,27 +115,42 @@ def get_sample_type(ID: str) -> str:
 
 
 def get_long_sample_type(ID: str) -> str:
+    """
+    get_long_sample_type: get the full type of sample from sample ID
+    """
     return long_sample_type_dict[get_sample_type(ID)]
 
 
 def get_simple_sample_type(ID: str) -> str:
+    """
+    get_simple_sample_type: similar to get_sample_type, but only pre-cancer
+    """
     t = get_long_sample_type(ID)
     if t in ["Normal", "Primary"]:
         return t
     else:
-        return "Precursor"
+        return "Precancer"
 
 
 def list_first_last(li: typing.List[typing.Any], el: typing.Any) -> typing.Tuple[int, int]:
+    """
+    list_first_last: get the first and last one which specified
+    """
     return li.index(el), max(loc for loc, val in enumerate(li) if val == el)
 
 
 def sorting(ID: str) -> typing.Tuple[str, int, str]:
+    """
+    sorting: sorting key by patient-type
+    """
     ID = ID.split("/")[-1]
     return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
 
 
 def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
+    """
+    sorting_by_type: sorting key by type-sample
+    """
     ID = ID.split("/")[-1]
     return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)
 
