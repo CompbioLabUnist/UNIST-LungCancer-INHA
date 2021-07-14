@@ -806,23 +806,23 @@ step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar
 Output/Revolver/BWA Output/Revolver/Bowtie2:
 	mkdir -p $@
 
-Output/Revolver/BWA/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
+Output/Revolver/BWA/SQC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-Output/Revolver/BWA/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/BWA/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
+Output/Revolver/BWA/ADC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Revolver/Bowtie2/%.SQC.tsv: Python/make_input_revolver.py Output/PyClone/Bowtie2/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
+Output/Revolver/Bowtie2/SQC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Revolver/Bowtie2/%.ADC.tsv: Python/make_input_revolver.py Output/PyClone/Bowtie2/%/loci.tsv $(GENCODE_GTF) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
+Output/Revolver/Bowtie2/ADC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Revolver/BWA/%.pdf: R/run_revolver.R Output/Revolver/BWA/%.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^))
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --cluster $(addprefix /,$(@D)/$*.cluster.pdf) --driver $(addprefix /,$(@D)/$*.driver.pdf) --dendrogram $(addprefix /,$(@D)/$*.dendrogram.pdf) --det $(addprefix /,$(@D)/$*.det.pdf) --clonality $(addprefix /,$(@D)/$*.clonality.pdf)
 
-step24-input: $(addprefix Output/Revolver/BWA/,$(addsuffix .SQC.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/Revolver/BWA/,$(addsuffix .ADC.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .SQC.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/Revolver/Bowtie2/,$(addsuffix .ADC.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES)))))
-step24-revolver: Output/Revolver/BWA/12C1.SQC.pdf
+step24-input: Output/Revolver/BWA/SQC.tsv Output/Revolver/BWA/ADC.tsv Output/Revolver/Bowtie2/SQC.tsv Output/Revolver/Bowtie2/ADC.tsv
+step24-revolver: Output/Revolver/BWA/SQC.pdf
 step24: step24-input
 .PHONY: step24-input step24
 
