@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer="jwlee230@unist.ac.kr"
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7
 
 # TOOL directory
 RUN mkdir /Tools
@@ -41,7 +41,7 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC', 'caravagnalab/revolver'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))"
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
