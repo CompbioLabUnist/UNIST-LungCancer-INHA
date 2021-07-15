@@ -505,7 +505,7 @@ Output/RSEM/hg38.gtf.gz: | Output/RSEM
 	touch $@
 
 Output/RSEM/hg38.gtf: Output/RSEM/hg38.gtf.gz | build.log
-	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<)
+	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/hg38.seq Output/RSEM/hg38.grp: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
 	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) /$(@D)/"hg38" 1> $@.stdout 2> $@.stderr
@@ -806,8 +806,8 @@ step23: Output/VAF/SQC.BWA.tar Output/VAF/ADC.BWA.tar Output/VAF/SQC.Bowtie2.tar
 Output/Revolver/BWA Output/Revolver/Bowtie2:
 	mkdir -p $@
 
-Output/Revolver/BWA/SQC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/Revolver/BWA/SQC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/Revolver/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Revolver/BWA/ADC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/BWA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -818,13 +818,16 @@ Output/Revolver/Bowtie2/SQC.tsv: Python/make_input_revolver.py $(addprefix Outpu
 Output/Revolver/Bowtie2/ADC.tsv: Python/make_input_revolver.py $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | build.log Output/Revolver/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Revolver/BWA/%.pdf: R/run_revolver.R Output/Revolver/BWA/%.tsv | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --cluster $(addprefix /,$(@D)/$*.cluster.pdf) --driver $(addprefix /,$(@D)/$*.driver.pdf) --dendrogram $(addprefix /,$(@D)/$*.dendrogram.pdf) --det $(addprefix /,$(@D)/$*.det.pdf) --clonality $(addprefix /,$(@D)/$*.clonality.pdf)
+Output/Revolver/BWA/%.cluster.pdf Output/Revolver/BWA/%.driver.pdf Output/Revolver/BWA/%.dendrogram.pdf Output/Revolver/BWA/%.det.pdf Output/Revolver/BWA/%.clonality.pdf: R/run_revolver.R Output/Revolver/BWA/%.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --cluster $(addprefix /,$(@D)/$*.cluster.pdf) --driver $(addprefix /,$(@D)/$*.driver.pdf) --dendrogram $(addprefix /,$(@D)/$*.dendrogram.pdf) --det $(addprefix /,$(@D)/$*.det.pdf) --clonality $(addprefix /,$(@D)/$*.clonality.pdf) 1> $@.stdout 2> $@.stderr
+
+Output/Revolver/Bowtie2/%.cluster.pdf Output/Revolver/Bowtie2/%.driver.pdf Output/Revolver/Bowtie2/%.dendrogram.pdf Output/Revolver/Bowtie2/%.det.pdf Output/Revolver/Bowtie2/%.clonality.pdf: R/run_revolver.R Output/Revolver/Bowtie2/%.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --cluster $(addprefix /,$(@D)/$*.cluster.pdf) --driver $(addprefix /,$(@D)/$*.driver.pdf) --dendrogram $(addprefix /,$(@D)/$*.dendrogram.pdf) --det $(addprefix /,$(@D)/$*.det.pdf) --clonality $(addprefix /,$(@D)/$*.clonality.pdf) 1> $@.stdout 2> $@.stderr
 
 step24-input: Output/Revolver/BWA/SQC.tsv Output/Revolver/BWA/ADC.tsv Output/Revolver/Bowtie2/SQC.tsv Output/Revolver/Bowtie2/ADC.tsv
-step24-revolver: Output/Revolver/BWA/SQC.pdf
-step24: step24-input
-.PHONY: step24-input step24
+step24-revolver: Output/Revolver/BWA/SQC.cluster.pdf Output/Revolver/BWA/ADC.cluster.pdf Output/Revolver/Bowtie2/SQC.cluster.pdf Output/Revolver/Bowtie2/ADC.cluster.pdf
+step24: step24-input step24-revolver
+.PHONY: step24-input step24-revolver step24
 
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5

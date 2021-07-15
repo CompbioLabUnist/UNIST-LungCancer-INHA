@@ -30,20 +30,20 @@ main <- function(input_file, cluster_file, driver_file, dendrogram_file, det_fil
 
     revolver_input_data <- revolver_cluster(revolver_input_data, split.method="cutreeHybrid", min.group.size=3)
 
-    plot_clusters(revolver_input_data, cutoff_trajectories=1, cutoff_drivers=0)
-    ggsave(filename=cluster_file, device="pdf")
+    plot_clusters(revolver_input_data, cutoff_trajectories=1, cutoff_drivers=0, arrow.symbol=" >> ")
+    ggsave(filename=cluster_file, device="pdf", width=9, height=20, units="in")
 
     plot_drivers_graph(revolver_input_data)
-    ggsave(filename=driver_file, device="pdf")
+    ggsave(filename=driver_file, device="pdf", width=9, height=9, units="in")
 
     plot_dendrogram(revolver_input_data)
     ggsave(filename=dendrogram_file, device="pdf")
 
     plot_DET_index(revolver_input_data)
-    ggsave(filename=det_file, device="pdf")
+    ggsave(filename=det_file, device="pdf", width=9, height=16, units="in")
 
     plot_drivers_clonality(revolver_input_data)
-    ggsave(filename=clonality_file, device="pdf")
+    ggsave(filename=clonality_file, device="pdf", width=9, height=16, units="in")
 }
 
 if (length(opt) == 7)

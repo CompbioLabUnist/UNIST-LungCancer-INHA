@@ -47,11 +47,16 @@ def get_CCF(sample_id: str, Gene: str) -> str:
     return "R1:{0:f};R2:{1:f}".format(numpy.mean(CCF_dict[sample_id][Gene][0]), numpy.mean(CCF_dict[sample_id][Gene][1]))
 
 
+def get_misc(sample_id: str, Gene: str) -> str:
+    return "/".join(list(input_data.loc[(input_data["sample_id"] == sample_id) & (input_data["Gene"] == Gene), "mutation_id"].to_numpy()))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input loci.TSV files", type=str, nargs="+")
     parser.add_argument("driver", help="Driver gene TSV file (not necessarily TSV)", type=str)
+    parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
@@ -60,6 +65,8 @@ if __name__ == "__main__":
 
     if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
         raise ValueError("INPUT must end with .TSV!!")
+    elif not args.census.endswith(".csv"):
+        raise ValueError("Census must end with .CSV!!")
     elif not args.output.endswith(".tsv"):
         raise ValueError("Output must end with .TSV!!")
     elif args.cpus < 1:
@@ -81,7 +88,13 @@ if __name__ == "__main__":
     driver_data["end"] = list(map(lambda x: int(x.replace("-", ":").split(":")[2]), driver_data["coordinates"]))
     print(list(driver_data.columns))
     print(driver_data)
+
     gene_symbol_set = set(driver_data["Gene"])
+    print("Gene set:", len(gene_symbol_set))
+
+    census_data = pandas.read_csv(args.census)
+    gene_symbol_set &= set(census_data["Gene Symbol"])
+    print("Gene set:", len(gene_symbol_set))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data["Gene"] = pool.starmap(change_position_Gene, input_data[["seqname", "start", "end"]].to_numpy())
@@ -114,7 +127,8 @@ if __name__ == "__main__":
         output_data["CCF"] = pool.starmap(get_CCF, input_data[["sample_id", "Gene"]].to_numpy())
     output_data["is.clonal"] = "TRUE"
     output_data["is.driver"] = list(map(lambda x: "TRUE" if x else "FALSE", input_data["is.driver"]))
-    output_data["Misc"] = input_data["mutation_id"]
+    with multiprocessing.Pool(args.cpus) as pool:
+        output_data["Misc"] = pool.starmap(get_misc, input_data[["sample_id", "Gene"]].to_numpy())
     output_data["cluster"] = list(map(lambda x: "cluster{0:d}".format(x), input_data["cluster_id"]))
     output_data = output_data.loc[(input_data["sample_type"] != "Primary")]
     output_data.drop_duplicates(subset=["patientID", "variantID", "CCF"], inplace=True, ignore_index=True)
