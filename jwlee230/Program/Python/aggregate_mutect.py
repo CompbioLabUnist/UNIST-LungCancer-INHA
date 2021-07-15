@@ -19,21 +19,27 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("mutenricher", help="MutEnricher Fisher enrichment output", type=str)
+    parser.add_argument("driver", help="MutEnricher Fisher enrichment output", type=str)
+    parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--gene", help="Gene number to draw", type=int, default=50)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
         raise ValueError("INPUT must end with .MAF!!")
+    elif not args.census.endswith(".csv"):
+        raise ValueError("Census must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif args.gene < 1:
         raise ValueError("GENE must be positive!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-values must be (0, 1)")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -50,12 +56,17 @@ if __name__ == "__main__":
     print(mutect_data)
 
     counter: collections.Counter = collections.Counter(mutect_data["Hugo_Symbol"])
-    mutation_data = pandas.read_csv(args.mutenricher, sep="\t")
-    mutation_data = mutation_data.loc[(mutation_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (mutation_data["Fisher_pval"] < 0.05)].sort_values(by="Fisher_pval", ignore_index=True)
-    mutation_data["Count"] = list(map(lambda x: counter[x], mutation_data["Gene"]))
-    mutation_data["-log10(P)"] = -1 * numpy.log10(mutation_data["Fisher_pval"])
-    print(mutation_data)
-    mutation_data = mutation_data.iloc[:args.gene].iloc[::-1]
+
+    census_data = pandas.read_csv(args.census)
+    print(census_data)
+
+    driver_data = pandas.read_csv(args.driver, sep="\t")
+    print(driver_data)
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"])) & (driver_data["Fisher_pval"] < args.p)].sort_values(by="Fisher_pval", ignore_index=True)
+    driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
+    driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
+    print(driver_data)
+    driver_data = driver_data.iloc[:args.gene].iloc[::-1]
 
     patient_data = pandas.DataFrame()
     patient_data["Tumor_Sample_Barcode"] = my_comut.samples
@@ -67,10 +78,10 @@ if __name__ == "__main__":
 
     my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Same patient")
     my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Collection type", value_order=step00.long_sample_type_list)
-    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=mutation_data["Gene"], mapping=step00.mutation_mapping, priority=["Frameshift indel"])
+    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=driver_data["Gene"], mapping=step00.mutation_mapping, priority=["Frameshift indel"])
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
-    my_comut.add_side_bar_data(mutation_data[["Gene", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
+    my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.2, mutation_data.shape[0]))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.2, driver_data.shape[0]))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output)
