@@ -4,23 +4,26 @@ make_input_revolver.py: make input file for revolver
 import argparse
 import multiprocessing
 import typing
+import numpy
 import pandas
 import step00
 
 input_data = pandas.DataFrame()
 driver_data = pandas.DataFrame()
 gene_symbol_set = set()
+CCF_dict: typing.Any = dict()
 
 
 def read_tsv(filename: str) -> pandas.DataFrame:
     try:
         input_data = pandas.read_csv(filename, sep="\t", usecols=["mutation_id", "sample_id", "cluster_id", "cellular_prevalence"])
     except pandas.errors.EmptyDataError:
-        return pandas.DataFrame(columns=["mutation_id", "sample_id", "cluster_id", "cellular_prevalence", "seqname", "start", "end"])
+        return pandas.DataFrame(columns=["mutation_id", "sample_id", "cluster_id", "cellular_prevalence", "seqname", "start", "end", "compared"])
 
     input_data["seqname"] = list(map(lambda x: x.split(":")[0], input_data["mutation_id"]))
     input_data["start"] = list(map(lambda x: int(x.split(":")[1]), input_data["mutation_id"]))
     input_data["end"] = list(map(lambda x: int(x.split(":")[2]), input_data["mutation_id"]))
+    input_data["compared"] = filename.split("/")[-2]
 
     return input_data
 
@@ -37,16 +40,11 @@ def is_driver(symbol: str) -> bool:
     return symbol in gene_symbol_set
 
 
-def get_CCF(mutation_id: str, Gene: str) -> str:
-    data = input_data.loc[(input_data["mutation_id"] == mutation_id) & (input_data["Gene"] == Gene), "cellular_prevalence"]
-    answer = ""
-    for i, d in enumerate(data.to_numpy()):
-        answer += "R{0:d}:{1:f};".format(i + 1, d)
-
-    if answer.endswith(";"):
-        answer = answer[:-1]
-
-    return answer
+def get_CCF(sample_id: str, Gene: str) -> str:
+    if step00.get_long_sample_type(sample_id) == "Primary":
+        return ""
+    assert CCF_dict[sample_id][Gene][0] and CCF_dict[sample_id][Gene][1]
+    return "R1:{0:f};R2:{1:f}".format(numpy.mean(CCF_dict[sample_id][Gene][0]), numpy.mean(CCF_dict[sample_id][Gene][1]))
 
 
 if __name__ == "__main__":
@@ -71,6 +69,9 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(read_tsv, args.input), axis="index", copy=False)
+        input_data["sample_type"] = pool.map(step00.get_long_sample_type, input_data["sample_id"])
+    input_data["sample_id"] = list(map(lambda x: x.split(".")[0], input_data["sample_id"]))
+    print(list(input_data.columns))
     print(input_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
@@ -88,16 +89,35 @@ if __name__ == "__main__":
         input_data["is.driver"] = pool.map(is_driver, input_data["Gene"])
     print(input_data)
 
+    for index, row in input_data.iterrows():
+        sample_id, Gene, sample_type = row["sample_id"], row["Gene"], row["sample_type"]
+
+        if sample_type == "Primary":
+            continue
+
+        if sample_id not in CCF_dict:
+            CCF_dict[sample_id] = dict()
+
+        if Gene not in CCF_dict[sample_id]:
+            CCF_dict[sample_id][Gene] = [[], []]
+
+        CCF_dict[sample_id][Gene][0].append(row["cellular_prevalence"])
+
+        tmp_data = list(input_data.loc[(input_data["sample_id"] == step00.get_paired_primary(sample_id)) & (input_data["compared"] == sample_id) & (input_data["Gene"] == Gene) & (input_data["mutation_id"] == row["mutation_id"]), "cellular_prevalence"].to_numpy())
+        assert len(tmp_data) == 1
+        CCF_dict[sample_id][Gene][1] += tmp_data
+
     output_data = pandas.DataFrame()
-    output_data["patientID"] = list(map(step00.get_patient, input_data["sample_id"]))
+    output_data["patientID"] = input_data["sample_id"]
     output_data["variantID"] = list(map(lambda x: x[1] if x[0] == "" else x[0], input_data[["Gene", "mutation_id"]].to_numpy()))
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data["CCF"] = pool.starmap(get_CCF, input_data[["mutation_id", "Gene"]].to_numpy())
+        output_data["CCF"] = pool.starmap(get_CCF, input_data[["sample_id", "Gene"]].to_numpy())
     output_data["is.clonal"] = "TRUE"
     output_data["is.driver"] = list(map(lambda x: "TRUE" if x else "FALSE", input_data["is.driver"]))
     output_data["Misc"] = input_data["mutation_id"]
     output_data["cluster"] = list(map(lambda x: "cluster{0:d}".format(x), input_data["cluster_id"]))
-    output_data.drop_duplicates(inplace=True, ignore_index=True)
+    output_data = output_data.loc[(input_data["sample_type"] != "Primary")]
+    output_data.drop_duplicates(subset=["patientID", "variantID", "CCF"], inplace=True, ignore_index=True)
 
     print(output_data)
     output_data.to_csv(args.output, sep="\t", index=False)

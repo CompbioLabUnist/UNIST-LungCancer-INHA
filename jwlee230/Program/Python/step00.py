@@ -92,12 +92,15 @@ def read_pickle(path: str) -> typing.Any:
     return pickle.loads(pkl)
 
 
+def get_id(ID: str) -> str:
+    return ID.split("/")[-1].split(".")[0]
+
+
 def get_patient(ID: str) -> str:
     """
     get_patient: get patient ID from sample ID
     """
-    ID = ID.split("/")[-1]
-    return re.findall(r"(^(cn)?\d+)", ID)[0][0]
+    return re.findall(r"(^(cn)?\d+)", get_id(ID))[0][0]
 
 
 def get_paired_normal(ID: str) -> str:
@@ -107,11 +110,19 @@ def get_paired_normal(ID: str) -> str:
     return get_patient(ID) + "N"
 
 
+def get_paired_primary(ID: str) -> str:
+    ID = get_id(ID)
+    if ID[-1].isalpha():
+        return ID[:-1] + "P"
+    else:
+        return ID[:-2] + "P1"
+
+
 def get_sample_type(ID: str) -> str:
     """
     get_sample_type: get the type of sample from sample ID
     """
-    return re.findall(r"[A-Z]", ID)[0][0]
+    return re.findall(r"[A-Z]", get_id(ID))[0][0]
 
 
 def get_long_sample_type(ID: str) -> str:
@@ -143,7 +154,7 @@ def sorting(ID: str) -> typing.Tuple[str, int, str]:
     """
     sorting: sorting key by patient-type
     """
-    ID = ID.split("/")[-1]
+    ID = get_id(ID)
     return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
 
 
@@ -151,7 +162,7 @@ def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
     """
     sorting_by_type: sorting key by type-sample
     """
-    ID = ID.split("/")[-1]
+    ID = get_id(ID)
     return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)
 
 
