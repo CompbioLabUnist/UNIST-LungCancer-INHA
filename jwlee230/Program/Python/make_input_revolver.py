@@ -40,9 +40,11 @@ def is_driver(symbol: str) -> bool:
     return symbol in gene_symbol_set
 
 
-def get_CCF(sample_id: str, Gene: str) -> str:
+def get_CCF(sample_id: str, Gene: str, mutation_id: str) -> str:
     if step00.get_long_sample_type(sample_id) == "Primary":
         return ""
+    if Gene == "":
+        Gene = mutation_id
     assert CCF_dict[sample_id][Gene][0] and CCF_dict[sample_id][Gene][1]
     return "R1:{0:f};R2:{1:f}".format(numpy.mean(CCF_dict[sample_id][Gene][0]), numpy.mean(CCF_dict[sample_id][Gene][1]))
 
@@ -74,6 +76,8 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P must be (0, 1)")
 
+    print("Input:", len(args.input))
+
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(read_tsv, args.input), axis="index", copy=False)
         input_data["sample_type"] = pool.map(step00.get_long_sample_type, input_data["sample_id"])
@@ -94,7 +98,7 @@ if __name__ == "__main__":
 
     census_data = pandas.read_csv(args.census)
     gene_symbol_set &= set(census_data["Gene Symbol"])
-    print("Gene set:", len(gene_symbol_set))
+    print("Gene set (with census):", len(gene_symbol_set))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data["Gene"] = pool.starmap(change_position_Gene, input_data[["seqname", "start", "end"]].to_numpy())
@@ -108,6 +112,9 @@ if __name__ == "__main__":
         if sample_type == "Primary":
             continue
 
+        if Gene == "":
+            Gene = row["mutation_id"]
+
         if sample_id not in CCF_dict:
             CCF_dict[sample_id] = dict()
 
@@ -116,7 +123,7 @@ if __name__ == "__main__":
 
         CCF_dict[sample_id][Gene][0].append(row["cellular_prevalence"])
 
-        tmp_data = list(input_data.loc[(input_data["sample_id"] == step00.get_paired_primary(sample_id)) & (input_data["compared"] == sample_id) & (input_data["Gene"] == Gene) & (input_data["mutation_id"] == row["mutation_id"]), "cellular_prevalence"].to_numpy())
+        tmp_data = list(input_data.loc[(input_data["sample_id"] == step00.get_paired_primary(sample_id)) & (input_data["compared"] == sample_id) & (input_data["Gene"] == row["Gene"]) & (input_data["mutation_id"] == row["mutation_id"]), "cellular_prevalence"].to_numpy())
         assert len(tmp_data) == 1
         CCF_dict[sample_id][Gene][1] += tmp_data
 
@@ -124,7 +131,7 @@ if __name__ == "__main__":
     output_data["patientID"] = input_data["sample_id"]
     output_data["variantID"] = list(map(lambda x: x[1] if x[0] == "" else x[0], input_data[["Gene", "mutation_id"]].to_numpy()))
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data["CCF"] = pool.starmap(get_CCF, input_data[["sample_id", "Gene"]].to_numpy())
+        output_data["CCF"] = pool.starmap(get_CCF, input_data[["sample_id", "Gene", "mutation_id"]].to_numpy())
     output_data["is.clonal"] = "TRUE"
     output_data["is.driver"] = list(map(lambda x: "TRUE" if x else "FALSE", input_data["is.driver"]))
     with multiprocessing.Pool(args.cpus) as pool:

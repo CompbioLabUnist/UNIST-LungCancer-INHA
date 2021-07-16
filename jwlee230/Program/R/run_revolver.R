@@ -18,7 +18,7 @@ main <- function(input_file, cluster_file, driver_file, dendrogram_file, det_fil
 
     input_data <- read.table(file=input_file, sep="\t", header=TRUE, as.is=TRUE)
 
-    revolver_input_data <- revolver_cohort(dataset=input_data, ONLY.DRIVER=TRUE, MIN.CLUSTER.SIZE=0)
+    revolver_input_data <- revolver_cohort(dataset=input_data, ONLY.DRIVER=FALSE, MIN.CLUSTER.SIZE=0)
     revolver_check_cohort(revolver_input_data)
 
     non_recurrent <-  Stats_drivers(revolver_input_data) %>% filter(N_tot == 1) %>% pull(variantID)
@@ -28,7 +28,7 @@ main <- function(input_file, cluster_file, driver_file, dendrogram_file, det_fil
 
     revolver_input_data <- revolver_fit(revolver_input_data, parallel=FALSE, initial.solution=NA)
 
-    revolver_input_data <- revolver_cluster(revolver_input_data, split.method="cutreeHybrid", min.group.size=3)
+    revolver_input_data <- revolver_cluster(revolver_input_data, min.group.size=1)
 
     plot_clusters(revolver_input_data, cutoff_trajectories=1, cutoff_drivers=0, arrow.symbol=" >> ")
     ggsave(filename=cluster_file, device="pdf", width=9, height=20, units="in")
