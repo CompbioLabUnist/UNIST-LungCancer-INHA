@@ -12,7 +12,7 @@ if (($# > 1)); then
 
     /root/anaconda2/envs/pyclone/bin/PyClone run_analysis_pipeline --in_files $1 $2 --tumour_contents $(cat $3) $(cat $4) --working_dir $last --init_method connected --seed 42
 
-    ln $last/tables/loci.tsv $last/loci.tsv
+    ln -f $last/tables/loci.tsv $last/loci.tsv
 else
     echo "Usage: <SH file> <input file(s)> <working directory>"
 fi
