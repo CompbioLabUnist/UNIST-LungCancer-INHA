@@ -769,7 +769,7 @@ Output/CIBERSORTx/SQC.%.violin.tar: Python/draw_violin_plot_cibersort.py Output/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/ADC.%.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/ADC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/SQC.%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/SQC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
