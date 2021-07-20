@@ -58,13 +58,18 @@ if __name__ == "__main__":
     counter: collections.Counter = collections.Counter(mutect_data["Hugo_Symbol"])
 
     census_data = pandas.read_csv(args.census)
+    census_gene = set(census_data["Gene Symbol"])
     print(census_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
     print(driver_data)
-    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"])) & (driver_data["Fisher_pval"] < args.p)].sort_values(by="Fisher_pval", ignore_index=True)
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"]))]
+    for column in step00.p_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+    driver_data.sort_values(by="Fisher_pval", ignore_index=True, inplace=True)
     driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
+    driver_data["Gene"] = list(map(lambda x: x + "*" if x in census_gene else x, driver_data["Gene"]))
     print(driver_data)
     driver_data = driver_data.iloc[:args.gene].iloc[::-1]
 

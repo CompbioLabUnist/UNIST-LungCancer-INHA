@@ -32,6 +32,8 @@ mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel
 bar_columns = ["category", "value"]
 bar_mapping = {"value": "tab:olive"}
 
+p_columns = {"gene_pval", "Fisher_pval", "Fisher_FDR"}
+
 
 def file_list(path: str) -> typing.List[str]:
     """
@@ -167,4 +169,7 @@ def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
 
 
 def get_color_by_type(ID: str) -> str:
+    """
+    get_color_by_type: get color by type
+    """
     return stage_color_code[get_long_sample_type(ID)]
