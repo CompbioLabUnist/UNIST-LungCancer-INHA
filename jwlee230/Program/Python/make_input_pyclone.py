@@ -72,4 +72,4 @@ if __name__ == "__main__":
     output_data["major_cn"] = output_data["normal_cn"] - output_data["minor_cn"]
 
     print(output_data)
-    output_data.to_csv(args.output + ".VAF.tsv", sep="\t", index=False)
+    output_data.to_csv(args.output + ".tsv", sep="\t", index=False)
