@@ -163,7 +163,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23 step24
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21# step22 step23 step24
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -757,7 +757,7 @@ Output/PyClone/Bowtie2/Plots/%.SQC.VAF.pdf: Python/draw_output_pyclone.py Output
 step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
 step21-pyclone: $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES) $(ADC_WES_SAMPLES)))))
 step21-plot: $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .ADC.CCF.pdf,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .SQC.CCF.pdf,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .ADC.VAF.pdf,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .SQC.VAF.pdf,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .ADC.CCF.pdf,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .SQC.CCF.pdf,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .ADC.VAF.pdf,$(filter-out %P,$(filter-out %P1,$(ADC_WES_SAMPLES))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .SQC.VAF.pdf,$(filter-out %P,$(filter-out %P1,$(SQC_WES_SAMPLES)))))
-step21: step21-preprocess step21-pyclone
+step21: step21-preprocess step21-pyclone step21-plot
 .PHONY: step21-preprocess step21-pyclone step21-plot step21
 
 # Step 22 (Run CIBERSORTx)

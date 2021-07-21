@@ -103,7 +103,7 @@ if __name__ == "__main__":
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="cluster_id", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Cancer Cell Fraction")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] == "None":
+            if row["Database"] != "Driver+Census":
                 continue
             texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", style="cluster_id", hue="Database", legend="brief", ax=ax)
         matplotlib.pyplot.ylabel("Variant Allele Frequency")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] == "None":
+            if row["Database"] != "Driver+Census":
                 continue
             texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     else:
