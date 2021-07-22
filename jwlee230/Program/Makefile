@@ -889,6 +889,9 @@ Output/MuSiC:
 Output/SCDC:
 	mkdir -p $@
 
+# Step ## (Arriba)
+# Step ## (Fusioncatcher)
+# Step ## (STAR-fusion)
 # Step ## (MesKit)
 # Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
