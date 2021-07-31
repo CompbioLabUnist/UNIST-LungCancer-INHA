@@ -109,7 +109,7 @@ Docker/Tools/vcf2maf.tar.gz: | Docker/Tools
 TOOLS += Docker/Tools/vcf2maf.tar.gz
 
 Docker/Tools/VEP.zip: | Docker/Tools
-	wget "https://github.com/Ensembl/ensembl-vep/archive/refs/tags/release/104.3.zip" -O $@
+	wget "https://github.com/Ensembl/ensembl-vep/archive/refs/tags/release/103.zip" -O $@
 TOOLS += Docker/Tools/VEP.zip
 
 Docker/Tools/BigFile.tar.gz: | Docker/Tools
