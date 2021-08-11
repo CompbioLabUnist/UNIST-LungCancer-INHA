@@ -2,7 +2,7 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 4
+CPUS = 5
 MEMS = 100
 PARALLEL = 20
 PWD := $(shell pwd)
@@ -135,6 +135,10 @@ TOOLS += Docker/Tools/Lemon.tar.gz
 Docker/Tools/Miniconda.sh: | Docker/Tools
 	wget "https://repo.anaconda.com/archive/Anaconda2-2019.10-Linux-x86_64.sh" -O $@
 TOOLS += Docker/Tools/Miniconda.sh
+
+Docker/Tools/arriba.tar.gz: | Docker/Tools
+	wget "https://github.com/suhrig/arriba/releases/download/v2.1.0/arriba_v2.1.0.tar.gz" -O $@
+TOOLS += Docker/Tools/arriba.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -866,7 +870,7 @@ Output/Revolver/Bowtie2/%.cluster.pdf Output/Revolver/Bowtie2/%.driver.pdf Outpu
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --cluster $(addprefix /,$(@D)/$*.cluster.pdf) --driver $(addprefix /,$(@D)/$*.driver.pdf) --dendrogram $(addprefix /,$(@D)/$*.dendrogram.pdf) --det $(addprefix /,$(@D)/$*.det.pdf) --clonality $(addprefix /,$(@D)/$*.clonality.pdf) 1> $@.stdout 2> $@.stderr
 
 step24-input: Output/Revolver/BWA/SQC.tsv Output/Revolver/BWA/ADC.tsv Output/Revolver/Bowtie2/SQC.tsv Output/Revolver/Bowtie2/ADC.tsv
-step24-revolver: Output/Revolver/BWA/SQC.cluster.pdf Output/Revolver/BWA/ADC.cluster.pdf
+step24-revolver: Output/Revolver/BWA/SQC.cluster.pdf Output/Revolver/Bowtie2/SQC.cluster.pdf# Output/Revolver/BWA/ADC.cluster.pdf Output/Revolver/Bowtie2/ADC.cluster.pdf
 step24: step24-input step24-revolver
 .PHONY: step24-input step24-revolver step24
 
