@@ -87,6 +87,6 @@ if __name__ == "__main__":
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.2, driver_data.shape[0]))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.2, driver_data.shape[0] * 2))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output)
