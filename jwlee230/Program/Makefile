@@ -2,12 +2,13 @@
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
-CPUS = 5
+CPUS = 10
 MEMS = 100
-PARALLEL = 20
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
+ARRIBA_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
 PYTHON = python3 -B
 R = Rscript --vanilla
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
@@ -43,6 +44,11 @@ TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
 GENE_CENSUS_CSV = Data/cancer_gene_census.csv
 LUNG_SINGLECELL = Output/CIBERSORTx/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
 KNOWN_GENE_GTF = Data/hg38.gtf.gz
+ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
+ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
+ARRIBA_BLACKLIST_TSV = $(ARRIBA_DATABASE_DIR)/blacklist_hg38_GRCh38_v2.1.0.tsv.gz
+ARRIBA_KNOWN_FUSIONS_TSV = $(ARRIBA_DATABASE_DIR)/known_fusions_hg38_GRCh38_v2.1.0.tsv.gz
+ARRIBA_PROTEIN_DOMAIN_GFF3 = $(ARRIBA_DATABASE_DIR)/protein_domains_hg38_GRCh38_v2.1.0.gff3
 
 # Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -169,7 +175,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step16 step17 step18 step19 step21 step22 step23 step24 step25
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -874,6 +880,17 @@ step24-revolver: Output/Revolver/BWA/SQC.cluster.pdf Output/Revolver/Bowtie2/SQC
 step24: step24-input step24-revolver
 .PHONY: step24-input step24-revolver step24
 
+# Step 25 (Arriba)
+Output/Arriba:
+	mkdir -p $@
+
+Output/Arriba/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/Arriba build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
+	$(ARRIBA_DOCKER) run_arriba.sh $(addprefix /,$(ARRIBA_STAR_DIR) $(filter %.gtf,$^) $(filter %.fasta,$^) $(ARRIBA_BLACKLIST_TSV) $(ARRIBA_KNOWN_FUSIONS_TSV) $(ARRIBA_PROTEIN_DOMAIN_GFF3)) $(CPUS) $(addprefix /,$(sort $(filter %.fastq.gz,$^))) 1> $(@D).stdout 2> $(@D).stderr
+
+step25: $(addprefix Output/Arriba/,$(addsuffix /fusions.tsv,$(WES_ID)))
+.PHONY: step25
+
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
 # https://cran.r-project.org/web/packages/BisqueRNA/vignettes/bisque.html
@@ -891,11 +908,9 @@ Output/MuSiC:
 Output/SCDC:
 	mkdir -p $@
 
-# Step ## (Arriba)
 # Step ## (Fusioncatcher)
 # Step ## (STAR-fusion)
 # Step ## (MesKit)
-# Step ## (WTS - fq.gz >> bam) - STAR
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (PureCN)
