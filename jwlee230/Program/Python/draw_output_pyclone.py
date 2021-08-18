@@ -85,8 +85,7 @@ if __name__ == "__main__":
     pyclone_data.dropna(inplace=True)
     print(pyclone_data)
 
-    for column in step00.p_columns:
-        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+    driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
     mutenricher_set = set(driver_data["Gene"])
     print(driver_data)
 

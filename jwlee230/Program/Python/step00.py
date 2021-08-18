@@ -32,8 +32,6 @@ mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel
 bar_columns = ["category", "value"]
 bar_mapping = {"value": "tab:olive"}
 
-p_columns = {"gene_pval", "Fisher_pval", "Fisher_FDR"}
-
 
 def file_list(path: str) -> typing.List[str]:
     """

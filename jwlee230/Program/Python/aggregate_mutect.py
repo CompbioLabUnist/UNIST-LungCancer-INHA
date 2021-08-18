@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--gene", help="Gene number to draw", type=int, default=50)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     args = parser.parse_args()
 
@@ -64,8 +64,7 @@ if __name__ == "__main__":
     driver_data = pandas.read_csv(args.driver, sep="\t")
     print(driver_data)
     driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"]))]
-    for column in step00.p_columns:
-        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+    driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
     driver_data.sort_values(by="Fisher_pval", ignore_index=True, inplace=True)
     driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
@@ -87,6 +86,6 @@ if __name__ == "__main__":
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.2, driver_data.shape[0] * 2))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) * 1.1, driver_data.shape[0]))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output)
