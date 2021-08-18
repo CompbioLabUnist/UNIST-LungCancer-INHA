@@ -884,11 +884,11 @@ step24: step24-input step24-revolver
 Output/Arriba:
 	mkdir -p $@
 
-Output/Arriba/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/RawData/%_*.fastq.gz | Output/Arriba build.log
+Output/Arriba/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(ARRIBA_DOCKER) run_arriba.sh $(addprefix /,$(ARRIBA_STAR_DIR) $(filter %.gtf,$^) $(filter %.fasta,$^) $(ARRIBA_BLACKLIST_TSV) $(ARRIBA_KNOWN_FUSIONS_TSV) $(ARRIBA_PROTEIN_DOMAIN_GFF3)) $(CPUS) $(addprefix /,$(sort $(filter %.fastq.gz,$^))) 1> $(@D).stdout 2> $(@D).stderr
 
-step25: $(addprefix Output/Arriba/,$(addsuffix /fusions.tsv,$(WES_ID)))
+step25: $(addprefix Output/Arriba/,$(addsuffix /fusions.tsv,$(WTS_ID)))
 .PHONY: step25
 
 # Step ## (BisqueRNA)
