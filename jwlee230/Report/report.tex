@@ -57,7 +57,9 @@
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/LungCancer/rate.png}
                 \caption{Common cancer survival rates \protect\cite{lung6}}
+                \label{fig:cancer-survival}
             \end{figure}
+
         \subsection{Precancer}
 
         \subsection{Study Objectives}
@@ -83,28 +85,28 @@
     \section{Methods}
         \subsection{Workflows}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering
                 \includegraphics[width=0.3 \linewidth]{figures/Workflow/mapping.png}
                 \caption{Workflow for data pre-processing for variant discovery \protect\cite{gatk1, gatk2}}
                 \label{fig:workflow-preprocessing}
             \end{figure}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/Workflow/somatic_short_variants.png}
                 \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
                 \label{fig:workflow-somatic}
             \end{figure}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/Workflow/germline_short_variant.png}
                 \caption{Germline short variant discovery workflow \protect\cite{gatk1, gatk2}}
                 \label{fig:workflow-germline}
             \end{figure}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/Workflow/RNA_short_variant.png}
                 \caption{RNA-seq short variant discovery workflow \protect\cite{gatk1, gatk2}}
@@ -114,31 +116,177 @@
     \section{Results}
         \subsection{Quality Check with FastQC}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering-
                \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WES.pdf}
                 \caption{FastQC results  with WES data}
-                \label{fig:fastqc-wes}
+                \label{fig:fastqc-WES}
             \end{figure}
 
-            \begin{figure}[ht]
+            \begin{figure}[htbp]
                 \centering
                 \includegraphics[width=0.8 \linewidth]{figures/FastQC/FastQC_WTS.pdf}
                 \caption{FastQC results with WTS data}
-                \label{fig:fastqc-wts}
+                \label{fig:fastqc-WTS}
             \end{figure}
 
-        \subsection{Quality Check with Sequenza}
+        \subsection{Copy Number Variations}
 
-        \subsection{Progressive Evolution at Single Nucleotide Level}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-sequenza-ADC.pdf}
+                \caption{Cellularities and Ploidies with ADC}
+                \label{fig:sequenza-ADC}
+            \end{figure}
 
-        \subsection{Macro-evolution at Chromosomal Level}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-sequenza-SQC.pdf}
+                \caption{Cellularities and Ploidies with SQC}
+                \label{fig:sequenza-SQC}
+            \end{figure}
 
-        \subsection{Selective Clonal Sweep during Neoplastic Evolution}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/Sequenza/BWA-genome-ADC.pdf}
+                \caption{CNV plot with ADC}
+                \label{fig:CNV-ADC}
+            \end{figure}
 
-        \subsection{Cancer Gene Mutation during Cancer Evolution}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-genome-SQC.pdf}
+                \caption{CNV plot with SQC}
+                \label{fig:CNV-SQC}
+            \end{figure}
 
-        \subsection{Distinct Drivers and Genetic Constraints in Multi-focal IPNs}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-ADC.pdf}
+                \caption{Simple CNV plot with ADC}
+                \label{fig:SimpleCNV-ADC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-SQC.pdf}
+                \caption{Simple CNV plot with SQC}
+                \label{fig:SimpleCNV-SQC}
+            \end{figure}
+
+        \subsection{Somatic Single Nucleotide Variations}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.pdf}
+                \caption{CoMut plot with ADC}
+                \label{fig:comut-ADC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.pdf}
+                \caption{CoMut plot with SQC}
+                \label{fig:comut-SQC}
+            \end{figure}
+
+        \subsection{Variant Allele Frequencies}
+
+        \subsection{Differences in Gene Expression levels}
+
+            \begin{figure}[htbp]
+                \centering
+                $\begin{array}{ccc}
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.Normal-AAH.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.Normal-AIS.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.Normal-Primary.volcano.pdf}
+                    \\
+                    \mbox{(a) Normal-AAH} & \mbox{(b) Normal-AIS} & \mbox{(c) Normal-Primary} \\
+
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.AAH-AIS.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.AAH-Primary.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/ADC.Bowtie2.AIS-Primary.volcano.pdf}
+                    \\
+                    \mbox{(d) AAH-AIS} & \mbox{(e) AAH-Primary} & \mbox{(f) AIS-Primary}
+                \end{array}$
+                \caption{DEG volcano plots in ADC}
+                \label{fig:DEG-Volcano-ADC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                $\begin{array}{ccc}
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.Normal-Dysplasia.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.Normal-CIS.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.Normal-Primary.volcano.pdf}
+                    \\
+                    \mbox{(a) Normal-Dysplasia} & \mbox{(b) Normal-CIS} & \mbox{(c) Normal-Primary} \\
+
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.Dysplasia-CIS.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.Dysplasia-Primary.volcano.pdf}
+                    &
+                    \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/SQC.Bowtie2.CIS-Primary.volcano.pdf}
+                    \\
+                    \mbox{(d) Dysplasia-CIS} & \mbox{(e) Dysplasia-Primary} & \mbox{(f) CIS-Primary} \\
+                \end{array}$
+                \caption{DEG volcano plots in SQC}
+                \label{fig:DEG-Volcano-SQC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/ADC.Up.Bowtie2.pair-venn.pdf}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/ADC.Down.Bowtie2.pair-venn.pdf}
+                    \\
+                    \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+                \end{array}$
+                \caption{DEG Venn Diagram in ADC}
+                \label{fig:DEG-Venn-ADC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                $\begin{array}{cc}
+                    \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/SQC.Up.Bowtie2.pair-venn.pdf}
+                    &
+                    \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/SQC.Down.Bowtie2.pair-venn.pdf}
+                    \\
+                    \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+                \end{array}$
+                \caption{DEG Venn Diagram in SQC}
+                \label{fig:DEG-Venn-SQC}
+            \end{figure}
+
+        \subsection{Bulk Cell Deconvolution}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.7 \linewidth]{figures/CIBERSORTx/reference.jpg}
+                \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/CIBERSORTx/clustermap/ADC.Bowtie2.cluster.pdf}
+                \caption{Cell deconvolution clustermap in ADC}
+                \label{fig:Deconvolution-cluster-ADC}
+            \end{figure}
+
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[width=\linewidth]{figures/CIBERSORTx/clustermap/SQC.Bowtie2.cluster.pdf}
+                \caption{Cell deconvolution clustermap in SQC}
+                \label{fig:Deconvolution-cluster-SQC}
+            \end{figure}
 
     \section{Discussion}
 
