@@ -34,14 +34,14 @@ RUN cd /Tools && unzip FastQC.zip && cd FastQC && chmod +x fastqc
 ENV PATH=/Tools/FastQC:$PATH
 
 # STAR
-ENV PATH=/Tools/STAR-2.7.7a/bin/Linux_x86_64:$PATH
+ENV PATH=/Tools/STAR-2.7.8a/bin/Linux_x86_64:$PATH
 
 # Bowtie2
 RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber')" && Rscript -e "remotes::install_github('Subhayan18/CRUST')"
 
 # VEP
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
@@ -74,6 +74,14 @@ RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downd
 # Arriba
 RUN cd /Tools/arriba_v2.1.0 && make -j && ./download_references.sh hg38+RefSeq
 ENV PATH=/Tools/arriba_v2.1.0:$PATH
+
+# FusionCatcher
+RUN python2 /Tools/FusionCatcher.py --install-all-tools --yes --download
+ENV PATH=/opt/fusioncatcher/bin:$PATH
+
+# STAR-Fusion
+RUN cpanm --notest DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS PerlIO::gzip
+ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 
 VOLUME /Output
 VOLUME /Data

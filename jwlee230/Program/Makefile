@@ -103,7 +103,7 @@ Docker/Tools/FastQC.zip: | Docker/Tools
 TOOLS += Docker/Tools/FastQC.zip
 
 Docker/Tools/STAR.tar.gz: | Docker/Tools
-	wget "https://github.com/alexdobin/STAR/archive/2.7.7a.tar.gz" -O $@
+	wget "https://github.com/alexdobin/STAR/archive/2.7.8a.tar.gz" -O $@
 TOOLS += Docker/Tools/STAR.tar.gz
 
 Docker/Tools/Bowtie2.zip: | Docker/Tools
@@ -145,6 +145,14 @@ TOOLS += Docker/Tools/Miniconda.sh
 Docker/Tools/arriba.tar.gz: | Docker/Tools
 	wget "https://github.com/suhrig/arriba/releases/download/v2.1.0/arriba_v2.1.0.tar.gz" -O $@
 TOOLS += Docker/Tools/arriba.tar.gz
+
+Docker/Tools/FusionCatcher.py: | Docker/Tools
+	wget "http://sf.net/projects/fusioncatcher/files/bootstrap.py" -O $@
+TOOLS += Docker/Tools/FusionCatcher.py
+
+Docker/Tools/Star-Fusion.tar.gz: | Docker/Tools
+	wget "https://github.com/STAR-Fusion/STAR-Fusion/releases/download/STAR-Fusion-v1.10.1/STAR-Fusion.v1.10.1.tar.gz" -O $@
+TOOLS += Docker/Tools/Star-Fusion.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
