@@ -881,15 +881,21 @@ step24: step24-input step24-revolver
 .PHONY: step24-input step24-revolver step24
 
 # Step 25 (Arriba)
-Output/Arriba:
+Output/Arriba/Raw Output/Arriba/Filtered:
 	mkdir -p $@
 
-Output/Arriba/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba build.log
+Output/Arriba/Raw/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba/Raw build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(ARRIBA_DOCKER) run_arriba.sh $(addprefix /,$(ARRIBA_STAR_DIR) $(filter %.gtf,$^) $(filter %.fasta,$^) $(ARRIBA_BLACKLIST_TSV) $(ARRIBA_KNOWN_FUSIONS_TSV) $(ARRIBA_PROTEIN_DOMAIN_GFF3)) $(CPUS) $(addprefix /,$(sort $(filter %.fastq.gz,$^))) 1> $(@D).stdout 2> $(@D).stderr
 
-step25: $(addprefix Output/Arriba/,$(addsuffix /fusions.tsv,$(WTS_ID)))
-.PHONY: step25
+# I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
+Output/Arriba/Filtered/%.tsv: Python/filter_arriba.py Output/Arriba/Raw/%/fusions.tsv $(addprefix Output/Arriba/Raw/,$(addsuffix /fusions.tsv,$(WTS_NORMAL_ID))) | build.log Output/Arriba/Filtered
+	$(DOCKER) $(PYTHON) $(addprefix /,$< Output/Arriba/Raw/$*/fusions.tsv Output/Arriba/Raw/$(PAIRED_NORMAL)/fusions.tsv $@) 1> $@.stdout 2> $@.stderr
+
+step25-Raw: $(addprefix Output/Arriba/Raw/,$(addsuffix /fusions.tsv,$(WTS_ID)))
+step25-Filtered: $(addprefix Output/Arriba/Filtered/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
+step25: step25-Raw
+.PHONY: step25-Raw step25
 
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
