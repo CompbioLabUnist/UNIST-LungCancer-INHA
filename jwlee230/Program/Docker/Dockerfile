@@ -76,7 +76,7 @@ RUN cd /Tools/arriba_v2.1.0 && make -j && ./download_references.sh hg38+RefSeq
 ENV PATH=/Tools/arriba_v2.1.0:$PATH
 
 # FusionCatcher
-RUN python2 /Tools/FusionCatcher.py --install-all-tools --yes --download
+RUN python2 /Tools/FusionCatcher.py --install-all-tools --yes --download && pip install biopython==1.76
 ENV PATH=/opt/fusioncatcher/bin:$PATH
 
 # STAR-Fusion
