@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 1
+CPUS = 5
 MEMS = 100
-PARALLEL = 2
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -185,7 +185,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -911,11 +911,19 @@ step25: step25-Raw
 Output/FusionCatcher/STAR Output/FusionCatcher/Bowtie2:
 	mkdir -p $@
 
-Output/FusionCatcher/STAR/%/preliminary-candidate-fusions-found-in-normal.log Output/FusionCatcher/STAR/%/partial-preliminary-candidate-fusions-found-in-normal.log: Data/WTS/%_*.fastq.gz | Output/FusionCatcher/STAR build.log
+Output/FusionCatcher/STAR/%/normal.tsv Output/FusionCatcher/STAR/%/tumor.tsv: Data/WTS/%_*.fastq.gz | Output/FusionCatcher/STAR build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(FUSIONCATCHER_DATA_DIR)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(FUSIONCATCHER_DATA_DIR)) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
+	cp $(@D)/1_*/final-list_candidate-fusion-genes.txt $(@D)/normal.tsv || touch $(@D)/normal.tsv
+	cp $(@D)/2_*/final-list_candidate-fusion-genes.txt $(@D)/tumor.tsv
 
-step26: $(addprefix Output/FusionCatcher/STAR/,$(addsuffix /preliminary-candidate-fusions-found-in-normal.log,$(WTS_TUMOR_ID)))
+Output/FusionCatcher/Bowtie2/%/normal.tsv Output/FusionCatcher/Bowtie2/%/tumor.tsv: Data/WTS/%_*.fastq.gz | Output/FusionCatcher/Bowtie2 build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
+	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(FUSIONCATCHER_DATA_DIR)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(FUSIONCATCHER_DATA_DIR)) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
+	cp $(@D)/1_*/final-list_candidate-fusion-genes.txt $(@D)/normal.tsv || touch $(@D)/normal.tsv
+	cp $(@D)/2_*/final-list_candidate-fusion-genes.txt $(@D)/tumor.tsv
+
+step26: $(addprefix Output/FusionCatcher/STAR/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID)))
 .PHONY: step26
 
 # Step ## (BisqueRNA)
