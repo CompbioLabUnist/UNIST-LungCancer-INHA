@@ -21,10 +21,9 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tsv"):
         raise ValueError("Output must end with .TSV!!")
 
-    wanted_columns = ["#gene1", "gene2", "breakpoint1", "breakpoint2"]
+    wanted_columns = ["#gene1", "gene2", "breakpoint1", "breakpoint2", "type", "confidence"]
 
     tumor_data = pandas.read_csv(args.tumor, sep="\t")
-    tumor_data = tumor_data.loc[(tumor_data["confidence"] == "high")]
     tumor_data["#gene1"] = list(map(lambda x: x.split(","), tumor_data["#gene1"]))
     tumor_data["gene2"] = list(map(lambda x: x.split(","), tumor_data["gene2"]))
     tumor_data = tumor_data.explode(column="#gene1", ignore_index=True).explode(column="gene2", ignore_index=True)
@@ -34,7 +33,6 @@ if __name__ == "__main__":
 
     try:
         normal_data = pandas.read_csv(args.normal, sep="\t")
-        normal_data = normal_data.loc[(normal_data["confidence"] == "high")]
         normal_data["#gene1"] = list(map(lambda x: x.split(","), normal_data["#gene1"]))
         normal_data["gene2"] = list(map(lambda x: x.split(","), normal_data["gene2"]))
         normal_data = normal_data.explode(column="#gene1", ignore_index=True).explode(column="gene2", ignore_index=True)
@@ -44,7 +42,12 @@ if __name__ == "__main__":
         normal_data = pandas.DataFrame(columns=wanted_columns)
     print(normal_data)
 
-    output_data = [("gene1", "gene2", "breakpoint1", "breakpoint2")] + sorted(set(tumor_data[wanted_columns].itertuples(index=False, name=None)) - set(normal_data[wanted_columns].itertuples(index=False, name=None)))
+    output_data = [("gene1", "gene2", "breakpoint1", "breakpoint2", "type", "confidence")]
+    for tumor, normals in (("high", ("high")), ("medium", ("medium", "high")), ("low", ("low", "medium", "high"))):
+        d = set(tumor_data.loc[(tumor_data["confidence"] == tumor), wanted_columns].itertuples(index=False, name=None))
+        for normal in normals:
+            d -= set(normal_data.loc[(normal_data["confidence"] == normal), wanted_columns].itertuples(index=False, name=None))
+        output_data += sorted(d)
     print(output_data)
 
     with open(args.output, "w") as f:
