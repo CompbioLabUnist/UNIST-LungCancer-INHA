@@ -600,7 +600,7 @@ Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MI
 Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -678,7 +678,7 @@ Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.B
 Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -708,7 +708,7 @@ Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmo
 Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -810,7 +810,7 @@ Output/RSEM/DEG/ADC-smoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR
 Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC-smoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -840,7 +840,7 @@ Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmokin
 Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
