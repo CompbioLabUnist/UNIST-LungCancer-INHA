@@ -496,11 +496,14 @@ step15: step15-BWA step15-Bowtie2
 # TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step 16 (MutEnricher)
-Output/MutEnricher Output/MutEnricher/BWA Output/MutEnricher/BWA/ADC Output/MutEnricher/BWA/SQC Output/MutEnricher/Bowtie2 Output/MutEnricher/Bowtie2/ADC Output/MutEnricher/Bowtie2/SQC:
+Output/MutEnricher Output/MutEnricher/Reference Output/MutEnricher/BWA Output/MutEnricher/BWA/ADC Output/MutEnricher/BWA/SQC Output/MutEnricher/Bowtie2 Output/MutEnricher/Bowtie2/ADC Output/MutEnricher/Bowtie2/SQC:
 	mkdir -p $@
 
-Output/MutEnricher/BWA/%.hg38_multianno.vcf: Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log Output/MutEnricher/BWA
-	$(DOCKER) table_annovar.pl $(addprefix /,$^) /Tools/annovar/hg38 --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/Reference/annovar_downdb.log Output/MutEnricher/Reference/hg38_refGene.txt Output/MutEnricher/Reference/hg38_refGeneMrna.fa Output/MutEnricher/Reference/hg38_refGeneVersion.txt: | Output/MutEnricher/Reference build.log
+	$(DOCKER) annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene $(addprefix /,$(@D)) 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/%.hg38_multianno.vcf: Output/Mutect2/BWA/%.BWA.PASS.vcf Output/MutEnricher/Reference/hg38_refGeneMrna.fa | build.log Output/MutEnricher/BWA
+	$(DOCKER) table_annovar.pl $(addprefix /,$(filter %.vcf,$^)) $(addprefix /,$(dir $(filter %.fa,$^))) --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/BWA/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/BWA/%.hg38_multianno.vcf | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
@@ -514,8 +517,8 @@ Output/MutEnricher/BWA/SQC.tsv: Python/make_list_MutEnricher.py $(addprefix Outp
 Output/MutEnricher/BWA/ADC.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(ADC_WES_SAMPLES))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(ADC_WES_SAMPLES))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$< $(filter %.vcf.gz,$^) $@) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf: Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log Output/MutEnricher/BWA
-	$(DOCKER) table_annovar.pl $(addprefix /,$^) /Tools/annovar/hg38 --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
+Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf: Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf Output/MutEnricher/Reference/hg38_refGeneMrna.fa | build.log Output/MutEnricher/BWA
+	$(DOCKER) table_annovar.pl $(addprefix /,$^) $(addprefix /,$(dir $(filter %.fa,$^))) --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf | build.log Output/MutEnricher/Bowtie2
 	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -557,30 +560,30 @@ step16: step16-preprocess step16-MutEnricher step16-plot
 .PHONY: step16-preprocess step16-MutEnricher step16-plot step16
 
 # Step 17 (RSEM: Prepare reference genome)
-Output/RSEM:
+Output/RSEM/Reference:
 	mkdir -p $@
 
-Output/RSEM/hg38.gtf.gz: | Output/RSEM
+Output/RSEM/Reference/hg38.gtf.gz: | Output/RSEM/Reference
 	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
 	touch $@
 
-Output/RSEM/hg38.gtf: Output/RSEM/hg38.gtf.gz | build.log
+Output/RSEM/Reference/hg38.gtf: Output/RSEM/Reference/hg38.gtf.gz | build.log
 	$(DOCKER) gzip --decompress --keep --force $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/hg38.seq Output/RSEM/hg38.grp: $(REFERENCE_FASTA) Output/RSEM/hg38.gtf | build.log
-	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) /$(@D)/"hg38" 1> $@.stdout 2> $@.stderr
+Output/RSEM/Reference/hg38.seq Output/RSEM/Reference/hg38.grp: $(REFERENCE_FASTA) Output/RSEM/Reference/hg38.gtf | build.log
+	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(basename $@)) 1> $@.stdout 2> $@.stderr
 
-step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
+step17: Output/RSEM/Reference/hg38.gtf Output/RSEM/Reference/hg38.seq
 .PHONY: step17
 
 # Step 18 (RSEM: Calculate expression)
 Output/RSEM/Bowtie2 Output/RSEM/STAR Output/RSEM/DEG:
 	mkdir -p $@
 
-Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
+Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/Reference/hg38.grp | Output/RSEM/Bowtie2 build.log
 	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --bowtie2 --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/STAR/%.genome.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/STAR build.log
+Output/RSEM/STAR/%.genome.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/Reference/hg38.grp | Output/RSEM/STAR build.log
 	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
@@ -964,8 +967,11 @@ step24: step24-input step24-revolver
 .PHONY: step24-input step24-revolver step24
 
 # Step 25 (Arriba)
-Output/Arriba Output/Arriba/Raw Output/Arriba/Filtered:
+Output/Arriba/Reference Output/Arriba/Raw Output/Arriba/Filtered:
 	mkdir -p $@
+
+Output/Arriba/Reference/hg38.fa: | Output/Arriba/Reference build.log
+	$(ARRIBA_DOCKER) /bin/bash /Tools/arriba_v2.1.0/download_references.sh hg38+RefSeq 1> $@.stdout 2> $@.stderr
 
 Output/Arriba/Raw/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba/Raw build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)

@@ -69,7 +69,6 @@ CMD cd /Tools && unzip CIBERSORT.zip
 
 # ANNOVAR
 ENV PATH=/Tools/annovar:$PATH
-RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene hg38/
 
 # Arriba
 RUN cd /Tools/arriba_v2.1.0 && make -j
