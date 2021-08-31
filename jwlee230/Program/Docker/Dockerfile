@@ -72,7 +72,7 @@ ENV PATH=/Tools/annovar:$PATH
 RUN cd /Tools/annovar && annotate_variation.pl --verbose --buildver hg38 --downdb --webfrom annovar refGene hg38/
 
 # Arriba
-RUN cd /Tools/arriba_v2.1.0 && make -j && ./download_references.sh hg38+RefSeq
+RUN cd /Tools/arriba_v2.1.0 && make -j
 ENV PATH=/Tools/arriba_v2.1.0:$PATH
 
 # FusionCatcher

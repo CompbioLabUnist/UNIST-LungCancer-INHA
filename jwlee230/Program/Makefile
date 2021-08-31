@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
+CPUS = 100
 MEMS = 100
 PARALLEL = 20
 PWD := $(shell pwd)
@@ -51,6 +51,7 @@ ARRIBA_BLACKLIST_TSV = $(ARRIBA_DATABASE_DIR)/blacklist_hg38_GRCh38_v2.1.0.tsv.g
 ARRIBA_KNOWN_FUSIONS_TSV = $(ARRIBA_DATABASE_DIR)/known_fusions_hg38_GRCh38_v2.1.0.tsv.gz
 ARRIBA_PROTEIN_DOMAIN_GFF3 = $(ARRIBA_DATABASE_DIR)/protein_domains_hg38_GRCh38_v2.1.0.gff3
 FUSIONCATCHER_DATA_DIR = opt/fusioncatcher/data/current
+CTAT_RESOURCE_LIB_DIR = Data/GRCh38_gencode_v37_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir
 
 # Sample IDs
 PATIENT_ID = $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -75,9 +76,9 @@ SQC_SMOKING_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn5P cn5C cn5N
 
 # ADC samples
 ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
-ADC_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn93P cn93C cn95P cn95C cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
+ADC_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn93P cn93C cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
 ADC_NONSMOKING_WES_SAMPLES = cn93P cn93C
-ADC_SMOKING_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95C cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
+ADC_SMOKING_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
 ADC_WTS_SAMPLES = cn90P cn90C cn90N cn95N cn96N cn99N cn101N cn102P cn102C cn102N cn103N cn107P cn107C cn109N cn110P cn110C cn111N cn112N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
 ADC_NONSMOKING_WTS_SAMPLES = cn90P cn90C cn90N cn96N cn99N cn102P cn102C cn102N cn103N cn109N cn111N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
 ADC_SMOKING_WTS_SAMPLES = cn95N cn101N cn107P cn107C cn110P cn110C cn112N
@@ -899,7 +900,7 @@ step18-ADC-STAR-DEG: Output/RSEM/DEG/ADC.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG
 step18-ADC-smoking-STAR-DEG: Output/RSEM/DEG/ADC-smoking.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-Primary.DEG.tsv
 step18-ADC-nonsmoking-STAR-DEG: Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-Primary.DEG.tsv
 step18: step18-preparation step18-SQC-Bowtie2 step18-SQC-smoking-Bowtie2 step18-SQC-nonsmoking-Bowtie2 step18-ADC-Bowtie2 step18-ADC-smoking-Bowtie2 step18-ADC-nonsmoking-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-smoking-Bowtie2-DEG step18-SQC-nonsmoking-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-ADC-smoking-Bowtie2-DEG step18-ADC-nonsmoking-Bowtie2-DEG step18-SQC-STAR step18-SQC-smoking-STAR step18-SQC-nonsmoking-STAR step18-ADC-STAR step18-ADC-smoking-STAR step18-ADC-nonsmoking-STAR step18-SQC-STAR-DEG step18-SQC-smoking-STAR-DEG step18-SQC-nonsmoking-STAR-DEG step18-ADC-STAR-DEG step18-ADC-smoking-STAR-DEG step18-ADC-nonsmoking-STAR-DEG
-.PHONY: 
+.PHONY: step18-preparation step18-SQC-Bowtie2 step18-SQC-smoking-Bowtie2 step18-SQC-nonsmoking-Bowtie2 step18-ADC-Bowtie2 step18-ADC-smoking-Bowtie2 step18-ADC-nonsmoking-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-smoking-Bowtie2-DEG step18-SQC-nonsmoking-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-ADC-smoking-Bowtie2-DEG step18-ADC-nonsmoking-Bowtie2-DEG step18-SQC-STAR step18-SQC-smoking-STAR step18-SQC-nonsmoking-STAR step18-ADC-STAR step18-ADC-smoking-STAR step18-ADC-nonsmoking-STAR step18-SQC-STAR-DEG step18-SQC-smoking-STAR-DEG step18-SQC-nonsmoking-STAR-DEG step18-ADC-STAR-DEG step18-ADC-smoking-STAR-DEG step18-ADC-nonsmoking-STAR-DEG step18
 
 # Step 19 (DEG: Draw plots)
 Output/RSEM/Plots:
@@ -1158,8 +1159,13 @@ step26-Bowtie: $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix /normal.tsv
 .PHONY: step26-STAR step26-Bowtie step26
 
 # Step 27 (STAR-Fusion)
-Output/STAR-Fusion/CTAT_resource:
+Output/STAR-Fusion:
 	mkdir -p $@
+
+Output/STAR-Fusion/%.tmp: Data/WTS/%_*.fastq.gz | Output/STAR-Fusion build.log
+	$(DOCKER) STAR-Fusion --genome_lib_dir $(addprefix /,$(CTAT_RESOURCE_LIB_DIR)) --left_fq $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) --right_fq $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --CPU $(CPUS) --output_dir $(addprefix /,$(@D))
+
+step27: $(firstword $(addprefix Output/STAR-Fusion/,$(addsuffix .tmp,$(WTS_TUMOR_ID))))
 
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
