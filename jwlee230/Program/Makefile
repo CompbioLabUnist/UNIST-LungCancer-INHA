@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 100
+CPUS = 5
 MEMS = 100
 PARALLEL = 20
 PWD := $(shell pwd)
@@ -67,21 +67,33 @@ BAM_TUMOR_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 
 
 # SQC samples
 SQC_PATIENTS = 1 2 4 8 12 14 15 33 34 38 48 49 53 57 58 63 64 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn10 cn11 cn13 cn15 cn16 cn17 cn18 cn21 cn23 cn26 cn27 cn30 cn31 cn32 cn33 cn34 cn35 cn36 cn37 cn38 cn39 cn40 cn41 cn42 cn43 cn44 cn45 cn47 cn48 cn49 cn50 cn51 cn52 cn53 cn54 cn55 cn56 cn57 cn60 cn61 cn62 cn63 cn64 cn65 cn66 cn67 cn68 cn69 cn70 cn71 cn72 cn73 cn74 cn75 cn76 cn77 cn78 cn79
+# SQC WES samples
 SQC_WES_SAMPLES = 8P1 8C1 12P1 12C1 14P1 14C1 15P1 15C1 33D1 34P1 34C1 38P1 38C1 48P1 48A1 48A2 48A3 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn7P cn7C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn18P cn18C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn30P cn30C cn31P cn31C cn32P cn32C cn33P cn33C cn34P cn34C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn40P cn40C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn47P cn47C cn48P cn48C cn49P cn49C cn50P cn50C cn51P cn51C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn60P cn60C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn71P cn71C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn76P cn76C cn78P cn78C cn79P cn79C
 SQC_NONSMOKING_WES_SAMPLES = cn4P cn4C cn7P cn7C cn18P cn18C
 SQC_SMOKING_WES_SAMPLES = 8P1 8C1 12P1 12C1 14P1 14C1 15P1 15C1 33P1 33D1 34P1 34C1 38P1 38C1 48P1 48A1 48A2 48A3 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn5P cn5C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn30P cn30C cn31P cn31C cn32P cn32C cn33P cn33C cn34P cn34C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn40P cn40C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn47P cn47C cn48P cn48C cn49P cn49C cn50P cn50C cn51P cn51C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn60P cn60C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn71P cn71C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn76P cn76C cn78P cn78C cn79P cn79C
+SQC_RECURRENCE_WES_SAMPLES = 12P1 12C1 33P1 33D1 38P1 38C1 48P1 48A1 48A2 48A3 cn30P cn30C cn34P cn34C cn40P cn40C cn47P cn47C cn50P cn50C cn53P cn53C cn60P cn60C cn71P cn71C cn76P cn76C cn78P cn78C
+SQC_NONRECURRENCE_WES_SAMPLES = 8P1 8C1 14P1 14C1 15P1 15C1 34P1 34C1 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn7P cn7C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn18P cn18C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn31P cn31C cn32P cn32C cn33P cn33C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn48P cn48C cn49P cn49C cn51P cn51C cn52P cn52C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn79P cn79C
+# SQC WTS samples
 SQC_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
 SQC_NONSMOKING_WTS_SAMPLES = cn4N cn7P cn7C
 SQC_SMOKING_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn5P cn5C cn5N cn6P cn6C cn6N cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
+SQC_RECURRENCE_WTS_SAMPLES = cn30P cn30C cn40P cn40C cn53P cn53C cn60P cn60N cn76P cn76C cn77P cn77D cn78P cn78C
+SQC_NON_RECURRENCE_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn32P cn32C cn38P cn38C cn39P cn39C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn54P cn54C cn55N cn57P cn57C cn57N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68P cn68N cn69P cn69C cn68N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn79P cn79C
 
 # ADC samples
 ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
+# ADC WES samples
 ADC_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn93P cn93C cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
 ADC_NONSMOKING_WES_SAMPLES = cn93P cn93C
 ADC_SMOKING_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
+ADC_RECURRENCE_WES_SAMPLES = 51P1 51A1 54P1 54A1 cn93P cn93C cn112P cn112C
+ADC_NONRECURRENCE_WES_SAMPLES = 39P1 39A1 39A2 52P1 52M1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95C cn95A cn97P cn97C cn101P cn101C cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C
+# ADC WTS samples
 ADC_WTS_SAMPLES = cn90P cn90C cn90N cn95N cn96N cn99N cn101N cn102P cn102C cn102N cn103N cn107P cn107C cn109N cn110P cn110C cn111N cn112N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
 ADC_NONSMOKING_WTS_SAMPLES = cn90P cn90C cn90N cn96N cn99N cn102P cn102C cn102N cn103N cn109N cn111N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
 ADC_SMOKING_WTS_SAMPLES = cn95N cn101N cn107P cn107C cn110P cn110C cn112N
+ADC_RECURRENCE_WTS_SAMPLES = cn90P cn90C cn90N cn112C cn112N
+ADC_NONRECURRENCE_WTS_SAMPLES = cn95N cn96N cn99N cn101C cn101N cn102P cn102C cn102N cn103C cn1033N cn107P cn107C cn109P cn109N cn110P cn110C cn111P cn111N cn113P cn113C cn113N cn115P cn115A cn115N cn116C cn116N
 
 # General
 all:
@@ -562,7 +574,7 @@ step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
 .PHONY: step17
 
 # Step 18 (RSEM: Calculate expression)
-Output/RSEM/Bowtie2 Output/RSEM/STAR Output/RSEM/DEG:
+Output/RSEM/Bowtie2 Output/RSEM/STAR Output/RSEM/DEG Output/RSEM/DEG-Recurrent:
 	mkdir -p $@
 
 Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
@@ -667,198 +679,6 @@ Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.co
 Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.Bowtie2.MIA-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.MIA-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-smoking.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AAH.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "AAH" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "AAH" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-MIA.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "MIA" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/DEG/ADC-nonsmoking.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -876,31 +696,15 @@ Output/RSEM/DEG/SQC.STAR.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Ou
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 step18-SQC-Bowtie2: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv
-step18-SQC-smoking-Bowtie2: Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.tsv
-step18-SQC-nonsmoking-Bowtie2: Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.tsv
 step18-ADC-Bowtie2: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv
-step18-ADC-smoking-Bowtie2: Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.MIA-Primary.tsv
-step18-ADC-nonsmoking-Bowtie2: Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.MIA-Primary.tsv
 step18-SQC-Bowtie2-DEG: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.DEG.tsv
-step18-SQC-smoking-Bowtie2-DEG: Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.DEG.tsv
-step18-SQC-nonsmoking-Bowtie2-DEG: Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.DEG.tsv
 step18-ADC-Bowtie2-DEG: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.DEG.tsv
-step18-ADC-smoking-Bowtie2-DEG: Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.Bowtie2.AIS-Primary.DEG.tsv
-step18-ADC-nonsmoking-Bowtie2-DEG: Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.Bowtie2.AIS-Primary.DEG.tsv
 step18-SQC-STAR: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.tsv
-step18-SQC-smoking-STAR: Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.tsv
-step18-SQC-nonsmoking-STAR: Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.tsv
 step18-ADC-STAR: Output/RSEM/DEG/ADC.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv
-step18-ADC-smoking-STAR: Output/RSEM/DEG/ADC-smoking.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC-smoking.STAR.MIA-Primary.tsv
-step18-ADC-nonsmoking-STAR: Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.MIA-Primary.tsv
 step18-SQC-STAR-DEG: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.DEG.tsv
-step18-SQC-smoking-STAR-DEG: Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.DEG.tsv
-step18-SQC-nonsmoking-STAR-DEG: Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.DEG.tsv
 step18-ADC-STAR-DEG: Output/RSEM/DEG/ADC.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.DEG.tsv
-step18-ADC-smoking-STAR-DEG: Output/RSEM/DEG/ADC-smoking.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-smoking.STAR.AIS-Primary.DEG.tsv
-step18-ADC-nonsmoking-STAR-DEG: Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC-nonsmoking.STAR.AIS-Primary.DEG.tsv
-step18: step18-preparation step18-SQC-Bowtie2 step18-SQC-smoking-Bowtie2 step18-SQC-nonsmoking-Bowtie2 step18-ADC-Bowtie2 step18-ADC-smoking-Bowtie2 step18-ADC-nonsmoking-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-smoking-Bowtie2-DEG step18-SQC-nonsmoking-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-ADC-smoking-Bowtie2-DEG step18-ADC-nonsmoking-Bowtie2-DEG step18-SQC-STAR step18-SQC-smoking-STAR step18-SQC-nonsmoking-STAR step18-ADC-STAR step18-ADC-smoking-STAR step18-ADC-nonsmoking-STAR step18-SQC-STAR-DEG step18-SQC-smoking-STAR-DEG step18-SQC-nonsmoking-STAR-DEG step18-ADC-STAR-DEG step18-ADC-smoking-STAR-DEG step18-ADC-nonsmoking-STAR-DEG
-.PHONY: step18-preparation step18-SQC-Bowtie2 step18-SQC-smoking-Bowtie2 step18-SQC-nonsmoking-Bowtie2 step18-ADC-Bowtie2 step18-ADC-smoking-Bowtie2 step18-ADC-nonsmoking-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-smoking-Bowtie2-DEG step18-SQC-nonsmoking-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-ADC-smoking-Bowtie2-DEG step18-ADC-nonsmoking-Bowtie2-DEG step18-SQC-STAR step18-SQC-smoking-STAR step18-SQC-nonsmoking-STAR step18-ADC-STAR step18-ADC-smoking-STAR step18-ADC-nonsmoking-STAR step18-SQC-STAR-DEG step18-SQC-smoking-STAR-DEG step18-SQC-nonsmoking-STAR-DEG step18-ADC-STAR-DEG step18-ADC-smoking-STAR-DEG step18-ADC-nonsmoking-STAR-DEG step18
+step18:
+.PHONY:
 
 # Step 19 (DEG: Draw plots)
 Output/RSEM/Plots:
