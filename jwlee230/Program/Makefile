@@ -77,8 +77,8 @@ SQC_NONRECURRENCE_WES_SAMPLES = 8P1 8C1 14P1 14C1 15P1 15C1 34P1 34C1 49P1 49C1 
 SQC_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
 SQC_NONSMOKING_WTS_SAMPLES = cn4N cn7P cn7C
 SQC_SMOKING_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn5P cn5C cn5N cn6P cn6C cn6N cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
-SQC_RECURRENCE_WTS_SAMPLES = cn30P cn30C cn40P cn40C cn53P cn53C cn60P cn60N cn76P cn76C cn77P cn77D cn78P cn78C
-SQC_NON_RECURRENCE_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn32P cn32C cn38P cn38C cn39P cn39C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn54P cn54C cn55N cn57P cn57C cn57N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68P cn68N cn69P cn69C cn68N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn79P cn79C
+SQC_RECURRENCE_WTS_SAMPLES = cn30P cn30C cn40P cn40C cn53P cn53C cn60N cn76P cn76C cn77P cn77D cn78P cn78C
+SQC_NON_RECURRENCE_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn32P cn32C cn38P cn38C cn39P cn39C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn54P cn54C cn55N cn57P cn57C cn57N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn68N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn79P cn79C
 
 # ADC samples
 ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
@@ -574,7 +574,7 @@ step17: Output/RSEM/hg38.gtf Output/RSEM/hg38.seq
 .PHONY: step17
 
 # Step 18 (RSEM: Calculate expression)
-Output/RSEM/Bowtie2 Output/RSEM/STAR Output/RSEM/DEG Output/RSEM/DEG-Recurrent:
+Output/RSEM/Bowtie2 Output/RSEM/STAR Output/RSEM/DEG:
 	mkdir -p $@
 
 Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/hg38.grp | Output/RSEM/Bowtie2 build.log
@@ -631,6 +631,24 @@ Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Prim
 Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-recurrence.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -679,6 +697,24 @@ Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.co
 Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/SQC-recurrence.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-recurrence.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-recurrence.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-recurrence.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-recurrence.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-recurrence.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonrecurrence.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NON_RECURRENCE_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -696,15 +732,25 @@ Output/RSEM/DEG/SQC.STAR.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Ou
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
 step18-SQC-Bowtie2: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv
+step18-SQC-recurrence-Bowtie2: Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.CIS-Primary.tsv
+step18-SQC-nonrecurrence-Bowtie2: Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.CIS-Primary.tsv
 step18-ADC-Bowtie2: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv
 step18-SQC-Bowtie2-DEG: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.DEG.tsv
+step18-SQC-recurrence-Bowtie2-DEG: Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-recurrence.Bowtie2.CIS-Primary.DEG.tsv
+step18-SQC-nonrecurrence-Bowtie2-DEG: Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.Bowtie2.CIS-Primary.DEG.tsv
 step18-ADC-Bowtie2-DEG: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.DEG.tsv
 step18-SQC-STAR: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.tsv
+step18-SQC-recurrence-STAR: Output/RSEM/DEG/SQC-recurrence.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-recurrence.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-recurrence.STAR.CIS-Primary.tsv
+step18-SQC-nonrecurrence-STAR: Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.CIS-Primary.tsv
 step18-ADC-STAR: Output/RSEM/DEG/ADC.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv
 step18-SQC-STAR-DEG: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.DEG.tsv
+step18-SQC-recurrence-STAR-DEG: Output/RSEM/DEG/SQC-recurrence.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-recurrence.STAR.CIS-Primary.DEG.tsv
+step18-SQC-nonrecurrence-STAR-DEG: Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.STAR.CIS-Primary.DEG.tsv
 step18-ADC-STAR-DEG: Output/RSEM/DEG/ADC.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.DEG.tsv
-step18:
-.PHONY:
+step18-Bowtie2: step18-preparation step18-SQC-Bowtie2 step18-SQC-recurrence-Bowtie2 step18-SQC-nonrecurrence-Bowtie2 step18-ADC-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-recurrence-Bowtie2-DEG step18-SQC-nonrecurrence-Bowtie2-DEG step18-ADC-Bowtie2-DEG
+step18-STAR: step18-preparation step18-SQC-STAR step18-SQC-recurrence-STAR step18-SQC-nonrecurrence-STAR step18-ADC-STAR step18-SQC-STAR-DEG step18-SQC-recurrence-STAR-DEG step18-SQC-nonrecurrence-STAR-DEG step18-ADC-STAR-DEG
+step18: step18-Bowtie2 step18-STAR
+.PHONY: step18-preparation step18-SQC-Bowtie2 step18-SQC-recurrence-Bowtie2 step18-SQC-nonrecurrence-Bowtie2 step18-ADC-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-recurrence-Bowtie2-DEG step18-SQC-nonrecurrence-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-SQC-STAR step18-SQC-recurrence-STAR step18-SQC-nonrecurrence-STAR step18-ADC-STAR step18-SQC-STAR-DEG step18-SQC-recurrence-STAR-DEG step18-SQC-nonrecurrence-STAR-DEG step18-ADC-STAR-DEG step18-Bowtie2 step18-STAR step18
 
 # Step 19 (DEG: Draw plots)
 Output/RSEM/Plots:
