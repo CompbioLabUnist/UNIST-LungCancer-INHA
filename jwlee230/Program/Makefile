@@ -666,6 +666,78 @@ Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.co
 Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(ADC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "MIA" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-smoking.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_SMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Normal-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-CIS.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "CIS+AIS" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.Dysplasia-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Dysplasia" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.STAR.CIS-Primary.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(SQC_NONSMOKING_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "CIS+AIS" "Primary" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
@@ -682,12 +754,18 @@ Output/RSEM/DEG/SQC.STAR.Aggregate.tsv: Python/aggregate_RSEM2.py $(addprefix Ou
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
-step18-Bowtie2: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv
-step18-Bowtie2-DEG: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.DEG.tsv
-step18-STAR: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv
-step18-STAR-DEG: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.DEG.tsv
-step18: step18-preparation step18-Bowtie2 step18-Bowtie-DEG step18-STAR step18-STAR-DEG
-.PHONY: step18 step18-preparation step18-Bowtie2 step18-Bowtie-DEG step18-STAR step18-STAR-DEG
+step18-SQC-Bowtie2: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.tsv
+step18-SQC-smoking-Bowtie2: Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-smoking.Bowtie2.CIS-Primary.tsv
+step18-SQC-nonsmoking-Bowtie2: Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC-nonsmoking.Bowtie2.CIS-Primary.tsv
+step28-ADC-Bowtie2: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-MIA.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.tsv Output/RSEM/DEG/ADC.Bowtie2.MIA-Primary.tsv
+step18-SQC-Bowtie2-DEG: Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.Bowtie2.CIS-Primary.DEG.tsv
+step18-ADC-Bowtie2-DEG: Output/RSEM/DEG/ADC.Bowtie2.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.Bowtie2.AIS-Primary.DEG.tsv
+step18-SQC-STAR: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.tsv
+step18-ADC-STAR: Output/RSEM/DEG/ADC.STAR.Normal-AAH.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.tsv Output/RSEM/DEG/ADC.STAR.Normal-MIA.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.tsv Output/RSEM/DEG/ADC.STAR.AAH-MIA.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.tsv Output/RSEM/DEG/ADC.STAR.AIS-MIA.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.tsv Output/RSEM/DEG/ADC.STAR.MIA-Primary.tsv
+step18-SQC-STAR-DEG: Output/RSEM/DEG/SQC.STAR.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.STAR.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.STAR.CIS-Primary.DEG.tsv
+step18-ADC-STAR-DEG:Output/RSEM/DEG/ADC.STAR.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.STAR.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.STAR.AIS-Primary.DEG.tsv
+step18: 
+.PHONY: 
 
 # Step 19 (DEG: Draw plots)
 Output/RSEM/Plots:
