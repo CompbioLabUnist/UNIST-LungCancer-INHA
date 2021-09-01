@@ -69,7 +69,7 @@ if __name__ == "__main__":
     print(args.recur)
     args.recur = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) == args.target, args.recur))
     args.non = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) == args.target, args.non))
-    input_files = args.recur + args.non
+    input_files = sorted(args.non) + sorted(args.recur)
     print(input_files)
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
