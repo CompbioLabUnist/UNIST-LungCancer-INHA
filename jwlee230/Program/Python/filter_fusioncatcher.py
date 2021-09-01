@@ -26,7 +26,10 @@ if __name__ == "__main__":
     try:
         normal_data = pandas.read_csv(args.normal, sep="\t", index_col=["Gene_1_symbol(5end_fusion_partner)", "Gene_2_symbol(3end_fusion_partner)"])
         print(normal_data)
-        filtered_data = tumor_data.drop(index=normal_data.index, errors="ignore")
+        if normal_data.empty:
+            filtered_data = tumor_data
+        else:
+            filtered_data = tumor_data.drop(index=normal_data.index, errors="ignore")
     except pandas.errors.EmptyDataError:
         filtered_data = tumor_data
     print(filtered_data)
