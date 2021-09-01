@@ -34,6 +34,8 @@ def ENSG_to_names(gene_id: str) -> str:
 
 
 def recur_or_non(recur, non, ID):
+    recur = list(map(lambda x: x.split("/")[-1].split(".")[0], recur))
+    non = list(map(lambda x: x.split("/")[-1].split(".")[0], non))
     if ID in recur:
         return "Recurrence"
     elif ID in non:
@@ -84,7 +86,9 @@ if __name__ == "__main__":
         input_data = input_data.loc[(input_data["ENSG"] != "")]
         input_data["gene_name"] = pool.map(ENSG_to_names, list(input_data["ENSG"]))
         input_data = input_data.loc[(input_data["gene_name"] != "")]
+    del input_data["ENSG"]
     print(input_data)
+    print(list(input_data.columns))
 
     input_data.groupby(by="gene_name").sum().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
     pandas.DataFrame(data=[(ID, recur_or_non(args.recur, args.non, ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)

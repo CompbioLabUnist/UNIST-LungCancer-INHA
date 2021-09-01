@@ -56,6 +56,7 @@ if __name__ == "__main__":
 
     args.input = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) in args.target, args.input))
     args.input.sort()
+    print(args.input)
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
     trembl_data = trembl_data.loc[(trembl_data["db_name"] == "Uniprot/SPTREMBL"), ["xref", "gene_stable_id"]]
@@ -73,6 +74,7 @@ if __name__ == "__main__":
         input_data = input_data.loc[(input_data["gene_name"] != "")]
     del input_data["ENSG"]
     print(input_data)
+    print(list(input_data.columns))
 
     input_data.groupby(by="gene_name").sum().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
     pandas.DataFrame(data=[(ID, step00.get_long_sample_type(ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)
