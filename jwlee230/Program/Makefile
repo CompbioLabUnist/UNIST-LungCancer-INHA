@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
+CPUS = 100
 MEMS = 100
 PARALLEL = 20
 PWD := $(shell pwd)
@@ -771,6 +771,18 @@ Output/RSEM/Plots/SQC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQ
 Output/RSEM/Plots/SQC.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/SQC-recurrence.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC-recurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-recurrence.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC-recurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-nonrecurrence.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-nonrecurrence.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.CIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/ADC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
 
@@ -783,10 +795,28 @@ Output/RSEM/Plots/SQC.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM
 Output/RSEM/Plots/SQC.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/SQC-recurrence.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC-recurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-recurrence.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC-recurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-recurrence.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-nonrecurrence.Up.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-nonrecurrence.Down.%.pair-venn.pdf: Python/draw_venn_plot_2.py Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-CIS.DEG.tsv Output/RSEM/DEG/SQC-nonrecurrence.%.Normal-Primary.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-recurrence.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/SQC-recurrence.%.DEG.tsv | Output/RSEM/Plots build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/SQC-nonrecurrence.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/SQC-nonrecurrence.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.%.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.tsv | Output/RSEM/Plots build.log
@@ -802,12 +832,18 @@ Output/RSEM/Plots/ADC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/ADC.%
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC
 
 step19-venn: Output/RSEM/Plots/ADC.Up.Bowtie2.venn.pdf Output/RSEM/Plots/ADC.Down.Bowtie2.venn.pdf Output/RSEM/Plots/SQC.Up.Bowtie2.venn.pdf Output/RSEM/Plots/SQC.Down.Bowtie2.venn.pdf Output/RSEM/Plots/ADC.Up.STAR.venn.pdf Output/RSEM/Plots/ADC.Down.STAR.venn.pdf Output/RSEM/Plots/SQC.Up.STAR.venn.pdf Output/RSEM/Plots/SQC.Down.STAR.venn.pdf
+step19-recurrence-venn: Output/RSEM/Plots/SQC-recurrence.Up.Bowtie2.venn.pdf Output/RSEM/Plots/SQC-recurrence.Down.Bowtie2.venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Up.Bowtie2.venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Down.Bowtie2.venn.pdf Output/RSEM/Plots/SQC-recurrence.Up.STAR.venn.pdf Output/RSEM/Plots/SQC-recurrence.Down.STAR.venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Up.STAR.venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Down.STAR.venn.pdf
 step19-pair-venn: Output/RSEM/Plots/ADC.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/ADC.Down.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC.Down.Bowtie2.pair-venn.pdf Output/RSEM/Plots/ADC.Up.STAR.pair-venn.pdf Output/RSEM/Plots/ADC.Down.STAR.pair-venn.pdf Output/RSEM/Plots/SQC.Up.STAR.pair-venn.pdf Output/RSEM/Plots/SQC.Down.STAR.pair-venn.pdf
+step19-recurrence-pair-venn: Output/RSEM/Plots/SQC-recurrence.Up.STAR.pair-venn.pdf Output/RSEM/Plots/SQC-recurrence.Down.STAR.pair-venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Up.STAR.pair-venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Down.STAR.pair-venn.pdf Output/RSEM/Plots/SQC-recurrence.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC-recurrence.Down.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Up.Bowtie2.pair-venn.pdf Output/RSEM/Plots/SQC-nonrecurrence.Down.Bowtie2.pair-venn.pdf
 step19-ADC-Bowtie2-volcano: Output/RSEM/Plots/ADC.Bowtie2.Normal-AAH.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.Normal-AIS.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AAH-AIS.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AAH-Primary.volcano.pdf Output/RSEM/Plots/ADC.Bowtie2.AIS-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-AAH.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AIS-Primary.volcano.pdf
 step19-SQC-Bowtie2-volcano: Output/RSEM/Plots/SQC.Bowtie2.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.Bowtie2.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.CIS-Primary.volcano.pdf
+step19-SQC-recurrence-Bowtie2-volcano: Output/RSEM/Plots/SQC-recurrence.Bowtie2.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-recurrence.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-recurrence.Bowtie2.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.Bowtie2.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.Bowtie2.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.Bowtie2.CIS-Primary.volcano.pdf
+step19-ADC-STAR-volcano: Output/RSEM/Plots/ADC.STAR.Normal-AAH.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AIS-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-AAH.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-AIS.volcano.pdf Output/RSEM/Plots/ADC.STAR.AAH-Primary.volcano.pdf Output/RSEM/Plots/ADC.STAR.AIS-Primary.volcano.pdf
+step19-SQC-STAR-volcano: Output/RSEM/Plots/SQC.STAR.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.CIS-Primary.volcano.pdf
+step19-SQC-recurrence-STAR-volcano: Output/RSEM/Plots/SQC-recurrence.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-recurrence.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-recurrence.STAR.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.CIS-Primary.volcano.pdf
 step19-violin: Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/ADC.Bowtie2.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar
-step19: step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-violin
-.PHONY: step19 step19-venn step19-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-violin
+step19: step19-venn step19-recurrence-venn step19-pair-venn step19-recurrence-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-SQC-recurrence-Bowtie2-volcano step19-ADC-STAR-volcano step19-SQC-STAR-volcano step19-SQC-recurrence-STAR-volcano step19-violin
+.PHONY: step19-venn step19-recurrence-venn step19-pair-venn step19-recurrence-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-SQC-recurrence-Bowtie2-volcano step19-ADC-STAR-volcano step19-SQC-STAR-volcano step19-SQC-recurrence-STAR-volcano step19-violin step19
 
 # Step 20 (Get ready to run MesKit)
 Output/MesKit:
