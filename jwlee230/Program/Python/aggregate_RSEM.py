@@ -55,7 +55,7 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
 
     args.input = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) in args.target, args.input))
-    args.input.sort()
+    args.input.sort(key=step00.sorting_by_type)
     print(args.input)
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
