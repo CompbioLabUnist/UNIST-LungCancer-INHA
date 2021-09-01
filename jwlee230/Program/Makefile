@@ -755,8 +755,8 @@ step18-STAR: step18-preparation step18-SQC-STAR step18-SQC-recurrence-STAR step1
 step18: step18-Bowtie2 step18-STAR
 .PHONY: step18-preparation step18-SQC-Bowtie2 step18-SQC-recurrence-Bowtie2 step18-SQC-nonrecurrence-Bowtie2 step18-ADC-Bowtie2 step18-SQC-Bowtie2-DEG step18-SQC-recurrence-Bowtie2-DEG step18-SQC-nonrecurrence-Bowtie2-DEG step18-ADC-Bowtie2-DEG step18-SQC-STAR step18-SQC-recurrence-STAR step18-SQC-nonrecurrence-STAR step18-ADC-STAR step18-SQC-STAR-DEG step18-SQC-recurrence-STAR-DEG step18-SQC-nonrecurrence-STAR-DEG step18-ADC-STAR-DEG step18-Bowtie2 step18-STAR step18
 
-# Step 19 (DEG: Draw plots)
-Output/RSEM/Plots:
+# Step 19 (DEG: further analysis)
+Output/RSEM/Plots Output/RSEM/Enrichment:
 	mkdir -p $@
 
 Output/RSEM/Plots/ADC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
@@ -825,6 +825,12 @@ Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/
 Output/RSEM/Plots/ADC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/ADC.%.Normal-AAH.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.tsv Output/RSEM/DEG/ADC.%.Normal-MIA.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.tsv Output/RSEM/DEG/ADC.%.AAH-MIA.tsv Output/RSEM/DEG/ADC.%.AAH-Primary.tsv Output/RSEM/DEG/ADC.%.AIS-MIA.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.tsv Output/RSEM/DEG/ADC.%.MIA-Primary.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/TSV/SQC.Up.%.Enrichr.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/TSV/SQC.Down.%.Enrichr.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
 
@@ -842,6 +848,7 @@ step19-ADC-STAR-volcano: Output/RSEM/Plots/ADC.STAR.Normal-AAH.volcano.pdf Outpu
 step19-SQC-STAR-volcano: Output/RSEM/Plots/SQC.STAR.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/SQC.STAR.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/SQC.STAR.CIS-Primary.volcano.pdf
 step19-SQC-recurrence-STAR-volcano: Output/RSEM/Plots/SQC-recurrence.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-recurrence.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-recurrence.STAR.CIS-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.Normal-CIS.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.Normal-Primary.volcano.pdf Output/RSEM/Plots/SQC-nonrecurrence.STAR.CIS-Primary.volcano.pdf
 step19-violin: Output/RSEM/Plots/SQC.Bowtie2.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/ADC.Bowtie2.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/SQC.STAR.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar Output/RSEM/Plots/ADC.STAR.violin.tar
+step19-enrichment: Output/RSEM/TSV/SQC.Up.Bowtie2.Normal-Dysplasia.Enrichr.tsv
 step19: step19-venn step19-recurrence-venn step19-pair-venn step19-recurrence-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-SQC-recurrence-Bowtie2-volcano step19-ADC-STAR-volcano step19-SQC-STAR-volcano step19-SQC-recurrence-STAR-volcano step19-violin
 .PHONY: step19-venn step19-recurrence-venn step19-pair-venn step19-recurrence-pair-venn step19-ADC-Bowtie2-volcano step19-SQC-Bowtie2-volcano step19-SQC-recurrence-Bowtie2-volcano step19-ADC-STAR-volcano step19-SQC-STAR-volcano step19-SQC-recurrence-STAR-volcano step19-violin step19
 
