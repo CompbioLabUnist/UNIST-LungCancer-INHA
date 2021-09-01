@@ -208,7 +208,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26 step27
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -844,11 +844,11 @@ step26: step26-STAR step26-Bowtie
 Output/STAR-Fusion:
 	mkdir -p $@
 
-Output/STAR-Fusion/%/tmp: Data/WTS/%_*.fastq.gz | Output/STAR-Fusion build.log
-	mkdir -p $(@D)
-	$(DOCKER) STAR-Fusion --genome_lib_dir $(addprefix /,$(CTAT_RESOURCE_LIB_DIR)) --left_fq $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) --right_fq $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --CPU $(CPUS) --output_dir $(addprefix /,$(@D))
+Output/STAR-Fusion/%/star-fusion.fusion_predictions.tsv Output/STAR-Fusion/%/star-fusion.fusion_predictions.abridged.tsv: Data/WTS/%_*.fastq.gz | Output/STAR-Fusion build.log
+	$(DOCKER) rm -rf $(addsuffix /,$(@D)) && mkdir -p $(@D)
+	$(DOCKER) STAR-Fusion --genome_lib_dir $(addprefix /,$(CTAT_RESOURCE_LIB_DIR)) --left_fq $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) --right_fq $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --CPU $(CPUS) --output_dir $(addprefix /,$(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
-step27: $(firstword $(addprefix Output/STAR-Fusion/,$(addsuffix /tmp,$(WTS_TUMOR_ID))))
+step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predictions.tsv,$(WTS_TUMOR_ID)))
 .PHONY: step27
 
 # Step ## (BisqueRNA)
@@ -868,8 +868,6 @@ Output/MuSiC:
 Output/SCDC:
 	mkdir -p $@
 
-# Step ## (Fusioncatcher)
-# Step ## (STAR-fusion)
 # Step ## (MesKit)
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
