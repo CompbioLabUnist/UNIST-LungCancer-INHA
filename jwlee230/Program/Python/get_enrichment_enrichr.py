@@ -63,6 +63,7 @@ if __name__ == "__main__":
     raw_data = get_response("{0}?userListId={1}&backgroundType={2}".format(enrichment_url, gene_set_data["userListId"], gene_set_library), None)
     enrichment_data = pandas.DataFrame(raw_data[gene_set_library], columns=["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"])
     enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(sorted(x)), enrichment_data["Overlapping genes"]))
+    enrichment_data = enrichment_data.loc[(enrichment_data["P-value"] < args.padj) & (enrichment_data["Adjusted p-value"] < args.padj)]
     print(enrichment_data)
 
     enrichment_data.to_csv(args.output, sep="\t", index=False)
