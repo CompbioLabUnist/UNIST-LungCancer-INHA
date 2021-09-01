@@ -564,7 +564,7 @@ Output/RSEM/Reference:
 	mkdir -p $@
 
 Output/RSEM/Reference/hg38.gtf.gz: | Output/RSEM/Reference
-	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@
+	wget "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz" -O $@ 1> $@.stdout 2> $@.stderr
 	touch $@
 
 Output/RSEM/Reference/hg38.gtf: Output/RSEM/Reference/hg38.gtf.gz | build.log
@@ -573,7 +573,7 @@ Output/RSEM/Reference/hg38.gtf: Output/RSEM/Reference/hg38.gtf.gz | build.log
 Output/RSEM/Reference/hg38.seq Output/RSEM/Reference/hg38.grp: $(REFERENCE_FASTA) Output/RSEM/Reference/hg38.gtf | build.log
 	$(DOCKER) rsem-prepare-reference --gtf $(addprefix /,$(filter %.gtf,$^)) --bowtie2 --star --num-threads $(CPUS) $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(basename $@)) 1> $@.stdout 2> $@.stderr
 
-step17: Output/RSEM/Reference/hg38.gtf Output/RSEM/Reference/hg38.seq
+step17: Output/RSEM/Reference/hg38.gtf.gz Output/RSEM/Reference/hg38.gtf Output/RSEM/Reference/hg38.seq
 .PHONY: step17
 
 # Step 18 (RSEM: Calculate expression)
