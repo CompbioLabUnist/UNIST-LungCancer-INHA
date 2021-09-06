@@ -16,7 +16,7 @@ census_set = set()
 
 def is_included(gene: str) -> str:
     if (gene in mutenricher_set) and (gene in census_set):
-        return "Driver+Census"
+        return "Census+Driver"
     elif gene in mutenricher_set:
         return "Driver"
     elif gene in census_set:
@@ -85,7 +85,8 @@ if __name__ == "__main__":
     pyclone_data.dropna(inplace=True)
     print(pyclone_data)
 
-    driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
     mutenricher_set = set(driver_data["Gene"])
     print(driver_data)
 
@@ -102,7 +103,7 @@ if __name__ == "__main__":
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="cluster_id", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Cancer Cell Fraction")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] != "Driver+Census":
+            if row["Database"] != "Census+Driver":
                 continue
             texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
 
@@ -110,7 +111,7 @@ if __name__ == "__main__":
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", style="cluster_id", hue="Database", legend="brief", ax=ax)
         matplotlib.pyplot.ylabel("Variant Allele Frequency")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] != "Driver+Census":
+            if row["Database"] != "Census+Driver":
                 continue
             texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     else:

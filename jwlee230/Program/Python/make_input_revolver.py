@@ -61,7 +61,7 @@ if __name__ == "__main__":
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     args = parser.parse_args()
 
@@ -86,7 +86,8 @@ if __name__ == "__main__":
     print(input_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
-    driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
     driver_data["seqname"] = list(map(lambda x: x.replace("-", ":").split(":")[0], driver_data["coordinates"]))
     driver_data["start"] = list(map(lambda x: int(x.replace("-", ":").split(":")[1]), driver_data["coordinates"]))
     driver_data["end"] = list(map(lambda x: int(x.replace("-", ":").split(":")[2]), driver_data["coordinates"]))
