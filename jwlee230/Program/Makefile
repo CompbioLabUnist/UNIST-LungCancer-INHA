@@ -614,14 +614,23 @@ step18: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG
 .PHONY: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG step18
 
 # Step 19 (DEG: further analysis)
-Output/RSEM/Plots Output/RSEM/Enrichment:
+Output/RSEM/Plots/Venn Output/RSEM/Plots/Volcano Output/RSEM/Enrichment:
 	mkdir -p $@
 
-Output/RSEM/Plots/ADC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/ADC.%.Normal-AAH.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.Normal-Primary.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-AIS.DEG.tsv Output/RSEM/DEG/ADC.%.AAH-Primary.DEG.tsv Output/RSEM/DEG/ADC.%.AIS-Primary.DEG.tsv | Output/RSEM/Plots build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AAH" "Normal-AIS" "Normal-Primary" "AAH-AIS" "AAH-Primary" "AIS-Primary" --up 1> $@.stdout 2> $@.stderr
+Output/RSEM/Plots/Venn/ADC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AAH" "Normal-AIS" "Normal-Primary" --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/ADC.%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/ADC.%.DEG.tsv | Output/RSEM/Plots build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+Output/RSEM/Plots/Venn/ADC.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AAH" "Normal-AIS" "Normal-Primary" --down 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Venn/SQC.Up.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-Dysplasia" "Normal-CIS" "Normal-Primary" --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Venn/SQC.Down.%.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-Dysplasia" "Normal-CIS" "Normal-Primary" --down 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Plots/Volcano build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/SQC.%.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.%.Normal-CIS.tsv Output/RSEM/DEG/SQC.%.Normal-Primary.tsv Output/RSEM/DEG/SQC.%.Dysplasia-CIS.tsv Output/RSEM/DEG/SQC.%.Dysplasia-Primary.tsv Output/RSEM/DEG/SQC.%.CIS-Primary.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -635,7 +644,9 @@ Output/RSEM/Enrichment/SQC.Up.%.Enrichr.tsv: Python/get_enrichment_enrichr.py Ou
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
 
-step19:
+step19-venn-ADC: Output/RSEM/Plots/Venn/ADC.Up.Bowtie2.venn.pdf Output/RSEM/Plots/Venn/ADC.Down.Bowtie2.venn.pdf Output/RSEM/Plots/Venn/ADC.Up.STAR.venn.pdf Output/RSEM/Plots/Venn/ADC.Down.STAR.venn.pdf
+step19-venn-SQC: Output/RSEM/Plots/Venn/SQC.Up.Bowtie2.venn.pdf Output/RSEM/Plots/Venn/SQC.Down.Bowtie2.venn.pdf Output/RSEM/Plots/Venn/SQC.Up.STAR.venn.pdf Output/RSEM/Plots/Venn/SQC.Down.STAR.venn.pdf
+step19-volcano-SQC: Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.CIS-Primary.volcano.pdf
 .PHONY: step19
 
 # Step 20 (Get ready to run MesKit)
