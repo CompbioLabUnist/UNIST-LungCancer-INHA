@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -79,28 +79,30 @@ if __name__ == "__main__":
     print(census_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
-    print(driver_data)
+    print(sorted(driver_data.columns))
     driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_gene))]
-    driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
-    driver_data.sort_values(by="Fisher_pval", ignore_index=True, inplace=True)
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+    driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
     driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
+    driver_data = driver_data.iloc[:len(args.input) // 2, :]
     print(driver_data)
 
     patient_data = pandas.DataFrame()
     patient_data["Tumor_Sample_Barcode"] = my_comut.samples
     patient_data["Patient"] = list(map(lambda x: hash(step00.get_patient(x)), my_comut.samples))
-    patient_data["Collection_Type_category"] = "Collection type"
+    patient_data["Collection_Type_category"] = "Type"
     patient_data["Collection_Type_value"] = list(map(step00.get_long_sample_type, my_comut.samples))
     patient_data["Mutation_Count"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0], my_comut.samples))
     print(patient_data)
 
     my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Same patient")
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Collection type", value_order=step00.long_sample_type_list)
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Type", value_order=step00.long_sample_type_list)
     my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=step00.categorical_columns, axis="columns"), name="Mutation type", category_order=driver_data["Gene"], mapping=step00.mutation_mapping, priority=["Frameshift indel"])
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "Mutation_Count"]].set_axis(labels=step00.sample_columns, axis="columns"), name="Mutation count", ylabel="Counts", mapping={"group": "purple"})
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=step00.bar_columns, axis="columns"), name="Mutation count", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping=step00.bar_mapping)
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0]))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 2))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output, bbox_inches="tight")

@@ -6,9 +6,8 @@ import re
 import typing
 import pandas
 
-secret = bytes("asdf", "UTF-8")
 tmpfs = "/tmpfs"
-chromosome_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22".split()
+chromosome_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX".split()
 
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
 
@@ -27,6 +26,8 @@ sample_columns = ["sample", "group"]
 mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel": {"facecolor": "blue", "hatch": "xxx"}, "Frameshift indel": "#FFD700", "Splice site": "darkviolet", "LOH": {"facecolor": "none", "edgecolor": "black", "linewidth": 3}, "Absent": {"facecolor": "grey", "alpha": 0.2}}
 bar_columns = ["category", "value"]
 bar_mapping = {"value": "tab:olive"}
+
+MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
 
 def file_list(path: str) -> typing.List[str]:
