@@ -29,6 +29,7 @@ CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7f
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
 
 # Reference Files
+CLINICAL_DATA_CSV = Data/Clinical.csv
 REFERENCE_DIR = Data/hg38
 REFERENCE_FASTA = $(REFERENCE_DIR)/Homo_sapiens_assembly38.fasta
 REFERENCE_KNOWN_VCF = $(sort $(wildcard $(REFERENCE_DIR)/*.vcf))
@@ -64,36 +65,6 @@ WTS_TUMOR_ID = $(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fi
 BAM_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADMN](_?\d)?"))
 BAM_NORMAL_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+N(_?\d)?"))
 BAM_TUMOR_ID = $(sort $(shell ls -1 Data/BAM/*.bam | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+[PCADM](_?\d)?"))
-
-# SQC samples
-SQC_PATIENTS = 1 2 4 8 12 14 15 33 34 38 48 49 53 57 58 63 64 cn1 cn2 cn3 cn4 cn5 cn6 cn7 cn8 cn10 cn11 cn13 cn15 cn16 cn17 cn18 cn21 cn23 cn26 cn27 cn30 cn31 cn32 cn33 cn34 cn35 cn36 cn37 cn38 cn39 cn40 cn41 cn42 cn43 cn44 cn45 cn47 cn48 cn49 cn50 cn51 cn52 cn53 cn54 cn55 cn56 cn57 cn60 cn61 cn62 cn63 cn64 cn65 cn66 cn67 cn68 cn69 cn70 cn71 cn72 cn73 cn74 cn75 cn76 cn77 cn78 cn79
-# SQC WES samples
-SQC_WES_SAMPLES = 8P1 8C1 12P1 12C1 14P1 14C1 15P1 15C1 33D1 34P1 34C1 38P1 38C1 48P1 48A1 48A2 48A3 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn7P cn7C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn18P cn18C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn30P cn30C cn31P cn31C cn32P cn32C cn33P cn33C cn34P cn34C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn40P cn40C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn47P cn47C cn48P cn48C cn49P cn49C cn50P cn50C cn51P cn51C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn60P cn60C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn71P cn71C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn76P cn76C cn78P cn78C cn79P cn79C
-SQC_NONSMOKING_WES_SAMPLES = cn4P cn4C cn7P cn7C cn18P cn18C
-SQC_SMOKING_WES_SAMPLES = 8P1 8C1 12P1 12C1 14P1 14C1 15P1 15C1 33P1 33D1 34P1 34C1 38P1 38C1 48P1 48A1 48A2 48A3 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn5P cn5C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn30P cn30C cn31P cn31C cn32P cn32C cn33P cn33C cn34P cn34C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn40P cn40C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn47P cn47C cn48P cn48C cn49P cn49C cn50P cn50C cn51P cn51C cn52P cn52C cn53P cn53C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn60P cn60C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn71P cn71C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn76P cn76C cn78P cn78C cn79P cn79C
-SQC_RECURRENCE_WES_SAMPLES = 12P1 12C1 33P1 33D1 38P1 38C1 48P1 48A1 48A2 48A3 cn30P cn30C cn34P cn34C cn40P cn40C cn47P cn47C cn50P cn50C cn53P cn53C cn60P cn60C cn71P cn71C cn76P cn76C cn78P cn78C
-SQC_NONRECURRENCE_WES_SAMPLES = 8P1 8C1 14P1 14C1 15P1 15C1 34P1 34C1 49P1 49C1 53P1 53A1 57P1 57C1 57D1 57D2 58P1 58A1 58A2 58A3 58A4 63P1 63C1 63C2 64P1 64D1 cn1P cn1C cn1D cn2P cn2C cn3P cn3C cn4P cn4C cn5P cn5C cn7P cn7C cn10P cn10C cn11P cn11C cn13P cn13C cn15P cn15C cn16P cn16C cn17P cn17C cn18P cn18C cn21P cn21C cn23P cn23C cn26P cn26C cn27P cn27C cn31P cn31C cn32P cn32C cn33P cn33C cn35P cn35C cn36P cn36C cn37P cn37C cn38P cn38C cn39P cn39C cn41P cn41C cn42P cn42C cn43P cn43C cn44P cn44C cn45P cn45C cn48P cn48C cn49P cn49C cn51P cn51C cn52P cn52C cn54P cn54C cn55P cn55C cn56P cn56C cn57P cn57C cn61P cn61C cn62P cn62C cn63P cn63C cn64P cn64C cn65P cn65C cn66P cn66C cn67P cn67C cn68P cn68C cn69P cn69C cn70P cn70C cn72P cn72C cn73P cn73C cn74P cn74C cn75P cn75C cn79P cn79C
-# SQC WTS samples
-SQC_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
-SQC_NONSMOKING_WTS_SAMPLES = cn4N cn7P cn7C
-SQC_SMOKING_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn5P cn5C cn5N cn6P cn6C cn6N cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn30P cn30C cn32P cn32C cn38P cn38C cn39P cn39C cn40P cn40C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn53P cn53C cn54P cn54C cn55N cn57P cn57C cn57N cn60N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn76P cn76C cn77P cn77D cn78P cn78C cn79P cn79C
-SQC_RECURRENCE_WTS_SAMPLES = cn30P cn30C cn40P cn40C cn53P cn53C cn60N cn76P cn76C cn77P cn77D cn78P cn78C
-SQC_NONRECURRENCE_WTS_SAMPLES = cn1P cn1D cn1N cn2P cn2C cn3P cn3C cn3N cn4N cn5P cn5C cn5N cn6P cn6C cn6N cn7P cn7C cn8P cn8C cn10P cn10C cn16P cn16C cn17P cn17C cn23P cn23C cn32P cn32C cn38P cn38C cn39P cn39C cn44P cn44C cn49P cn49C cn52P cn52C cn52N cn54P cn54C cn55N cn57P cn57C cn57N cn62N cn63P cn63C cn63N cn64P cn64C cn64N cn65P cn65C cn66P cn66C cn66N cn67P cn67C cn67N cn68N cn69P cn69C cn69N cn70P cn70C cn74P cn74C cn75P cn75C cn75N cn79P cn79C
-
-# ADC samples
-ADC_PATIENTS = 39 51 52 54 55 61 62 65 cn80 cn90 cn93 cn95 cn96 cn97 cn99 cn101 cn102 cn103 cn105 cn106 cn107 cn108 cn109 cn110 cn111 cn112 cn113 cn115 cn116
-# ADC WES samples
-ADC_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn93P cn93C cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
-ADC_NONSMOKING_WES_SAMPLES = cn93P cn93C
-ADC_SMOKING_WES_SAMPLES = 39P1 39A1 39A2 51P1 51A1 52P1 52M1 54P1 54A1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95A cn97P cn97C cn101P cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C cn112P cn112C
-ADC_RECURRENCE_WES_SAMPLES = 51P1 51A1 54P1 54A1 cn93P cn93C cn112P cn112C
-ADC_NONRECURRENCE_WES_SAMPLES = 39P1 39A1 39A2 52P1 52M1 55P1 55A1 55A2 61P1 61A1 61A2 62P1 62A1 62A2 62A3 62A4 65P1 65A1 cn95P cn95C cn95A cn97P cn97C cn101P cn101C cn105P cn105C cn106P cn106C cn107P cn107C cn107A1 cn108P cn108C cn110P cn110C
-# ADC WTS samples
-ADC_WTS_SAMPLES = cn90P cn90C cn90N cn95N cn96N cn99N cn101N cn102P cn102C cn102N cn103N cn107P cn107C cn109N cn110P cn110C cn111N cn112N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
-ADC_NONSMOKING_WTS_SAMPLES = cn90P cn90C cn90N cn96N cn99N cn102P cn102C cn102N cn103N cn109N cn111N cn113P cn113C cn113N cn115P cn115A cn115N cn116N
-ADC_SMOKING_WTS_SAMPLES = cn95N cn101N cn107P cn107C cn110P cn110C cn112N
-ADC_RECURRENCE_WTS_SAMPLES = cn90P cn90C cn90N cn112C cn112N
-ADC_NONRECURRENCE_WTS_SAMPLES = cn95N cn96N cn99N cn101C cn101N cn102P cn102C cn102N cn103C cn1033N cn107P cn107C cn109P cn109N cn110P cn110C cn111P cn111N cn113P cn113C cn113N cn115P cn115A cn115N cn116C cn116N
 
 # General
 all:
@@ -382,52 +353,56 @@ step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID))) 
 .PHONY: step12
 
 # Step 13 (Sequenza: Draw the plots)
-Output/Sequenza/BWA/%.tar.gz: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Output/Sequenza/BWA/%.seqz.gz.tbi | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
-	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
+Output/Sequenza/BWA/%/sample_alternative_solutions.txt Output/Sequenza/BWA/%/sample_segments.txt: R/run_sequenza.R Output/Sequenza/BWA/%.seqz.gz Output/Sequenza/BWA/%.seqz.gz.tbi | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --sampleid "sample" --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Sequenza/Bowtie2/%.tar.gz: R/run_sequenza.R Output/Sequenza/Bowtie2/%.seqz.gz Output/Sequenza/Bowtie2/%.seqz.gz.tbi | build.log
-	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --sampleid $* --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $@.stdout 2> $@.stderr
-	cd $(abspath $(@D)) && tar -zcvf $(@F) $*_* && rm -fv $*_*
+Output/Sequenza/Bowtie2/%/sample_alternative_solutions.txt Output/Sequenza/BWA/%/sample_segments.txt: R/run_sequenza.R Output/Sequenza/Bowtie2/%.seqz.gz Output/Sequenza/Bowtie2/%.seqz.gz.tbi | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --sampleid "sample" --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Sequenza/BWA-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.pdf: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/BWA-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(SQC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(ADC_WES_SAMPLES))) Data/hg38/hg38.chrom.sizes | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-step13: $(addprefix Output/Sequenza/BWA/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .tar.gz,$(WES_TUMOR_ID))) Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf
-.PHONY: step13
+step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
+step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf
+step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf
+step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf
+step13: step13-Sequenza step13-default step13-genome step13-simple
+.PHONY: step13-Sequenza step13-default step13-genome step13-simple step13
 
 # Step 14 (Mutect2)
 Output/Mutect2/BWA Output/Mutect2/Bowtie2:
@@ -586,13 +561,16 @@ Output/RSEM/Bowtie2/%.genome.bam Output/RSEM/Bowtie2/%.genes.results: Data/WTS/%
 Output/RSEM/STAR/%.genome.bam Output/RSEM/STAR/%.genes.results: Data/WTS/%_*.fastq.gz Output/RSEM/Reference/hg38.grp | Output/RSEM/STAR build.log
 	$(DOCKER) rsem-calculate-expression --num-threads $(CPUS) --estimate-rspd --ci-memory $(shell echo "$(MEMS) * 1024" | bc) --star --star-gzipped-read-file --output-genome-bam --paired-end $(addprefix /,$(sort $(filter %.fastq.gz,$^)) $(basename $(filter %.grp,$^)) $(@D)/$*) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.tsv Output/RSEM/DEG/SQC.Bowtie2.Normal-Dysplasia.coldata: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(SQC_WTS_SAMPLES))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --target "Normal" "Dysplasia" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/RSEM/DEG/Bowtie2.tsv: Python/aggregate_RSEM.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/STAR.tsv: Python/aggregate_RSEM.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(GENCODE_GTF) $(TREMBL_TSV) | Output/RSEM/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID)))
+step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/Bowtie2.tsv $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/STAR.tsv
 step18: step18-preparation
 .PHONY: step18
 

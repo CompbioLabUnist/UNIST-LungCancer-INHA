@@ -38,9 +38,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
-    parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
-    parser.add_argument("output", help="Output Basename file", type=str)
-    parser.add_argument("--target", help="Give compared histologies", nargs=2, required=True)
+    parser.add_argument("trembl", help="Gencode TREMBL tsv.gz file", type=str)
+    parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -49,12 +48,13 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .genes.results!!")
     elif not args.gencode.endswith(".gtf"):
         raise ValueError("Gencode must end with .gtf!!")
-    elif (args.target[0] not in step00.long_sample_type_list) or (args.target[1] not in step00.long_sample_type_list):
-        raise ValueError("TARGET is not valid!!")
+    elif not args.trembl.endswith(".tsv.gz"):
+        raise ValueError("Trembl must end with .tsv.gz!!")
+    elif not args.output.endswith(".tsv"):
+        raise ValueError("Output must end with .tsv!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    args.input = list(filter(lambda x: step00.get_long_sample_type(x.split("/")[-1].split(".")[0]) in args.target, args.input))
     args.input.sort(key=step00.sorting_by_type)
     print(args.input)
 
@@ -76,5 +76,4 @@ if __name__ == "__main__":
     print(input_data)
     print(list(input_data.columns))
 
-    input_data.groupby(by="gene_name").sum().to_csv(args.output + ".tsv", sep="\t", index=True, header=True)
-    pandas.DataFrame(data=[(ID, step00.get_long_sample_type(ID)) for ID in list(input_data.columns)[:-1]], columns=["ID", "condition"]).to_csv(args.output + ".coldata", sep="\t", index=False, header=True)
+    input_data.groupby(by="gene_name").sum().to_csv(args.output, sep="\t", index=True, header=True)

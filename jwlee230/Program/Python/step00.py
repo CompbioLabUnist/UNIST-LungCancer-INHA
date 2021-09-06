@@ -1,10 +1,10 @@
 """
 step00.py: for base implementation
 """
-import math
 import os
 import re
 import typing
+import pandas
 
 secret = bytes("asdf", "UTF-8")
 tmpfs = "/tmpfs"
@@ -122,3 +122,10 @@ def get_color_by_type(ID: str) -> str:
     get_color_by_type: get color by type
     """
     return stage_color_code[get_long_sample_type(ID)]
+
+
+def get_clinical_data(filename: str) -> pandas.DataFrame:
+    """
+    get_clinical_data: get clinical data for select proper patients
+    """
+    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1])

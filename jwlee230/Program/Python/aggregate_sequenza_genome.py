@@ -3,7 +3,6 @@ aggregate_sequenza_genome.py: Aggregate sequenza results as genome view
 """
 import argparse
 import multiprocessing
-import tarfile
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -15,42 +14,41 @@ big = 10 ** 6
 
 
 def cut_ratio(value: float) -> float:
-    if 0 <= value <= 2:
+    if 0 <= value:
         return value
     elif value < 0:
         return 0
-    elif 2 < value:
-        return 2
     else:
         raise ValueError("Something went wrong!!")
 
 
-def untar(file_name: str) -> pandas.DataFrame:
-    print("Working on", file_name)
-    with tarfile.open(file_name, "r:gz") as tar:
-        txt_file = list(filter(lambda x: x.endswith("_segments.txt"), tar.getnames()))[0]
-        tar.extract(txt_file, path=step00.tmpfs)
-
-    data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"]).dropna(axis="index")
-    data["sample"] = txt_file.split("_")[0]
+def get_data(file_name: str) -> pandas.DataFrame:
+    data = pandas.read_csv(file_name, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"]).dropna(axis="index")
+    data["sample"] = file_name.split("/")[-2]
     data["depth.ratio"] = list(map(cut_ratio, data["depth.ratio"]))
-
     return data
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Sequenza tar.gz file(s)", type=str, nargs="+")
+    parser.add_argument("input", help="Sequenza output segments.txt file(s)", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
 
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".tar.gz"), args.input)):
-        raise ValueError("INPUT must end with .tar.gz!!")
+    if list(filter(lambda x: not x.endswith(".txt"), args.input)):
+        raise ValueError("INPUT must end with .TXT!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
@@ -58,10 +56,21 @@ if __name__ == "__main__":
     elif not (0 < args.threshold < 1):
         raise ValueError("Threshold must be (0, 1)")
 
-    args.input = sorted(args.input, key=lambda x: step00.sorting(x.split("/")[-1].split(".")[0]))
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    if args.SQC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+    elif args.ADC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in patients, args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        input_data = pandas.concat(objs=pool.map(untar, args.input), axis="index", copy=False, ignore_index=True)
+        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True)
     print(input_data)
 
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
