@@ -377,14 +377,6 @@
 
     \begin{frame}
         \frametitle{Findings in Sequenza}
-
-        \begin{exampleblock}{Sequenza Findings}
-            \begin{itemize}
-                \item SQC have more CNVs than ADC.
-                \item SQC have aggressive CNVs on chromosome \#3 and \#5.
-                \item ADC have aggressive CNVs on chromosome \#5.
-            \end{itemize}
-        \end{exampleblock}
     \end{frame}
 
     \subsection{SNVs Analysis}
@@ -426,10 +418,6 @@
 
     \begin{frame}
         \frametitle{Findings in SNVs Analysis}
-
-        \begin{exampleblock}{TTN}
-            TTN is the most mutated gene both in SQC and ADC.
-        \end{exampleblock}
     \end{frame}
 
     \subsection{VAF Analysis}
@@ -521,19 +509,19 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.Normal-Dysplasia.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.Normal-Dysplasia.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.Normal-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-Dysplasia} & \mbox{(b) Normal-CIS} & \mbox{(c) Normal-Primary} \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.Dysplasia-CIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.Dysplasia-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.Dysplasia-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.Dysplasia-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/SQC.STAR.CIS-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.SQC.CIS-Primary.volcano.pdf}
                 \\
                 \mbox{(d) Dysplasia-CIS} & \mbox{(e) Dysplasia-Primary} & \mbox{(f) CIS-Primary} \\
             \end{array}$
@@ -542,15 +530,15 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram with Bowtie2 in SQC}
+        \frametitle{DEG Venn Diagram with STAR in SQC}
 
         Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (SQC)
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/SQC.Up.STAR.pair-venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Up.venn.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/SQC.Down.STAR.pair-venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
             \end{array}$
@@ -563,24 +551,24 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Volcano Plots with Bowtie2 in ADC}
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ Primary (ADC)
+        \frametitle{DEG Volcano Plots with STAR in ADC}
+        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA ($\star$ No WTS) $\rightarrow$ Primary (ADC)
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.Normal-AAH.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-AAH.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.Normal-AIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-AIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-AAH} & \mbox{(b) Normal-AIS} & \mbox{(c) Normal-Primary} \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.AAH-AIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AAH-AIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.AAH-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AAH-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/ADC.STAR.AIS-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AIS-Primary.volcano.pdf}
                 \\
                 \mbox{(d) AAH-AIS} & \mbox{(e) AAH-Primary} & \mbox{(f) AIS-Primary} \\
             \end{array}$
@@ -591,13 +579,13 @@
     \begin{frame}
         \frametitle{DEG Venn Diagram with Bowtie2 in ADC}
 
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ Primary (ADC)
+        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA ($\star$ No WTS) $\rightarrow$ Primary (ADC)
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/ADC.Up.STAR.pair-venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Up.venn.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/ADC.Down.STAR.pair-venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
             \end{array}$
