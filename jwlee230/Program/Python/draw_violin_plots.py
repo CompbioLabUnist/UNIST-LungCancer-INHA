@@ -17,7 +17,7 @@ import step00
 input_data = pandas.DataFrame()
 
 
-def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
+def run(gene: str) -> str:
     print(gene)
 
     for stage in set(input_data["Stage"]):
@@ -25,10 +25,12 @@ def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
             return ""
 
     for stage_a, stage_b in itertools.combinations(set(input_data["Stage"]), 2):
-        if scipy.stats.ttest_ind(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene], equal_var=False)[1] < 0.001:
+        if scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene])[1] < 0.001:
             break
     else:
         return ""
+
+    stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -36,14 +38,10 @@ def run(gene: str, ADC: bool = False, SQC: bool = False) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    if ADC:
-        seaborn.violinplot(data=input_data, x="Stage", y=gene, order=step00.ADC_stage_list, ax=ax)
-        statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=step00.ADC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.ADC_stage_list, 2), text_format="star", loc="inside", verbose=0)
-    elif SQC:
-        seaborn.violinplot(data=input_data, x="Stage", y=gene, order=step00.SQC_stage_list, ax=ax)
-        statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=step00.SQC_stage_list, test="t-test_ind", box_pairs=itertools.combinations(step00.SQC_stage_list, 2), text_format="star", loc="inside", verbose=0)
-    else:
-        raise Exception("Something went wrong!!")
+    seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax)
+    statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=stage_order, test="Mann-Whitney", box_pairs=itertools.combinations(stage_order, 2), text_format="star", loc="outside", verbose=0)
+
+    matplotlib.pyplot.tight_layout()
 
     fig_name = gene + ".pdf"
     fig.savefig(fig_name)
@@ -60,10 +58,6 @@ if __name__ == "__main__":
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--pvalue", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
-    group.add_argument("--SQC", help="Draw SQC pathway", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -82,8 +76,7 @@ if __name__ == "__main__":
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = pool.starmap(run, [(gene, args.ADC, args.SQC) for gene in list(input_data.columns)[:-1]])
-        tar_files = list(filter(None, tar_files))
+        tar_files = sorted(filter(None, pool.map(run, list(input_data.columns)[:-1])))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tar_files:
