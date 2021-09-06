@@ -2,6 +2,7 @@
 draw_volcano_plot.py: draw the volcano plot of DEG
 """
 import argparse
+from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -15,10 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
-    group.add_argument("--SQC", help="Draw SQC pathway", action="store_true", default=False)
+    parser.add_argument("--annotation", help="Annotation limits", type=int, default=5)
 
     args = parser.parse_args()
 
@@ -26,37 +24,48 @@ if __name__ == "__main__":
         raise ValueError("DEG must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
+    elif args.annotation < 1:
+        raise ValueError("Annotation must be positive!!")
 
     DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
+    DEG_data["importance"] = list(map(lambda x: abs(x[0] * x[1]), zip(DEG_data["log2FoldChange"], DEG_data["-log(Padj)"])))
+    DEG_data.sort_values(by="importance", ascending=False, inplace=True)
     print(DEG_data)
 
     up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
     down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
     NS_gene = DEG_data.loc[((DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold)) & (DEG_data["log2FoldChange"] < numpy.log2(args.fold))) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
 
+    texts = list()
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    matplotlib.pyplot.scatter(NS_gene["log2FoldChange"], NS_gene["-log(Padj)"], c="tab:gray")
-    matplotlib.pyplot.scatter(up_gene["log2FoldChange"], up_gene["-log(Padj)"], c="tab:red")
-    matplotlib.pyplot.scatter(down_gene["log2FoldChange"], down_gene["-log(Padj)"], c="tab:blue")
-    matplotlib.pyplot.axhline(y=-1 * numpy.log10(args.padj), linestyle="--", color="black")
-    matplotlib.pyplot.axvline(x=numpy.log2(args.fold), linestyle="--", color="black")
-    matplotlib.pyplot.axvline(x=-1 * numpy.log2(args.fold), linestyle="--", color="black")
+    matplotlib.pyplot.scatter(NS_gene["log2FoldChange"], NS_gene["-log(Padj)"], color="tab:gray")
+    matplotlib.pyplot.scatter(up_gene["log2FoldChange"], up_gene["-log(Padj)"], color="tab:red")
+    matplotlib.pyplot.scatter(down_gene["log2FoldChange"], down_gene["-log(Padj)"], color="tab:blue")
 
+    matplotlib.pyplot.axhline(y=-1 * numpy.log10(args.padj), linestyle="--", color="black")
     matplotlib.pyplot.text(x=0, y=-1 * numpy.log10(args.padj), s="Padj={0:.2f}".format(args.padj), horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small")
+
+    matplotlib.pyplot.axvline(x=numpy.log2(args.fold), linestyle="--", color="black")
+    matplotlib.pyplot.text(x=numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s="log2(FC)={0:.1f}".format(numpy.log2(args.fold)), rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small")
+
+    matplotlib.pyplot.axvline(x=-1 * numpy.log2(args.fold), linestyle="--", color="black")
+    matplotlib.pyplot.text(x=-1 * numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s="log2(FC)={0:.1f}".format(-1 * numpy.log2(args.fold)), rotation="vertical", horizontalalignment="right", verticalalignment="bottom", fontsize="xx-small")
+
+    for index, d in up_gene.iloc[:args.annotation, :].iterrows():
+        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:red", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
+    for index, d in down_gene.iloc[:args.annotation, :].iterrows():
+        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:blue", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 6)
 
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlabel("log2(Fold_Change)")
     matplotlib.pyplot.ylabel("-log10(Padj)")
-    if args.ADC:
-        matplotlib.pyplot.title("Up: {0:d}, Down: {1:d} in ADC".format(len(up_gene), len(down_gene)))
-    elif args.SQC:
-        matplotlib.pyplot.title("Up: {0:d}, Down: {1:d} in SQC".format(len(up_gene), len(down_gene)))
-    else:
-        raise Exception("Something went wrong!!")
+    matplotlib.pyplot.title("Up: {0:d}, Down: {1:d}".format(len(up_gene), len(down_gene)))
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
