@@ -21,10 +21,14 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("driver", help="MutEnricher Fisher enrichment output", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--gene", help="Gene number to draw", type=int, default=50)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.01)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -32,14 +36,27 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.census.endswith(".csv"):
         raise ValueError("Census must end with .CSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
-    elif args.gene < 1:
-        raise ValueError("GENE must be positive!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
+
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    if args.SQC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+    elif args.ADC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -63,14 +80,12 @@ if __name__ == "__main__":
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
     print(driver_data)
-    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"]))]
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_gene))]
     driver_data = driver_data.loc[(driver_data["Fisher_pval"] < args.p)]
     driver_data.sort_values(by="Fisher_pval", ignore_index=True, inplace=True)
     driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
-    driver_data["Gene"] = list(map(lambda x: x + "*" if x in census_gene else x, driver_data["Gene"]))
     print(driver_data)
-    driver_data = driver_data.iloc[:args.gene].iloc[::-1]
 
     patient_data = pandas.DataFrame()
     patient_data["Tumor_Sample_Barcode"] = my_comut.samples
