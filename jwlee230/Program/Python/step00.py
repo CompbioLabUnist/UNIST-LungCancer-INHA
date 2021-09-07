@@ -129,4 +129,4 @@ def get_clinical_data(filename: str) -> pandas.DataFrame:
     """
     get_clinical_data: get clinical data for select proper patients
     """
-    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1])
+    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1]).dropna(axis="index", how="all")

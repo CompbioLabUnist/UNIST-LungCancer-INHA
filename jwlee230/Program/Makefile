@@ -176,7 +176,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26# step27
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26 step27
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -614,8 +614,17 @@ step18: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG
 .PHONY: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG step18
 
 # Step 19 (DEG: further analysis)
-Output/RSEM/Plots/Venn Output/RSEM/Plots/Volcano Output/RSEM/Plots/Violin Output/RSEM/Enrichment:
+Output/RSEM/Plots/Cluster Output/RSEM/Plots/Venn Output/RSEM/Plots/Volcano Output/RSEM/Plots/Violin Output/RSEM/Enrichment:
 	mkdir -p $@
+
+Output/RSEM/Plots/Cluster/%.SQC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.ADC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.ADC-SQC.pdf: Python/draw_clustermap_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Venn/%.ADC.Up.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AAH" "Normal-AIS" "Normal-Primary" --up 1> $@.stdout 2> $@.stderr
@@ -653,6 +662,7 @@ Output/RSEM/Enrichment/%.Down.MSigDB.tsv: Python/get_enrichment_enrichr.py Outpu
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
 
+step19-cluster: Output/RSEM/Plots/Cluster/Bowtie2.SQC.pdf Output/RSEM/Plots/Cluster/STAR.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.pdf Output/RSEM/Plots/Cluster/STAR.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC-SQC.pdf Output/RSEM/Plots/Cluster/STAR.ADC-SQC.pdf
 step19-venn-ADC: Output/RSEM/Plots/Venn/Bowtie2.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Down.venn.pdf
 step19-venn-SQC: Output/RSEM/Plots/Venn/Bowtie2.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.SQC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Down.venn.pdf
 step19-volcano-ADC: Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AIS-Primary.volcano.pdf
@@ -663,8 +673,8 @@ step19-KEGG-ADC: Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AAH.Up.KEGG.tsv Outpu
 step19-MSigDB-ADC: Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AAH.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AIS.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-AIS.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AIS-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AAH.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AIS.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-Primary.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-AIS.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-Primary.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AIS-Primary.Down.MSigDB.tsv
 step19-KEGG-SQC: Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Dysplasia.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-CIS.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-CIS.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.CIS-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Dysplasia.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-CIS.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-CIS.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.SQC.CIS-Primary.Down.KEGG.tsv
 step19-MSigDB-SQC: Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Dysplasia.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-CIS.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-CIS.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.CIS-Primary.Up.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Dysplasia.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-CIS.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Normal-Primary.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-CIS.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.Dysplasia-Primary.Down.MSigDB.tsv Output/RSEM/Enrichment/Bowtie2.SQC.CIS-Primary.Down.MSigDB.tsv
-step19: step19-venn-ADC step19-venn-SQC step19-volcano-ADC step19-volcano-SQC step19-violin-ADC step19-violin-SQC step19-KEGG-ADC step19-MSigDB-ADC step19-KEGG-SQC step19-MSigDB-SQC
-.PHONY: step19-venn-ADC step19-venn-SQC step19-volcano-ADC step19-volcano-SQC step19-violin-ADC step19-violin-SQC step19-KEGG-ADC step19-MSigDB-ADC step19-KEGG-SQC step19-MSigDB-SQC step19
+step19: step19-cluster step19-venn-ADC step19-venn-SQC step19-volcano-ADC step19-volcano-SQC step19-violin-ADC step19-violin-SQC step19-KEGG-ADC step19-MSigDB-ADC step19-KEGG-SQC step19-MSigDB-SQC
+.PHONY: step19-cluster step19-venn-ADC step19-venn-SQC step19-volcano-ADC step19-volcano-SQC step19-violin-ADC step19-violin-SQC step19-KEGG-ADC step19-MSigDB-ADC step19-KEGG-SQC step19-MSigDB-SQC step19
 
 # Step 20 (Get ready to run MesKit)
 Output/MesKit:
@@ -766,10 +776,10 @@ Output/CIBERSORTx/ADC.%.violin.tar: Python/draw_violin_plot_cibersort.py Output/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/SQC.%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/SQC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/ADC.%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/ADC.%/CIBERSORTxGEP_NA_Weights.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step22-RSEM: Output/CIBERSORTx/SQC.Bowtie2.tsv Output/CIBERSORTx/ADC.Bowtie2.tsv Output/CIBERSORTx/SQC.STAR.tsv Output/CIBERSORTx/ADC.STAR.tsv
 step22-CIBERSORTx: Output/CIBERSORTx/GSE131907_signature.tsv Output/CIBERSORTx/SQC.Bowtie2/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/ADC.Bowtie2/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/SQC.STAR/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/ADC.STAR/CIBERSORTxGEP_NA_Weights.txt

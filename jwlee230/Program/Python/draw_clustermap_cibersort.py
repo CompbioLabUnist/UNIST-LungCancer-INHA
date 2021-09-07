@@ -15,10 +15,6 @@ if __name__ == "__main__":
     parser.add_argument("cibersort", help="CIBERSORT result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
-    group.add_argument("--SQC", help="Draw SQC pathway", action="store_true", default=False)
-
     args = parser.parse_args()
 
     if not args.output.endswith(".pdf"):
