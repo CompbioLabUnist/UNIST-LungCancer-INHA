@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input RSEM filtered TSV file", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["stage", "Normal", "Primary"])
     parser.add_argument("--date", help="Selection is date", action="store_true", default=False)
