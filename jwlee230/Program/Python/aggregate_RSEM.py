@@ -42,6 +42,10 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
+    group_histology = parser.add_mutually_exclusive_group(required=True)
+    group_histology.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group_histology.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".genes.results"), args.input)):

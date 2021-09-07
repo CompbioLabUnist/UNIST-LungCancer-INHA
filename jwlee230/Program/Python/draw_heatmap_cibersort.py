@@ -15,10 +15,6 @@ if __name__ == "__main__":
     parser.add_argument("cibersort", help="CIBERSORT result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
-    group.add_argument("--SQC", help="Draw SQC pathway", action="store_true", default=False)
-
     args = parser.parse_args()
 
     if not args.output.endswith(".pdf"):
@@ -38,12 +34,6 @@ if __name__ == "__main__":
 
     seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="Reds")
 
-    if args.ADC:
-        matplotlib.pyplot.title("ADC")
-    elif args.SQC:
-        matplotlib.pyplot.title("SQC")
-    else:
-        raise Exception("Something went wrong!!")
     matplotlib.pyplot.xticks(fontsize="xx-small")
     matplotlib.pyplot.yticks(fontsize="xx-small")
     ax.figure.tight_layout()

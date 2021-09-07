@@ -5,6 +5,7 @@ import argparse
 import gtfparse
 import multiprocessing
 import pandas
+import step00
 
 trembl_data = pandas.DataFrame()
 gencode_data = pandas.DataFrame()
@@ -36,23 +37,45 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
-    parser.add_argument("trembl", help="Gencode TREMBL gz file", type=str)
+    parser.add_argument("trembl", help="Gencode TREMBL TSV.gz file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+
+    group_histology = parser.add_mutually_exclusive_group(required=True)
+    group_histology.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group_histology.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".genes.results"), args.input)):
         raise ValueError("INPUT must end with .genes.results!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif not args.gencode.endswith(".gtf"):
         raise ValueError("Gencode must end with .gtf!!")
+    elif not args.trembl.endswith(".tsv.gz"):
+        raise ValueError("TREMBL must end with .tsv.gz!!")
     elif not args.output.endswith(".tsv"):
         raise ValueError("Output must end with .TSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    args.input.sort()
+    clinical_data = step00.get_clinical_data(args.clinical)
+
+    patients = list(map(lambda x: x.split("/")[-1].split(".")[0], args.input))
+
+    if args.SQC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    elif args.ADC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+    args.input = list(filter(lambda x: x.split("/")[-1].split(".")[0] in patients, args.input))
 
     trembl_data = pandas.read_csv(args.trembl, sep="\t")
     trembl_data = trembl_data.loc[(trembl_data["db_name"] == "Uniprot/SPTREMBL"), ["xref", "gene_stable_id"]]
@@ -70,5 +93,6 @@ if __name__ == "__main__":
         input_data = input_data.loc[(input_data["gene_name"] != "")]
     del input_data["ENSG"]
     print(input_data)
+    print(sorted(input_data.columns))
 
-    input_data.groupby("gene_name").mean().to_csv(args.output, sep="\t", index=True, header=True)
+    input_data.groupby("gene_name").sum().to_csv(args.output, sep="\t", index=True, header=True)
