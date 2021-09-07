@@ -53,6 +53,7 @@ if __name__ == "__main__":
         txt_file = list(filter(lambda x: x.endswith("_alternative_solutions.txt"), tar.getnames()))[0]
         tar.extract(txt_file, path=step00.tmpfs)
     solution_data = pandas.read_csv(step00.tmpfs + "/" + txt_file, sep="\t")
+
     with open(args.output + ".Cellularity.txt", "w") as f:
         f.write("%s" % solution_data.loc[0, "cellularity"])
 

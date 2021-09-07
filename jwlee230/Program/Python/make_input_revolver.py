@@ -57,16 +57,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input loci.TSV files", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
     parser.add_argument("driver", help="Driver gene TSV file (not necessarily TSV)", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
+    group_histology = parser.add_mutually_exclusive_group(required=True)
+    group_histology.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group_histology.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
         raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif not args.census.endswith(".csv"):
         raise ValueError("Census must end with .CSV!!")
     elif not args.output.endswith(".tsv"):
@@ -76,11 +83,26 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P must be (0, 1)")
 
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    patients = list(map(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]), args.input))
+    if args.SQC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    elif args.ADC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
     print("Input:", len(args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(read_tsv, args.input), axis="index", copy=False)
-        input_data["sample_type"] = pool.map(step00.get_long_sample_type, input_data["sample_id"])
+        input_data["sample_type"] = pool.map(step00.get_simple_sample_type, input_data["sample_id"])
     input_data["sample_id"] = list(map(lambda x: x.split(".")[0], input_data["sample_id"]))
     print(list(input_data.columns))
     print(input_data)
