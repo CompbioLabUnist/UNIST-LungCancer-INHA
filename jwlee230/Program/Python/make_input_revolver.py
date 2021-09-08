@@ -86,7 +86,7 @@ if __name__ == "__main__":
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
 
-    patients = list(map(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]), args.input))
+    patients = list(map(lambda x: step00.get_patient(x.split("/")[-2]), args.input))
     if args.SQC:
         histology = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
         patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
+    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in patients, args.input))
     print("Input:", len(args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
