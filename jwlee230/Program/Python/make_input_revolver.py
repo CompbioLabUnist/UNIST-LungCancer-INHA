@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(read_tsv, args.input), axis="index", copy=False)
-        input_data["sample_type"] = pool.map(step00.get_simple_sample_type, input_data["sample_id"])
+        input_data["sample_type"] = pool.map(step00.get_long_sample_type, input_data["sample_id"])
     input_data["sample_id"] = list(map(lambda x: x.split(".")[0], input_data["sample_id"]))
     print(list(input_data.columns))
     print(input_data)

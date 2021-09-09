@@ -2,7 +2,6 @@
 aggregate_arriba.py: Aggregate the Arriba resuluts as CoMut plot
 """
 import argparse
-import collections
 import multiprocessing
 from comut import comut
 import matplotlib
@@ -21,35 +20,59 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Arriba output .tsv files", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
+    parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--gene", help="Gene number to draw", type=int, default=50)
+
+    group_histology = parser.add_mutually_exclusive_group(required=True)
+    group_histology.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group_histology.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
         raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
+    elif not args.census.endswith(".csv"):
+        raise ValueError("Census must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
-    elif args.gene < 1:
-        raise ValueError("GENE must be positive!!")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    patients = list(map(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]), args.input))
+    if args.SQC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    elif args.ADC:
+        histology = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = sorted(list(filter(lambda x: step00.get_patient(x) in patients, args.input)), key=step00.sorting)
+
+    census_data = pandas.read_csv(args.census)
+    census_gene = set(census_data["Gene Symbol"])
+    print(census_data)
+
     my_comut = comut.CoMut()
-    my_comut.samples = sorted(list(map(lambda x: x.split("/")[-1].split(".")[0], args.input)), key=step00.sorting)
+    my_comut.samples = list(map(lambda x: x.split("/")[-1].split(".")[0], args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
         arriba_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
+    arriba_data = arriba_data.loc[(arriba_data["gene1"].isin(census_gene)) | (arriba_data["gene2"].isin(census_gene))]
     print(arriba_data)
-
-    gene_counter = collections.Counter(list(arriba_data["gene1"]) + list(arriba_data["gene2"]))
-    common_genes = set(map(lambda x: x[0], gene_counter.most_common(args.gene)))
-    print(gene_counter.most_common(args.gene))
-    print(common_genes)
 
     indicator_data = pandas.DataFrame()
     indicator_data["sample"] = my_comut.samples
@@ -60,8 +83,7 @@ if __name__ == "__main__":
     categorical_data = pandas.DataFrame()
     categorical_data["sample"] = arriba_data["sample"]
     categorical_data["value"] = list(map(lambda x: x.split("/")[0].title(), arriba_data["type"]))
-    categorical_data["category"] = list(map(lambda x: "{0}({2}) + {1}({3})".format(x[0], x[1], x[2], x[3]), arriba_data[["gene1", "gene2", "breakpoint1", "breakpoint2"]].itertuples(index=False, name=None)))
-    # categorical_data = categorical_data.loc[(arriba_data["gene1"].isin(common_genes)) & (arriba_data["gene2"].isin(common_genes))]
+    categorical_data["category"] = list(map(lambda x: "{0}+{1}".format(x[0], x[1]), arriba_data[["gene1", "gene2"]].itertuples(index=False, name=None)))
     print(categorical_data)
     my_comut.add_categorical_data(categorical_data, name="Gene fusion type")
 

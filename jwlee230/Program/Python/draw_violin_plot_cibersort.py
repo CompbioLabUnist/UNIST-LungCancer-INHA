@@ -59,9 +59,8 @@ if __name__ == "__main__":
     print(cibersort_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = sorted(pool.map(run, list(cibersort_data.columns)))
+        tar_files = sorted(pool.map(run, list(cibersort_data.columns)[:-1]))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sorted(tar_files):
-            print(f)
+        for f in tar_files:
             tar.add(f, arcname=f)
