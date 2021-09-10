@@ -63,9 +63,9 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
 
     clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
 
     patients = list(map(lambda x: x.split("/")[-1].split(".")[0], args.input))
-
     if args.SQC:
         histology = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
         patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
