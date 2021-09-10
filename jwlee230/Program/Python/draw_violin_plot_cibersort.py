@@ -27,7 +27,7 @@ def run(cell: str) -> str:
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
 
     seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order)
-    statannot.add_stat_annotation(ax, data=cibersort_data, x="Stage", y=cell, order=order, test="Mann-Whitney", box_pairs=itertools.combinations(order, 2), text_format="star", loc="outside", verbose=0)
+    statannot.add_stat_annotation(ax, data=cibersort_data, x="Stage", y=cell, order=order, test="Mann-Whitney", box_pairs=itertools.combinations(order, 2), text_format="star", loc="inside", verbose=0)
 
     matplotlib.pyplot.title(cell)
     matplotlib.pyplot.ylabel("Proportion")
