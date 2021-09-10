@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
-MEMS = 500
+MEMS = 100
 PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
@@ -889,27 +889,37 @@ step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predicti
 .PHONY: step27
 
 # Step 28 (MuSiC)
-# https://xuranw.github.io/MuSiC/articles/MuSiC.html
 Output/MuSiC:
 	mkdir -p $@
 
 Output/MuSiC/%.tsv: R/run_MuSiC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/MuSiC build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step28: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
-.PHONY: step28
+step28-MuSiC: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
+step28: step28-MuSiC
+.PHONY: step28-MuSiC step28
 
-# Step ## (BisqueRNA)
-# https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
-# https://cran.r-project.org/web/packages/BisqueRNA/vignettes/bisque.html
+# Step 29 (BisqueRNA)
 Output/BisqueRNA:
 	mkdir -p $@
 
-# Step ## (SCDC)
-# https://meichendong.github.io/SCDC/
-# https://meichendong.github.io/SCDC/articles/SCDC.html
+Output/BisqueRNA/%.tsv: R/run_BisqueRNA.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/BisqueRNA build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.tsv Output/BisqueRNA/Bowtie2.ADC.tsv Output/BisqueRNA/STAR.SQC.tsv Output/BisqueRNA/STAR.ADC.tsv
+step29: step29-BisqueRNA
+.PHONY: step29-BisqueRNA step29
+
+# Step 30 (SCDC)
 Output/SCDC:
 	mkdir -p $@
+
+Output/SCDC/%.tsv: R/run_SCDC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/SCDC build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step30-SCDC: Output/SCDC/Bowtie2.SQC.tsv Output/SCDC/Bowtie2.ADC.tsv Output/SCDC/STAR.SQC.tsv Output/SCDC/STAR.ADC.tsv
+step30: step30-SCDC
+.PHONY: step30-SCDC step30
 
 # Step ## (MesKit)
 # Step ## (WTS - samtools depth)

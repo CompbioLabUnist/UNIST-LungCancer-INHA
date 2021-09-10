@@ -11,7 +11,7 @@ opt = parse_args(opt_parser)
 main <- function(input_file, annotation_file, reference_file, output_file)
 {
     library(Biobase)
-    library(MuSiC)
+    library(SCDC)
     require(data.table)
 
     input_data <- read.table(file=input_file, sep="\t", header=TRUE, row.names=1)
@@ -29,10 +29,11 @@ main <- function(input_file, annotation_file, reference_file, output_file)
     reference_eset <- ExpressionSet(as.matrix(reference_data), phenoData=AnnotatedDataFrame(data.frame(row.names=colnames(reference_data), samples=annotation_data[["Sample"]], clusters=annotation_data[["Cell_subtype"]])))
     print(reference_eset)
 
-    estimation_proportion <- music_prop(bulk.eset=input_eset, sc.eset=reference_eset, clusters="clusters", samples="samples", verbose=TRUE)
+    estimation_proportion <- SCDC_prop(bulk.eset=input_eset, sc.eset=reference_eset, ct.varname="clusters", ct.sub=annotation_data[["Cell_subtype"]], sample="samples", verbose=TRUE)
 
-    print(head(estimation_proportion$Est.prop.weighted))
-    write.table(estimation_proportion$Est.prop.weighted, file=output_file, quote=FALSE, sep="\t", col.names=NA)
+    print(names(estimation_proportion))
+    print(head(estimation_proportion$prop.est.mvw))
+    write.table(estimation_proportion$prop.est.mvw, file=output_file, quote=FALSE, sep="\t", col.names=NA)
 }
 
 if (length(opt) == 5)

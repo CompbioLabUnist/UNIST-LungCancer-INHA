@@ -10,8 +10,9 @@ opt = parse_args(opt_parser)
 
 main <- function(input_file, annotation_file, reference_file, output_file)
 {
+    install.packages("BisqueRNA", repos="http://cran.us.r-project.org")
     library(Biobase)
-    library(MuSiC)
+    library(BisqueRNA)
     require(data.table)
 
     input_data <- read.table(file=input_file, sep="\t", header=TRUE, row.names=1)
@@ -29,10 +30,11 @@ main <- function(input_file, annotation_file, reference_file, output_file)
     reference_eset <- ExpressionSet(as.matrix(reference_data), phenoData=AnnotatedDataFrame(data.frame(row.names=colnames(reference_data), samples=annotation_data[["Sample"]], clusters=annotation_data[["Cell_subtype"]])))
     print(reference_eset)
 
-    estimation_proportion <- music_prop(bulk.eset=input_eset, sc.eset=reference_eset, clusters="clusters", samples="samples", verbose=TRUE)
+    estimation_proportion <- ReferenceBasedDecomposition(bulk.eset=input_eset, sc.eset=reference_eset, cell.types="clusters", subject.names="samples", verbose=TRUE, use.overlap=FALSE)
+    output_data <- estimation_proportion$bulk.props
 
-    print(head(estimation_proportion$Est.prop.weighted))
-    write.table(estimation_proportion$Est.prop.weighted, file=output_file, quote=FALSE, sep="\t", col.names=NA)
+    print(head(output_data))
+    write.table(output_data, file=output_file, quote=FALSE, sep="\t", col.names=NA)
 }
 
 if (length(opt) == 5)
