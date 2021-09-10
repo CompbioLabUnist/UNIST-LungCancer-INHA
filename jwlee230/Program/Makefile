@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
-MEMS = 100
+MEMS = 500
 PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
@@ -44,9 +44,11 @@ LIBRARY_BED_GZ = $(LIBRARY_BED).gz
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
 GENE_CENSUS_CSV = Data/cancer_gene_census.csv
-LUNG_SINGLECELL_ANNOTATION = Data/Lung_SingleCell/GSE131907_Lung_Cancer_cell_annotation.txt
-LUNG_SINGLECELL_RAW_MATRIX = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
-LUNG_SINGLECELL_NORMALIZED_MATRIX = Data/Lung_SingleCell/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.txt
+LUNG_SINGLECELL_ANNOTATION_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_cell_annotation.txt
+LUNG_SINGLECELL_RAW_MATRIX_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
+LUNG_SINGLECELL_RAW_MATRIX_RDS = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.rds
+LUNG_SINGLECELL_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.txt
+LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS = Data/Lung_SingleCell/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.rds
 KNOWN_GENE_GTF = Data/hg38.gtf.gz
 ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
 ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
@@ -178,7 +180,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26 step27
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26 step27 step28
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -746,7 +748,7 @@ Output/CIBERSORTx/STAR.SQC.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix O
 Output/CIBERSORTx/STAR.ADC.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_SINGLECELL_ANNOTATION) $(LUNG_SINGLECELL_NORMALIZED_MATRIX) | build.log
+Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_TXT) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/CIBERSORTx/%.tsv Output/CIBERSORTx/GSE131907_signature.tsv | build.log
@@ -886,15 +888,21 @@ Output/STAR-Fusion/%/star-fusion.fusion_predictions.tsv Output/STAR-Fusion/%/sta
 step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predictions.tsv,$(WTS_TUMOR_ID)))
 .PHONY: step27
 
+# Step 28 (MuSiC)
+# https://xuranw.github.io/MuSiC/articles/MuSiC.html
+Output/MuSiC:
+	mkdir -p $@
+
+Output/MuSiC/%.tsv: R/run_MuSiC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/MuSiC build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step28: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
+.PHONY: step28
+
 # Step ## (BisqueRNA)
 # https://www.rdocumentation.org/packages/BisqueRNA/versions/1.0.5
 # https://cran.r-project.org/web/packages/BisqueRNA/vignettes/bisque.html
 Output/BisqueRNA:
-	mkdir -p $@
-
-# Step ## (MuSiC)
-# https://xuranw.github.io/MuSiC/articles/MuSiC.html
-Output/MuSiC:
 	mkdir -p $@
 
 # Step ## (SCDC)
