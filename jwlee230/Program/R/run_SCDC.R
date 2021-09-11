@@ -29,7 +29,7 @@ main <- function(input_file, annotation_file, reference_file, output_file)
     reference_eset <- ExpressionSet(as.matrix(reference_data), phenoData=AnnotatedDataFrame(data.frame(row.names=colnames(reference_data), samples=annotation_data[["Sample"]], clusters=annotation_data[["Cell_subtype"]])))
     print(reference_eset)
 
-    estimation_proportion <- SCDC_prop(bulk.eset=input_eset, sc.eset=reference_eset, ct.varname="clusters", ct.sub=annotation_data[["Cell_subtype"]], sample="samples", verbose=TRUE)
+    estimation_proportion <- SCDC_prop(bulk.eset=input_eset, sc.eset=reference_eset, ct.varname="clusters", ct.sub=annotation_data[["Cell_subtype"]], sample="samples", verbose=TRUE, iter.max=10000)
 
     print(names(estimation_proportion))
     print(head(estimation_proportion$prop.est.mvw))
