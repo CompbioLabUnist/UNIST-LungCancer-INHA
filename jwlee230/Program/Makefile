@@ -766,7 +766,7 @@ Output/CIBERSORTx/%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBE
 
 step22-RSEM: Output/CIBERSORTx/Bowtie2.SQC.tsv Output/CIBERSORTx/Bowtie2.ADC.tsv Output/CIBERSORTx/STAR.SQC.tsv Output/CIBERSORTx/STAR.ADC.tsv
 step22-CIBERSORTx: Output/CIBERSORTx/GSE131907_signature.tsv Output/CIBERSORTx/Bowtie2.SQC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/Bowtie2.ADC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.SQC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.ADC/CIBERSORTxGEP_NA_Weights.txt
-step22-heatmap: Output/CIBERSORTx/Bowtie2.SQC.heatmap.pdf Output/CIBERSORTx/Bowtie2.ADC.heatmap.pdf Output/CIBERSORTx/STAR.SQC.heatmap.pdf Output/CIBERSORTx/STAR.SQC.heatmap.pdf
+step22-heatmap: Output/CIBERSORTx/Bowtie2.SQC.heatmap.pdf Output/CIBERSORTx/Bowtie2.ADC.heatmap.pdf Output/CIBERSORTx/STAR.SQC.heatmap.pdf Output/CIBERSORTx/STAR.ADC.heatmap.pdf
 step22-violin: Output/CIBERSORTx/Bowtie2.SQC.violin.tar Output/CIBERSORTx/Bowtie2.ADC.violin.tar Output/CIBERSORTx/STAR.SQC.violin.tar Output/CIBERSORTx/STAR.ADC.violin.tar
 step22-cluster: Output/CIBERSORTx/Bowtie2.SQC.cluster.pdf Output/CIBERSORTx/STAR.SQC.cluster.pdf Output/CIBERSORTx/Bowtie2.ADC.cluster.pdf Output/CIBERSORTx/STAR.ADC.cluster.pdf
 step22: step22-RSEM step22-CIBERSORTx step22-heatmap step22-violin step22-cluster
@@ -894,6 +894,9 @@ Output/MuSiC:
 
 Output/MuSiC/%.tsv: R/run_MuSiC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/MuSiC build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/MuSiC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step28-MuSiC: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
 step28: step28-MuSiC
