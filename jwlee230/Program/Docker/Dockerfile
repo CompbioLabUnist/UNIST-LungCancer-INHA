@@ -75,7 +75,7 @@ RUN cd /Tools/arriba_v2.1.0 && make -j
 ENV PATH=/Tools/arriba_v2.1.0:$PATH
 
 # FusionCatcher
-RUN python2 /Tools/FusionCatcher.py --install-all-tools --yes --download && pip install biopython==1.76
+RUN python2 /Tools/FusionCatcher.py --install-all-tools --yes && pip install biopython==1.76
 ENV PATH=/opt/fusioncatcher/bin:$PATH
 
 # STAR-Fusion
