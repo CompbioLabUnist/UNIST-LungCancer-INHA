@@ -895,12 +895,21 @@ Output/MuSiC:
 Output/MuSiC/%.tsv: R/run_MuSiC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/MuSiC build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/MuSiC/%.tsv | build.log
+Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/MuSiC/%.tsv | build
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step28-MuSiC: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
-step28: step28-MuSiC
-.PHONY: step28-MuSiC step28
+step28-heatmap: Output/MuSiC/Bowtie2.SQC.heatmap.pdf Output/MuSiC/Bowtie2.ADC.heatmap.pdf Output/MuSiC/STAR.SQC.heatmap.pdf Output/MuSiC/STAR.ADC.heatmap.pdf
+step28-violin: Output/MuSiC/Bowtie2.SQC.violin.tar Output/MuSiC/Bowtie2.ADC.violin.tar Output/MuSiC/STAR.SQC.violin.tar Output/MuSiC/STAR.ADC.violin.tar
+step28-cluster: Output/MuSiC/Bowtie2.SQC.cluster.pdf Output/MuSiC/Bowtie2.ADC.cluster.pdf Output/MuSiC/STAR.SQC.cluster.pdf Output/MuSiC/STAR.ADC.cluster.pdf
+step28: step28-MuSiC step28-heatmap step28-violin step28-cluster
+.PHONY: step28-MuSiC step28-heatmap step28-violin step28-cluster step28
 
 # Step 29 (BisqueRNA)
 Output/BisqueRNA:
