@@ -951,9 +951,9 @@ Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | b
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step30-SCDC: Output/SCDC/Bowtie2.SQC.tsv Output/SCDC/Bowtie2.ADC.tsv Output/SCDC/STAR.SQC.tsv Output/SCDC/STAR.ADC.tsv
-step30-heatmap: Output/SCDC/Bowtie2.SQC.heatmap.pdf Output/SCDC/Bowtie2.ADC.heatmap.pdf Output/SCDC/STAR.SQC.heatmap.pdf Output/SCDC/STAR.ADC.heatmap.pd
+step30-heatmap: Output/SCDC/Bowtie2.SQC.heatmap.pdf Output/SCDC/Bowtie2.ADC.heatmap.pdf Output/SCDC/STAR.SQC.heatmap.pdf Output/SCDC/STAR.ADC.heatmap.pdf
 step30-violin: Output/SCDC/Bowtie2.SQC.violin.tar Output/SCDC/Bowtie2.ADC.violin.tar Output/SCDC/STAR.SQC.violin.tar Output/SCDC/STAR.ADC.violin.tar
-step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/Bowtie2.ADC.cluster.pdf Output/SCDC/STAR.SQC.cluster.pdf Output/SCDC/STAR.ADC.cluster.pdf
+step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/SCDC/Bowtie2.ADC.cluster.pdf Output/SCDC/STAR.SQC.cluster.pdf Output/SCDC/STAR.ADC.cluster.pdf
 step30: step30-SCDC step30-heatmap step30-violin step30-cluster
 .PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
