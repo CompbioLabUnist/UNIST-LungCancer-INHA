@@ -1,5 +1,5 @@
 """
-draw_clustermap_MuSiC.py: draw clustermap plot from MuSiC result
+draw_clustermap_BisqueRNA.py: draw clustermap plot from BisqueRNA result
 """
 import argparse
 import matplotlib
@@ -12,7 +12,7 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="input result TSV file", type=str)
+    parser.add_argument("input", help="Input result TSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
     args = parser.parse_args()
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
 
     input_data = pandas.read_csv(args.input, sep="\t")
-    input_data = input_data.set_index(list(input_data.columns)[0]).T
+    input_data = input_data.set_index(list(input_data.columns)[0])
     print(input_data)
 
     matplotlib.use("Agg")

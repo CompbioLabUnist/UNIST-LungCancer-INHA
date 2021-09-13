@@ -918,9 +918,21 @@ Output/BisqueRNA:
 Output/BisqueRNA/%.tsv: R/run_BisqueRNA.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/BisqueRNA build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_BisqueRNA.py Output/BisqueRNA/%.tsv | build
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.tsv Output/BisqueRNA/Bowtie2.ADC.tsv Output/BisqueRNA/STAR.SQC.tsv Output/BisqueRNA/STAR.ADC.tsv
-step29: step29-BisqueRNA
-.PHONY: step29-BisqueRNA step29
+step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.heatmap.pdf Output/BisqueRNA/STAR.SQC.heatmap.pdf Output/BisqueRNA/STAR.ADC.heatmap.pdf
+step29-violin: Output/BisqueRNA/Bowtie2.SQC.violin.tar Output/BisqueRNA/Bowtie2.ADC.violin.tar Output/BisqueRNA/STAR.SQC.violin.tar Output/BisqueRNA/STAR.ADC.violin.tar
+step29-cluster: Output/BisqueRNA/Bowtie2.SQC.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.cluster.pdf Output/BisqueRNA/STAR.SQC.cluster.pdf Output/BisqueRNA/STAR.ADC.cluster.pdf
+step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster
+.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29
 
 # Step 30 (SCDC)
 Output/SCDC:
@@ -929,9 +941,21 @@ Output/SCDC:
 Output/SCDC/%.tsv: R/run_SCDC.R Output/CIBERSORTx/%.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS) | Output/SCDC build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/SCDC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/SCDC/%.tsv | build
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 step30-SCDC: Output/SCDC/Bowtie2.SQC.tsv Output/SCDC/Bowtie2.ADC.tsv Output/SCDC/STAR.SQC.tsv Output/SCDC/STAR.ADC.tsv
-step30: step30-SCDC
-.PHONY: step30-SCDC step30
+step30-heatmap: Output/SCDC/Bowtie2.SQC.heatmap.pdf Output/SCDC/Bowtie2.ADC.heatmap.pdf Output/SCDC/STAR.SQC.heatmap.pdf Output/SCDC/STAR.ADC.heatmap.pd
+step30-violin: Output/SCDC/Bowtie2.SQC.violin.tar Output/SCDC/Bowtie2.ADC.violin.tar Output/SCDC/STAR.SQC.violin.tar Output/SCDC/STAR.ADC.violin.tar
+step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/Bowtie2.ADC.cluster.pdf Output/SCDC/STAR.SQC.cluster.pdf Output/SCDC/STAR.ADC.cluster.pdf
+step30: step30-SCDC step30-heatmap step30-violin step30-cluster
+.PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
 # Step ## (MesKit)
 # Step ## (WTS - samtools depth)
