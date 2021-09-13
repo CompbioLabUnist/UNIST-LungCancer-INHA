@@ -823,7 +823,7 @@ Output/Arriba/Reference Output/Arriba/Raw Output/Arriba/Filtered:
 	mkdir -p $@
 
 Output/Arriba/Reference/hg38.fa: | Output/Arriba/Reference build.log
-	$(ARRIBA_DOCKER) /bin/bash /Tools/arriba_v2.1.0/download_references.sh hg38+RefSeq 1> $@.stdout 2> $@.stderr
+	$(ARRIBA_DOCKER) /bin/bash /Tools/arriba_v2.1.0/download_references.sh "hg38+RefSeq" 1> $@.stdout 2> $@.stderr
 
 Output/Arriba/Raw/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba/Raw build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
