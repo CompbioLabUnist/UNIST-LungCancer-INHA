@@ -180,7 +180,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -697,7 +697,7 @@ step20: Output/MesKit/SQC_clinical.tsv Output/MesKit/ADC_clinical.tsv Output/Mes
 .PHONY: step20
 
 # Step 21 (Run PyClone)
-Output/PyClone/BWA Output/PyClone/Bowtie2 Output/PyClone/BWA/Plots Output/PyClone/Bowtie2/Plots:
+Output/PyClone/BWA Output/PyClone/Bowtie2 Output/PyClone/BWA-Plots Output/PyClone/Bowtie2-Plots:
 	mkdir -p $@
 
 Output/PyClone/BWA/%.tsv Output/PyClone/BWA/%.Cellularity.txt: Python/make_input_pyclone.py Output/Mutect2/BWA/%.BWA.PASS.maf Output/Sequenza/BWA/%.tar.gz | Output/PyClone/BWA build.log
@@ -714,21 +714,21 @@ Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/
 Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(WES_ID))) | build.log
 	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
-Output/PyClone/BWA/Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/BWA/Plots
+Output/PyClone/BWA-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/BWA-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --CCF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA/Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/BWA/Plots
+Output/PyClone/BWA-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/BWA-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --VAF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/Bowtie2/Plots
+Output/PyClone/Bowtie2-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/Bowtie2-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --CCF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2/Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/Bowtie2/Plots
+Output/PyClone/Bowtie2-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/Bowtie2-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --VAF 1> $@.stdout 2> $@.stderr
 
 step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
 step21-pyclone: $(addprefix Output/PyClone/BWA/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix /loci.tsv,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID)))))
-step21-plot: $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .CCF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMORID))))) $(addprefix Output/PyClone/BWA/Plots/,$(addsuffix .VAF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .CCF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/Bowtie2/Plots/,$(addsuffix .VAF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID)))))
+step21-plot: $(addprefix Output/PyClone/BWA-Plots/,$(addsuffix .CCF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/BWA-Plots/,$(addsuffix .VAF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/Bowtie2-Plots/,$(addsuffix .CCF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID))))) $(addprefix Output/PyClone/Bowtie2-Plots/,$(addsuffix .VAF.pdf,$(filter-out %P,$(filter-out %P1,$(WES_TUMOR_ID)))))
 step21: step21-preprocess step21-pyclone step21-plot
 .PHONY: step21-preprocess step21-pyclone step21-plot step21
 

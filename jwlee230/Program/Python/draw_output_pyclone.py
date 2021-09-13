@@ -35,8 +35,8 @@ if __name__ == "__main__":
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--CCF", action="store_true", default=False)
-    group.add_argument("--VAF", action="store_true", default=False)
+    group.add_argument("--CCF", help="Draw CCF (cancer cell fraction) plot", action="store_true", default=False)
+    group.add_argument("--VAF", help="Draw VAF (variant allele frequency) plot", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -48,8 +48,6 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-value must be (0, 1)!!")
-    elif not (args.CCF or args.VAF):
-        raise Exception("Something went wrong!!")
 
     try:
         pyclone_data = pandas.read_csv(args.loci, sep="\t")
@@ -91,6 +89,7 @@ if __name__ == "__main__":
     print(driver_data)
 
     pyclone_data["Database"] = list(map(is_included, pyclone_data["gene"]))
+    pyclone_data.rename(columns={"cluster_id": "Cluster ID"}, inplace=True)
     print(pyclone_data)
 
     matplotlib.use("Agg")
@@ -100,26 +99,23 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     texts = list()
     if args.CCF:
-        seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="cluster_id", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
+        seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Cancer Cell Fraction")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] != "Census+Driver":
-                continue
-            texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
-
+            if row["Database"] == "Census+Driver":
+                texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     elif args.VAF:
-        seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", style="cluster_id", hue="Database", legend="brief", ax=ax)
+        seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Variant Allele Frequency")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] != "Census+Driver":
-                continue
-            texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
+            if row["Database"] == "Census+Driver":
+                texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     else:
         raise Exception("Something went wrong!!")
 
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k"}, ax=ax, lim=10 ** 6)
     matplotlib.pyplot.xlabel("Samples")
-    matplotlib.pyplot.ylim(0, 1)
+    matplotlib.pyplot.ylim(-0.1, 1.1)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k"}, ax=ax, lim=10 ** 6)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
