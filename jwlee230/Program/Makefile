@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 4
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -860,7 +860,7 @@ Output/FusionCatcher/STAR/%/normal.tsv Output/FusionCatcher/STAR/%/tumor.tsv: Ou
 
 Output/FusionCatcher/Bowtie2/%/normal.tsv Output/FusionCatcher/Bowtie2/%/tumor.tsv: Output/FusionCatcher/Reference/current Data/WTS/%_*.fastq.gz | Output/FusionCatcher/Bowtie2 build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
-	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /$(filter %.current,$^)) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
+	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
 	cp $(@D)/1_*/final-list_candidate-fusion-genes.txt $(@D)/normal.tsv || touch $(@D)/normal.tsv
 	cp $(@D)/2_*/final-list_candidate-fusion-genes.txt $(@D)/tumor.tsv
 
