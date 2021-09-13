@@ -3,11 +3,11 @@ rm(list = ls())
 
 library(optparse)
 option_list = list(make_option(c("--input"), type="character", default=NULL, help="Input TSV data"),
-                    make_option(c("--cluster"), type="character", default=NULL, help="Input TSV data"),
-                    make_option(c("--driver"), type="character", default=NULL, help="Input TSV data"),
-                    make_option(c("--dendrogram"), type="character", default=NULL, help="Input TSV data"),
-                    make_option(c("--det"), type="character", default=NULL, help="Input TSV data"),
-                    make_option(c("--clonality"), type="character", default=NULL, help="Input TSV data"))
+                    make_option(c("--cluster"), type="character", default=NULL, help="Output PDF file"),
+                    make_option(c("--driver"), type="character", default=NULL, help="Output PDF file"),
+                    make_option(c("--dendrogram"), type="character", default=NULL, help="Output PDF file"),
+                    make_option(c("--det"), type="character", default=NULL, help="Output PDF file"),
+                    make_option(c("--clonality"), type="character", default=NULL, help="Output PDF file"))
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 

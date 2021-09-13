@@ -117,7 +117,7 @@ if __name__ == "__main__":
     print(driver_data)
 
     gene_symbol_set = set(driver_data["Gene"])
-    print("Gene set:", len(gene_symbol_set))
+    print("Gene set (with driver):", len(gene_symbol_set))
 
     census_data = pandas.read_csv(args.census)
     gene_symbol_set &= set(census_data["Gene Symbol"])
