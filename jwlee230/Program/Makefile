@@ -772,7 +772,7 @@ step22: step22-RSEM step22-CIBERSORTx step22-heatmap step22-violin step22-cluste
 .PHONY: step22-RSEM step22-CIBERSORTx step22-heatmap step22-violin step22-cluster step22
 
 # Step 23 (VAF plot)
-Output/VAF:
+Output/VAF Output/VAF-tSNE:
 	mkdir -p $@
 
 Output/VAF/BWA.SQC.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENSUS_CSV) | Output/VAF build.log
@@ -787,8 +787,22 @@ Output/VAF/Bowtie2.SQC.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/
 Output/VAF/Bowtie2.ADC.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENSUS_CSV) | Output/VAF build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-step23: Output/VAF/BWA.SQC.tar Output/VAF/BWA.ADC.tar Output/VAF/Bowtie2.SQC.tar Output/VAF/Bowtie2.ADC.tar
-.PHONY: step23
+Output/VAF-tSNE/BWA.SQC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/VAF-tSNE/BWA.ADC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/VAF-tSNE/Bowtie2.SQC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/VAF-tSNE/Bowtie2.ADC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step23-VAF: Output/VAF/BWA.SQC.tar Output/VAF/BWA.ADC.tar Output/VAF/Bowtie2.SQC.tar Output/VAF/Bowtie2.ADC.tar
+step23-tSNE: Output/VAF-tSNE/BWA.SQC.pdf Output/VAF-tSNE/BWA.ADC.pdf Output/VAF-tSNE/Bowtie2.SQC.pdf Output/VAF-tSNE/Bowtie2.ADC.pdf
+step23: step23-VAF step23-tSNE
+.PHONY: step23-VAF step23-tSNE step23
 
 # Step 24 (Revolver)
 Output/Revolver/BWA Output/Revolver/Bowtie2:
