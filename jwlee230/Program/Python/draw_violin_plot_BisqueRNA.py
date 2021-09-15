@@ -59,6 +59,9 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t")
     input_data = input_data.set_index(list(input_data.columns)[0]).T
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    for stage in set(input_data["Stage"]):
+        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
+            input_data = input_data.loc[~(input_data["Stage"] == stage)]
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:

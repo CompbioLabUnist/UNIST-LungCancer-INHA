@@ -56,6 +56,9 @@ if __name__ == "__main__":
 
     cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
     cibersort_data["Stage"] = list(map(step00.get_long_sample_type, list(cibersort_data.index)))
+    for stage in set(input_data["Stage"]):
+        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
+            input_data = input_data.loc[~(input_data["Stage"] == stage)]
     print(cibersort_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
