@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("DEG", help="DEG TSV file", type=str)
-    parser.add_argument("output", help="Output TSV file", type=str)
+    parser.add_argument("output", help="Output basename file", type=str)
     parser.add_argument("--DB", help="Database name", choices=gene_set_library, required=True)
     parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
@@ -42,8 +42,6 @@ if __name__ == "__main__":
 
     if not args.DEG.endswith(".tsv"):
         raise ValueError("DEG must end with .TSV!!")
-    elif not args.output.endswith(".tsv"):
-        raise ValueError("Output must end with .TSV!!")
 
     DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
@@ -69,4 +67,5 @@ if __name__ == "__main__":
     else:
         enrichment_data = pandas.DataFrame(columns=["Rank", "Term", "name", "P-value", "Z-score", "Combined", "score", "Overlapping", "genes", "Adjusted", "p-value", "Old", "p-value", "Old", "adjusted", "p-value"])
 
-    enrichment_data.to_csv(args.output, sep="\t", index=False)
+    enrichment_data.to_csv(args.output + ".tsv", sep="\t", index=False)
+    enrichment_data.to_latex(args.output + ".tex", index=False)
