@@ -9,6 +9,7 @@
 \usepackage[style=iso]{datetime2}
 \usepackage{enumerate}
 \usepackage{multirow}
+\usepackage{booktabs}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
 
 \AtBeginSection[]
@@ -18,7 +19,7 @@
         \centering
         \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{title}
-            \insertsectionhead
+            \thesection. \insertsectionhead
             \par
         \end{beamercolorbox}
         \vfill
@@ -32,12 +33,36 @@
         \centering
         \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{title}
-            \insertsectionhead
+            \thesection. \insertsectionhead
             \par
         \end{beamercolorbox}
         \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
             \usebeamerfont{subtitle}
-            \insertsubsectionhead
+            \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\AtBeginSubsubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \thesection. \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=3pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection.\thesubsubsection. \insertsubsubsectionhead
             \par
         \end{beamercolorbox}
         \vfill
@@ -83,7 +108,7 @@
 
     \section{Introduction}
     \subsection{Lung Cancer}
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Lung Cancer?}
 
         \begin{block}{The most common cancer}
@@ -402,6 +427,10 @@
     \begin{frame}
         \frametitle{Driver Gene Selection Strategy}
 
+        \begin{block}{COSMIC Cancer Gene Census \cite{CGC1}}
+            Gene $\in$ CGC Tier 1 set
+        \end{block}
+
         \begin{block}{Fisher FDR}
             Fisher FDR $ < 0.05$
         \end{block}
@@ -565,6 +594,7 @@
         \end{table}
     \end{frame}
 
+    \subsubsection{Comparing cancer stage}
     \begin{frame}
         \frametitle{DEG Volcano Plots in SQC}
 
@@ -659,6 +689,10 @@
     \begin{frame}
         \frametitle{Enrichment test with KEGG in ADC}
     \end{frame}
+
+    \subsubsection{Selecting Recurrence \& Comparing Stage}
+
+    \subsubsection{Selecting Stage \& Comparing Recurrence}
 
     \begin{frame}
         \frametitle{Findings in DEG Analysis}
