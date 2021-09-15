@@ -98,12 +98,14 @@ if __name__ == "__main__":
             axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor=None, linewidth=0)
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
+        axs[0][i].set_xticks([])
 
         for j in range(chromosome_data.shape[1]):
             axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor=None, linewidth=0)
             axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor=None, linewidth=0)
         axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].invert_yaxis()
+        axs[1][i].set_xticks([])
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
