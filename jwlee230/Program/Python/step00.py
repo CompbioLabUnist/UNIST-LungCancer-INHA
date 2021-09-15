@@ -19,14 +19,6 @@ ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
 stage_color_code = {"Normal": "tab:green", "Primary": "black", "Dysplasia": "tab:red", "CIS+AIS": "tab:red", "AAH": "tab:red", "MIA": "tab:red"}
 
-mutations_list = ["Nonsense_Mutation", "In_Frame_Del", "Frame_Shift_Ins", "Splice_Site", "In_Frame_Ins", "Frame_Shift_Del", "Missense_Mutation"]
-mutations_dict = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel"}
-categorical_columns = ["sample", "category", "value"]
-sample_columns = ["sample", "group"]
-mutation_mapping = {"Missense": "green", "Nonsense": "deeppink", "In frame indel": {"facecolor": "blue", "hatch": "xxx"}, "Frameshift indel": "#FFD700", "Splice site": "darkviolet", "LOH": {"facecolor": "none", "edgecolor": "black", "linewidth": 3}, "Absent": {"facecolor": "grey", "alpha": 0.2}}
-bar_columns = ["category", "value"]
-bar_mapping = {"value": "tab:olive"}
-
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
 
