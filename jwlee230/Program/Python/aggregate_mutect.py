@@ -75,18 +75,15 @@ if __name__ == "__main__":
     counter: collections.Counter = collections.Counter(mutect_data["Hugo_Symbol"])
 
     census_data = pandas.read_csv(args.census)
-    census_gene = set(census_data["Gene Symbol"])
     print(census_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
-    print(sorted(driver_data.columns))
-    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_gene))]
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"]))]
     for column in step00.MutEnricher_pval_columns:
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
     driver_data["Count"] = list(map(lambda x: counter[x], driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
-    driver_data = driver_data.iloc[:len(args.input) // 2, :]
     print(driver_data)
 
     patient_data = pandas.DataFrame()

@@ -59,15 +59,17 @@ if __name__ == "__main__":
     pyclone_data["end"] = list(map(lambda x: int(x.split(":")[2]), pyclone_data["mutation_id"]))
     print(pyclone_data)
 
+    census_data = pandas.read_csv(args.census)
+    print(census_data)
+
     driver_data = pandas.read_csv(args.driver, sep="\t")
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
     driver_data["chromosome"] = list(map(lambda x: x.replace("-", ":").split(":")[0], driver_data["coordinates"]))
     driver_data["start"] = list(map(lambda x: int(x.replace("-", ":").split(":")[1]), driver_data["coordinates"]))
     driver_data["end"] = list(map(lambda x: int(x.replace("-", ":").split(":")[2]), driver_data["coordinates"]))
     print(driver_data)
-
-    census_data = pandas.read_csv(args.census)
-    census_set = set(census_data["Gene Symbol"])
-    print(census_data)
 
     gene_names: typing.List[typing.List[str]] = list()
     for index, row in pyclone_data.iterrows():
@@ -83,8 +85,6 @@ if __name__ == "__main__":
     pyclone_data.dropna(inplace=True)
     print(pyclone_data)
 
-    for column in step00.MutEnricher_pval_columns:
-        driver_data = driver_data.loc[(driver_data[column] < args.p)]
     mutenricher_set = set(driver_data["Gene"])
     print(driver_data)
 
