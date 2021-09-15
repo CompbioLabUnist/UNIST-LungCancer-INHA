@@ -65,7 +65,7 @@ if __name__ == "__main__":
         enrichment_data = enrichment_data.loc[(enrichment_data["P-value"] < args.padj) & (enrichment_data["Adjusted p-value"] < args.padj)]
         print(enrichment_data)
     else:
-        enrichment_data = pandas.DataFrame(columns=["Rank", "Term", "name", "P-value", "Z-score", "Combined", "score", "Overlapping", "genes", "Adjusted", "p-value", "Old", "p-value", "Old", "adjusted", "p-value"])
+        enrichment_data = pandas.DataFrame(columns=["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"])
 
     enrichment_data.to_csv(args.output + ".tsv", sep="\t", index=False)
-    enrichment_data.to_latex(args.output + ".tex", index=False)
+    enrichment_data[["Term name", "Adjusted P-value", "Z-score", "Combined score"]].to_latex(args.output + ".tex", index=False)
