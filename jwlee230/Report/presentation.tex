@@ -623,7 +623,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram with STAR in SQC}
+        \frametitle{DEG Venn Diagram in SQC}
 
         Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (SQC)
 
@@ -640,12 +640,20 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with KEGG in SQC}
+        \frametitle{Enrichment test in SQC}
+
+        \begin{table}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-Primary.Up.KEGG.tex}
+        \end{table}
+
+        \begin{table}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-Primary.Down.KEGG.tex}
+        \end{table}
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Volcano Plots with STAR in ADC}
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA ($\star$ No WTS) $\rightarrow$ Primary (ADC)
+        \frametitle{DEG Volcano Plots in ADC}
+        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary (ADC)
 
         \begin{figure}
             $\begin{array}{ccc}
@@ -670,9 +678,9 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram with Bowtie2 in ADC}
+        \frametitle{DEG Venn Diagram in ADC}
 
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA ($\star$ No WTS) $\rightarrow$ Primary (ADC)
+        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary (ADC)
 
         \begin{figure}
             $\begin{array}{cc}
@@ -687,12 +695,109 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with KEGG in ADC}
+        \frametitle{Enrichment test in ADC}
     \end{frame}
 
-    \subsubsection{Selecting Recurrence \& Comparing Stage}
+    \subsubsection{Selecting Non-Recurrence \& Comparing Stage}
+    \begin{frame}
+        \frametitle{DEG Volcano Plots in SQC with Selecting Non-Recurrence}
+        Normal $\rightarrow$ CIS $\rightarrow$ Primary
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.Normal-CIS.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.Normal-Primary.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.CIS-Primary.volcano.pdf}
+                \\
+                \mbox{(a) Normal-CIS} & \mbox{(b) Normal-Primary} & \mbox{(c) CIS-Primary} \\
+            \end{array}$
+            \caption{DEG Volcano Plots in SQC with Selecting Non-Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Venn Diagram in SQC with Selecting Non-Recurrence}
+        Normal $\rightarrow$ CIS $\rightarrow$ Primary
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Up.venn.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Down.venn.pdf}
+                \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+            \end{array}$
+            \caption{DEG Venn Diagram in SQC with Selecting Non-Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test in SQC with Selecting Non-Recurrence}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Volcano Plots in ADC with Selecting Non-Recurrence}
+        Normal $\rightarrow$ AIS $\rightarrow$ Primary
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-AIS.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-Primary.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.AIS-Primary.volcano.pdf}
+                \\
+                \mbox{(a) Normal-AIS} & \mbox{(b) Normal-Primary} & \mbox{(c) AIS-Primary} \\
+            \end{array}$
+            \caption{DEG Volcano Plots in ADC with Selecting Non-Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Venn Diagram in ADC with Selecting Non-Recurrence}
+        Normal $\rightarrow$ AIS $\rightarrow$ Primary
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Up.venn.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Down.venn.pdf}
+                \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+            \end{array}$
+            \caption{DEG Venn Diagram in ADC with Selecting Non-Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test in ADC with Selecting Non-Recurrence}
+    \end{frame}
 
     \subsubsection{Selecting Stage \& Comparing Recurrence}
+    \begin{frame}
+        \frametitle{DEG Volcano Plots in SQC with Selecting Stage}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.CIS.Nonrecur-Recur.volcano.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Primary.Nonrecur-Recur.volcano.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary}
+            \end{array}$
+            \caption{DEG Volcano Plots in SQC with Selecting Stage}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test in SQC with Selecting CIS}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test in SQC with Selecting Primary}
+    \end{frame}
 
     \begin{frame}
         \frametitle{Findings in DEG Analysis}
@@ -718,7 +823,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Cluster Plot with STAR in SQC}
+        \frametitle{Cluster Plot in SQC}
 
         \begin{figure}
             \includegraphics[height=0.6 \textheight]{figures/MuSiC/clustermap/STAR.SQC.cluster.pdf}
@@ -727,11 +832,48 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Cluster Plot with STAR in ADC}
+        \frametitle{Violin Plots in SQC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/AT1.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/CD8lowT.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/ExhaustedTfh.pdf}
+                \\
+
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/GCBcellsintheLZ.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/Mesothelialcells.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/MuSiC/violin/STAR.SQC.violin/PleuralMac.pdf}
+                \\
+            \end{array}$
+            \caption{Violin Plots in SQC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plot in ADC}
 
         \begin{figure}
             \includegraphics[height=0.6 \textheight]{figures/MuSiC/clustermap/STAR.ADC.cluster.pdf}
             \caption{Cluster Plot in ADC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Violin Plots in ADC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/MuSiC/violin/STAR.ADC.violin/GCBcellsintheLZ.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/MuSiC/violin/STAR.ADC.violin/NaiveCD8+T.pdf}
+                \\
+            \end{array}$
+            \caption{Violin Plots in ADC}
         \end{figure}
     \end{frame}
 
