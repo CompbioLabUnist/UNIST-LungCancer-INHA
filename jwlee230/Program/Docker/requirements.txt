@@ -1,4 +1,4 @@
-pandas==1.2.0
+pandas==1.0.5
 sequenza-utils==3.0.0
 matplotlib==3.3.3
 seaborn==0.11.1
@@ -13,3 +13,4 @@ venn==0.1.3
 adjustText==0.7.3
 requests==2.26.0
 scikit-learn==0.24.2
+tidepy==1.3.7

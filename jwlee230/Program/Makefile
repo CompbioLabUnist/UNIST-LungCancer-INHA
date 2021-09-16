@@ -43,7 +43,7 @@ LIBRARY_BED = Data/S04380110_Regions.bed
 LIBRARY_BED_GZ = $(LIBRARY_BED).gz
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
-GENE_CENSUS_CSV = Data/cancer_gene_census.csv
+GENE_CENSUS_CSV = Data/CGC_tier1.csv
 LUNG_SINGLECELL_ANNOTATION_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_cell_annotation.txt
 LUNG_SINGLECELL_RAW_MATRIX_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
 LUNG_SINGLECELL_RAW_MATRIX_RDS = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.rds
@@ -149,6 +149,16 @@ TOOLS += Docker/Tools/FusionCatcher.py
 Docker/Tools/Star-Fusion.tar.gz: | Docker/Tools
 	wget "https://github.com/STAR-Fusion/STAR-Fusion/releases/download/STAR-Fusion-v1.10.1/STAR-Fusion.v1.10.1.tar.gz" -O $@
 TOOLS += Docker/Tools/Star-Fusion.tar.gz
+
+Docker/Tools/Spruce.zip: | Docker/Tools
+	wget "https://github.com/raphael-group/spruce/archive/refs/heads/master.zip" -O $@
+TOOLS += Docker/Tools/Spruce.zip
+
+Docker/Tools/QAPA.tar.gz: | Docker/Tools
+	wget "https://github.com/morrislab/qapa/archive/refs/tags/v1.3.1.tar.gz" -O $@
+TOOLS += Docker/Tools/QAPA.tar.gz
+
+TOOLS += Docker/Tools/annovar.latest.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
@@ -397,6 +407,9 @@ Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(ad
 Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Sequnza/BWA-correlation-SQC.pdf: Python/aggregate_sequenza_correlation.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(REFERENCE_CENTROMERE) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC
+
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
 step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf
 step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf
@@ -605,16 +618,49 @@ Output/RSEM/DEG/%.ADC.AAH-Primary.tsv Output/RSEM/DEG/%.ADC.AAH-Primary.coldata:
 Output/RSEM/DEG/%.ADC.AIS-Primary.tsv Output/RSEM/DEG/%.ADC.AIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --ADC --compare "stage" "CIS+AIS" "Primary" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/%.SQC.Recur.CIS-Primary.tsv Output/RSEM/DEG/%.SQC.Recur.CIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "YES" --compare "stage" "CIS+AIS" "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "NO" --compare "stage" "Normal" "CIS+AIS" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "NO" --compare "stage" "Normal" "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.SQC.Nonrecur.CIS-Primary.tsv Output/RSEM/DEG/%.SQC.NonrecurCIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "NO" --compare "stage" "CIS+AIS" "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.ADC.Nonrecur.Normal-AIS.tsv Output/RSEM/DEG/%.ADC.Nonrecur.Normal-AIS.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --ADC --exact "Recurrence" "NO" --compare "stage" "Normal" "CIS+AIS" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.ADC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/%.ADC.Nonrecur.Normal-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --ADC --exact "Recurrence" "NO" --compare "stage" "Normal" "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.ADC.Nonrecur.AIS-Primary.tsv Output/RSEM/DEG/%.ADC.Nonrecur.AIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --ADC --exact "Recurrence" "NO" --compare "stage" "CIS+AIS" "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.SQC.CIS.Nonrecur-Recur.tsv Output/RSEM/DEG/%.SQC.CIS.Nonrecur-Recur.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "stage" "CIS+AIS" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/DEG/%.SQC.Primary.Nonrecur-Recur.tsv Output/RSEM/DEG/%.SQC.Primary.Nonrecur-Recur.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "stage" "Primary" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/Bowtie2.tsv $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/STAR.tsv
 step18-SQC: Output/RSEM/DEG/Bowtie2.SQC.Normal-Dysplasia.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-CIS.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-CIS.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.CIS-Primary.tsv Output/RSEM/DEG/STAR.SQC.Normal-Dysplasia.tsv Output/RSEM/DEG/STAR.SQC.Normal-CIS.tsv Output/RSEM/DEG/STAR.SQC.Normal-Primary.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-CIS.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-Primary.tsv Output/RSEM/DEG/STAR.SQC.CIS-Primary.tsv
 step18-SQC-DEG: Output/RSEM/DEG/Bowtie2.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.CIS-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/STAR.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/STAR.SQC.Normal-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-CIS.DEG.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.CIS-Primary.DEG.tsv
+step18-SQC-Recur: Output/RSEM/DEG/Bowtie2.SQC.Recur.CIS-Primary.tsv Output/RSEM/DEG/STAR.SQC.Recur.CIS-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.Normal-CIS.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.CIS-Primary.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.Normal-CIS.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.CIS-Primary.tsv
+step18-SQC-Recur-DEG: Output/RSEM/DEG/Bowtie2.SQC.Recur.CIS-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.Recur.CIS-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Nonrecur.CIS-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/STAR.SQC.Nonrecur.CIS-Primary.DEG.tsv
+step18-SQC-Stage: Output/RSEM/DEG/Bowtie2.SQC.CIS.Nonrecur-Recur.tsv Output/RSEM/DEG/Bowtie2.SQC.Primary.Nonrecur-Recur.tsv Output/RSEM/DEG/STAR.SQC.CIS.Nonrecur-Recur.tsv Output/RSEM/DEG/STAR.SQC.Primary.Nonrecur-Recur.tsv
+step18-SQC-Stage-DEG: Output/RSEM/DEG/Bowtie2.SQC.CIS.Nonrecur-Recur.DEG.tsv Output/RSEM/DEG/Bowtie2.SQC.Primary.Nonrecur-Recur.DEG.tsv Output/RSEM/DEG/STAR.SQC.CIS.Nonrecur-Recur.DEG.tsv Output/RSEM/DEG/STAR.SQC.Primary.Nonrecur-Recur.DEG.tsv
 step18-ADC: Output/RSEM/DEG/Bowtie2.ADC.Normal-AAH.tsv Output/RSEM/DEG/Bowtie2.ADC.Normal-AIS.tsv Output/RSEM/DEG/Bowtie2.ADC.Normal-Primary.tsv Output/RSEM/DEG/Bowtie2.ADC.AAH-AIS.tsv Output/RSEM/DEG/Bowtie2.ADC.AAH-Primary.tsv Output/RSEM/DEG/Bowtie2.ADC.AIS-Primary.tsv Output/RSEM/DEG/STAR.ADC.Normal-AAH.tsv Output/RSEM/DEG/STAR.ADC.Normal-AIS.tsv Output/RSEM/DEG/STAR.ADC.Normal-Primary.tsv Output/RSEM/DEG/STAR.ADC.AAH-AIS.tsv Output/RSEM/DEG/STAR.ADC.AAH-Primary.tsv Output/RSEM/DEG/STAR.ADC.AIS-Primary.tsv
 step18-ADC-DEG: Output/RSEM/DEG/Bowtie2.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.Normal-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.AAH-AIS.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.AAH-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.AIS-Primary.DEG.tsv Output/RSEM/DEG/STAR.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/STAR.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/STAR.ADC.Normal-Primary.DEG.tsv Output/RSEM/DEG/STAR.ADC.AAH-AIS.DEG.tsv Output/RSEM/DEG/STAR.ADC.AAH-Primary.DEG.tsv Output/RSEM/DEG/STAR.ADC.AIS-Primary.DEG.tsv
-step18: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG
-.PHONY: step18-preparation step18-SQC step18-SQC-DEG step18-ADC step18-ADC-DEG step18
+step18-ADC-Recur: Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.Normal-AIS.tsv Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.AIS-Primary.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.Normal-AIS.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.AIS-Primary.tsv
+step18-ADC-Recur-DEG: Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.Normal-AIS.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/Bowtie2.ADC.Nonrecur.AIS-Primary.DEG.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.Normal-AIS.DEG.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/STAR.ADC.Nonrecur.AIS-Primary.DEG.tsv
+step18: step18-preparation step18-SQC step18-SQC-DEG step18-SQC-Recur step18-SQC-Recur-DEG step18-SQC-Stage step18-SQC-Stage-DEG step18-ADC step18-ADC-DEG step18-ADC-Recur step18-ADC-Recur-DEG
+.PHONY: step18-preparation step18-SQC step18-SQC-DEG step18-SQC-Recur step18-SQC-Recur-DEG step18-SQC-Stage step18-SQC-Stage-DEG step18-ADC step18-ADC-DEG step18-ADC-Recur step18-ADC-Recur-DEG step18
 
 # Step 19 (DEG: further analysis)
 Output/RSEM/Plots/Cluster Output/RSEM/Plots/Venn Output/RSEM/Plots/Volcano Output/RSEM/Plots/Violin Output/RSEM/Enrichment:
@@ -635,11 +681,23 @@ Output/RSEM/Plots/Venn/%.ADC.Up.venn.pdf: Python/draw_venn_plot.py Output/RSEM/D
 Output/RSEM/Plots/Venn/%.ADC.Down.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AAH" "Normal-AIS" "Normal-Primary" --down 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/Venn/%.ADC.Nonrecur.Up.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Nonrecur.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.ADC.Nonrecur.AIS-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AIS" "Normal-Primary" "AIS-Primary" --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Venn/%.ADC.Nonrecur.Down.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.ADC.Nonrecur.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.ADC.Nonrecur.AIS-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-AIS" "Normal-Primary" "AIS-Primary" --down 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/Venn/%.SQC.Up.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-Dysplasia" "Normal-CIS" "Normal-Primary" --up 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Venn/%.SQC.Down.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Normal-Dysplasia.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-Dysplasia" "Normal-CIS" "Normal-Primary" --down 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Venn/%.SQC.Nonrecur.Up.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.CIS-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-CIS" "Normal-Primary" "CIS-Primary" --up 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Venn/%.SQC.Nonrecur.Down.venn.pdf: Python/draw_venn_plot.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.CIS-Primary.DEG.tsv | Output/RSEM/Plots/Venn build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Normal-CIS" "Normal-Primary" "CIS-Primary" --down 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Plots/Volcano build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -650,26 +708,26 @@ Output/RSEM/Plots/Violin/%.ADC.violin.tar: Python/draw_violin_plots.py Output/RS
 Output/RSEM/Plots/Violin/%.SQC.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/%.SQC.Normal-Dysplasia.tsv Output/RSEM/DEG/%.SQC.Normal-CIS.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.tsv Output/RSEM/DEG/%.SQC.Dysplasia-CIS.tsv Output/RSEM/DEG/%.SQC.Dysplasia-Primary.tsv Output/RSEM/DEG/%.SQC.CIS-Primary.tsv | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Up.KEGG.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" --up 1> $@.stdout 2> $@.stderr
+Output/RSEM/Enrichment/%.Up.KEGG.tsv Output/RSEM/Enrichment/%.Up.KEGG.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Down.KEGG.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" --down 1> $@.stdout 2> $@.stderr
+Output/RSEM/Enrichment/%.Down.KEGG.tsv Output/RSEM/Enrichment/%.Down.KEGG.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Up.MSigDB.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" --up 1> $@.stdout 2> $@.stderr
+Output/RSEM/Enrichment/%.Up.MSigDB.tsv Output/RSEM/Enrichment/%.Up.MSigDB.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Down.MSigDB.tsv: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" --down 1> $@.stdout 2> $@.stderr
+Output/RSEM/Enrichment/%.Down.MSigDB.tsv Output/RSEM/Enrichment/%.Down.MSigDB.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
+	$(DOCKER) $(PYTHON) $(addprefix /,$^  $@) --SQC
 
 step19-cluster: Output/RSEM/Plots/Cluster/Bowtie2.SQC.pdf Output/RSEM/Plots/Cluster/STAR.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.pdf Output/RSEM/Plots/Cluster/STAR.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC-SQC.pdf Output/RSEM/Plots/Cluster/STAR.ADC-SQC.pdf
-step19-venn-ADC: Output/RSEM/Plots/Venn/Bowtie2.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Down.venn.pdf
-step19-venn-SQC: Output/RSEM/Plots/Venn/Bowtie2.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.SQC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Down.venn.pdf
-step19-volcano-ADC: Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AIS-Primary.volcano.pdf
-step19-volcano-SQC: Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.CIS-Primary.volcano.pdf
+step19-venn-ADC: Output/RSEM/Plots/Venn/Bowtie2.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Nonrecur.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Nonrecur.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Nonrecur.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Nonrecur.Down.venn.pdf
+step19-venn-SQC: Output/RSEM/Plots/Venn/Bowtie2.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.SQC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Down.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.SQC.Nonrecur.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.SQC.Nonrecur.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Nonrecur.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.SQC.Nonrecur.Down.venn.pdf
+step19-volcano-ADC: Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.AIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AAH.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AAH-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.AIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Nonrecur.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Nonrecur.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.ADC.Nonrecur.AIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Nonrecur.Normal-AIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Nonrecur.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.ADC.Nonrecur.AIS-Primary.volcano.pdf
+step19-volcano-SQC: Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Dysplasia.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Dysplasia-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Recur.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Recur.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Nonrecur.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Nonrecur.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Nonrecur.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Nonrecur.Normal-CIS.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Nonrecur.Normal-Primary.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Nonrecur.CIS-Primary.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.CIS.Nonrecur-Recur.volcano.pdf Output/RSEM/Plots/Volcano/Bowtie2.SQC.Primary.Nonrecur-Recur.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.CIS.Nonrecur-Recur.volcano.pdf Output/RSEM/Plots/Volcano/STAR.SQC.Primary.Nonrecur-Recur.volcano.pdf
 step19-violin-ADC: Output/RSEM/Plots/Violin/Bowtie2.ADC.violin.tar Output/RSEM/Plots/Violin/STAR.ADC.violin.tar
 step19-violin-SQC: Output/RSEM/Plots/Violin/Bowtie2.SQC.violin.tar Output/RSEM/Plots/Violin/STAR.SQC.violin.tar
 step19-KEGG-ADC: Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AAH.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AIS.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-AIS.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AIS-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AAH.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-AIS.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.Normal-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-AIS.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AAH-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/Bowtie2.ADC.AIS-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-AAH.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-AIS.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AAH-AIS.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AAH-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AIS-Primary.Up.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-AAH.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-AIS.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.Normal-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AAH-AIS.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AAH-Primary.Down.KEGG.tsv Output/RSEM/Enrichment/STAR.ADC.AIS-Primary.Down.KEGG.tsv
@@ -790,8 +848,8 @@ Output/VAF/Bowtie2.ADC.tar: Python/draw_vaf_plots.py $(addprefix Output/Mutect2/
 Output/VAF-tSNE/BWA.SQC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/VAF-tSNE/BWA.ADC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+Output/VAF-tSNE/BWA.ADC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENSUS_CSV) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt | Output/VAF-tSNE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC
 
 Output/VAF-tSNE/Bowtie2.SQC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/VAF-tSNE build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
@@ -974,7 +1032,22 @@ step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/SCDC/Bowtie2.ADC.clus
 step30: step30-SCDC step30-heatmap step30-violin step30-cluster
 .PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
+# Step ## (Gistic2.0)
+# http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
+# ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
+
+# Step ## (TIDE)
+# https://github.com/jingxinfu/TIDEpy
+
+# Step ## (QAPA)
+# https://github.com/morrislab/qapa
+
+# Step ## (Roar)
+# http://bioconductor.org/packages/release/bioc/html/roar.html
+
 # Step ## (MesKit)
+# Step ## (Spruce)
+# STep ## (CRUST)
 # Step ## (WTS - samtools depth)
 # Step ## (Picard - CollectMultipleMetrics)
 # Step ## (PureCN)
