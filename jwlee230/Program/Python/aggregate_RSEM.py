@@ -13,7 +13,7 @@ trembl_ID_set = set()
 
 
 def read_RSEM(filename: str) -> pandas.DataFrame:
-    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "TPM"], index_col="gene_id")
+    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "expected_count"], index_col="gene_id")
     data.columns = [filename.split("/")[-1].split(".")[0]]
     return data
 
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
-    parser.add_argument("trembl", help="Gencode TREMBL tsv.gz file", type=str)
+    parser.add_argument("trembl", help="Gencode TREMBL TSV.gz file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
