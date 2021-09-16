@@ -97,11 +97,11 @@ if __name__ == "__main__":
         print(patients)
         print(conditions)
     else:
-        f1 = set(clinical_data.loc[(clinical_data[args.compare[1]] == value)].index)
-        f2 = set(clinical_data.loc[(clinical_data[args.compare[2]] == value)].index)
+        f1 = set(clinical_data.loc[(clinical_data[args.compare[0]] == args.compare[1])].index)
+        f2 = set(clinical_data.loc[(clinical_data[args.compare[0]] == args.compare[2])].index)
 
         patients = list(filter(lambda x: step00.get_patient(x) in f1, patients)) + list(filter(lambda x: step00.get_patient(x) in f2, patients))
-        conditions = list(map(lambda x: args.compare[1] if x in f1 else args.compare[2], patients))
+        conditions = list(map(lambda x: args.compare[1] if (step00.get_patient(x) in f1) else args.compare[2], patients))
 
         assert patients, "Too less patients!!"
         assert len(set(conditions)) == 2, "Invalid conditions!!"
