@@ -859,8 +859,8 @@ Output/VAF-tSNE/Bowtie2.ADC.pdf: Python/draw_vaf_tsne.py $(addprefix Output/Mute
 
 step23-VAF: Output/VAF/BWA.SQC.tar Output/VAF/BWA.ADC.tar Output/VAF/Bowtie2.SQC.tar Output/VAF/Bowtie2.ADC.tar
 step23-tSNE: Output/VAF-tSNE/BWA.SQC.pdf Output/VAF-tSNE/BWA.ADC.pdf Output/VAF-tSNE/Bowtie2.SQC.pdf Output/VAF-tSNE/Bowtie2.ADC.pdf
-step23: step23-VAF step23-tSNE
-.PHONY: step23-VAF step23-tSNE step23
+step23: step23-VAF
+.PHONY: step23-VAF step23
 
 # Step 24 (Revolver)
 Output/Revolver/BWA Output/Revolver/Bowtie2:
@@ -921,18 +921,18 @@ step25: step25-Raw step25-Filtered step25-Plot
 Output/FusionCatcher/Reference Output/FusionCatcher/STAR Output/FusionCatcher/Bowtie2 Output/FusionCatcher/Plot:
 	mkdir -p $@
 
-Output/FusionCatcher/Reference/current: Bash/download_human-db.bash | build.log Output/FusionCatcher/Reference
-	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $@.stdout 2> $@.stderr
+Output/FusionCatcher/Reference/human_v102/genes.fa: Bash/download_human-db.bash | build.log Output/FusionCatcher/Reference
+	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/FusionCatcher/STAR/%/normal.tsv Output/FusionCatcher/STAR/%/tumor.tsv: Output/FusionCatcher/Reference/current Data/WTS/%_*.fastq.gz | Output/FusionCatcher/STAR build.log
+Output/FusionCatcher/STAR/%/normal.tsv Output/FusionCatcher/STAR/%/tumor.tsv: Output/FusionCatcher/Reference/human_v102/genes.fa Data/WTS/%_*.fastq.gz | Output/FusionCatcher/STAR build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
-	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
+	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(dir $(filter %.fa,$^))) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(dir $(filter %.fa,$^))) --threads=$(CPUS) --no-update-check --aligners=star --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
 	cp $(@D)/1_*/final-list_candidate-fusion-genes.txt $(@D)/normal.tsv || touch $(@D)/normal.tsv
 	cp $(@D)/2_*/final-list_candidate-fusion-genes.txt $(@D)/tumor.tsv
 
-Output/FusionCatcher/Bowtie2/%/normal.tsv Output/FusionCatcher/Bowtie2/%/tumor.tsv: Output/FusionCatcher/Reference/current Data/WTS/%_*.fastq.gz | Output/FusionCatcher/Bowtie2 build.log
+Output/FusionCatcher/Bowtie2/%/normal.tsv Output/FusionCatcher/Bowtie2/%/tumor.tsv: Output/FusionCatcher/Reference/human_v102/genes.fa Data/WTS/%_*.fastq.gz | Output/FusionCatcher/Bowtie2 build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
-	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(filter %.current,$^)) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
+	if [[ -e "Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz" ]]; then $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(dir $(filter %.fa,$^))) --tmp=$(TMPFS) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; else $(DOCKER) fusioncatcher.py --input=$(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))),$(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) --normal=$(addprefix /,$(word 1,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))),$(addprefix /,$(word 2,$(sort $(wildcard Data/WTS/$(PAIRED_NORMAL)_*.fastq.gz)))) --output=$(addprefix /,$(@D)) --data=$(addprefix /,$(dir $(filter %.fa,$^))) --threads=$(CPUS) --no-update-check --aligners=bowtie2 --skip-conversion-grch37 --Xmx=$(MEMS)g 1> $(@D).stdout 2> $(@D).stderr; fi;
 	cp $(@D)/1_*/final-list_candidate-fusion-genes.txt $(@D)/normal.tsv || touch $(@D)/normal.tsv
 	cp $(@D)/2_*/final-list_candidate-fusion-genes.txt $(@D)/tumor.tsv
 
@@ -945,7 +945,7 @@ Output/FusionCatcher/Bowtie2/%.tsv: Python/filter_fusioncatcher.py Output/Fusion
 Output/FusionCatcher/Plot/ADC.STAR.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(filter-out %N,$(ADC_WTS_SAMPLES)))) | Output/FusionCatcher/Plot build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-step26-prepar: Output/FusionCatcher/Reference/current
+step26-prepar: Output/FusionCatcher/Reference/human_v102/genes.fa
 step26-STAR: $(addprefix Output/FusionCatcher/STAR/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
 step26-Bowtie: $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
 step26-Plot:
