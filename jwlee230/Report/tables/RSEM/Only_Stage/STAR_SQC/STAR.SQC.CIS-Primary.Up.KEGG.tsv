@@ -1,4 +1,1 @@
 Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
-1	Pantothenate and CoA biosynthesis	0.0010499764455398322	19979.0	137035.71221916509	BCAT1	0.002499957206903733	0	0
-2	Valine, leucine and isoleucine degradation	0.002399958356798814	19952.0	120356.5272753826	BCAT1	0.002499957206903733	0	0
-3	Cysteine and methionine metabolism	0.002499957206903733	19950.0	119530.05920663517	BCAT1	0.002499957206903733	0	0
