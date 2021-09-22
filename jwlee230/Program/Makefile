@@ -154,9 +154,9 @@ Docker/Tools/Spruce.zip: | Docker/Tools
 	wget "https://github.com/raphael-group/spruce/archive/refs/heads/master.zip" -O $@
 TOOLS += Docker/Tools/Spruce.zip
 
-Docker/Tools/QAPA.tar.gz: | Docker/Tools
-	wget "https://github.com/morrislab/qapa/archive/refs/tags/v1.3.1.tar.gz" -O $@
-TOOLS += Docker/Tools/QAPA.tar.gz
+Docker/Tools/QAPA.zip: | Docker/Tools
+	wget "https://codeload.github.com/morrislab/qapa/zip/refs/heads/master" -O $@
+TOOLS += Docker/Tools/QAPA.zip
 
 TOOLS += Docker/Tools/annovar.latest.tar.gz
 
@@ -1032,12 +1032,33 @@ step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/SCDC/Bowtie2.ADC.clus
 step30: step30-SCDC step30-heatmap step30-violin step30-cluster
 .PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
+# Step 31 (TIDE)
+Output/TIDE:
+	mkdir -p $@
+
+Output/TIDE/Bowtie2.SQC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/TIDE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/TIDE/Bowtie2.ADC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/TIDE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/TIDE/STAR.SQC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/TIDE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/TIDE/STAR.ADC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/TIDE build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/TIDE/%.TIDE.tsv: Output/TIDE/%.tsv | build.log
+	$(DOCKER) tidepy --output $(addprefix /,$@) --cancer "NSCLC" --pretreat --force_normalize $(addprefix /,$^)
+
+step31-prepare: Output/TIDE/Bowtie2.SQC.tsv Output/TIDE/Bowtie2.ADC.tsv Output/TIDE/STAR.SQC.tsv Output/TIDE/STAR.ADC.tsv
+step31-tide: Output/TIDE/Bowtie2.SQC.TIDE.tsv #Output/TIDE/Bowtie2.ADC.TIDE.tsv Output/TIDE/STAR.SQC.TIDE.tsv Output/TIDE/STAR.ADC.TIDE.tsv
+step31: step31-prepare step31-tide
+.PHONY: step31-prepare step31-tide step31
+
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
 # ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
-
-# Step ## (TIDE)
-# https://github.com/jingxinfu/TIDEpy
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

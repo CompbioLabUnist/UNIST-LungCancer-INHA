@@ -104,8 +104,8 @@ RUN cpanm --notest DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS P
 ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 
 # QAPA
-ADD Tools/QAPA.tar.gz /Tools/
-RUN cd /Tools/qapa-1.3.1 && conda install -c conda-forge mamba && mamba env create -f environment.yml
+ADD Tools/QAPA.zip /Tools/
+RUN cd /Tools && unzip QAPA.zip && cd qapa-master && conda install -c conda-forge mamba && mamba env create -f environment.yml
 
 VOLUME /Output
 VOLUME /Data
