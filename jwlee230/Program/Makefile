@@ -1048,11 +1048,11 @@ Output/TIDE/STAR.SQC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/
 Output/TIDE/STAR.ADC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/TIDE build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/TIDE/%.TIDE.tsv: Output/TIDE/%.tsv | build.log
-	$(DOCKER) tidepy --output $(addprefix /,$@) --cancer "NSCLC" --pretreat --force_normalize $(addprefix /,$^)
+Output/TIDE/%.TIDE.tsv: Bash/run_TIDE.bash Output/TIDE/%.tsv | build.log
+	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step31-prepare: Output/TIDE/Bowtie2.SQC.tsv Output/TIDE/Bowtie2.ADC.tsv Output/TIDE/STAR.SQC.tsv Output/TIDE/STAR.ADC.tsv
-step31-tide: Output/TIDE/Bowtie2.SQC.TIDE.tsv #Output/TIDE/Bowtie2.ADC.TIDE.tsv Output/TIDE/STAR.SQC.TIDE.tsv Output/TIDE/STAR.ADC.TIDE.tsv
+step31-tide: Output/TIDE/Bowtie2.SQC.TIDE.tsv Output/TIDE/Bowtie2.ADC.TIDE.tsv Output/TIDE/STAR.SQC.TIDE.tsv Output/TIDE/STAR.ADC.TIDE.tsv
 step31: step31-prepare step31-tide
 .PHONY: step31-prepare step31-tide step31
 
