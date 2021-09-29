@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Docker/Dockerfile --tag lungcancer:$(date "+%y%m%d")
+      run: docker build jwlee230/Program/Docker --tag lungcancer:$(date "+%y%m%d")
