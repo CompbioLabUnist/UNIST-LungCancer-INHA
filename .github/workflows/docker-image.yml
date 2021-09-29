@@ -2,8 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    paths:
-    - "jwlee230/Program/Docker"
+    branches: [ main ]
+    #paths:
+    #- "jwlee230/Program/Docker"
 
 jobs:
   build:
@@ -11,4 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build jwlee230/Program/Docker --tag lungcancer:$(date "+%y%m%d")
+      run: make -C jwlee230/Program/Docker build
