@@ -158,6 +158,9 @@ Docker/Tools/QAPA.zip: | Docker/Tools
 	wget "https://codeload.github.com/morrislab/qapa/zip/refs/heads/master" -O $@
 TOOLS += Docker/Tools/QAPA.zip
 
+Docker/Tools/annovar.latest.tar.gz: | Docker/Tools
+	@echo "You must manullay download <annovar> on https://www.openbioinformatics.org/annovar/annovar_download_form.php"
+	touch $@
 TOOLS += Docker/Tools/annovar.latest.tar.gz
 
 # Docker
