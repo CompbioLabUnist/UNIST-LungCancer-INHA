@@ -11,14 +11,15 @@ import sklearn.preprocessing
 import pandas
 import step00
 
+driver_gene_set = set()
+
 
 def read(filename: str) -> pandas.DataFrame:
     sample = filename.split("/")[-1].split(".")[0]
-    print(sample)
 
     data = pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
-    data = data.loc[(data["Chromosome"].isin(step00.chromosome_list)), :]
+    data = data.loc[(data["Chromosome"].isin(step00.chromosome_list)) & (data["Hugo_Symbol"].isin(driver_gene_set)), :]
     data[sample] = data["t_alt_count"] / data["t_depth"]
     data.set_index(keys=["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2", "Hugo_Symbol", "Variant_Classification", "HGVSp_Short"], inplace=True, verify_integrity=True)
     data = data[[sample]]
@@ -31,8 +32,11 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
+    parser.add_argument("census", help="Census data data CSV file", type=str)
+    parser.add_argument("driver", help="MutEnricher Fisher enrichment output", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group_histology = parser.add_mutually_exclusive_group(required=True)
     group_histology.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -44,10 +48,14 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
+    elif not args.census.endswith(".csv"):
+        raise ValueError("Census must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-values must be (0, 1)")
 
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
@@ -66,6 +74,17 @@ if __name__ == "__main__":
 
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
     print(len(args.input))
+
+    census_data = pandas.read_csv(args.census)
+    print(census_data)
+
+    driver_data = pandas.read_csv(args.driver, sep="\t")
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+    driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
+    driver_gene_set = set(driver_data["Gene"])
+    print(driver_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(read, args.input), axis="columns", join="outer", sort=True, verify_integrity=True).fillna(0).T
