@@ -640,7 +640,35 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test in LUSC}
+        \frametitle{Enrichment test with Normal vs. Dysplasia in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways on Normal vs. Dysplasia}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-Dysplasia.Up.KEGG.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways on Normal vs. Dysplasia}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-Dysplasia.Down.KEGG.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test with Normal vs. CIS in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways on Normal vs. CIS}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-CIS.Up.KEGG.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways on Normal vs. CIS}
+            \input{tables/RSEM/Only_Stage/STAR_SQC/STAR.SQC.Normal-CIS.Down.KEGG.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test with Normal vs. Primary in LUSC}
 
         \begin{table}
             \caption{Up-regulated Pathways on Normal vs. Primary}
@@ -700,118 +728,79 @@
         \frametitle{Enrichment test in LUAD}
     \end{frame}
 
-    \subsubsection{Selecting Recurrence \& Comparing Stage}
+    \subsubsection{Recur vs. Non-recur in LUSC}
     \begin{frame}
-        \frametitle{DEG Volcano Plots in LUSC with Selecting Recur.}
+        \frametitle{LUSC Data Composition}
+
+        \begin{table}
+            \caption{Number of WTS LUSC samples}
+            \input{tables/WTS_samples/WTS_SQC_samples.tex}
+        \end{table}
+
+        \begin{block}{Normal samples}
+            In order to compare with Normal stage, merging Normal samples. \\
+            $\because$ Insufficient number of Normal samples in Recur.
+        \end{block}
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram in LUSC with Selecting Recur.}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Enrichment test in LUSC with Selecting Recur.}
-    \end{frame}
-
-    \subsubsection{Selecting Non-Recurrence \& Comparing Stage}
-    \begin{frame}
-        \frametitle{DEG Volcano Plots in LUSC with Selecting Non-Recur.}
-        Normal $\rightarrow$ CIS $\rightarrow$ Primary (LUSC)
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.Normal-CIS.volcano.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.Normal-Primary.volcano.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/Bowtie2.SQC.Nonrecur.CIS-Primary.volcano.pdf}
-                \\
-                \mbox{(a) Normal-CIS} & \mbox{(b) Normal-Primary} & \mbox{(c) CIS-Primary} \\
-            \end{array}$
-            \caption{DEG Volcano Plots in LUSC with Selecting Non-Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Venn Diagram in LUSC with Selecting Non-Recur.}
-        Normal $\rightarrow$ CIS $\rightarrow$ Primary (LUSC)
+        \frametitle{DEG Volcano Plots Recur vs. Non-recur with CIS in LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-CIS.volcano.pdf}
                 \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+                \mbox{(a) Recurrence} & \mbox{(b) Non-recurrence} \\
             \end{array}$
-            \caption{DEG Venn Diagram in LUSC with Selecting Non-Recurrence}
+            \caption{DEG Volcano Plots Recur vs. Non-recur with CI}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test in LUSC with Selecting Non-Recur.}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Volcano Plots in LUAD with Selecting Non-Recur.}
-        Normal $\rightarrow$ AIS $\rightarrow$ Primary (LUAD)
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-AIS.volcano.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-Primary.volcano.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.AIS-Primary.volcano.pdf}
-                \\
-                \mbox{(a) Normal-AIS} & \mbox{(b) Normal-Primary} & \mbox{(c) AIS-Primary} \\
-            \end{array}$
-            \caption{DEG Volcano Plots in LUAD with Selecting Non-Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Venn Diagram in LUAD with Selecting Non-Recur.}
-        Normal $\rightarrow$ AIS $\rightarrow$ Primary (LUAD)
+        \frametitle{DEG Venn Diagram Recur vs. Non-recur with CIS in LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
                 \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated}
             \end{array}$
-            \caption{DEG Venn Diagram in LUAD with Selecting Non-Recurrence}
+            \caption{DEG Venn Diagram Recur vs. Non-recur with CIS}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test in LUAD with Selecting Non-Recur.}
-    \end{frame}
-
-    \subsubsection{Selecting Stage \& Comparing Recurrence}
-    \begin{frame}
-        \frametitle{DEG Volcano Plots in LUSC with Selecting Stage}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.CIS.Nonrecur-Recur.volcano.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Primary.Nonrecur-Recur.volcano.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary}
-            \end{array}$
-            \caption{DEG Volcano Plots in LUSC with Selecting Stage}
-        \end{figure}
+        \frametitle{Enrichment test Recur vs. Non-recur with CIS in LUSC}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test in LUSC with Selecting CIS}
+        \frametitle{DEG Volcano Plots R vs. NR with Primary in LUSC}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test in LUSC with Selecting Primary}
+        \frametitle{DEG Venn Diagram R vs. NR with Primary in LUSC}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test R vs. NR with Primary in LUSC}
+    \end{frame}
+
+    \subsubsection{Within Recur in LUSC}
+
+    \subsubsection{Within Non-recur in LUSC}
+
+    \subsubsection{Within Non-recur in LUAD}
+    \begin{frame}
+        \frametitle{LUAD Data Composition}
+
+        \begin{table}
+            \caption{Number of WTS LUAD samples}
+            \input{tables/WTS_samples/WTS_ADC_samples.tex}
+        \end{table}
     \end{frame}
 
     \begin{frame}
