@@ -630,10 +630,10 @@ Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.tsv Output/RSEM/DEG/%.SQC.Recur.Norma
 Output/RSEM/DEG/%.SQC.Recur.CIS-Primary.tsv Output/RSEM/DEG/%.SQC.Recur.CIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "YES" --compare "stage" "CIS+AIS" "Primary" 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.coldata: Python/aggregate_RSEM_3.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "NO" --compare "stage" "Normal" "CIS+AIS" 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
+Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.coldata: Python/aggregate_RSEM_3.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --SQC --exact "Recurrence" "NO" --compare "stage" "Normal" "Primary" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/DEG/%.SQC.Nonrecur.CIS-Primary.tsv Output/RSEM/DEG/%.SQC.NonrecurCIS-Primary.coldata: Python/aggregate_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log
