@@ -69,6 +69,6 @@ if __name__ == "__main__":
 
     enrichment_data.to_csv(args.output + ".tsv", sep="\t", index=False)
     if enrichment_data.iloc[:3, :].empty:
-        pandas.DataFrame(columns=["Term name", "Adjusted p-value"]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        pandas.DataFrame(columns=["Term name", "Adjusted p-value"], index=[0]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
     else:
         enrichment_data.iloc[:3, :].loc[:, ["Term name", "Adjusted p-value"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")
