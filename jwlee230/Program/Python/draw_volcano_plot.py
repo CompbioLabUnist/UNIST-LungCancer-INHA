@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
-    parser.add_argument("--annotation", help="Annotation limits", type=int, default=5)
+    parser.add_argument("--annotation", help="Annotation limits", type=int, default=10)
 
     args = parser.parse_args()
 
