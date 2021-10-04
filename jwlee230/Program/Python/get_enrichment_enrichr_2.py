@@ -7,6 +7,7 @@ import numpy
 import pandas
 import requests
 
+wanted_columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
 addlist_url = "https://maayanlab.cloud/Enrichr/addList"
 enrichment_url = "https://maayanlab.cloud/Enrichr/enrich"
 gene_set_library = ["KEGG_2021_Human", "MSigDB_Oncogenic_Signatures"]
@@ -89,15 +90,17 @@ if __name__ == "__main__":
         print(gene_set_data)
 
         raw_data = get_response("{0}?userListId={1}&backgroundType={2}".format(enrichment_url, gene_set_data["userListId"], args.DB), None)
-        enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"])
-        enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
+        enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=wanted_columns)
         enrichment_data = enrichment_data.loc[(enrichment_data["P-value"] < args.padj) & (enrichment_data["Adjusted p-value"] < args.padj)]
+        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."])), enrichment_data["Overlapping genes"]))
+        enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
         print(enrichment_data)
     else:
         enrichment_data = pandas.DataFrame(columns=["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"])
 
-    enrichment_data.to_csv(args.output + ".tsv", sep="\t", index=False)
-    if enrichment_data.iloc[:3, :].empty:
-        pandas.DataFrame(columns=["Term name", "Adjusted p-value"], index=[0], data=[["None", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
+    if enrichment_data.empty:
+        pandas.DataFrame(columns=wanted_columns, index=[0], data=[["None"] + [""] * (len(wanted_columns) - 1)]).to_csv(args.output + ".tsv", sep="\t", index=False)
+        pandas.DataFrame(columns=["Term name", "Overlapping genes...", "Adjusted p-value"], index=[0], data=[["None", "", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
     else:
-        enrichment_data.iloc[:3, :].loc[:, ["Term name", "Adjusted p-value"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        enrichment_data.loc[:, wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
+        enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")
