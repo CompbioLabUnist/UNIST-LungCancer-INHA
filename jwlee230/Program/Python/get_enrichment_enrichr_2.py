@@ -56,6 +56,8 @@ if __name__ == "__main__":
         raise ValueError("Case must end with .tsv!!")
     elif list(filter(lambda x: not x.endswith("tsv"), args.control)):
         raise ValueError("Control must end with .tsv!!")
+    elif not (0 < args.padj < 1):
+        raise ValueError("Padj must be [0, 1]!!")
 
     case_data = read_TSV(args.case)
 

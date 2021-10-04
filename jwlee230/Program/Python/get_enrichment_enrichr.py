@@ -43,6 +43,8 @@ if __name__ == "__main__":
 
     if not args.DEG.endswith(".tsv"):
         raise ValueError("DEG must end with .TSV!!")
+    elif not (0 < args.padj < 1):
+        raise ValueError("Padj must be [0, 1]!!")
 
     DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
