@@ -35,8 +35,8 @@ if __name__ == "__main__":
     print(input_data)
 
     if input_data.empty:
-        pandas.DataFrame(columns=["gene", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index=[0], data=[["None", "", "", "", "", "", ""]]).to_csv(args.output + ".txt", sep="\t", index=False, float_format="%.2e")
+        pandas.DataFrame(columns=["gene", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index=[0], data=[["None", "", "", "", "", "", ""]]).to_csv(args.output + ".tsv", sep="\t", index=False, float_format="%.2e")
         pandas.DataFrame(columns=["gene", "log2FoldChange", "pvalue", "padj"], index=[0], data=[["None", "", "", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
     else:
-        input_data.to_csv(args.output + ".txt", sep="\t", index=False, float_format="%.2e")
+        input_data.to_csv(args.output + ".tsv", sep="\t", index=False, float_format="%.2e")
         input_data.iloc[:3, :].loc[:, ["gene", "log2FoldChange", "pvalue", "padj"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")
