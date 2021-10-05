@@ -835,6 +835,24 @@
 
     \begin{frame}
         \frametitle{Finding in Comparing cancer stage in LUAD}
+
+        \begin{block}{ABCA4}
+            \begin{enumerate}
+                \item Down-regulated in AAH \& AIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{KCNQ3}
+            \begin{enumerate}
+                \item Down-regulated in AIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CHRM1}
+            \begin{enumerate}
+                \item Up-regulated in AIS, but down-regulated in Primary.
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \subsubsection{Recur vs. Non-recur in LUSC}
@@ -916,6 +934,34 @@
 
     \subsubsection{Within Recur in LUSC}
     \begin{frame}
+        \frametitle{DEG List for CIS within Recur in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated DEG for CIS within Recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Recur.Normal-CIS.DEG.Up.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated DEG for CIS within Recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Recur.Normal-CIS.DEG.Down.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG List for Primary within Recur in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated DEG for Primary within Recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Recur.Normal-Primary.DEG.Up.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated DEG for Primary within Recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Recur.Normal-Primary.DEG.Down.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots with Recur in LUSC}
 
         \begin{figure}
@@ -979,7 +1025,57 @@
         \end{table}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{Finding in Comparing within Recur in LUSC}
+
+        \begin{block}{AKR1C1}
+            \begin{enumerate}
+                \item Down-regulated in CIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{ADAM23}
+            \begin{enumerate}
+                \item Down-regulated in CIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{FAM107A}
+            \begin{enumerate}
+                \item Up-regulated in CIS, but down-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
     \subsubsection{Within Non-recur in LUSC}
+    \begin{frame}
+        \frametitle{DEG List for CIS within Non-recur in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated DEG for CIS within Non-recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Nonrecur.Normal-CIS.DEG.Up.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated DEG for CIS within Non-recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Nonrecur.Normal-CIS.DEG.Down.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG List for Primary within Non-recur in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated DEG for Primary within Non-recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Nonrecur.Normal-Primary.DEG.Up.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated DEG for Primary within Non-recur in LUSC}
+            \input{tables/DEG/STAR.SQC.Nonrecur.Normal-Primary.DEG.Down.tex}
+        \end{table}
+\end{frame}
+
     \begin{frame}
         \frametitle{DEG Volcano Plots with Non-recur in LUSC}
 
@@ -1042,6 +1138,28 @@
             \resizebox{\linewidth}{!}
             {\input{tables/RSEM/STAR.SQC.Nonrecur.Normal-Primary.Down.KEGG.tex}}
         \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Finding in Comparing within Recur in LUSC}
+
+        \begin{block}{AKR1C1 \& AKR1C2}
+            \begin{enumerate}
+                \item Down-regulated in CIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CYP4F11}
+            \begin{enumerate}
+                \item Down-regulated in CIS, but up-regulated in Primary.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{LRRC36}
+            \begin{enumerate}
+                \item Up-regulated in CIS, but down-regulated in Primary.
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \subsubsection{Within Non-recur in LUAD}
