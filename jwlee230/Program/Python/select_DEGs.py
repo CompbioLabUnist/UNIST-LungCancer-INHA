@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input TSV file", type=str)
-    parser.add_argument("output", help="Output TEX file", type=str)
+    parser.add_argument("output", help="Output Basename", type=str)
     parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
 
@@ -22,8 +22,6 @@ if __name__ == "__main__":
 
     if not args.input.endswith(".tsv"):
         raise ValueError("INPUT must end with .TSV!!")
-    elif not args.output.endswith(".tex"):
-        raise ValueError("Output must end with .TEX!!")
     elif not (0 < args.padj < 1):
         raise ValueError("Padj must be [0, 1]!!")
 
@@ -37,6 +35,8 @@ if __name__ == "__main__":
     print(input_data)
 
     if input_data.empty:
-        pandas.DataFrame(columns=["gene", "log2FoldChange", "pvalue", "padj"], index=[0], data=[["None", "", "", ""]]).to_latex(args.output, index=False, float_format="%.2e")
+        pandas.DataFrame(columns=["gene", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index=[0], data=[["None", "", "", "", "", "", ""]]).to_csv(args.output + ".tsv", sep="\t", index=False, float_format="%.2e")
+        pandas.DataFrame(columns=["gene", "log2FoldChange", "pvalue", "padj"], index=[0], data=[["None", "", "", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
     else:
-        input_data.iloc[:3, :].loc[:, ["gene", "log2FoldChange", "pvalue", "padj"]].to_latex(args.output, index=False, float_format="%.2e")
+        input_data.to_csv(args.output + ".tsv", sep="\t", index=False, float_format="%.2e")
+        input_data.iloc[:3, :].loc[:, ["gene", "log2FoldChange", "pvalue", "padj"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")

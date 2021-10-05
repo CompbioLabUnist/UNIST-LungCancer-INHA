@@ -657,11 +657,11 @@ Output/RSEM/DEG/%.SQC.Primary.Nonrecur-Recur.tsv Output/RSEM/DEG/%.SQC.Primary.N
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/%.Up.tex: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --up 1> $@.stdout 2> $@.stderr
+Output/RSEM/DEG/%.Up.tex Output/RSEM/DEG/%.Up.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG/%.Down.tex: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --down 1> $@.stdout 2> $@.stderr
+Output/RSEM/DEG/%.Down.tex Output/RSEM/DEG/%.Down.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --down 1> $@.stdout 2> $@.stderr
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/Bowtie2.tsv $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/STAR.tsv
 step18-SQC: Output/RSEM/DEG/Bowtie2.SQC.Normal-Dysplasia.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-CIS.tsv Output/RSEM/DEG/Bowtie2.SQC.Normal-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-CIS.tsv Output/RSEM/DEG/Bowtie2.SQC.Dysplasia-Primary.tsv Output/RSEM/DEG/Bowtie2.SQC.CIS-Primary.tsv Output/RSEM/DEG/STAR.SQC.Normal-Dysplasia.tsv Output/RSEM/DEG/STAR.SQC.Normal-CIS.tsv Output/RSEM/DEG/STAR.SQC.Normal-Primary.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-CIS.tsv Output/RSEM/DEG/STAR.SQC.Dysplasia-Primary.tsv Output/RSEM/DEG/STAR.SQC.CIS-Primary.tsv
