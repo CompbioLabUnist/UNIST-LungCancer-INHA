@@ -60,7 +60,7 @@ if __name__ == "__main__":
         texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:red", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
     for index, d in down_gene.iloc[:args.annotation, :].iterrows():
         texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:blue", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 6)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 3)
 
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlabel("log2(Fold_Change)")
