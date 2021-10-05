@@ -640,12 +640,14 @@
         Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (LUSC)
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Up.venn.pdf}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Up.venn.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Down.venn.pdf}
                 \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Both}& \mbox{(c) Down-regulated} \\
             \end{array}$
             \caption{DEG Venn Diagram in LUSC}
         \end{figure}
@@ -657,17 +659,13 @@
         \begin{table}
             \caption{Up-regulated Pathways on Normal vs. Dysplasia}
             \resizebox{\linewidth}{!}
-            {
-                \input{tables/RSEM/STAR.SQC.Normal-Dysplasia.Up.KEGG.tex}
-            }
+            {\input{tables/RSEM/STAR.SQC.Normal-Dysplasia.Up.KEGG.tex}}
         \end{table}
 
         \begin{table}
             \caption{Down-regulated Pathways on Normal vs. Dysplasia}
             \resizebox{\linewidth}{!}
-            {
-                \input{tables/RSEM/STAR.SQC.Normal-Dysplasia.Down.KEGG.tex}
-            }
+            {\input{tables/RSEM/STAR.SQC.Normal-Dysplasia.Down.KEGG.tex}}
         \end{table}
     \end{frame}
 
@@ -677,17 +675,13 @@
         \begin{table}
             \caption{Up-regulated Pathways on Normal vs. CIS}
             \resizebox{\linewidth}{!}
-            {
-                \input{tables/RSEM/STAR.SQC.Normal-CIS.Up.KEGG.tex}
-            }
+            {\input{tables/RSEM/STAR.SQC.Normal-CIS.Up.KEGG.tex}}
         \end{table}
 
         \begin{table}
             \caption{Down-regulated Pathways on Normal vs. CIS}
             \resizebox{\linewidth}{!}
-            {
-                \input{tables/RSEM/STAR.SQC.Normal-CIS.Down.KEGG.tex}
-            }
+            {\input{tables/RSEM/STAR.SQC.Normal-CIS.Down.KEGG.tex}}
         \end{table}
     \end{frame}
 
@@ -864,68 +858,170 @@
             \input{tables/WTS_samples/WTS_SQC_samples.tex}
         \end{table}
 
-        \begin{block}{Normal samples}
+        \begin{block}{Pooled normal samples}
             In order to compare with Normal stage, merging Normal samples. \\
             $\because$ Insufficient number of Normal samples in Recur.
         \end{block}
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG List for Recur in CIS of LUSC}
-
-        \begin{table}
-            \caption{Up-regulated DEG for Recur in CIS of LUSC}
-            \input{tables/DEG/STAR.SQC.CIS.Nonrecur-Recur.DEG.Up.tex}
-        \end{table}
-
-        \begin{table}
-            \caption{Down-regulated DEG for Recur in CIS of LUSC}
-            \input{tables/DEG/STAR.SQC.CIS.Nonrecur-Recur.DEG.Down.tex}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG List for Recur in Primary of LUSC}
-
-        \begin{table}
-            \caption{Up-regulated DEG for Recur in Primary of LUSC}
-            \input{tables/DEG/STAR.SQC.Primary.Nonrecur-Recur.DEG.Up.tex}
-        \end{table}
-
-        \begin{table}
-            \caption{Down-regulated DEG for Recur in Primary of LUSC}
-            \input{tables/DEG/STAR.SQC.Primary.Nonrecur-Recur.DEG.Down.tex}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DEG Volcano Plots Recur vs. Non-recur in LUSC}
+        \frametitle{DEG Volcano Plots for R vs. NR with CIS in LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.CIS.Nonrecur-Recur.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Primary.Nonrecur-Recur.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-CIS.volcano.pdf}
                 \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} \\
+                \mbox{(a) Recur} & \mbox{(b) Non-recur} \\
             \end{array}$
-            \caption{DEG Volcano Plots Recur vs. Non-recur}
+            \caption{DEG Volcanot Plot with CIS in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram Recur vs. Non-recur with CIS in LUSC}
+        \frametitle{DEG Venn Diagram for R vs. NR with CIS in  LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
+                \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
+            \end{array}$
+            \caption{DEG Venn Diagram for R vs. NR with CIS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Recur-specific with CIS in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.Recur.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.Recur.Down.KEGG.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Non-recur-specific with CIS in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Non-recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.Nonrecur.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Non-recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.Nonrecur.Down.KEGG.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Intersected with CIS in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Intersected}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.Both.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Intersected}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-CIS.both.Down.KEGG.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Volcano Plots for R vs. NR with Primary in LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.CIS-Primary.Recur-Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.CIS-Primary.Recur-Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-Primary.volcano.pdf}
                 \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated}
+                \mbox{(a) Recur} & \mbox{(b) Non-recur} \\
             \end{array}$
-            \caption{DEG Venn Diagram Recur vs. Non-recur}
+            \caption{DEG Volcanot Plot with Primary in LUSC}
         \end{figure}
+    \end{frame}
+
+     \begin{frame}
+        \frametitle{DEG Venn Diagram for R vs. NR with Primary in  LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.Up.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.Down.venn.pdf}
+                \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
+            \end{array}$
+            \caption{DEG Venn Diagram for R vs. NR with Primary in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Recur-specific with Primary in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.Recur.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.Recur.Down.KEGG.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Non-recur-specific with Primary in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Non-recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.Nonrecur.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Non-recur-specific}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.Nonrecur.Down.KEGG.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Enrichment test for Intersected with Primary in LUSC}
+
+        \begin{table}
+            \caption{Up-regulated Pathways for Intersected}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.Both.Up.KEGG.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Down-regulated Pathways for Intersected}
+            \resizebox{\linewidth}{!}
+            {\input{tables/RSEM/STAR.SQC-Primary.both.Down.KEGG.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}
