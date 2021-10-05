@@ -67,7 +67,7 @@ if __name__ == "__main__":
         raw_data = get_response("{0}?userListId={1}&backgroundType={2}".format(enrichment_url, gene_set_data["userListId"], args.DB), None)
         enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=wanted_columns)
         enrichment_data = enrichment_data.loc[(enrichment_data["P-value"] < args.padj) & (enrichment_data["Adjusted p-value"] < args.padj)]
-        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."])), enrichment_data["Overlapping genes"]))
+        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + "({0})".format(len(x))), enrichment_data["Overlapping genes"]))
         enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
         print(enrichment_data)
     else:
