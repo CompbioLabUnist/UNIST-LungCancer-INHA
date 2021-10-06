@@ -153,6 +153,17 @@
         \cite{lung1, lung2}
     \end{frame}
 
+    \subsection{LUAD}
+    \begin{frame}
+        \frametitle{LUAD}
+    \end{frame}
+
+    \subsection{LUSC}
+    \begin{frame}
+        \frametitle{LUSC}
+    \end{frame}
+
+    \subsection{LUAD vs. LUSC}
     \begin{frame}[allowframebreaks]
         \frametitle{LUAD vs. LUSC}
 
@@ -216,7 +227,7 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item WES (n=289) + Transcriptome (n=166)
+            \item Exome (n=289) + Transcriptome (n=166)
             \item Normal + \{Primary, CIS + AIS, AAH, Dysplasia, MIA\}
             \begin{itemize}
                 \item Carcinoma in situ
@@ -231,6 +242,19 @@
                 \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (n=80)
             \end{enumerate}
         \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{WES Data Composition}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{WTS Data Composition}
+
+        \begin{table}
+            \caption{Number of WTS samples}
+            \input{tables/WTS_samples/WTS_samples.tex}
+        \end{table}
     \end{frame}
 
     \section{Methods}
@@ -1033,8 +1057,37 @@
         \end{table}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Finding in Comparing Recur vs. Non-recur in LUSC}
+
+        \begin{block}{NTS}
+            \begin{enumerate}
+                \item Highly up-regulated in Recur patients.
+                \item Neurotensin.
+                \item Association with non-gastrointestinal cancers \cite{NTS1}.
+                \item Modulate lung cancer cell plasticity and heterogeneity \cite{NTS2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{NTRK3}
+            \begin{enumerate}
+                \item Highly down-regulated in Recur patients.
+                \item Activation of NTRK3 in LUSC \cite{NTRK3-1}.
+                \item NTRK3 mutation has association with immunotherapy in LUAD \cite{NTRK3-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{RECQL4}
+            \begin{enumerate}
+                \item Highly up-regulated in Non-recur patients.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{ASPA}
+            \begin{enumerate}
+                \item Highly down-regulated in Non-recur patients.
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \subsubsection{Within Recur in LUSC}
@@ -1132,7 +1185,7 @@
         \end{table}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Finding in Comparing within Recur in LUSC}
 
         \begin{block}{AKR1C1}
@@ -1249,7 +1302,7 @@
         \end{table}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Finding in Comparing within Non-recur in LUSC}
 
         \begin{block}{AKR1C1 \& AKR1C2}
@@ -1375,7 +1428,7 @@
         \end{table}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Finding in Comparing within Non-recur in LUAD}
 
         \begin{block}{KCNQ3}
