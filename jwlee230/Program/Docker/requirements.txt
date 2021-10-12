@@ -16,3 +16,4 @@ adjustText==0.7.3
 requests==2.26.0
 scikit-learn==0.24.2
 tqdm==4.62.3
+statannotations==0.4.2
