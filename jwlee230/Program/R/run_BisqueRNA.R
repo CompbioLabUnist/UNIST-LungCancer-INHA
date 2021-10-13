@@ -10,7 +10,6 @@ opt = parse_args(opt_parser)
 
 main <- function(input_file, annotation_file, reference_file, output_file)
 {
-    install.packages("BisqueRNA", repos="http://cran.us.r-project.org")
     library(Biobase)
     library(BisqueRNA)
     require(data.table)
