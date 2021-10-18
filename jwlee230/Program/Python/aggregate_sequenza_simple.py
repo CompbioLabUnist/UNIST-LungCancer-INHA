@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         for j in range(chromosome_data.shape[1]):
             axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:red", edgecolor="tab:red", linewidth=None)
-            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor="tab:orange", linewidth=None)
+            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor="tab:orange", linewidth=None)
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
         axs[0][i].set_xticks([])
