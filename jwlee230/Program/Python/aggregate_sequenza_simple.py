@@ -81,7 +81,8 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"width_ratios": list(map(lambda x: x // step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
-        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
+        chromosome_data = pandas.DataFrame(data=2 * numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
+
         for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
             chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
 
