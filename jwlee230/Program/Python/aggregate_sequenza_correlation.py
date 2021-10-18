@@ -10,7 +10,6 @@ import pandas
 import seaborn
 import step00
 
-big = 10 ** 6
 centromere_dict = dict()
 clinical_columns = ["Age", "Diagnosis_Size_OP", "Recurrence-Free Survial", "Overall Survival"]
 

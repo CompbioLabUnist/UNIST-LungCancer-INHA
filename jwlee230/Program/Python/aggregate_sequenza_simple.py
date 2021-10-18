@@ -8,24 +8,15 @@ import matplotlib.pyplot
 import numpy
 import pandas
 import seaborn
+import tqdm
 import step00
 
-big = 10 ** 6
-
-
-def cut_ratio(value: float) -> float:
-    if 0 <= value:
-        return value
-    elif value < 0:
-        return 0
-    else:
-        raise ValueError("Something went wrong!!")
+watching = "CNt"
 
 
 def get_data(file_name: str) -> pandas.DataFrame:
-    data = pandas.read_csv(file_name, sep="\t", usecols=["chromosome", "start.pos", "end.pos", "depth.ratio"]).dropna(axis="index")
+    data = pandas.read_csv(file_name, sep="\t", usecols=["chromosome", "start.pos", "end.pos", watching]).dropna(axis="index")
     data["sample"] = file_name.split("/")[-2]
-    data["depth.ratio"] = list(map(cut_ratio, data["depth.ratio"]))
     return data
 
 
@@ -70,7 +61,7 @@ if __name__ == "__main__":
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in patients, args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True)
+        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
     print(input_data)
 
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
@@ -87,22 +78,23 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"height_ratios": [1, 1], "width_ratios": list(map(lambda x: x // big, size_data.loc[chromosome_list, "length"]))})
-    for i, chromosome in enumerate(chromosome_list):
-        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // big)), index=sample_list, dtype=float)
+    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"width_ratios": list(map(lambda x: x // step00.big, size_data.loc[chromosome_list, "length"]))})
+
+    for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
+        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
         for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
-            chromosome_data.loc[row["sample"], row["start.pos"] // big:row["end.pos"] // big] = row["depth.ratio"]
+            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
 
         for j in range(chromosome_data.shape[1]):
-            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:red", edgecolor=None, linewidth=0)
-            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor=None, linewidth=0)
+            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:red", edgecolor="tab:red", linewidth=None)
+            axs[0][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:orange", edgecolor="tab:orange", linewidth=None)
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
         axs[0][i].set_xticks([])
 
         for j in range(chromosome_data.shape[1]):
-            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor=None, linewidth=0)
-            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor=None, linewidth=0)
+            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list), width=1, align="edge", color="tab:blue", edgecolor="tab:blue", linewidth=None)
+            axs[1][i].bar(x=j, height=len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), precancer_list))) / len(precancer_list), width=1, align="edge", color="tab:cyan", edgecolor="tab:cyan", linewidth=None)
         axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].invert_yaxis()
         axs[1][i].set_xticks([])

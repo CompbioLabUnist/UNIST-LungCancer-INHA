@@ -65,10 +65,15 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
     order = list(filter(lambda x: x in set(input_data["type"]), step00.long_sample_type_list))
     seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=order, style_order=order, s=1000, ax=ax)
+
     matplotlib.pyplot.xlim(-0.1, 1.1)
     matplotlib.pyplot.axvline(x=1, color="k", linestyle="--")
     matplotlib.pyplot.axhline(y=2, color="k", linestyle="--")
+    matplotlib.pyplot.xlabel("Cellularity")
+    matplotlib.pyplot.ylabel("Ploidy")
+
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
