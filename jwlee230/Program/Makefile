@@ -1220,9 +1220,16 @@ Output/Data_Composition/WES_samples.tex: Python/get_data_composition.py $(CLINIC
 Output/Data_Composition/WTS_samples.tex: Python/get_data_composition.py $(CLINICAL_DATA_CSV) | build.log Output/Data_Composition
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WTS_ID) $(addprefix /,$(filter %.csv,$^) $@) 1> $@.stdout 2> $@.stderr
 
+Output/Data_Composition/WTS_SQC_recurrence.tex: Python/get_data_composition_recurrence.py $(CLINICAL_DATA_CSV) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WTS_ID) $(addprefix /,$(filter %.csv,$^) $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Data_Composition/WTS_ADC_recurrence.tex: Python/get_data_composition_recurrence.py $(CLINICAL_DATA_CSV) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WTS_ID) $(addprefix /,$(filter %.csv,$^) $@) --ADC 1> $@.stdout 2> $@.stderr
+
 step32-all: Output/Data_Composition/WES_samples.tex Output/Data_Composition/WTS_samples.tex
-step32: step32-all
-.PHONY: step32-all step32
+step32-Recur: Output/Data_Composition/WTS_SQC_recurrence.tex Output/Data_Composition/WTS_ADC_recurrence.tex
+step32: step32-all step32-Recur
+.PHONY: step32-all step32-Recur step32
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
