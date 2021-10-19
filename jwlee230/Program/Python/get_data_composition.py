@@ -22,6 +22,7 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .tex!!")
 
     clinical_data = step00.get_clinical_data(args.clinical)
+    print(sorted(clinical_data.columns))
     print(clinical_data)
 
     output_data = pandas.DataFrame(columns=["Cancer Subtype", "Stage", "Number of Samples"], data=itertools.product(["LUSC", "LUAD"], step00.long_sample_type_list + ["Total"], [None])).set_index(keys=["Cancer Subtype", "Stage"], verify_integrity=True)
