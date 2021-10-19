@@ -49,4 +49,4 @@ if __name__ == "__main__":
     output_data.dropna(inplace=True)
     print(output_data)
 
-    output_data.to_latex(args.output, multirow=True)
+    output_data.to_latex(args.output, multirow=True, column_format="l|lr")
