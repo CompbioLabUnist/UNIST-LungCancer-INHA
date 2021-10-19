@@ -12,13 +12,14 @@ DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 ARRIBA_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
 PYTHON = python3 -B
 R = Rscript --vanilla
+BASH = /bin/bash
 CHROMOSOMES = chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM
 PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 PAIRED_PRIMARY = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")P$(shell echo $* | grep --perl-regexp --only-match "\d$$" > /dev/null && echo "1")
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
-RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
+RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G" --env NUMEXPR_MAX_THREADS=$(CPUS)
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
@@ -173,7 +174,7 @@ build: build.log
 .PHONY: build
 
 interactive: build.log
-	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) /bin/bash || true
+	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) $(BASH) || true
 .PHONY: interactive
 
 delete: build.log
@@ -257,7 +258,7 @@ Output/WES/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.Sort.bam Output/WE
 	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WES/%.Sort.dm-tmp.bam | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.MarkDuplicate.bai: Output/WES/%.Sort.MarkDuplicate.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -439,10 +440,10 @@ Output/Mutect2/Bowtie2/%.Bowtie2.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/B
 	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA/%.BWA.PASS.vcf: Bash/select_pass.bash Output/Mutect2/BWA/%.BWA.filter.vcf | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf: Bash/select_pass.bash Output/Mutect2/Bowtie2/%.Bowtie2.filter.vcf | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA/%.BWA.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.BWA.sam" --normal-id "$(PAIRED_NORMAL).BWA.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
@@ -463,28 +464,48 @@ Output/HaplotypeCaller/BWA/%.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.
 Output/HaplotypeCaller/Bowtie2/%.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller/Bowtie2 build.log
 	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
-Output/HaplotypeCaller/BWA/HaplotypeCaller.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.g.vcf.gz,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
+Output/HaplotypeCaller/BWA/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --patient "$*" 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/Bowtie2/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --patient "$*" 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/BWA/%.genomicsdb/callset.json: $(REFERENCE_FASTA) Output/HaplotypeCaller/BWA/%.sample_map.tsv | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) --sample-name-map $(addprefix /,$(filter %.tsv,$^)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
-Output/HaplotypeCaller/Bowtie2/HaplotypeCaller.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_TUMOR_ID))) | build.log
-	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.g.vcf.gz,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
+Output/HaplotypeCaller/Bowtie2/%.genomicsdb/callset.json: $(REFERENCE_FASTA) Output/HaplotypeCaller/Bowtie2/%.sample_map.tsv | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) --sample-name-map $(addprefix /,$(filter %.tsv,$^)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
-Output/HaplotypeCaller/%/HaplotypeCaller.vcf.gz: $(REFERENCE_FASTA) Output/HaplotypeCaller/%/HaplotypeCaller.genomicsdb/callset.json $(REFERENCE_DBSNP_VCF) | build.log
+Output/HaplotypeCaller/BWA/%.vcf.gz: $(REFERENCE_FASTA) Output/HaplotypeCaller/BWA/%.genomicsdb/callset.json $(REFERENCE_DBSNP_VCF) | build.log
 	$(DOCKER) $(GATK) GenotypeGVCFs --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/HaplotypeCaller/%/HaplotypeCaller.VQSR.recal Output/HaplotypeCaller/%/HaplotypeCaller.VQSR.tranches: $(REFERENCE_FASTA) $(REFERENCE_HAPMAP_VCF) $(REFERENCE_OMNI_VCF) $(REFERENCE_1000G_VCF) $(REFERENCE_DBSNP_VCF) Output/HaplotypeCaller/%/HaplotypeCaller.vcf.gz | build.log
+Output/HaplotypeCaller/Bowtie2/%.vcf.gz: $(REFERENCE_FASTA) Output/HaplotypeCaller/Bowtie2/%.genomicsdb/callset.json $(REFERENCE_DBSNP_VCF) | build.log
+	$(DOCKER) $(GATK) GenotypeGVCFs --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/BWA/%.VQSR.recal Output/HaplotypeCaller/BWA/%.VQSR.tranches: $(REFERENCE_FASTA) $(REFERENCE_HAPMAP_VCF) $(REFERENCE_OMNI_VCF) $(REFERENCE_1000G_VCF) $(REFERENCE_DBSNP_VCF) Output/HaplotypeCaller/BWA/%.vcf.gz | build.log
 	$(DOCKER) $(GATK) VariantRecalibrator --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$(basename $@).recal) --tranches-file $(addprefix /,$(basename $@).tranches) --variant $(addprefix /,$(lastword $^)) --use-annotation MQ --use-annotation MQRankSum --use-annotation ReadPosRankSum --use-annotation FS --use-annotation SOR --mode BOTH --resource:hapmap,known=false,training=true,truth=true,prior=15.0 $(addprefix /,$(REFERENCE_HAPMAP_VCF)) --resource:omni,known=false,training=true,truth=false,prior=12.0 $(addprefix /,$(REFERENCE_OMNI_VCF)) --resource:1000G,known=false,training=true,truth=false,prior=10.0 $(addprefix /,$(REFERENCE_1000G_VCF)) --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 $(addprefix /,$(REFERENCE_DBSNP_VCF)) 1> $@.stdout 2> $@.stderr
 
-Output/HaplotypeCaller/%/HaplotypeCaller.VQSR.vcf: $(REFERENCE_FASTA) Output/HaplotypeCaller/%/HaplotypeCaller.vcf.gz Output/HaplotypeCaller/%/HaplotypeCaller.VQSR.recal Output/HaplotypeCaller/%/HaplotypeCaller.VQSR.tranches | build.log
+Output/HaplotypeCaller/Bowtie2/%.VQSR.recal Output/HaplotypeCaller/Bowtie2/%.VQSR.tranches: $(REFERENCE_FASTA) $(REFERENCE_HAPMAP_VCF) $(REFERENCE_OMNI_VCF) $(REFERENCE_1000G_VCF) $(REFERENCE_DBSNP_VCF) Output/HaplotypeCaller/Bowtie2/%.vcf.gz | build.log
+	$(DOCKER) $(GATK) VariantRecalibrator --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$(basename $@).recal) --tranches-file $(addprefix /,$(basename $@).tranches) --variant $(addprefix /,$(lastword $^)) --use-annotation MQ --use-annotation MQRankSum --use-annotation ReadPosRankSum --use-annotation FS --use-annotation SOR --mode BOTH --resource:hapmap,known=false,training=true,truth=true,prior=15.0 $(addprefix /,$(REFERENCE_HAPMAP_VCF)) --resource:omni,known=false,training=true,truth=false,prior=12.0 $(addprefix /,$(REFERENCE_OMNI_VCF)) --resource:1000G,known=false,training=true,truth=false,prior=10.0 $(addprefix /,$(REFERENCE_1000G_VCF)) --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 $(addprefix /,$(REFERENCE_DBSNP_VCF)) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/BWA/%.VQSR.vcf: $(REFERENCE_FASTA) Output/HaplotypeCaller/BWA/%.vcf.gz Output/HaplotypeCaller/BWA/%.VQSR.recal Output/HaplotypeCaller/BWA/%.VQSR.tranches | build.log
 	$(DOCKER) $(GATK) ApplyVQSR --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf.gz,$^)) --recal-file $(addprefix /,$(filter %.recal,$^)) --tranches-file $(addprefix /,$(filter %.tranches,$^)) --output $(addprefix /,$@) --truth-sensitivity-filter-level 99.0 --mode BOTH 1> $@.stdout 2> $@.stderr
 
-step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_TUMOR_ID))) Output/HaplotypeCaller/BWA/HaplotypeCaller.genomicsdb/callset.json Output/HaplotypeCaller/BWA/HaplotypeCaller.vcf.gz Output/HaplotypeCaller/BWA/HaplotypeCaller.VQSR.recal Output/HaplotypeCaller/BWA/HaplotypeCaller.VQSR.vcf
-step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_TUMOR_ID))) Output/HaplotypeCaller/Bowtie2/HaplotypeCaller.genomicsdb/callset.json Output/HaplotypeCaller/Bowtie2/HaplotypeCaller.vcf.gz Output/HaplotypeCaller/Bowtie2/HaplotypeCaller.VQSR.recal Output/HaplotypeCaller/Bowtie2/HaplotypeCaller.VQSR.vcf
+Output/HaplotypeCaller/Bowtie2/%.VQSR.vcf: $(REFERENCE_FASTA) Output/HaplotypeCaller/Bowtie2/%.vcf.gz Output/HaplotypeCaller/Bowtie2/%.VQSR.recal Output/HaplotypeCaller/Bowtie2/%.VQSR.tranches | build.log
+	$(DOCKER) $(GATK) ApplyVQSR --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf.gz,$^)) --recal-file $(addprefix /,$(filter %.recal,$^)) --tranches-file $(addprefix /,$(filter %.tranches,$^)) --output $(addprefix /,$@) --truth-sensitivity-filter-level 99.0 --mode BOTH 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/BWA/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/HaplotypeCaller/BWA/%.VQSR.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/HaplotypeCaller/Bowtie2/%.VQSR.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
+step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
 step15: step15-BWA step15-Bowtie2
 .PHONY: step15-BWA step15-Bowtie2 step15
-# TODO: wallace >> /BiO/Research/UNIST-Pancreas_Liver_Metastasis-SMC-2018-05/Workspace/seunghoon/hg38/haplotypecaller
 
 # Step 16 (MutEnricher)
 Output/MutEnricher Output/MutEnricher/Reference Output/MutEnricher/BWA Output/MutEnricher/Bowtie2:
@@ -497,7 +518,7 @@ Output/MutEnricher/BWA/%.hg38_multianno.vcf: Output/Mutect2/BWA/%.BWA.PASS.vcf O
 	$(DOCKER) table_annovar.pl $(addprefix /,$(filter %.vcf,$^)) $(addprefix /,$(dir $(filter %.fa,$^))) --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/BWA/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/BWA/%.hg38_multianno.vcf | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@)
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@)
 
 Output/MutEnricher/BWA/%.vcf.gz.tbi: Output/MutEnricher/BWA/%.vcf.gz | build.log
 	$(DOCKER) tabix --preset "vcf" --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
@@ -512,7 +533,7 @@ Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf: Output/Mutect2/Bowtie2/%.Bowtie
 	$(DOCKER) table_annovar.pl $(addprefix /,$(filter %.vcf,$^)) $(addprefix /,$(dir $(filter %.fa,$^))) --verbose --buildver "hg38" --remove --vcfinput --protocol "refGene" --operation g --nastring "." --outfile $(addprefix /,$(@D)/$*) --thread $(CPUS) --maxgenethread $(CPUS) --tempdir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%.vcf.gz: Bash/prepare_VCF_annotation.bash Output/MutEnricher/Bowtie2/%.hg38_multianno.vcf | build.log Output/MutEnricher/Bowtie2
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/Bowtie2/%.vcf.gz.tbi: Output/MutEnricher/Bowtie2/%.vcf.gz | build.log
 	$(DOCKER) tabix --preset "vcf" --force $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
@@ -906,11 +927,11 @@ Output/PyClone/Bowtie2/%.tsv Output/PyClone/Bowtie2/%.Cellularity.txt: Python/ma
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/PyClone/BWA/,$(addsuffix .Cellularity.txt,$(WES_ID))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/BWA/$*.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).tsv Output/PyClone/BWA/$*.Cellularity.txt Output/PyClone/BWA/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+	$(DOCKER) $(BASH) $(addprefix /,$< Output/PyClone/BWA/$*.tsv Output/PyClone/BWA/$(PAIRED_PRIMARY).tsv Output/PyClone/BWA/$*.Cellularity.txt Output/PyClone/BWA/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(WES_ID))) | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
+	$(DOCKER) $(BASH) $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
 Output/PyClone/BWA-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENSUS_CSV) | build.log Output/PyClone/BWA-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --CCF 1> $@.stdout 2> $@.stderr
@@ -1035,7 +1056,7 @@ Output/Arriba/Reference Output/Arriba/Raw Output/Arriba/Filtered:
 	mkdir -p $@
 
 Output/Arriba/Reference/hg38.fa: | Output/Arriba/Reference build.log
-	$(ARRIBA_DOCKER) /bin/bash /Tools/arriba_v2.1.0/download_references.sh "hg38+RefSeq" 1> $@.stdout 2> $@.stderr
+	$(ARRIBA_DOCKER) $(BASH) /Tools/arriba_v2.1.0/download_references.sh "hg38+RefSeq" 1> $@.stdout 2> $@.stderr
 
 Output/Arriba/Raw/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba/Raw build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
@@ -1063,7 +1084,7 @@ Output/FusionCatcher/Reference Output/FusionCatcher/STAR Output/FusionCatcher/Bo
 	mkdir -p $@
 
 Output/FusionCatcher/Reference/human_v102/genes.fa: Bash/download_human-db.bash | build.log Output/FusionCatcher/Reference
-	$(DOCKER) /bin/bash $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $(@D)) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/FusionCatcher/STAR/%/normal.tsv Output/FusionCatcher/STAR/%/tumor.tsv: Output/FusionCatcher/Reference/human_v102/genes.fa Data/WTS/%_*.fastq.gz | Output/FusionCatcher/STAR build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
@@ -1203,7 +1224,7 @@ Output/TIDE/STAR.ADC.tsv: Python/aggregate_RSEM_TIDE.py $(addprefix Output/RSEM/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/TIDE/%.TIDE.tsv: Bash/run_TIDE.bash Output/TIDE/%.tsv | build.log
-	$(DOCKER) /bin/bash $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step31-prepare: Output/TIDE/Bowtie2.SQC.tsv Output/TIDE/Bowtie2.ADC.tsv Output/TIDE/STAR.SQC.tsv Output/TIDE/STAR.ADC.tsv
 step31-tide: Output/TIDE/Bowtie2.SQC.TIDE.tsv Output/TIDE/Bowtie2.ADC.TIDE.tsv Output/TIDE/STAR.SQC.TIDE.tsv Output/TIDE/STAR.ADC.TIDE.tsv
