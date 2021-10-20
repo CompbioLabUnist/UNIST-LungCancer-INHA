@@ -67,9 +67,9 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
 
-    mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(["Nonsense_Mutation", "In_Frame_Del", "Frame_Shift_Ins", "Splice_Site", "In_Frame_Ins", "Frame_Shift_Del", "Missense_Mutation"]))]
+    mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
     mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
-    mutect_data["Variant_Classification"] = list(map(lambda x: {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel"}[x], mutect_data["Variant_Classification"]))
+    mutect_data["Variant_Classification"] = list(map(lambda x: {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel", "Translation_Start_Site": "TSS", "Nonstop_Mutation": "Nonstop"}[x], mutect_data["Variant_Classification"]))
     print(mutect_data)
 
     counter: collections.Counter = collections.Counter(mutect_data["Hugo_Symbol"])

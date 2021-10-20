@@ -22,6 +22,8 @@ stage_color_code = {"Normal": "tab:green", "Primary": "black", "Dysplasia": "tab
 
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
+nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Missense_Mutation", "Nonsense_Mutation", "Splice_Site", "Translation_Start_Site", "Nonstop_Mutation"}
+
 
 def file_list(path: str) -> typing.List[str]:
     """
@@ -67,7 +69,7 @@ def get_sample_type(ID: str) -> str:
     """
     get_sample_type: get the type of sample from sample ID
     """
-    return re.findall(r"[A-Z]", get_id(ID))[0][0]
+    return re.findall(r"[PCADMN]", get_id(ID))[0][0]
 
 
 def get_long_sample_type(ID: str) -> str:
@@ -122,4 +124,4 @@ def get_clinical_data(filename: str) -> pandas.DataFrame:
     """
     get_clinical_data: get clinical data for select proper patients
     """
-    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1]).dropna(axis="index", how="all")
+    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1], verbose=True).dropna(axis="index", how="all")
