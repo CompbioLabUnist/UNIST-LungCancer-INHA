@@ -451,8 +451,10 @@ Output/Mutect2/BWA/%.BWA.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.P
 Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/Bowtie2/%.Bowtie2.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*.Bowtie2.sam" --normal-id "$(PAIRED_NORMAL).Bowtie2.sam" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-step14: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID)))
-.PHONY: step14
+step14-BWA: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID)))
+step14-Bowtie2: $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID)))
+step14: step14-BWA step14-Bowtie2
+.PHONY: step14-BWA step14-Bowtie2 step14
 
 # Step 15 (HaplotypeCaller)
 Output/HaplotypeCaller/BWA Output/HaplotypeCaller/Bowtie2:
@@ -501,6 +503,8 @@ Output/HaplotypeCaller/BWA/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/Haploty
 
 Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/HaplotypeCaller/Bowtie2/%.VQSR.vcf | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+# TODO: vcf2maf
 
 step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
 step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
@@ -1253,11 +1257,24 @@ Output/Data_Composition/WTS_SQC_smoking.tex: Python/get_data_composition_smoking
 Output/Data_Composition/WTS_ADC_smoking.tex: Python/get_data_composition_smoking.py $(CLINICAL_DATA_CSV) | build.log Output/Data_Composition
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WTS_ID) $(addprefix /,$(filter %.csv,$^) $@) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Data_Composition/WES_SQC_%_BWA.tex: Python/get_data_composition_gene.py $(CLINICAL_DATA_CSV) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WES_ID) $(addprefix /,$(filter %.csv,$^) $@) --mutect $(addprefix /,$(filter %.maf,$^)) --gene "$*" --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Data_Composition/WES_SQC_%_Bowtie2.tex: Python/get_data_composition_gene.py $(CLINICAL_DATA_CSV) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WES_ID) $(addprefix /,$(filter %.csv,$^) $@) --mutect $(addprefix /,$(filter %.maf,$^)) --gene "$*" --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Data_Composition/WES_ADC_%_BWA.tex: Python/get_data_composition_gene.py $(CLINICAL_DATA_CSV) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WES_ID) $(addprefix /,$(filter %.csv,$^) $@) --mutect $(addprefix /,$(filter %.maf,$^)) --gene "$*" --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Data_Composition/WES_ADC_%_Bowtie2.tex: Python/get_data_composition_gene.py $(CLINICAL_DATA_CSV) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) | build.log Output/Data_Composition
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^)) $(WES_ID) $(addprefix /,$(filter %.csv,$^) $@) --mutect $(addprefix /,$(filter %.maf,$^)) --gene "$*" --ADC 1> $@.stdout 2> $@.stderr
+
 step32-all: Output/Data_Composition/WES_samples.tex Output/Data_Composition/WTS_samples.tex
 step32-Recur: Output/Data_Composition/WTS_SQC_recurrence.tex Output/Data_Composition/WTS_ADC_recurrence.tex
 step32-Smoking: Output/Data_Composition/WTS_SQC_smoking.tex Output/Data_Composition/WTS_ADC_smoking.tex
-step32: step32-all step32-Recur step32-Smoking
-.PHONY: step32-all step32-Recur step32-Smoking step32
+step32-gene: Output/Data_Composition/WES_SQC_EGFR_BWA.tex Output/Data_Composition/WES_SQC_EGFR_Bowtie2.tex Output/Data_Composition/WES_ADC_EGFR_BWA.tex Output/Data_Composition/WES_ADC_EGFR_Bowtie2.tex Output/Data_Composition/WES_SQC_KRAS_BWA.tex Output/Data_Composition/WES_SQC_KRAS_Bowtie2.tex Output/Data_Composition/WES_ADC_KRAS_BWA.tex Output/Data_Composition/WES_ADC_KRAS_Bowtie2.tex Output/Data_Composition/WES_SQC_TP53_BWA.tex Output/Data_Composition/WES_SQC_TP53_Bowtie2.tex Output/Data_Composition/WES_ADC_TP53_BWA.tex Output/Data_Composition/WES_ADC_TP53_Bowtie2.tex
+step32: step32-all step32-Recur step32-Smoking step32-gene
+.PHONY: step32-all step32-Recur step32-Smoking step32-gene step32
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
