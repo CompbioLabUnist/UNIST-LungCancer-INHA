@@ -110,6 +110,9 @@ ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 ADD Tools/QAPA.zip /Tools/
 RUN cd /Tools && unzip QAPA.zip && cd qapa-master && conda install -c conda-forge mamba && mamba env create -f environment.yml
 
+# SigProfiler
+RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; genInstall.install('GRCh38')"
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
