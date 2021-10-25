@@ -9,7 +9,7 @@ PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
-ARRIBA_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
+WORKDIR_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
 PYTHON = python3 -B
 R = Rscript --vanilla
 BASH = /bin/bash
@@ -193,7 +193,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1060,11 +1060,11 @@ Output/Arriba/Reference Output/Arriba/Raw Output/Arriba/Filtered:
 	mkdir -p $@
 
 Output/Arriba/Reference/hg38.fa: | Output/Arriba/Reference build.log
-	$(ARRIBA_DOCKER) $(BASH) /Tools/arriba_v2.1.0/download_references.sh "hg38+RefSeq" 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) $(BASH) /Tools/arriba_v2.1.0/download_references.sh "hg38+RefSeq" 1> $@.stdout 2> $@.stderr
 
 Output/Arriba/Raw/%/fusions.tsv: $(GENCODE_GTF) $(REFERENCE_FASTA) Data/WTS/%_*.fastq.gz | Output/Arriba/Raw build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
-	$(ARRIBA_DOCKER) run_arriba.sh $(addprefix /,$(ARRIBA_STAR_DIR) $(filter %.gtf,$^) $(filter %.fasta,$^) $(ARRIBA_BLACKLIST_TSV) $(ARRIBA_KNOWN_FUSIONS_TSV) $(ARRIBA_PROTEIN_DOMAIN_GFF3)) $(CPUS) $(addprefix /,$(sort $(filter %.fastq.gz,$^))) 1> $(@D).stdout 2> $(@D).stderr
+	$(WORKDIR_DOCKER) run_arriba.sh $(addprefix /,$(ARRIBA_STAR_DIR) $(filter %.gtf,$^) $(filter %.fasta,$^) $(ARRIBA_BLACKLIST_TSV) $(ARRIBA_KNOWN_FUSIONS_TSV) $(ARRIBA_PROTEIN_DOMAIN_GFF3)) $(CPUS) $(addprefix /,$(sort $(filter %.fastq.gz,$^))) 1> $(@D).stdout 2> $(@D).stderr
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 # It is working even if there is no matched normal sample.
@@ -1275,6 +1275,23 @@ step32-Smoking: Output/Data_Composition/WTS_SQC_smoking.tex Output/Data_Composit
 step32-gene: Output/Data_Composition/WES_SQC_EGFR_BWA.tex Output/Data_Composition/WES_SQC_EGFR_Bowtie2.tex Output/Data_Composition/WES_ADC_EGFR_BWA.tex Output/Data_Composition/WES_ADC_EGFR_Bowtie2.tex Output/Data_Composition/WES_SQC_KRAS_BWA.tex Output/Data_Composition/WES_SQC_KRAS_Bowtie2.tex Output/Data_Composition/WES_ADC_KRAS_BWA.tex Output/Data_Composition/WES_ADC_KRAS_Bowtie2.tex Output/Data_Composition/WES_SQC_TP53_BWA.tex Output/Data_Composition/WES_SQC_TP53_Bowtie2.tex Output/Data_Composition/WES_ADC_TP53_BWA.tex Output/Data_Composition/WES_ADC_TP53_Bowtie2.tex
 step32: step32-all step32-Recur step32-Smoking step32-gene
 .PHONY: step32-all step32-Recur step32-Smoking step32-gene step32
+
+# Step 33 (SigProfilerExtractor)
+Output/SigProfiler/BWA Output/SigProfiler/Bowtie2:
+	mkdir -p $@
+
+Output/SigProfiler/BWA/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/BWA build.log
+	$(DOCKER) mkdir -p $(addprefix /,$(@D)/input) && $(DOCKER) cp -lf $(addprefix /,$(filter %.vcf,$^) $(@D)/input)
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) Output/SigProfiler/BWA/ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) rm -rf $(addprefix /,$(@D)/input)
+
+Output/SigProfiler/Bowtie2/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/Bowtie2 build.log
+	$(DOCKER) mkdir -p $(addprefix /,$(@D)/input) && $(DOCKER) cp -lf $(addprefix /,$(filter %.vcf,$^) $(@D)/input)
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) Output/SigProfiler/Bowtie2/ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) rm -rf $(addprefix /,$(@D)/input)
+
+step33: Output/SigProfiler/BWA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/JOB_METADATA.txt
+.PHONY: step33
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
