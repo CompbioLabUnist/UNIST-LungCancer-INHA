@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 20
 MEMS = 100
 PARALLEL = 4
 PWD := $(shell pwd)
@@ -188,8 +188,8 @@ stop:
 
 # SGE
 run: | log Output build.log
-	echo "make -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
-	qsub -cwd -l h_vmem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G -m abe -M "230@fumire.moe" -N Lung_$(DATE) -pe smp $(shell echo "$(CPUS) * $(PARALLEL)" | bc) -o $(abspath log) -e $(abspath log) tmp.sh
+	echo -e "#!/bin/bash\nmake -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
+	sbatch --chdir=$(abspath .) --cpus-per-task=$(shell echo "$(CPUS) * $(PARALLEL)" | bc) --error="$(abspath log)/%x.e%A" --job-name="Lung_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
 # Actual
