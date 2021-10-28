@@ -23,6 +23,8 @@ stage_color_code = {"Normal": "tab:green", "Primary": "black", "Dysplasia": "tab
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
 nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Missense_Mutation", "Nonsense_Mutation", "Splice_Site", "Translation_Start_Site", "Nonstop_Mutation"}
+nonsynonymous_notations = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel", "Translation_Start_Site": "TSS", "Nonstop_Mutation": "Nonstop"}
+nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame indel": "navy", "Frameshift indel": "gold", "Splice site": "darkviolet", "LOH": "orange", "TSS": "chocolate", "Nonstop": "crimson", "Absent": "lightgray", "Multiple": "black"}
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -102,7 +104,7 @@ def sorting(ID: str) -> typing.Tuple[str, int, str]:
     sorting: sorting key by patient-type
     """
     ID = get_id(ID)
-    return (get_patient(ID), sample_order_dict[get_long_sample_type(ID)], ID)
+    return (get_patient(ID), long_sample_type_list.index(get_long_sample_type(ID)), ID)
 
 
 def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
@@ -110,7 +112,7 @@ def sorting_by_type(ID: str) -> typing.Tuple[int, str, str]:
     sorting_by_type: sorting key by type-sample
     """
     ID = get_id(ID)
-    return (sample_order_dict[get_long_sample_type(ID)], get_patient(ID), ID)
+    return (long_sample_type_list.index(get_long_sample_type(ID)), get_patient(ID), ID)
 
 
 def get_color_by_type(ID: str) -> str:
