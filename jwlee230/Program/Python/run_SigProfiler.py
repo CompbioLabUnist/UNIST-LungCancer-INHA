@@ -47,6 +47,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
     print(sorted(patients))
+    print(args.input)
 
     input_directory = os.path.join(args.output, "input")
     if os.path.exists(input_directory):
