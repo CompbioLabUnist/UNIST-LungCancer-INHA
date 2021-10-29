@@ -1,5 +1,5 @@
 """
-aggregate_mutect.py: aggregate mutect MAF files
+aggregate_mutect_2.py: aggregate mutect MAF files with separation of Recur vs. Non-recur
 """
 import argparse
 import collections
@@ -30,15 +30,6 @@ if __name__ == "__main__":
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group_subtype.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
-    group_including = parser.add_mutually_exclusive_group(required=True)
-    group_including.add_argument("--include", help="Use included gene with CGC", action="store_true", default=False)
-    group_including.add_argument("--exclude", help="Use included gene with CGC", action="store_true", default=False)
-
-    group_sorting = parser.add_mutually_exclusive_group()
-    group_sorting.add_argument("--patient", help="Sorting along patients", action="store_true", default=False)
-    group_sorting.add_argument("--stage", help="Sorting along stages", action="store_true", default=False)
-    group_sorting.add_argument("--gene", help="Sorting along genes", action="store_true", default=False)
-
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
@@ -54,26 +45,21 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
 
-    if not (args.patient or args.stage or args.gene):
-        args.patient = True
-
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
 
     if args.SQC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        R_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "YES")].index)
+        NR_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "NO")].index)
     elif args.ADC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        R_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "YES")].index)
+        NR_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "NO")].index)
     else:
         raise Exception("Something went wrong!!")
-    print(sorted(patients))
+    print(sorted(NR_patients))
+    print(sorted(R_patients))
 
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
-
-    if args.stage:
-        args.input.sort(key=step00.sorting_by_type)
-    elif args.patient:
-        args.input.sort(key=step00.sorting)
+    args.input = sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in NR_patients, args.input), key=step00.sorting_by_type) + sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in R_patients, args.input), key=step00.sorting_by_type)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -92,13 +78,7 @@ if __name__ == "__main__":
     print(census_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
-
-    if args.include:
-        driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"]))]
-    elif args.exclude:
-        driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & ~(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
-    else:
-        raise Exception("Something went wrong!!")
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"]))]
     for column in step00.MutEnricher_pval_columns:
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
 
@@ -106,17 +86,6 @@ if __name__ == "__main__":
     driver_data["Rate"] = list(map(lambda x: counter[x] / len(args.input), driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
     print(driver_data)
-
-    if args.gene:
-        sorting_data = pandas.DataFrame(data=numpy.zeros((len(args.input), driver_data.shape[0])), index=args.input, columns=reversed(driver_data["Gene"]), dtype=bool)
-
-        for patient in list(sorting_data.index):
-            for gene in list(sorting_data.columns):
-                if not mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == patient.split("/")[-1].split(".")[0]) & (mutect_data["Hugo_Symbol"] == gene)].empty:
-                    sorting_data.loc[patient, gene] = True
-
-        sorting_data.sort_values(by=list(sorting_data.columns), axis="index", ascending=False, kind="mergesort", inplace=True)
-        args.input = list(sorting_data.index)
 
     my_comut = comut.CoMut()
     my_comut.samples = list(map(lambda x: x.split("/")[-1].split(".")[0], args.input))
@@ -126,13 +95,12 @@ if __name__ == "__main__":
     patient_data["Patient"] = list(map(lambda x: hash(step00.get_patient(x)), my_comut.samples))
     patient_data["Collection_Type_category"] = "Type"
     patient_data["Collection_Type_value"] = list(map(step00.get_long_sample_type, my_comut.samples))
+    patient_data["Recur?"] = list(map(lambda x: "Recur" if step00.get_patient(x) in R_patients else "Non-Recur", my_comut.samples))
     patient_data["non-synonymous"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0], my_comut.samples))
     print(patient_data)
 
-    if args.patient:
-        my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=["sample", "group"], axis="columns"), name="Same patient")
-
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Type")
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage")
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Recur?"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Recur?", mapping={"Recur": "tab:red", "Non-Recur": "tab:green"})
     my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "non-synonymous"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="Mutations", mapping={"Counts": "purple"})
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
