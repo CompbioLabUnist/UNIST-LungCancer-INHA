@@ -17,9 +17,6 @@ input_data = pandas.DataFrame()
 
 def run(cell: str) -> str:
     print("Running:", cell)
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tmp = set(input_data["Stage"])
@@ -55,6 +52,10 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .tar!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     input_data = pandas.read_csv(args.input, sep="\t")
     input_data = input_data.set_index(list(input_data.columns)[0])

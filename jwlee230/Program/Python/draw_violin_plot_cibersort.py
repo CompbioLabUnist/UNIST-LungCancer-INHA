@@ -17,9 +17,6 @@ cibersort_data = pandas.DataFrame()
 
 def run(cell: str) -> str:
     print("Running:", cell)
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     tmp = set(cibersort_data["Stage"])
@@ -53,6 +50,10 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .tar!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
     cibersort_data["Stage"] = list(map(step00.get_long_sample_type, list(cibersort_data.index)))
