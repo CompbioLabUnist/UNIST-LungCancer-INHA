@@ -66,7 +66,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
-    parser.add_argument("output", help="Output file", type=str)
+    parser.add_argument("table", help="Output TSV file", type=str)
+    parser.add_argument("figure", help="Output PDF file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
@@ -85,8 +86,10 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
+    elif not args.table.endswith(".tsv"):
+        raise ValueError("Table must end with .TSV!!")
+    elif not args.figure.endswith(".pdf"):
+        raise ValueError("Figure must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.p < 1):
@@ -141,17 +144,25 @@ if __name__ == "__main__":
 
     for derivation in tqdm.tqdm(evaluation_data.columns):
         evaluation_data = evaluation_data.loc[(evaluation_data[derivation] < args.p)]
-    evaluation_data.sort_values(by="Fisher", ascending=True, inplace=True)
+    evaluation_data["mean"] = list(map(lambda x: numpy.mean(evaluation_data.loc[x, :]), list(evaluation_data.index)))
+    evaluation_data.sort_values(by="mean", ascending=True, inplace=True)
+    del evaluation_data["mean"]
     print(evaluation_data)
 
     heatmap_data = heatmap_data.loc[evaluation_data.index, :]
     print(heatmap_data)
 
-    fig, axs = matplotlib.pyplot.subplots(sharey="row", ncols=3, figsize=(len(control_samples) + 2 * len(evaluation_data.columns) + len(case_samples), evaluation_data.shape[0] / 2.5), gridspec_kw={"width_ratios": [len(control_samples), 2 * len(evaluation_data.columns), len(case_samples)]})
+    fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(evaluation_data.columns) + len(case_samples), evaluation_data.shape[0] / 2.5), gridspec_kw={"width_ratios": [len(control_samples), len(evaluation_data.columns), len(case_samples)]})
 
-    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=False, vmax=True, cmap="gray", cbar=False, ax=axs[0])
-    seaborn.heatmap(data=evaluation_data, vmin=0, vmax=args.p, cmap="Reds_r", cbar=True, ax=axs[1])
-    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=False, vmax=True, cmap="gray", cbar=False, ax=axs[2])
+    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=False, vmax=True, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, ax=axs[0])
+    seaborn.heatmap(data=evaluation_data, vmin=0, vmax=args.p, cmap="Reds_r", cbar=False, xticklabels=True, yticklabels=True, ax=axs[1])
+    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=False, vmax=True, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, ax=axs[2])
 
-    fig.savefig(args.output)
+    matplotlib.pyplot.tight_layout()
+    fig.savefig(args.figure)
     matplotlib.pyplot.close(fig)
+
+    heatmap_data = heatmap_data.loc[:, sorted(heatmap_data.columns, key=step00.sorting)]
+    output_data = pandas.concat([evaluation_data, heatmap_data], axis="columns", join="outer", verify_integrity=True)
+    output_data.to_csv(args.table, sep="\t")
+    print(output_data)

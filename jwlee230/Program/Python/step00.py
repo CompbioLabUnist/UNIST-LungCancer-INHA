@@ -4,6 +4,7 @@ step00.py: for base implementation
 import os
 import re
 import typing
+import numpy
 import pandas
 
 tmpfs = "/tmpfs"
@@ -25,6 +26,8 @@ MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Missense_Mutation", "Nonsense_Mutation", "Splice_Site", "Translation_Start_Site", "Nonstop_Mutation"}
 nonsynonymous_notations = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel", "Translation_Start_Site": "TSS", "Nonstop_Mutation": "Nonstop"}
 nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame indel": "navy", "Frameshift indel": "gold", "Splice site": "darkviolet", "LOH": "orange", "TSS": "chocolate", "Nonstop": "crimson", "Absent": "lightgray", "Multiple": "black"}
+
+derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 
 
 def file_list(path: str) -> typing.List[str]:
@@ -127,3 +130,28 @@ def get_clinical_data(filename: str) -> pandas.DataFrame:
     get_clinical_data: get clinical data for select proper patients
     """
     return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1], verbose=True).dropna(axis="index", how="all")
+
+
+def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:
+    """
+    aggregate_confusion_matrix: derivations from confusion matrix
+    """
+
+    assert (derivation in derivations)
+    assert confusion_matrix.shape == (2, 2)
+
+    TP, FP, FN, TN = confusion_matrix[0][0], confusion_matrix[0][1], confusion_matrix[1][0], confusion_matrix[1][1]
+    assert TP and FP and FN and TN
+
+    if derivation == "Sensitivity":
+        return TP / (TP + FN)
+    elif derivation == "Specificity":
+        return TN / (TN + FP)
+    elif derivation == "Precision":
+        return TP / (TP + FP)
+    elif derivation == "Accuracy":
+        return (TP + TN) / (TP + TN + FP + FN)
+    elif derivation == "Balanced Accuracy":
+        return TP / (2 * (TP + FN)) + TN / (2 * (TN + FP))
+    else:
+        raise Exception("Something went wrong!!")
