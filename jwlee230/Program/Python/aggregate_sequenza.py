@@ -64,16 +64,9 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
     order = list(filter(lambda x: x in set(input_data["type"]), step00.long_sample_type_list))
-    seaborn.scatterplot(data=input_data, x="cellularity", y="ploidy", hue="type", style="type", legend="full", hue_order=order, style_order=order, s=1000, ax=ax)
+    g = seaborn.JointGrid(data=input_data, x="cellularity", y="ploidy", hue="type", hue_order=order, xlim=(-0.1, 1.1), height=24, ratio=5)
+    g.plot_joint(seaborn.scatterplot, s=1000, legend="full")
+    g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
 
-    matplotlib.pyplot.xlim(-0.1, 1.1)
-    matplotlib.pyplot.axvline(x=1, color="k", linestyle="--")
-    matplotlib.pyplot.axhline(y=2, color="k", linestyle="--")
-    matplotlib.pyplot.xlabel("Cellularity")
-    matplotlib.pyplot.ylabel("Ploidy")
-
-    fig.savefig(args.output)
-    matplotlib.pyplot.close(fig)
+    g.savefig(args.output)
