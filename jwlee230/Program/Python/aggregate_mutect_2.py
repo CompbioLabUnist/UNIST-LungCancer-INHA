@@ -81,7 +81,6 @@ if __name__ == "__main__":
     driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & (driver_data["Gene"].isin(census_data["Gene Symbol"]))]
     for column in step00.MutEnricher_pval_columns:
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
-
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
     driver_data["Rate"] = list(map(lambda x: counter[x] / len(args.input), driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
