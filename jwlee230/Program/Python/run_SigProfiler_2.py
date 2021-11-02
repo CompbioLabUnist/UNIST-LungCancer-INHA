@@ -1,5 +1,5 @@
 """
-run_SigProfiler.py: run SigProfilerExtractor as https://github.com/AlexandrovLab/SigProfilerExtractor
+run_SigProfiler_2.py: run SigProfilerExtractor by cancer stage separation
 """
 import argparse
 import os
