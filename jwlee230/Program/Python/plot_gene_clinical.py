@@ -146,9 +146,7 @@ if __name__ == "__main__":
 
     for column in tqdm.tqdm(exact_test_data.columns):
         exact_test_data = exact_test_data.loc[(exact_test_data[column] < args.p)]
-    exact_test_data["mean"] = list(map(lambda x: numpy.mean(exact_test_data.loc[x, :]), list(exact_test_data.index)))
-    exact_test_data.sort_values(by="mean", ascending=True, inplace=True)
-    del exact_test_data["mean"]
+    exact_test_data.sort_values(by="Fisher", ascending=True, inplace=True)
     print(exact_test_data)
 
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
