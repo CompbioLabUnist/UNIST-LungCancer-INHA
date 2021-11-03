@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input input Mutect2 VCF file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
     parser.add_argument("output", help="Output directory", type=str)
-    parser.add_argument("--stage", help="Cancer stage selection", choices=step00.long_sample_type_list, required=True)
+    parser.add_argument("--stage", help="Cancer stage selection", choices=step00.long_sample_type_list + ["Precancer"], required=True)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_histology = parser.add_mutually_exclusive_group(required=True)
@@ -45,7 +45,12 @@ if __name__ == "__main__":
         patients = list(filter(lambda x: step00.get_patient(x) in histology, patients))
     else:
         raise Exception("Something went wrong!!")
-    args.input = list(filter(lambda x: (step00.get_patient(x) in patients) and (step00.get_long_sample_type(x) == args.stage), args.input))
+
+    if args.stage == "Precancer":
+        args.input = list(filter(lambda x: (step00.get_patient(x) in patients) and (step00.get_simple_sample_type(x) == args.stage), args.input))
+    else:
+        args.input = list(filter(lambda x: (step00.get_patient(x) in patients) and (step00.get_long_sample_type(x) == args.stage), args.input))
+
     print(sorted(patients))
     print(args.input)
 
