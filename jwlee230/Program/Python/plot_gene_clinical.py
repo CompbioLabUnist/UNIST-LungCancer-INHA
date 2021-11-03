@@ -163,5 +163,5 @@ if __name__ == "__main__":
 
     heatmap_data = heatmap_data.loc[:, sorted(heatmap_data.columns, key=step00.sorting)]
     output_data = pandas.concat([exact_test_data, heatmap_data], axis="columns", join="outer", verify_integrity=True)
-    output_data.to_csv(args.table, sep="\t")
+    output_data.to_csv(args.table, sep="\t", float_format="%.2e")
     print(output_data)
