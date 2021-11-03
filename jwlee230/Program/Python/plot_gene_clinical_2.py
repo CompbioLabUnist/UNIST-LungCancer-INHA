@@ -1,5 +1,5 @@
 """
-plot_gene_clinical.py: Plot the importance of gene upon clinical data
+plot_gene_clinical_2.py: Plot the importance of gene upon clinical data with cancer stage separation
 """
 import argparse
 import multiprocessing
@@ -71,6 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("table", help="Output TSV file", type=str)
     parser.add_argument("figure", help="Output PDF file", type=str)
+    parser.add_argument("--stage", help="Select cancer stage", choices=step00.long_sample_type_list + ["Precancer"], required=True)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
@@ -116,10 +117,18 @@ if __name__ == "__main__":
     print(sorted(control_patients))
     print(sorted(case_patients))
 
+    if args.stage == "Precancer":
+        args.input = list(filter(lambda x: step00.get_simple_sample_type(x) == args.stage, args.input))
+    else:
+        args.input = list(filter(lambda x: step00.get_long_sample_type(x) == args.stage, args.input))
+
     args.input = sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in control_patients, args.input), key=step00.sorting_by_type) + sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in case_patients, args.input), key=step00.sorting_by_type)
 
     control_samples = list(map(step00.get_id, sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in control_patients, args.input), key=step00.sorting_by_type)))
     case_samples = list(map(step00.get_id, sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in case_patients, args.input), key=step00.sorting_by_type)))
+
+    assert control_samples
+    assert case_samples
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)

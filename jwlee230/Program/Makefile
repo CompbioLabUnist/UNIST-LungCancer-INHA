@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 15
 MEMS = 100
-PARALLEL = 4
+PARALLEL = 6
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1355,6 +1355,9 @@ Output/SigProfiler/BWA/SQC-Dysplasia/JOB_METADATA.txt: Python/run_SigProfiler_2.
 Output/SigProfiler/BWA/SQC-CIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
 
+Output/SigProfiler/BWA/SQC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
+
 Output/SigProfiler/BWA/SQC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
 
@@ -1370,6 +1373,9 @@ Output/SigProfiler/BWA/ADC-AIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(a
 Output/SigProfiler/BWA/ADC-MIA/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "MIA" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
 
+Output/SigProfiler/BWA/ADC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
+
 Output/SigProfiler/BWA/ADC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
 
@@ -1380,7 +1386,10 @@ Output/SigProfiler/Bowtie2/SQC-Dysplasia/JOB_METADATA.txt: Python/run_SigProfile
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Dysplasia" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
 
 Output/SigProfiler/Bowtie2/SQC-CIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
+
+Output/SigProfiler/Bowtie2/SQC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
 
 Output/SigProfiler/Bowtie2/SQC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
@@ -1397,15 +1406,18 @@ Output/SigProfiler/Bowtie2/ADC-AIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py
 Output/SigProfiler/Bowtie2/ADC-MIA/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "MIA" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
 
+Output/SigProfiler/Bowtie2/ADC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
+
 Output/SigProfiler/Bowtie2/ADC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
 
 step33-BWA: Output/SigProfiler/BWA/SQC/JOB_METADATA.txt Output/SigProfiler/BWA/ADC/JOB_METADATA.txt
 step33-Bowtie2: Output/SigProfiler/Bowtie2/SQC/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC/JOB_METADATA.txt
-step33-BWA-SQC: Output/SigProfiler/BWA/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-Primary/JOB_METADATA.txt
-step33-BWA-ADC: Output/SigProfiler/BWA/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-Primary/JOB_METADATA.txt
-step33-Bowtie2-SQC: Output/SigProfiler/Bowtie2/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-Primary/JOB_METADATA.txt
-step33-Bowtie2-ADC: Output/SigProfiler/Bowtie2/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-Primary/JOB_METADATA.txt
+step33-BWA-SQC: Output/SigProfiler/BWA/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-Precancer/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-Primary/JOB_METADATA.txt
+step33-BWA-ADC: Output/SigProfiler/BWA/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-Precancer/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-Primary/JOB_METADATA.txt
+step33-Bowtie2-SQC: Output/SigProfiler/Bowtie2/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-Precancer/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-Primary/JOB_METADATA.txt
+step33-Bowtie2-ADC: Output/SigProfiler/Bowtie2/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-Primary/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-Precancer/JOB_METADATA.txt
 step33: step33-BWA step33-Bowtie2 step33-BWA-SQC step33-BWA-ADC step33-Bowtie2-SQC step33-Bowtie2-ADC
 .PHONY: step33-BWA step33-Bowtie2 step33-BWA-SQC step33-BWA-ADC step33-Bowtie2-SQC step33-Bowtie2-ADC step33
 
@@ -1425,9 +1437,42 @@ Output/Gene_Clinical/Bowtie2-SQC.Recur.tsv Output/Gene_Clinical/Bowtie2-SQC.Recu
 Output/Gene_Clinical/Bowtie2-ADC.Recur.tsv Output/Gene_Clinical/Bowtie2-ADC.Recur.pdf: Python/plot_gene_clinical.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-step34-Recur: Output/Gene_Clinical/BWA-SQC.Recur.pdf Output/Gene_Clinical/BWA-ADC.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Recur.pdf
-step34: step34-Recur
-.PHONY: step34-Recur step34
+Output/Gene_Clinical/BWA-SQC.CIS.Recur.tsv Output/Gene_Clinical/BWA-SQC.CIS.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-SQC.Precancer.Recur.tsv Output/Gene_Clinical/BWA-SQC.Precancer.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-SQC.Primary.Recur.tsv Output/Gene_Clinical/BWA-SQC.Primary.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.AAH.Recur.tsv Output/Gene_Clinical/BWA-ADC.AAH.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.Primary.Recur.tsv Output/Gene_Clinical/BWA-ADC.Primary.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.tsv Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.Primary.Recur.tsv Output/Gene_Clinical/Bowtie2-SQC.Primary.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.AAH.Recur.tsv Output/Gene_Clinical/Bowtie2-ADC.AAH.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.Precancer.Recur.tsv Output/Gene_Clinical/Bowtie2-ADC.Precancer.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.tsv Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step34-BWA-Recur: Output/Gene_Clinical/BWA-SQC.Recur.pdf Output/Gene_Clinical/BWA-ADC.Recur.pdf
+step34-Bowtie2-Recur: Output/Gene_Clinical/Bowtie2-SQC.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Recur.pdf
+step34-BWA-Stage-Recur: Output/Gene_Clinical/BWA-SQC.CIS.Recur.pdf Output/Gene_Clinical/BWA-SQC.Primary.Recur.pdf Output/Gene_Clinical/BWA-ADC.AAH.Recur.pdf Output/Gene_Clinical/BWA-ADC.Primary.Recur.pdf
+step34-Bowtie2-Stage-Recur: Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.AAH.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.pdf
+step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur
+.PHONY: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
