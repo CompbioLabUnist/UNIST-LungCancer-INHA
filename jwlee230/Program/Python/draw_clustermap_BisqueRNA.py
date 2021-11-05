@@ -32,5 +32,6 @@ if __name__ == "__main__":
 
     g = seaborn.clustermap(data=input_data, figsize=(max(input_data.shape), input_data.shape[0]), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(step00.get_color_by_type, input_data.columns)), tree_kws={"linewidths": 2.0}, xticklabels=True, yticklabels=True, square=False, cmap="Reds")
     g.ax_heatmap.set_xlabel("")
+    g.ax_heatmap.set_ylabel("")
 
     g.savefig(args.output)
