@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 15
-MEMS = 100
-PARALLEL = 6
+CPUS = 45
+MEMS = 200
+PARALLEL = 2
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1343,83 +1343,20 @@ step32: step32-all step32-Recur step32-Smoking step32-gene
 .PHONY: step32-all step32-Recur step32-Smoking step32-gene step32
 
 # Step 33 (SigProfilerExtractor)
-Output/SigProfiler/BWA/SQC Output/SigProfiler/BWA/ADC Output/SigProfiler/Bowtie2/SQC Output/SigProfiler/Bowtie2/ADC:
+Output/SigProfiler/BWA Output/SigProfiler/Bowtie2:
 	mkdir -p $@
 
-Output/SigProfiler/BWA/SQC/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
+Output/SigProfiler/BWA/JOB_METADATA.txt Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/BWA/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/BWA/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/BWA/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/BWA build.log
+	$(DOCKER) rm -rfv $(addprefix /,$(@D))
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/SigProfiler/BWA/SQC-Dysplasia/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Dysplasia" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
+Output/SigProfiler/Bowtie2/JOB_METADATA.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/Bowtie2/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/Bowtie2/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/Bowtie2 build.log
+	$(DOCKER) rm -rfv $(addprefix /,$(@D))
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/SigProfiler/BWA/SQC-CIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/SQC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/SQC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC-AAH/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "AAH" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC-AIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC-MIA/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "MIA" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/BWA/ADC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/BWA/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/SQC/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/SQC-Dysplasia/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Dysplasia" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/SQC-CIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/SQC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/SQC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/SQC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --SQC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC/JOB_METADATA.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC-AAH/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "AAH" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC-AIS/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "CIS+AIS" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC-MIA/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "MIA" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC-Precancer/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Precancer" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-Output/SigProfiler/Bowtie2/ADC-Primary/JOB_METADATA.txt: Python/run_SigProfiler_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/SigProfiler/Bowtie2/ADC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --stage "Primary" --cpus $(CPUS) --ADC 1> $(@D).stdout 2> $(@D).stderr
-
-step33-BWA: Output/SigProfiler/BWA/SQC/JOB_METADATA.txt Output/SigProfiler/BWA/ADC/JOB_METADATA.txt
-step33-Bowtie2: Output/SigProfiler/Bowtie2/SQC/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC/JOB_METADATA.txt
-step33-BWA-SQC: Output/SigProfiler/BWA/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-Precancer/JOB_METADATA.txt Output/SigProfiler/BWA/SQC-Primary/JOB_METADATA.txt
-step33-BWA-ADC: Output/SigProfiler/BWA/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-Precancer/JOB_METADATA.txt Output/SigProfiler/BWA/ADC-Primary/JOB_METADATA.txt
-step33-Bowtie2-SQC: Output/SigProfiler/Bowtie2/SQC-Dysplasia/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-CIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-Precancer/JOB_METADATA.txt Output/SigProfiler/Bowtie2/SQC-Primary/JOB_METADATA.txt
-step33-Bowtie2-ADC: Output/SigProfiler/Bowtie2/ADC-AAH/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-AIS/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-MIA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-Primary/JOB_METADATA.txt Output/SigProfiler/Bowtie2/ADC-Precancer/JOB_METADATA.txt
-step33: step33-BWA step33-Bowtie2 step33-BWA-SQC step33-BWA-ADC step33-Bowtie2-SQC step33-Bowtie2-ADC
-.PHONY: step33-BWA step33-Bowtie2 step33-BWA-SQC step33-BWA-ADC step33-Bowtie2-SQC step33-Bowtie2-ADC step33
+step33-SigProfiler: Output/SigProfiler/BWA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/JOB_METADATA.txt
+step33: step33-SigProfiler
+.PHONY: step33-SigProfiler step33
 
 # Step 34 (Gene analysis upon clinical data with WES data)
 Output/Gene_Clinical:
