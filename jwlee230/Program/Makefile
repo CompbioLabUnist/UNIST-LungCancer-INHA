@@ -1417,6 +1417,18 @@ step34-Bowtie2-Stage-Recur: Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.pdf Outpu
 step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur
 .PHONY: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34
 
+# Step 35 (Gene expression changing upon clinical data)
+Output/GeneExpression:
+	mkdir -p $@
+
+Output/GeneExpression/%.SQC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/Bowtie2.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/GeneExpression/%.ADC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/Bowtie2.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step35-subtype: Output/GeneExpression/STAR.SQC.Subtype.tar Output/GeneExpression/STAR.ADC.Subtype.tar Output/GeneExpression/Bowtie2.SQC.Subtype.tar Output/GeneExpression/Bowtie2.ADC.Subtype.tar
+
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
 # ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
