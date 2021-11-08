@@ -1421,15 +1421,22 @@ step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowt
 Output/GeneExpression:
 	mkdir -p $@
 
-Output/GeneExpression/%.SQC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/Bowtie2.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+Output/GeneExpression/%.SQC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/%.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/GeneExpression/%.ADC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/Bowtie2.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+Output/GeneExpression/%.ADC.Subtype.tar: Python/plot_expression_clinical.py Output/RSEM/DEG/%.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/GeneExpression/%.SQC.Recurrence.tar: Python/plot_expression_clinical_2.py Output/RSEM/DEG/%.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/GeneExpression/%.ADC.Recurrence.tar: Python/plot_expression_clinical_2.py Output/RSEM/DEG/%.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
 step35-subtype: Output/GeneExpression/STAR.SQC.Subtype.tar Output/GeneExpression/STAR.ADC.Subtype.tar Output/GeneExpression/Bowtie2.SQC.Subtype.tar Output/GeneExpression/Bowtie2.ADC.Subtype.tar
-step35: step35-subtype
-.PHONY: step35-subtype step35
+step35-Recur: Output/GeneExpression/STAR.SQC.Recurrence.tar Output/GeneExpression/STAR.ADC.Recurrence.tar Output/GeneExpression/Bowtie2.SQC.Recurrence.tar Output/GeneExpression/Bowtie2.ADC.Recurrence.tar
+step35: step35-subtype step35-Recur
+.PHONY: step35-subtype step35-Recur step35
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t

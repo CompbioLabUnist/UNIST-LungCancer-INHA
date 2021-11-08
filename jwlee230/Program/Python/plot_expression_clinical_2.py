@@ -2,7 +2,6 @@
 plot_expression_clinical.py: Plot gene expression TPM with cancer subtype
 """
 import argparse
-import itertools
 import multiprocessing
 import os.path
 import tarfile
@@ -18,13 +17,15 @@ import step00
 
 input_data = pandas.DataFrame()
 order: typing.List[str] = list()
+compare_order: typing.List[str] = list()
+hue_order: typing.List[str] = list()
 
 
-def draw_violin(gene: str) -> pandas.DataFrame:
+def draw_violin(gene: str, clinical: str) -> pandas.DataFrame:
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
-    seaborn.violinplot(data=input_data, x="Subtype", y=gene, order=order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Subtype", y=gene, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=input_data, x="Subtype", y=gene, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
+    statannotations.Annotator.Annotator(ax, list(map(lambda x: [(x, hue_order[0]), (x, hue_order[1])], compare_order)), data=input_data, x="Subtype", y=gene, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("TPM")
     matplotlib.pyplot.title(gene)
@@ -34,10 +35,10 @@ def draw_violin(gene: str) -> pandas.DataFrame:
     matplotlib.pyplot.close(fig)
 
     outputs = [gene]
-    for control, case in list(itertools.combinations(order, 2)):
-        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == control), gene]), list(input_data.loc[(input_data["Subtype"] == case), gene]))[1])
+    for subtype in compare_order:
+        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == subtype) & (input_data[clinical] == hue_order[0]), gene]), list(input_data.loc[(input_data["Subtype"] == subtype) & (input_data[clinical] == hue_order[1]), gene]))[1])
 
-    return pandas.DataFrame(data=outputs, index=["Gene"] + list(map(lambda x: x[0] + "-" + x[1], list(itertools.combinations(order, 2))))).T
+    return pandas.DataFrame(data=outputs, index=["Gene"] + compare_order).T
 
 
 if __name__ == "__main__":
@@ -46,6 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="RSEM TPM files", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -75,21 +77,31 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     elif args.ADC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     else:
         raise Exception("Something went wrong!!")
-    print(sorted(patients))
+    patients = set(list(control_patients) + list(case_patients))
+    print(sorted(control_patients))
+    print(sorted(case_patients))
 
     input_data = input_data.loc[:, sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)), key=step00.sorting_by_type)].T
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    input_data[args.compare[0]] = list(map(lambda x: args.compare[1] if (step00.get_patient(x) in control_patients) else args.compare[2], list(input_data.index)))
     print(input_data)
+
+    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    compare_order = list(filter(lambda x: not input_data.loc[(input_data["Subtype"] == x) & (input_data[args.compare[0]] == args.compare[1])].empty and not input_data.loc[(input_data["Subtype"] == x) & (input_data[args.compare[0]] == args.compare[2])].empty, order))
+    hue_order = args.compare[1:]
     print(order)
+    print(compare_order)
+    print(hue_order)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data = pandas.concat(objs=pool.map(draw_violin, genes), join="outer", ignore_index=True, axis="index").set_index(keys="Gene", verify_integrity=True)
+        output_data = pandas.concat(objs=pool.starmap(draw_violin, [(gene, args.compare[0]) for gene in genes]), join="outer", ignore_index=True, axis="index").set_index(keys="Gene", verify_integrity=True)
     output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
     print(output_data)
 
