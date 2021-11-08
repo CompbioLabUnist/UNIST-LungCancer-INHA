@@ -108,4 +108,4 @@ if __name__ == "__main__":
     with tarfile.open(name=args.output, mode="w") as tar:
         tar.add(os.path.join(step00.tmpfs, "output.tsv"), arcname="output.tsv")
         for file in tqdm.tqdm(list(output_data.index)):
-            tar.add(os.path.join(step00.tmpfs, file), arcname=file)
+            tar.add(os.path.join(step00.tmpfs, file + ".pdf"), arcname=file + ".pdf")
