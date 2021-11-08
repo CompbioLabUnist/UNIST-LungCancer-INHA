@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 45
+CPUS = 20
 MEMS = 200
-PARALLEL = 2
+PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -194,7 +194,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1346,15 +1346,17 @@ step32: step32-all step32-Recur step32-Smoking step32-gene
 Output/SigProfiler/BWA Output/SigProfiler/Bowtie2:
 	mkdir -p $@
 
-Output/SigProfiler/BWA/JOB_METADATA.txt Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/BWA/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/BWA/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/BWA/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/BWA build.log
+Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/BWA/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/BWA/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/BWA/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/BWA build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	cp -v $(@D)/**/*Activities_refit.txt $(@D)
 
-Output/SigProfiler/Bowtie2/JOB_METADATA.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/Bowtie2/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/Bowtie2/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/Bowtie2 build.log
+Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/Bowtie2/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/Bowtie2/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/Bowtie2 build.log
 	$(DOCKER) rm -rfv $(addprefix /,$(@D))
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
+	cp -v $(@D)/**/*Activities_refit.txt $(@D)
 
-step33-SigProfiler: Output/SigProfiler/BWA/JOB_METADATA.txt Output/SigProfiler/Bowtie2/JOB_METADATA.txt
+step33-SigProfiler: Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt
 step33: step33-SigProfiler
 .PHONY: step33-SigProfiler step33
 
