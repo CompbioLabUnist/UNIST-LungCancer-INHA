@@ -1,5 +1,5 @@
 """
-plot_expression_clinical.py: Plot gene expression TPM with cancer subtype
+plot_expression_clinical_2.py: Plot gene expression TPM with cancer subtype with clinical data
 """
 import argparse
 import multiprocessing
