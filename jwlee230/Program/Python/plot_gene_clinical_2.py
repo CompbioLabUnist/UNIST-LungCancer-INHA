@@ -82,10 +82,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.clinical.endswith(".csv"):
@@ -107,11 +103,11 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "YES")].index)
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "NO")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     elif args.ADC:
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "YES")].index)
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "NO")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     else:
         raise Exception("Something went wrong!!")
     print(sorted(control_patients))
