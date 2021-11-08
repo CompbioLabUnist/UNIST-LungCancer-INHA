@@ -1428,6 +1428,8 @@ Output/GeneExpression/%.ADC.Subtype.tar: Python/plot_expression_clinical.py Outp
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step35-subtype: Output/GeneExpression/STAR.SQC.Subtype.tar Output/GeneExpression/STAR.ADC.Subtype.tar Output/GeneExpression/Bowtie2.SQC.Subtype.tar Output/GeneExpression/Bowtie2.ADC.Subtype.tar
+step35: step35-subtype
+.PHONY: step35-subtype step35
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t

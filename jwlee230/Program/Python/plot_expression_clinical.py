@@ -89,7 +89,7 @@ if __name__ == "__main__":
     print(order)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data = pandas.concat(objs=pool.map(draw_violin, genes[:111]), join="outer", ignore_index=True, axis="index").set_index(keys="Figure", verify_integrity=True)
+        output_data = pandas.concat(objs=pool.map(draw_violin, genes), join="outer", ignore_index=True, axis="index").set_index(keys="Figure", verify_integrity=True)
     output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
     print(output_data)
 
