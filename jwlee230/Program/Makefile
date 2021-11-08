@@ -1343,7 +1343,7 @@ step32: step32-all step32-Recur step32-Smoking step32-gene
 .PHONY: step32-all step32-Recur step32-Smoking step32-gene step32
 
 # Step 33 (SigProfilerExtractor)
-Output/SigProfiler/BWA Output/SigProfiler/Bowtie2:
+Output/SigProfiler/BWA Output/SigProfiler/Bowtie2 Output/SigProfiler/BWA-Plot Output/SigProfiler/Bowtie2-Plot:
 	mkdir -p $@
 
 Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/BWA/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt Output/SigProfiler/BWA/ID83_De-Novo_Activities_refit.txt Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/BWA/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) | Output/SigProfiler/BWA build.log
@@ -1356,9 +1356,47 @@ Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 	cp -v $(@D)/**/*Activities_refit.txt $(@D)
 
+Output/SigProfiler/%-Plot/COSMIC-SingleBase.SQC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-SingleBase.ADC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-DoubleBase.SQC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-DoubleBase.ADC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-Indel.SQC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-Indel.ADC.Subtype.tar: Python/plot_signature.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-SingleBase.SQC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-SingleBase.ADC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-DoubleBase.SQC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-DoubleBase.ADC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-Indel.SQC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Plot/COSMIC-Indel.ADC.Recurrence.tar: Python/plot_signature_2.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step33-SigProfiler: Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt
-step33: step33-SigProfiler
-.PHONY: step33-SigProfiler step33
+step33-Subtype: Output/SigProfiler/BWA-Plot/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Plot/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Plot/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Plot/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Plot/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/BWA-Plot/COSMIC-Indel.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-Indel.ADC.Subtype.tar
+step33-Recurrence: Output/SigProfiler/BWA-Plot/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Plot/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Plot/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Plot/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Plot/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/BWA-Plot/COSMIC-Indel.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Plot/COSMIC-Indel.ADC.Recurrence.tar
+step33: step33-SigProfiler step33-Subtype
+.PHONY: step33-SigProfiler step33-Subtype step33
 
 # Step 34 (Gene analysis upon clinical data with WES data)
 Output/Gene_Clinical:
@@ -1435,10 +1473,10 @@ Output/GeneExpression/%.SQC.Recurrence.tar: Python/plot_expression_clinical_2.py
 Output/GeneExpression/%.ADC.Recurrence.tar: Python/plot_expression_clinical_2.py Output/RSEM/DEG/%.TPM.tsv $(CLINICAL_DATA_CSV) | build.log Output/GeneExpression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
-step35-subtype: Output/GeneExpression/STAR.SQC.Subtype.tar Output/GeneExpression/STAR.ADC.Subtype.tar Output/GeneExpression/Bowtie2.SQC.Subtype.tar Output/GeneExpression/Bowtie2.ADC.Subtype.tar
+step35-Subtype: Output/GeneExpression/STAR.SQC.Subtype.tar Output/GeneExpression/STAR.ADC.Subtype.tar Output/GeneExpression/Bowtie2.SQC.Subtype.tar Output/GeneExpression/Bowtie2.ADC.Subtype.tar
 step35-Recur: Output/GeneExpression/STAR.SQC.Recurrence.tar Output/GeneExpression/STAR.ADC.Recurrence.tar Output/GeneExpression/Bowtie2.SQC.Recurrence.tar Output/GeneExpression/Bowtie2.ADC.Recurrence.tar
-step35: step35-subtype step35-Recur
-.PHONY: step35-subtype step35-Recur step35
+step35: step35-Subtype step35-Recur
+.PHONY: step35-Subtype step35-Recur step35
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
