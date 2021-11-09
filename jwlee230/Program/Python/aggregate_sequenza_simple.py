@@ -78,12 +78,12 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"width_ratios": list(map(lambda x: x // step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=2 * numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
-        for _, row in input_data.loc[(input_data["chromosome"] == chromosome)].iterrows():
+        for _, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
             chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
 
         primary_proportion = list()
@@ -92,8 +92,8 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="tab:red", linestyle="-")
-        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="tab:orange", linestyle="--")
+        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-")
+        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="salmon", linestyle="--")
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
         axs[0][i].set_xticks([])
@@ -104,11 +104,11 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[1][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="tab:blue", linestyle="-")
-        axs[1][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="tab:cyan", linestyle="--")
+        axs[1][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-")
+        axs[1][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--")
         axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].invert_yaxis()
-        axs[1][i].set_xticks([])
+        axs[1][i].set_xlabel(chromosome[3:])
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

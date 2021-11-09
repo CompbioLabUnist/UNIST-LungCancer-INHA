@@ -415,12 +415,38 @@ Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(ad
 Output/Sequnza/BWA-correlation-SQC.pdf: Python/aggregate_sequenza_correlation.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC
 
+Output/Sequenza/BWA-genome-SQC.Recurrence.pdf: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-genome-ADC.Recurrence.pdf: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
 step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf
 step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf
 step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf
-step13: step13-Sequenza step13-default step13-genome step13-simple
-.PHONY: step13-Sequenza step13-default step13-genome step13-simple step13
+step13-genome-Recurrence: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf
+step13-simple-Recurrence: Output/Sequenza/BWA-simple-SQC.Recurrence.pdf Output/Sequenza/BWA-simple-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf
+step13: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Recurrence step13-simple-Recurrence
+.PHONY: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Recurrence step13-simple-Recurrence step13
 
 # Step 14 (Mutect2)
 Output/Mutect2/BWA Output/Mutect2/Bowtie2:
