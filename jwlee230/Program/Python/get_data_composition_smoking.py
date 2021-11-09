@@ -39,11 +39,11 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(args.input)
 
-    output_data = pandas.DataFrame(columns=["Smoking?", "Stage", "Number of Samples"], data=itertools.product(["Never", "Ever"], step00.long_sample_type_list + ["Total"], [None])).set_index(keys=["Smoking?", "Stage"], verify_integrity=True)
+    output_data = pandas.DataFrame(columns=["Smoking?", "Stage", "Number of Samples"], data=itertools.product(["Never", "Ex", "Current"], step00.long_sample_type_list + ["Total"], [None])).set_index(keys=["Smoking?", "Stage"], verify_integrity=True)
     print(output_data)
 
     for sample in tqdm.tqdm(args.input):
-        smoking = clinical_data.loc[step00.get_patient(sample), "Smoking"]
+        smoking = clinical_data.loc[step00.get_patient(sample), "Smoking-Detail"]
         stage = step00.get_long_sample_type(sample)
 
         if output_data.loc[(smoking, stage), "Number of Samples"] is None:
