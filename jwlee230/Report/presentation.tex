@@ -263,6 +263,34 @@
         \end{table}
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{WTS Data Composition with Recurrence}
+
+        \begin{table}
+            \caption{LUSC Data with Recurrence}
+            \input{tables/WTS_samples/WTS_SQC_recurrence.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{LUAD Data with Recurrence}
+            \input{tables/WTS_samples/WTS_ADC_recurrence.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{WTS Data Composition with Smoking}
+
+        \begin{table}
+            \caption{LUSC Data with Smoking}
+            \input{tables/WTS_samples/WTS_SQC_smoking.tex}
+        \end{table}
+
+        \begin{table}
+            \caption{LUAD Data with Smoking}
+            \input{tables/WTS_samples/WTS_ADC_smoking.tex}
+        \end{table}
+    \end{frame}
+
     \section{Methods}
     \subsection{Workflows}
     \begin{frame}
@@ -302,7 +330,7 @@
     \end{frame}
 
     \section{Results}
-    \subsection{Quality Checks}
+    \subsection{Quality Checks with FastQC}
     \begin{frame}
         \frametitle{FastQC?}
 
@@ -361,6 +389,15 @@
         \begin{exampleblock}{All sample are good to analysis}
             $\because$ No sample has more than 5 failures.
         \end{exampleblock}
+    \end{frame}
+
+    \subsection{Quality Checks with Picard}
+    \begin{frame}
+        \frametitle{Picard?}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Picard}
     \end{frame}
 
     \subsection{Copy Number Variations}
