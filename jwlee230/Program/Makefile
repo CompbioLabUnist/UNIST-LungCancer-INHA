@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 20
-MEMS = 200
-PARALLEL = 4
+CPUS = 2
+MEMS = 20
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -187,14 +187,14 @@ stop:
 	docker rm $(CONTAINER_NAME)
 .PHONY: stop
 
-# SGE
+# Slurm
 run: | log Output build.log
 	echo -e "#!/bin/bash\nmake -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
 	sbatch --chdir=$(abspath .) --cpus-per-task=$(shell echo "$(CPUS) * $(PARALLEL)" | bc) --error="$(abspath log)/%x.e%A" --job-name="Lung_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1504,6 +1504,21 @@ step35-Recur: Output/GeneExpression/STAR.SQC.Recurrence.tar Output/GeneExpressio
 step35: step35-Subtype step35-Recur
 .PHONY: step35-Subtype step35-Recur step35
 
+# Step 36 (Picard - CollectMultipleMetrics)
+Output/CollectMultipleMetrics/BWA Output/CollectMultipleMetrics/Bowtie2:
+	mkdir -p $@
+
+Output/CollectMultipleMetrics/BWA/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_distribution.pdf Output/CollectMultipleMetrics/BWA/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/BWA
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION txt --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+
+Output/CollectMultipleMetrics/Bowtie2/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution.pdf Output/CollectMultipleMetrics/Bowtie2/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/Bowtie2
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION txt --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+
+step36-BWA: $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
+step36-Bowtie2: $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
+step36: step36-BWA step36-Bowtie2
+.PHONY: step36-BWA step36-Bowtie2 step36
+
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
 # ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
@@ -1515,9 +1530,14 @@ step35: step35-Subtype step35-Recur
 # http://bioconductor.org/packages/release/bioc/html/roar.html
 
 # Step ## (MesKit)
+# https://www.bioconductor.org/packages/release/bioc/html/MesKit.html
+
 # Step ## (Spruce)
-# STep ## (CRUST)
-# Step ## (WTS - samtools depth)
-# Step ## (Picard - CollectMultipleMetrics)
+# https://github.com/raphael-group/spruce/
+
 # Step ## (PureCN)
-# S2021-11-03T15:10:53+0900tep ## (Histogram of file size)
+# https://bioconductor.org/packages/release/bioc/html/PureCN.html
+
+# Step ## (CRUST)
+# Step ## (WTS - samtools depth)
+# Step ## (Histogram of file size)
