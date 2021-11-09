@@ -49,6 +49,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -64,6 +65,8 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-value must be (0, 1)")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -102,8 +105,9 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         output_data = pandas.concat(objs=pool.starmap(draw_violin, [(gene, args.compare[0]) for gene in genes]), join="outer", ignore_index=True, axis="index").set_index(keys="Gene", verify_integrity=True)
-    output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
+    output_data = output_data[(output_data < args.p).any(axis="columns")]
     print(output_data)
+    output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
 
     with tarfile.open(name=args.output, mode="w") as tar:
         tar.add(os.path.join(step00.tmpfs, "output.tsv"), arcname="output.tsv")
