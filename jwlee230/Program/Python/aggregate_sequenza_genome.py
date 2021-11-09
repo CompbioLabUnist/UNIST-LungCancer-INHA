@@ -93,7 +93,7 @@ if __name__ == "__main__":
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), precancer_list))) / len(precancer_list))
 
         axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-")
-        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="salmon", linestyle="--")
+        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--")
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
 
@@ -110,6 +110,7 @@ if __name__ == "__main__":
         axs[2][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--")
         axs[2][i].set_ylim(bottom=0, top=1)
         axs[2][i].invert_yaxis()
+        axs[2][i].set_xticks([])
         axs[2][i].set_xlabel(chromosome[3:])
 
     fig.savefig(args.output)

@@ -87,7 +87,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=4, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(control_sample_list + case_sample_list)), gridspec_kw={"height_ratios": [1, len(control_sample_list) / 5, len(case_sample_list) / 5, 1], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=6, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(control_sample_list + case_sample_list)), gridspec_kw={"height_ratios": [1, 1, len(control_sample_list) / 5, len(case_sample_list) / 5, 1, 1], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=2 * numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
@@ -105,18 +105,31 @@ if __name__ == "__main__":
             case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), case_primary_list))) / len(case_primary_list))
             case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), case_precancer_list))) / len(case_precancer_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="red", linestyle="--")
-        axs[0][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="salmon", linestyle="--")
-        axs[0][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="red", linestyle="-")
-        axs[0][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="salmon", linestyle="-")
+        axs[0][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="red", linestyle="--", label=args.compare[1])
+        axs[0][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="red", linestyle="-", label=args.compare[2])
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[0][i].set_ylabel("Primary")
+            axs[0][i].legend(title=args.compare[0], loc="upper center")
 
-        seaborn.heatmap(data=chromosome_data.loc[control_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
+        axs[1][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="lightsalmon", linestyle="--", label=args.compare[1])
+        axs[1][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="lightsalmon", linestyle="-", label=args.compare[2])
+        axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[1][i].set_ylabel("Precancer")
+            axs[1][i].legend(title=args.compare[0], loc="upper center")
 
-        seaborn.heatmap(data=chromosome_data.loc[case_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[2][i])
+        seaborn.heatmap(data=chromosome_data.loc[control_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[2][i])
         axs[2][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[2][i].set_ylabel("{0} - {1}".format(args.compare[0], args.compare[1]))
+
+        seaborn.heatmap(data=chromosome_data.loc[case_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[3][i])
+        axs[3][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[3][i].set_ylabel("{0} - {1}".format(args.compare[0], args.compare[2]))
 
         control_primary_proportion = list()
         control_precancer_proportion = list()
@@ -128,13 +141,25 @@ if __name__ == "__main__":
             case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), case_primary_list))) / len(case_primary_list))
             case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), case_precancer_list))) / len(case_precancer_list))
 
-        axs[3][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="navy", linestyle="--")
-        axs[3][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="cyan", linestyle="--")
-        axs[3][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="navy", linestyle="-")
-        axs[3][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="cyan", linestyle="-")
-        axs[3][i].set_ylim(bottom=0, top=1)
-        axs[3][i].invert_yaxis()
-        axs[3][i].set_xlabel(chromosome[3:])
+        axs[4][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="cyan", linestyle="--", label=args.compare[1])
+        axs[4][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="cyan", linestyle="-", label=args.compare[2])
+        axs[4][i].set_ylim(bottom=0, top=1)
+        axs[4][i].invert_yaxis()
+        axs[4][i].set_xticks([])
+        axs[4][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[4][i].set_ylabel("Precancer")
+            axs[4][i].legend(title=args.compare[0], loc="lower center")
+
+        axs[5][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="navy", linestyle="--", label=args.compare[1])
+        axs[5][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="navy", linestyle="-", label=args.compare[2])
+        axs[5][i].set_ylim(bottom=0, top=1)
+        axs[5][i].invert_yaxis()
+        axs[5][i].set_xticks([])
+        axs[5][i].set_xlabel(chromosome[3:])
+        if i == 0:
+            axs[5][i].set_ylabel("Primary")
+            axs[5][i].legend(title=args.compare[0], loc="lower center")
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
