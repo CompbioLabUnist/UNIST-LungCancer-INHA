@@ -23,6 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
+    parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
@@ -49,17 +50,17 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        R_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "YES")].index)
-        NR_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "NO")].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
     elif args.ADC:
-        R_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "YES")].index)
-        NR_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "NO")].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
     else:
         raise Exception("Something went wrong!!")
-    print(sorted(NR_patients))
-    print(sorted(R_patients))
+    print(sorted(control_patients))
+    print(sorted(case_patients))
 
-    args.input = sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in NR_patients, args.input), key=step00.sorting_by_type) + sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in R_patients, args.input), key=step00.sorting_by_type)
+    args.input = sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in control_patients, args.input), key=step00.sorting_by_type) + sorted(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in case_patients, args.input), key=step00.sorting_by_type)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     patient_data["Patient"] = list(map(lambda x: hash(step00.get_patient(x)), my_comut.samples))
     patient_data["Collection_Type_category"] = "Type"
     patient_data["Collection_Type_value"] = list(map(step00.get_long_sample_type, my_comut.samples))
-    patient_data["Recur?"] = list(map(lambda x: "Recur" if step00.get_patient(x) in R_patients else "Non-Recur", my_comut.samples))
+    patient_data[args.compare[0]] = list(map(lambda x: args.compare[2] if (step00.get_patient(x) in case_patients) else args.compare[1], my_comut.samples))
     patient_data["non-synonymous"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0], my_comut.samples))
     print(patient_data)
 
@@ -105,6 +106,6 @@ if __name__ == "__main__":
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
     my_comut.add_side_bar_data(driver_data[["Gene", "Rate"]].set_axis(labels=["category", "value"], axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="right", mapping={"value": "teal"})
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 2))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 3))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output, bbox_inches="tight")

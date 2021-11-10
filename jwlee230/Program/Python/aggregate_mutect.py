@@ -138,6 +138,6 @@ if __name__ == "__main__":
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
     my_comut.add_side_bar_data(driver_data[["Gene", "Rate"]].set_axis(labels=["category", "value"], axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="right", mapping={"value": "teal"})
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 2))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 3))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output, bbox_inches="tight")
