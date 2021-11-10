@@ -82,6 +82,8 @@ if __name__ == "__main__":
         matplotlib.pyplot.ylabel("Counts")
     elif args.relative:
         matplotlib.pyplot.ylabel("Proportion")
+    else:
+        raise Exception("Something went wrong!!")
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.legend()
