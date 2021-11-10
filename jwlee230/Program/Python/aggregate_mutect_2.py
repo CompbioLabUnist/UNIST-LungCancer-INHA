@@ -1,5 +1,5 @@
 """
-aggregate_mutect_2.py: aggregate mutect MAF files with separation of Recur vs. Non-recur
+aggregate_mutect_2.py: aggregate mutect MAF files with separation of clinical data
 """
 import argparse
 import collections
@@ -100,12 +100,12 @@ if __name__ == "__main__":
     print(patient_data)
 
     my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage")
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Recur?"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Recur?", mapping={"Recur": "tab:red", "Non-Recur": "tab:green"})
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", args.compare[0]]].set_axis(labels=["sample", "category", "value"], axis="columns"), name=args.compare[0], mapping={args.compare[2]: "tab:red", args.compare[1]: "tab:green"})
     my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "non-synonymous"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="Mutations", mapping={"Counts": "purple"})
     my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
     my_comut.add_side_bar_data(driver_data[["Gene", "Rate"]].set_axis(labels=["category", "value"], axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="right", mapping={"value": "teal"})
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 3))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) + 10, driver_data.shape[0] * 2))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output, bbox_inches="tight")
