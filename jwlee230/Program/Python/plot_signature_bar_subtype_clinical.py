@@ -51,13 +51,21 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
     signatures = list(input_data.columns)
+    input_data["Total"] = input_data.sum(axis="columns")
     print(input_data)
     print(signatures)
 
-    if args.relative:
-        input_data["Total"] = input_data.sum(axis="columns")
+    if args.absolute:
+        input_data.sort_values(by="Total", ascending=False, inplace=True)
+        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
+    elif args.relative:
         for index in list(input_data.index):
             input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
+        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
+        input_data.sort_values(by=signatures, ascending=False, inplace=True)
+    else:
+        raise Exception("Something went wrong!!")
+    input_data = input_data.loc[:, signatures + ["Total"]]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
@@ -72,17 +80,12 @@ if __name__ == "__main__":
 
     for i, subtype in tqdm.tqdm(enumerate(order)):
         for j, clinical in enumerate(args.compare[1:]):
-            drawing_data = input_data.loc[(input_data["Subtype"] == subtype) & (input_data[args.compare[0]] == clinical), signatures]
+            drawing_data = input_data.loc[(input_data["Subtype"] == subtype) & (input_data[args.compare[0]] == clinical), :]
 
             if args.absolute:
-                drawing_data["Total"] = drawing_data.sum(axis="columns")
                 drawing_data.sort_values(by="Total", ascending=False, inplace=True)
-                signatures.sort(key=lambda x: sum(drawing_data[x]), reverse=True)
-                drawing_data = drawing_data.loc[:, signatures]
             elif args.relative:
-                signatures.sort(key=lambda x: sum(drawing_data[x]), reverse=True)
                 drawing_data.sort_values(by=signatures, ascending=False, inplace=True)
-                drawing_data = drawing_data.loc[:, signatures]
             else:
                 raise Exception("Something went wrong!!")
 
@@ -98,7 +101,8 @@ if __name__ == "__main__":
                 raise Exception("Something went wrong!!")
             axs[i][j].set_xticks([])
             axs[i][j].grid(True)
-            axs[i][j].legend()
+            if i == 0 and j == len(args.compare) - 2:
+                axs[i][j].legend()
             axs[i][j].set_title("{0}: {1}".format(args.compare[0], clinical))
 
     matplotlib.pyplot.tight_layout()

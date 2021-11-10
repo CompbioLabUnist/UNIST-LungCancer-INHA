@@ -50,13 +50,21 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
     signatures = list(input_data.columns)
+    input_data["Total"] = input_data.sum(axis="columns")
     print(input_data)
     print(signatures)
 
-    if args.relative:
-        input_data["Total"] = input_data.sum(axis="columns")
+    if args.absolute:
+        input_data.sort_values(by="Total", ascending=False, inplace=True)
+        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
+    elif args.relative:
         for index in list(input_data.index):
             input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
+        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
+        input_data.sort_values(by=signatures, ascending=False, inplace=True)
+    else:
+        raise Exception("Something went wrong!!")
+    input_data = input_data.loc[:, signatures + ["Total"]]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
 
@@ -69,17 +77,12 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(nrows=len(order), figsize=(32, 9 * len(order)), sharey=True)
 
     for i, subtype in tqdm.tqdm(enumerate(order)):
-        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), signatures]
+        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), :]
 
         if args.absolute:
-            drawing_data["Total"] = drawing_data.sum(axis="columns")
             drawing_data.sort_values(by="Total", ascending=False, inplace=True)
-            signatures.sort(key=lambda x: sum(drawing_data[x]), reverse=True)
-            drawing_data = drawing_data.loc[:, signatures]
         elif args.relative:
-            signatures.sort(key=lambda x: sum(drawing_data[x]), reverse=True)
             drawing_data.sort_values(by=signatures, ascending=False, inplace=True)
-            drawing_data = drawing_data.loc[:, signatures]
         else:
             raise Exception("Something went wrong!!")
 
@@ -95,7 +98,8 @@ if __name__ == "__main__":
             raise Exception("Something went wrong!!")
         axs[i].set_xticks([])
         axs[i].grid(True)
-        axs[i].legend()
+        if i == 0:
+            axs[i].legend()
         axs[i].set_title(subtype)
 
     matplotlib.pyplot.tight_layout()
