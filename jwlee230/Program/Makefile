@@ -1436,10 +1436,17 @@ Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Absolute.pdf: Python/plot_signatu
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
 
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative
+
 step33-SigProfiler: Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt
 step33-Violin-Subtype: Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.tar
 step33-Violin-Recurrence: Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.ADC.Recurrence.tar
-ste33-Bar: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf
+step33-Bar: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf
+step33-Bar-Subtype: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf
 step33: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence
 .PHONY: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence step33
 
