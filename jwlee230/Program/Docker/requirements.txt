@@ -20,3 +20,5 @@ statannotations==0.4.2
 lifelines==0.26.3
 SigProfilerExtractor==1.1.3
 SigProfilerMatrixGenerator==1.2.0
+SigProfilerSimulator==1.1.2
+SigProfilerPlotting==1.2.0
