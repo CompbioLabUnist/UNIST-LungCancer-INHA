@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 2
 MEMS = 20
-PARALLEL = 20
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1436,19 +1436,119 @@ Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Absolute.pdf: Python/plot_signatu
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
 
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Absolute.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Absolute.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Absolute.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
 
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Smoking.Absolute.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Smoking.Relative.pdf: Python/plot_signature_bar_subtype_clinical.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
 step33-SigProfiler: Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt
 step33-Violin-Subtype: Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.tar
 step33-Violin-Recurrence: Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-SingleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.SQC.Recurrence.tar Output/SigProfiler/Bowtie2-Violin/COSMIC-Indel.ADC.Recurrence.tar
-step33-Bar: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf
-step33-Bar-Subtype: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf
-step33: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence
-.PHONY: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence step33
+step33-Bar-SQC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-SingleBase.SQC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-Indel.SQC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-Indel.SQC.Relative.pdf
+step33-Bar-ADC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-SingleBase.ADC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-SingleBase.ADC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Relative.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-Indel.ADC.Absolute.pdf Output/SigProfiler/Bowtie2-Bar/COSMIC-Indel.ADC.Relative.pdf
+step33-Bar-Subtype-SQC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf
+step33-Bar-Subtype-ADC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf
+step33-Bar-Smoking-SQC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Relative.pdf
+step33-Bar-Smoking-ADC: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Relative.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Absolute.pdf Output/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Relative.pdf
+step33: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence step33-Bar-SQC step33-Bar-ADC step33-Bar-Subtype-SQC step33-Bar-Smoking-SQC step33-Bar-Smoking-ADC
+.PHONY: step33-SigProfiler step33-Violin-Subtype step33-Violin-Reccurence step33-Bar-SQC step33-Bar-ADC step33-Bar-Subtype-SQC step33-Bar-Smoking-SQC step33-Bar-Smoking-ADC step33
 
 # Step 34 (Gene analysis upon clinical data with WES data)
 Output/Gene_Clinical:
@@ -1535,10 +1635,10 @@ Output/CollectMultipleMetrics/BWA Output/CollectMultipleMetrics/Bowtie2:
 	mkdir -p $@
 
 Output/CollectMultipleMetrics/BWA/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_distribution.pdf Output/CollectMultipleMetrics/BWA/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/BWA
-	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION txt --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
 Output/CollectMultipleMetrics/Bowtie2/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution.pdf Output/CollectMultipleMetrics/Bowtie2/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/Bowtie2
-	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION txt --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
 step36-BWA: $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
 step36-Bowtie2: $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
