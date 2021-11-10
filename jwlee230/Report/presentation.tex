@@ -244,6 +244,7 @@
         \end{itemize}
     \end{frame}
 
+    \subsection{WES Data}
     \begin{frame}
         \frametitle{WES Data Composition}
 
@@ -254,6 +255,38 @@
         \end{table}
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{WES Data Composition with Recurrence}
+
+        \begin{table}
+            \caption{LUSC WES Data with Recurrence}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_recurrence.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{LUAD WES Data with Recurrence}
+            \input{tables/WES_samples/WES_ADC_recurrence.tex}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{WES Data Composition with Smoking}
+
+        \begin{table}
+            \caption{LUSC WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{LUAD WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_ADC_smoking.tex}}
+        \end{table}
+    \end{frame}
+
+    \subsection{WTS Data}
     \begin{frame}
         \frametitle{WTS Data Composition}
 
@@ -267,12 +300,12 @@
         \frametitle{WTS Data Composition with Recurrence}
 
         \begin{table}
-            \caption{LUSC Data with Recurrence}
+            \caption{LUSC WTS Data with Recurrence}
             \input{tables/WTS_samples/WTS_SQC_recurrence.tex}
         \end{table}
 
         \begin{table}
-            \caption{LUAD Data with Recurrence}
+            \caption{LUAD WTS Data with Recurrence}
             \input{tables/WTS_samples/WTS_ADC_recurrence.tex}
         \end{table}
     \end{frame}
@@ -281,13 +314,13 @@
         \frametitle{WTS Data Composition with Smoking}
 
         \begin{table}
-            \caption{LUSC Data with Smoking}
+            \caption{LUSC WTS Data with Smoking}
             \resizebox{!}{0.3 \textheight}
             {\input{tables/WTS_samples/WTS_SQC_smoking.tex}}
         \end{table}
 
         \begin{table}
-            \caption{LUAD Data with Smoking}
+            \caption{LUAD WTS Data with Smoking}
             \resizebox{!}{0.3 \textheight}
             {\input{tables/WTS_samples/WTS_ADC_smoking.tex}}
         \end{table}
@@ -428,16 +461,38 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{LUSC vs. LUAD in CNV Plot}
+        \frametitle{LUSC in CNV Plot}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-SQC.pdf}
-            \caption{Simple CNV Plot with LUSC Patients}
+            \caption{LUSC in CNV Plot}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUSC with Recurrence in CNV Plot}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-SQC.Recurrence.pdf}
+            \caption{LUSC with Recurrence in CNV Plot}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUAD in CNV Plot}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-ADC.pdf}
-            \caption{Simple CNV Plot with LUAD Patients}
+            \caption{LUAD in CNV Plot}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUAD with Recurrence in CNV Plot}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Sequenza/BWA-simple-ADC.Recurrence.pdf}
+            \caption{LUAD with Recurrence in CNV Plot}
         \end{figure}
     \end{frame}
 
@@ -461,6 +516,15 @@
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/Workflow/MutEnricher.jpg}
             \caption{Schematic representation of MunEnricher's analysis procedures \protect\cite{MutEnricher1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{CoMut?}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Workflow/comut.png}
+            \caption{A comutation plot generated with CoMut \protect\cite{comut1}}
         \end{figure}
     \end{frame}
 
@@ -494,11 +558,29 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{Somatic Variant in LUSC with Recurrence}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Recur.pdf}
+            \caption{CoMut Plot in LUSC Patients with Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Somatic Variant in LUAD}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.pdf}
             \caption{CoMut Plot with LUAD Patients}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in LUAD with Recurrence}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Recur.pdf}
+            \caption{CoMut Plot in LUAD Patients with Recurrence}
         \end{figure}
     \end{frame}
 
