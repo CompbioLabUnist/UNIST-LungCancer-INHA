@@ -56,12 +56,10 @@ if __name__ == "__main__":
 
     if args.absolute:
         input_data.sort_values(by="Total", ascending=False, inplace=True)
-        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
         input_data = input_data.loc[:, signatures]
     elif args.relative:
         for index in list(input_data.index):
             input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
-        signatures.sort(key=lambda x: sum(input_data[x]), reverse=True)
         input_data.sort_values(by=signatures, ascending=False, inplace=True)
         input_data = input_data.loc[:, signatures]
     else:
