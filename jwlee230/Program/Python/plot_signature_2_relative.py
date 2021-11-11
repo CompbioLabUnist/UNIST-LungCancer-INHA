@@ -18,7 +18,7 @@ import step00
 
 input_data = pandas.DataFrame()
 order: typing.List[str] = list()
-compare_order: typing.List[str] = list()
+compare_order: typing.List[typing.Tuple[typing.Tuple[str, str], typing.Tuple[str, str]]] = list()
 hue_order: typing.List[str] = list()
 
 
@@ -26,7 +26,7 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
     seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in compare_order], data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(signature)
@@ -36,10 +36,10 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     matplotlib.pyplot.close(fig)
 
     outputs = [signature]
-    for (s1, c1), (s2, c2) in [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in compare_order]:
+    for (s1, c1), (s2, c2) in compare_order:
         outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == s1) & (input_data[clinical] == c1), signature]), list(input_data.loc[(input_data["Subtype"] == s2) & (input_data[clinical] == c2), signature]))[1])
 
-    return pandas.DataFrame(data=outputs, index=["Signature"] + compare_order).T
+    return pandas.DataFrame(data=outputs, index=["Signature"] + ["{0}: {1}-{2}".format(s1, c1, c2) for (s1, c1), (s2, c2) in compare_order]).T
 
 
 if __name__ == "__main__":
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
     hue_order = args.compare[1:]
-    compare_order = list(filter(lambda x: all([not input_data.loc[(input_data["Subtype"] == x) & (input_data[args.compare[0]] == compare)].empty for compare in hue_order]), order))
+    compare_order = list(filter(lambda x: not input_data.loc[(input_data["Subtype"] == x[0][0]) & (input_data[args.compare[0]] == x[0][1])].empty and not input_data.loc[(input_data["Subtype"] == x[1][0]) & (input_data[args.compare[0]] == x[1][1])].empty, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in order]))
     print(order)
     print(hue_order)
     print(compare_order)
