@@ -1,5 +1,5 @@
 """
-plot_signature.py: violin plot cancer signature by stage
+plot_signature_violin_relative.py: violin plot cancer signature by stage with relative count
 """
 import argparse
 import itertools
@@ -26,7 +26,7 @@ def draw_violin(signature: str) -> pandas.DataFrame:
     seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, inner="box", ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Subtype", y=signature, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel("Count")
+    matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(signature)
 
     fig_name = "{0}.pdf".format(signature)
@@ -81,6 +81,9 @@ if __name__ == "__main__":
     print(sorted(patients))
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
+    input_data["Total"] = input_data.sum(axis="columns")
+    for index in list(input_data.index):
+        input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
     print(input_data)

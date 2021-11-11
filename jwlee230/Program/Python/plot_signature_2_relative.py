@@ -1,5 +1,5 @@
 """
-plot_signature.py: violin plot cancer signature by stage
+plot_signature_2_relative.py: violin plot cancer signature with relative by stage with clinical data
 """
 import argparse
 import itertools
@@ -18,15 +18,17 @@ import step00
 
 input_data = pandas.DataFrame()
 order: typing.List[str] = list()
+compare_order: typing.List[str] = list()
+hue_order: typing.List[str] = list()
 
 
-def draw_violin(signature: str) -> pandas.DataFrame:
+def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
-    seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Subtype", y=signature, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
+    statannotations.Annotator.Annotator(ax, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in compare_order], data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel("Count")
+    matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(signature)
 
     fig_name = "{0}.pdf".format(signature)
@@ -34,10 +36,10 @@ def draw_violin(signature: str) -> pandas.DataFrame:
     matplotlib.pyplot.close(fig)
 
     outputs = [signature]
-    for control, case in list(itertools.combinations(order, 2)):
-        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == control), signature]), list(input_data.loc[(input_data["Subtype"] == case), signature]))[1])
+    for (s1, c1), (s2, c2) in [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in compare_order]:
+        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == s1) & (input_data[clinical] == c1), signature]), list(input_data.loc[(input_data["Subtype"] == s2) & (input_data[clinical] == c2), signature]))[1])
 
-    return pandas.DataFrame(data=outputs, index=["Signature"] + list(map(lambda x: x[0] + "-" + x[1], list(itertools.combinations(order, 2))))).T
+    return pandas.DataFrame(data=outputs, index=["Signature"] + compare_order).T
 
 
 if __name__ == "__main__":
@@ -46,6 +48,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs="+", default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -73,21 +76,29 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]].isin(args.compare[1:]))].index)
     elif args.ADC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]].isin(args.compare[1:]))].index)
     else:
         raise Exception("Something went wrong!!")
-    print(sorted(patients))
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
+    input_data["Total"] = input_data.sum(axis="columns")
+    for index in list(input_data.index):
+        input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
+
+    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    hue_order = args.compare[1:]
+    compare_order = list(filter(lambda x: all([not input_data.loc[(input_data["Subtype"] == x) & (input_data[args.compare[0]] == compare)].empty for compare in hue_order]), order))
     print(order)
+    print(hue_order)
+    print(compare_order)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data = pandas.concat(objs=pool.map(draw_violin, signatures), join="outer", ignore_index=True, axis="index").set_index(keys="Signature", verify_integrity=True)
+        output_data = pandas.concat(objs=pool.starmap(draw_violin, [(signature, args.compare[0]) for signature in signatures]), join="outer", ignore_index=True, axis="index").set_index(keys="Signature", verify_integrity=True)
     output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
     print(output_data)
 
