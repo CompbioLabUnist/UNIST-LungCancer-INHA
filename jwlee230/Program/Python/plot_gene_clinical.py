@@ -2,6 +2,7 @@
 plot_gene_clinical.py: Plot the importance of gene upon clinical data
 """
 import argparse
+import collections
 import multiprocessing
 import typing
 import matplotlib
@@ -13,7 +14,7 @@ import seaborn
 import tqdm
 import step00
 
-mutation_set: typing.Set[typing.Tuple[str, str]] = set()
+mutation_set: collections.Counter = collections.Counter()
 heatmap_data = pandas.DataFrame()
 
 
@@ -21,38 +22,33 @@ def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
 
-def query_mutect(gene: str, sample: str) -> bool:
-    return (gene, sample) in mutation_set
+def query_mutect(gene: str, sample: str) -> int:
+    return mutation_set[(gene, sample)]
 
 
 def query_heatmap(gene: str, derivation: str) -> typing.Union[float, None]:
     confusion_matrix = numpy.zeros((2, 2))
     try:
-        confusion_matrix[0, 0] = heatmap_data.loc[gene, control_samples].T.value_counts().loc[True]
+        confusion_matrix[0, 0] = heatmap_data.loc[gene, control_samples].astype(bool).T.value_counts().loc[True]
     except KeyError:
         pass
 
     try:
-        confusion_matrix[0, 1] = heatmap_data.loc[gene, control_samples].T.value_counts().loc[False]
+        confusion_matrix[0, 1] = heatmap_data.loc[gene, control_samples].astype(bool).T.value_counts().loc[False]
     except KeyError:
         pass
 
     try:
-        confusion_matrix[1, 0] = heatmap_data.loc[gene, case_samples].T.value_counts().loc[True]
+        confusion_matrix[1, 0] = heatmap_data.loc[gene, case_samples].astype(bool).T.value_counts().loc[True]
     except KeyError:
         pass
 
     try:
-        confusion_matrix[1, 1] = heatmap_data.loc[gene, case_samples].T.value_counts().loc[False]
+        confusion_matrix[1, 1] = heatmap_data.loc[gene, case_samples].astype(bool).T.value_counts().loc[False]
     except KeyError:
         pass
 
-    if derivation in step00.derivations:
-        if confusion_matrix[0, 0] and confusion_matrix[0, 1] and confusion_matrix[1, 0] and confusion_matrix[1, 1]:
-            return step00.aggregate_confusion_matrix(confusion_matrix, derivation)
-        else:
-            return None
-    elif derivation == "Fisher":
+    if derivation == "Fisher":
         return scipy.stats.fisher_exact(confusion_matrix)[1]
     elif derivation == "Chi2":
         return scipy.stats.chi2_contingency(confusion_matrix)[1]
@@ -126,13 +122,12 @@ if __name__ == "__main__":
 
     mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
     mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
-    mutect_data = mutect_data.loc[:, ["Hugo_Symbol", "Tumor_Sample_Barcode"]].drop_duplicates(ignore_index=True)
     print(mutect_data)
 
-    mutation_set = set(mutect_data.itertuples(index=False, name=None))
+    mutation_set = collections.Counter(mutect_data[["Hugo_Symbol", "Tumor_Sample_Barcode"]].itertuples(index=False, name=None))
     gene_list = sorted(set(mutect_data["Hugo_Symbol"]))
 
-    heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(args.input))), index=gene_list, columns=control_samples + case_samples, dtype=bool)
+    heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(args.input))), index=gene_list, columns=control_samples + case_samples, dtype=int)
     with multiprocessing.Pool(args.cpus) as pool:
         for gene in tqdm.tqdm(list(heatmap_data.index)):
             heatmap_data.loc[gene, :] = pool.starmap(query_mutect, [(gene, sample) for sample in (control_samples + case_samples)])
@@ -141,24 +136,22 @@ if __name__ == "__main__":
     exact_test_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), 4)), index=gene_list, columns=["Fisher", "Chi2", "Barnard", "Boschloo"], dtype=float)
     with multiprocessing.Pool(args.cpus) as pool:
         for derivation in tqdm.tqdm(exact_test_data.columns):
-            exact_test_data.loc[:, derivation] = pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)])
+            exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
     print(exact_test_data)
 
-    for column in tqdm.tqdm(exact_test_data.columns):
-        exact_test_data = exact_test_data.loc[(exact_test_data[column] < args.p)]
-    exact_test_data.sort_values(by="Fisher", ascending=True, inplace=True)
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False).iloc[:100, :]
     print(exact_test_data)
 
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
 
-    fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(exact_test_data.columns) + len(case_samples), max(exact_test_data.shape[0], (len(control_samples) + len(exact_test_data.columns) + len(case_samples)) // 4)), gridspec_kw={"width_ratios": [len(control_samples), len(exact_test_data.columns), len(case_samples)]})
+    fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(exact_test_data.columns) + len(case_samples) + 15, exact_test_data.shape[0] + 5), gridspec_kw={"width_ratios": [len(control_samples) + 5, len(exact_test_data.columns) + 5, len(case_samples) + 5]})
 
-    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=False, vmax=True, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, ax=axs[0])
+    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
     axs[0].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[1]))
 
-    seaborn.heatmap(data=exact_test_data, vmin=0, vmax=args.p, cmap="Reds_r", cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
+    seaborn.heatmap(data=exact_test_data, cmap="Reds", cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
-    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=False, vmax=True, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, ax=axs[2])
+    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
     axs[2].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[2]))
 
     matplotlib.pyplot.tight_layout()
@@ -166,6 +159,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.close(fig)
 
     heatmap_data = heatmap_data.loc[:, sorted(heatmap_data.columns, key=step00.sorting)]
+    heatmap_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if x in control_samples else "{0}-{1}".format(x, args.compare[2]), list(heatmap_data.columns)))
     output_data = pandas.concat([exact_test_data, heatmap_data], axis="columns", join="outer", verify_integrity=True)
     output_data.to_csv(args.table, sep="\t", float_format="%.2e")
     print(output_data)

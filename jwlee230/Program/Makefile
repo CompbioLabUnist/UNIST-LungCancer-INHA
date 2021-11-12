@@ -1710,12 +1710,64 @@ Output/Gene_Clinical/Bowtie2-ADC.Precancer.Recur.tsv Output/Gene_Clinical/Bowtie
 Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.tsv Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Gene_Clinical/BWA-SQC.Smoking.tsv Output/Gene_Clinical/BWA-SQC.Smoking.pdf: Python/plot_gene_clinical.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.Smoking.tsv Output/Gene_Clinical/BWA-ADC.Smoking.pdf: Python/plot_gene_clinical.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.Smoking.tsv Output/Gene_Clinical/Bowtie2-SQC.Smoking.pdf: Python/plot_gene_clinical.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Smoking.pdf: Python/plot_gene_clinical.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-SQC.CIS.Smoking.tsv Output/Gene_Clinical/BWA-SQC.CIS.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "CIS+AIS" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.tsv Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-SQC.Primary.Smoking.tsv Output/Gene_Clinical/BWA-SQC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.AAH.Smoking.tsv Output/Gene_Clinical/BWA-ADC.AAH.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.tsv Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/BWA-ADC.Primary.Smoking.tsv Output/Gene_Clinical/BWA-ADC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.CIS.Smoking.tsv Output/Gene_Clinical/Bowtie2-SQC.CIS.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "CIS+AIS" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.tsv Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.tsv Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
 step34-BWA-Recur: Output/Gene_Clinical/BWA-SQC.Recur.pdf Output/Gene_Clinical/BWA-ADC.Recur.pdf
 step34-Bowtie2-Recur: Output/Gene_Clinical/Bowtie2-SQC.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Recur.pdf
 step34-BWA-Stage-Recur: Output/Gene_Clinical/BWA-SQC.CIS.Recur.pdf Output/Gene_Clinical/BWA-SQC.Precancer.Recur.pdf Output/Gene_Clinical/BWA-SQC.Primary.Recur.pdf Output/Gene_Clinical/BWA-ADC.AAH.Recur.pdf Output/Gene_Clinical/BWA-ADC.Precancer.Recur.pdf Output/Gene_Clinical/BWA-ADC.Primary.Recur.pdf
 step34-Bowtie2-Stage-Recur: Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Precancer.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.AAH.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Precancer.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.pdf
-step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur
-.PHONY: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34
+step34-BWA-Smoking: Output/Gene_Clinical/BWA-SQC.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Smoking.pdf
+step34-Bowtie2-Smoking: Output/Gene_Clinical/Bowtie2-SQC.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Smoking.pdf
+step34-BWA-Stage-Smoking: Output/Gene_Clinical/BWA-SQC.CIS.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Primary.Smoking.pdf Output/Gene_Clinical/BWA-ADC.AAH.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Primary.Smoking.pdf
+step34-Bowtie2-Stage-Smoking: Output/Gene_Clinical/Bowtie2-SQC.CIS.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.pdf
+step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34-BWA-Smoking step34-Bowtie2-Smoking step34-BWA-Stage-Smoking step34-Bowtie2-Stage-Smoking
+.PHONY: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34-BWA-Smoking step34-Bowtie2-Smoking step34-BWA-Stage-Smoking step34-Bowtie2-Stage-Smoking step34
 
 # Step 35 (Gene expression changing upon clinical data)
 Output/GeneExpression:
