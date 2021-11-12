@@ -146,12 +146,12 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(exact_test_data.columns) + len(case_samples) + 15, exact_test_data.shape[0] + 5), gridspec_kw={"width_ratios": [len(control_samples) + 5, len(exact_test_data.columns) + 5, len(case_samples) + 5]})
 
-    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
+    seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=0, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
     axs[0].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[1]))
 
     seaborn.heatmap(data=exact_test_data, cmap="Reds", cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
-    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
+    seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=0, cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
     axs[2].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[2]))
 
     matplotlib.pyplot.tight_layout()
