@@ -11,7 +11,7 @@ import seaborn
 import tqdm
 import step00
 
-watching = "CNt"
+watching = "depth.ratio"
 
 
 def get_data(file_name: str) -> pandas.DataFrame:
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(nrows=4, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 32), gridspec_kw={"width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
-        chromosome_data = pandas.DataFrame(data=2 * numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
+        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
 
         for _, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
             chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
@@ -100,10 +100,10 @@ if __name__ == "__main__":
         case_primary_proportion = list()
         case_precancer_proportion = list()
         for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), control_primary_list))) / len(control_primary_list))
-            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), control_precancer_list))) / len(control_precancer_list))
-            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), case_primary_list))) / len(case_primary_list))
-            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= 2 * (1 + args.threshold), case_precancer_list))) / len(case_precancer_list))
+            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_primary_list))) / len(control_primary_list))
+            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_precancer_list))) / len(control_precancer_list))
+            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_primary_list))) / len(case_primary_list))
+            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_precancer_list))) / len(case_precancer_list))
 
         axs[0][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="red", linestyle="--", label=args.compare[1])
         axs[0][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="red", linestyle="-", label=args.compare[2])
@@ -126,10 +126,10 @@ if __name__ == "__main__":
         case_primary_proportion = list()
         case_precancer_proportion = list()
         for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), control_primary_list))) / len(control_primary_list))
-            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), control_precancer_list))) / len(control_precancer_list))
-            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), case_primary_list))) / len(case_primary_list))
-            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= 2 * (1 - args.threshold), case_precancer_list))) / len(case_precancer_list))
+            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_primary_list))) / len(control_primary_list))
+            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_precancer_list))) / len(control_precancer_list))
+            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_primary_list))) / len(case_primary_list))
+            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_precancer_list))) / len(case_precancer_list))
 
         axs[2][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="cyan", linestyle="--", label=args.compare[1])
         axs[2][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="cyan", linestyle="-", label=args.compare[2])
