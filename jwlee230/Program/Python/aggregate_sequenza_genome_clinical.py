@@ -121,12 +121,12 @@ if __name__ == "__main__":
             axs[1][i].set_ylabel("Precancer")
             axs[1][i].legend(title=args.compare[0], loc="upper center")
 
-        seaborn.heatmap(data=chromosome_data.loc[control_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[2][i])
+        seaborn.heatmap(data=chromosome_data.loc[control_sample_list, :], vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[2][i])
         axs[2][i].set_xlabel(chromosome[3:])
         if i == 0:
             axs[2][i].set_ylabel("{0} - {1}".format(args.compare[0], args.compare[1]))
 
-        seaborn.heatmap(data=chromosome_data.loc[case_sample_list, :], vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[3][i])
+        seaborn.heatmap(data=chromosome_data.loc[case_sample_list, :], vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[3][i])
         axs[3][i].set_xlabel(chromosome[3:])
         if i == 0:
             axs[3][i].set_ylabel("{0} - {1}".format(args.compare[0], args.compare[2]))

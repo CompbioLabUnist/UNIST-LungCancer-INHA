@@ -97,7 +97,7 @@ if __name__ == "__main__":
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
 
-        seaborn.heatmap(data=chromosome_data, vmin=0, center=2, vmax=4, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
+        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
         axs[1][i].set_xlabel(chromosome[3:])
 
         primary_proportion = list()
