@@ -1806,15 +1806,17 @@ step36: step36-BWA step36-Bowtie2
 .PHONY: step36-BWA step36-Bowtie2 step36
 
 # Step 37 (PureCN)
-# https://bioconductor.org/packages/release/bioc/html/PureCN.html
 # https://www.bioconductor.org/packages/devel/bioc/vignettes/PureCN/inst/doc/Quick.html
-Output/PureCN/Reference:
+Output/PureCN/Reference Output/PureCN/BWA Output/PureCN/Bowtie2:
 	mkdir -p $@
 
 Output/PureCN/Reference/hg38.txt Output/PureCN/Reference/hg38.bed: $(REFERENCE_FASTA) $(LIBRARY_BED) $(MAPPABILITY_BW) | Output/PureCN/Reference build.log
-	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/IntervalFile.R --fasta=$(addprefix /,$(filter %.fasta,$^)) --infile=$(addprefix /,$(filter %.bed,$^)) --offtarget --mappability=$(addprefix /,$(filter %.bw,$^)) --genome="hg38" --outfile=$(addprefix /,$(@D)/hg38.txt) --export=$(addprefix /,$(@D)/hg38.bed) --force
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/IntervalFile.R --fasta=$(addprefix /,$(filter %.fasta,$^)) --infile=$(addprefix /,$(filter %.bed,$^)) --offtarget --mappability=$(addprefix /,$(filter %.bw,$^)) --genome="hg38" --outfile=$(addprefix /,$(@D)/hg38.txt) --export=$(addprefix /,$(@D)/hg38.bed) --force 1> $@.stdout 2> $@.stderr
 
-step37: Output/PureCN/Reference/hg38.txt
+Output/PureCN/BWA/%.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz: Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/PureCN/Reference/hg38.txt | Output/PureCN/BWA build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --outdir=$(addprefix /,$(@D)) --force 
+
+step37: Output/PureCN/Reference/hg38.txt Output/PureCN/BWA/33P1.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz
 .PHONY: step37
 
 # Step ## (Gistic2.0)
