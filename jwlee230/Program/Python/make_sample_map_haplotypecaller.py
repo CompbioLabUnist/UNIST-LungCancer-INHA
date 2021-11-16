@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input Haplotype Caller output g.vcf.gz file(s)", type=str, nargs="+")
     parser.add_argument("output", help="Output TSV file", type=str)
-    parser.add_argument("--patient", help="Designated patient name", required=True, type=str)
+    parser.add_argument("--sample", help="Designated patient name", required=True, type=str)
 
     args = parser.parse_args()
 
@@ -19,8 +19,10 @@ if __name__ == "__main__":
     elif not args.output.endswith(".tsv"):
         raise ValueError("Output file must end in .tsv!!")
 
-    args.input.sort(key=step00.sorting)
-    sample_list = list(map(lambda x: (x.split("/")[-1].split(".")[0], x), list(filter(lambda x: step00.get_patient(x) == args.patient, args.input))))
+    wanted_samples = {args.sample, step00.get_paired_normal(args.sample)}
+
+    args.input.sort(key=step00.sorting_by_type)
+    sample_list = list(map(lambda x: (step00.get_id(x), x), list(filter(lambda x: step00.get_id(x) in wanted_samples, args.input))))
     assert sample_list, "No patient remaining!!"
 
     with open(args.output, "w") as f:

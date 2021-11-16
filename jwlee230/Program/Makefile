@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 2
-MEMS = 20
-PARALLEL = 10
+CPUS = 5
+MEMS = 25
+PARALLEL = 30
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -28,6 +28,7 @@ MUTENRICHER = $(PYTHON) /Tools/MutEnricher-1.3.1/mutEnricher.py
 TMPFS = /tmpfs
 CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
+PURECN_EXTDATA_DIR = /usr/local/lib/R/site-library/PureCN/extdata
 
 # Reference Files
 CLINICAL_DATA_CSV = Data/Clinical.csv
@@ -58,6 +59,7 @@ ARRIBA_BLACKLIST_TSV = $(ARRIBA_DATABASE_DIR)/blacklist_hg38_GRCh38_v2.1.0.tsv.g
 ARRIBA_KNOWN_FUSIONS_TSV = $(ARRIBA_DATABASE_DIR)/known_fusions_hg38_GRCh38_v2.1.0.tsv.gz
 ARRIBA_PROTEIN_DOMAIN_GFF3 = $(ARRIBA_DATABASE_DIR)/protein_domains_hg38_GRCh38_v2.1.0.gff3
 CTAT_RESOURCE_LIB_DIR = Data/GRCh38_gencode_v37_CTAT_lib_Mar012021.plug-n-play/ctat_genome_lib_build_dir
+MAPPABILITY_BW = Data/k24.Bismap.MultiTrackMappability.bw
 
 # Sample IDs
 PATIENT_ID := $(sort $(shell ls -1 Data/RawData/*.fastq.gz | cut --delimiter / --fields 3 | grep --perl-regexp --only-match "^(cn)?\d+"))
@@ -494,10 +496,10 @@ Output/HaplotypeCaller/Bowtie2/%.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.Bowti
 	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller/BWA/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --patient "$*" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --sample "$*" 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller/Bowtie2/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --patient "$*" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --sample "$*" 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller/BWA/%.genomicsdb/callset.json: $(REFERENCE_FASTA) Output/HaplotypeCaller/BWA/%.sample_map.tsv | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) --sample-name-map $(addprefix /,$(filter %.tsv,$^)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
@@ -531,10 +533,14 @@ Output/HaplotypeCaller/BWA/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/Haploty
 Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/HaplotypeCaller/Bowtie2/%.VQSR.vcf | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-# TODO: vcf2maf
+Output/HaplotypeCaller/BWA/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/HaplotypeCaller/BWA/%.VQSR.PASS.vcf | build.log
+	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
-step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
-step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .sample_map.tsv,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .vcf.gz,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.recal,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.vcf,$(PATIENT_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(PATIENT_ID)))
+Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.vcf | build.log
+	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .sample_map.tsv,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .genomicsdb/callset.json,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.recal,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.maf,$(WES_TUMOR_ID)))
+step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .sample_map.tsv,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.recal,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.maf,$(WES_TUMOR_ID)))
 step15: step15-BWA step15-Bowtie2
 .PHONY: step15-BWA step15-Bowtie2 step15
 
@@ -1731,9 +1737,6 @@ Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.tsv Output/Gene_Clinical/BWA-SQC.
 Output/Gene_Clinical/BWA-SQC.Primary.Smoking.tsv Output/Gene_Clinical/BWA-SQC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical/BWA-ADC.AAH.Smoking.tsv Output/Gene_Clinical/BWA-ADC.AAH.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
-
 Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.tsv Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
@@ -1749,9 +1752,6 @@ Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.tsv Output/Gene_Clinical/Bowt
 Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.tsv Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "AAH" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
-
 Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
@@ -1764,8 +1764,8 @@ step34-BWA-Stage-Recur: Output/Gene_Clinical/BWA-SQC.CIS.Recur.pdf Output/Gene_C
 step34-Bowtie2-Stage-Recur: Output/Gene_Clinical/Bowtie2-SQC.CIS.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Precancer.Recur.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.AAH.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Precancer.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Recur.pdf
 step34-BWA-Smoking: Output/Gene_Clinical/BWA-SQC.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Smoking.pdf
 step34-Bowtie2-Smoking: Output/Gene_Clinical/Bowtie2-SQC.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Smoking.pdf
-step34-BWA-Stage-Smoking: Output/Gene_Clinical/BWA-SQC.CIS.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Primary.Smoking.pdf Output/Gene_Clinical/BWA-ADC.AAH.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Primary.Smoking.pdf
-step34-Bowtie2-Stage-Smoking: Output/Gene_Clinical/Bowtie2-SQC.CIS.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.AAH.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.pdf
+step34-BWA-Stage-Smoking: Output/Gene_Clinical/BWA-SQC.CIS.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-SQC.Primary.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/BWA-ADC.Primary.Smoking.pdf
+step34-Bowtie2-Stage-Smoking: Output/Gene_Clinical/Bowtie2-SQC.CIS.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.pdf
 step34: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34-BWA-Smoking step34-Bowtie2-Smoking step34-BWA-Stage-Smoking step34-Bowtie2-Stage-Smoking
 .PHONY: step34-BWA-Recur step34-Bowtie2-Recur step34-BWA-Stage-Recur step34-Bowtie2-Stage-Recur step34-BWA-Smoking step34-Bowtie2-Smoking step34-BWA-Stage-Smoking step34-Bowtie2-Stage-Smoking step34
 
@@ -1805,6 +1805,18 @@ step36-Bowtie2: $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .
 step36: step36-BWA step36-Bowtie2
 .PHONY: step36-BWA step36-Bowtie2 step36
 
+# Step 37 (PureCN)
+# https://bioconductor.org/packages/release/bioc/html/PureCN.html
+# https://www.bioconductor.org/packages/devel/bioc/vignettes/PureCN/inst/doc/Quick.html
+Output/PureCN/Reference:
+	mkdir -p $@
+
+Output/PureCN/Reference/hg38.txt Output/PureCN/Reference/hg38.bed: $(REFERENCE_FASTA) $(LIBRARY_BED) $(MAPPABILITY_BW) | Output/PureCN/Reference build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/IntervalFile.R --fasta=$(addprefix /,$(filter %.fasta,$^)) --infile=$(addprefix /,$(filter %.bed,$^)) --offtarget --mappability=$(addprefix /,$(filter %.bw,$^)) --genome="hg38" --outfile=$(addprefix /,$(@D)/hg38.txt) --export=$(addprefix /,$(@D)/hg38.bed) --force
+
+step37: Output/PureCN/Reference/hg38.txt
+.PHONY: step37
+
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
 # ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
@@ -1820,10 +1832,6 @@ step36: step36-BWA step36-Bowtie2
 
 # Step ## (Spruce)
 # https://github.com/raphael-group/spruce/
-
-# Step ## (PureCN)
-# https://bioconductor.org/packages/release/bioc/html/PureCN.html
-
 # Step ## (CRUST)
 # Step ## (WTS - samtools depth)
 # Step ## (Histogram of file size)
