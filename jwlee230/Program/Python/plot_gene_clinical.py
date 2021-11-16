@@ -102,11 +102,11 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "YES")].index)
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data["Recurrence"] == "NO")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     elif args.ADC:
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "YES")].index)
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data["Recurrence"] == "NO")].index)
+        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
+        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
     else:
         raise Exception("Something went wrong!!")
     print(sorted(control_patients))
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
     axs[0].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[1]))
 
-    seaborn.heatmap(data=exact_test_data, cmap="Reds", cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
+    seaborn.heatmap(data=exact_test_data, cmap="Reds", vmin=0, center=-1 * numpy.log10(args.p), cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
     seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
     axs[2].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[2]))

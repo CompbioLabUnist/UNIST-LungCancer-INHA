@@ -154,7 +154,7 @@ if __name__ == "__main__":
     seaborn.heatmap(data=heatmap_data.loc[:, control_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
     axs[0].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[1]))
 
-    seaborn.heatmap(data=exact_test_data, cmap="Reds", cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
+    seaborn.heatmap(data=exact_test_data, cmap="Reds", vmin=0, center=-1 * numpy.log10(args.p), cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
     seaborn.heatmap(data=heatmap_data.loc[:, case_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
     axs[2].set_xlabel("{0} - {1}".format(args.compare[0], args.compare[2]))
