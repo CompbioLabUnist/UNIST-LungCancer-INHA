@@ -3,7 +3,7 @@ rm(list = ls())
 library(optparse)
 option_list = list(make_option(c("-i", "--input"), type="character", default=NULL, help="Input TSV file"),
                    make_option(c("-a", "--annotation"), type="character", default=NULL, help="Reference annotation TXT file"),
-                   make_option(c("-r", "--reference"), type="character", default=NULL, help="Reference TSV file"),
+                   make_option(c("-r", "--reference"), type="character", default=NULL, help="Reference RDS file"),
                    make_option(c("-o", "--output"), type="character", default=NULL, help="Output TSV file"))
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
