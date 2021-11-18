@@ -1,7 +1,10 @@
 FROM ubuntu:20.04
 LABEL maintainer="jwlee230@unist.ac.kr"
 
-RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync
+# apt install & update
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 51716619E084DAB9 && add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && apt-get update
+RUN apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync
 
 # TOOL directory
 RUN mkdir /Tools
@@ -10,7 +13,7 @@ RUN mkdir /Tools
 ADD Tools/Python.tar.xz /Tools/
 RUN cd /Tools/Python-3.9.1 && ./configure && make -j && make -j install && ln -sf /usr/local/bin/python3 /usr/bin/python
 ADD requirements.txt /Tools/requirements.txt
-RUN pip3 install --no-cache-dir --upgrade wheel pip && pip3 install --requirement /Tools/requirements.txt --no-cache-dir
+RUN pip3 install --upgrade wheel pip && pip3 install --requirement /Tools/requirements.txt
 
 # Conda
 ADD Tools/Miniconda.sh /Tools/
@@ -54,7 +57,7 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes', 'R.utils'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber')" && Rscript -e "remotes::install_github('Subhayan18/CRUST')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN'))" && Rscript -e "install.packages('BisqueRNA')" && Rscript -e "remotes::install_version('Seurat', version = '3.2.3')"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes', 'R.utils'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber')" && Rscript -e "remotes::install_github('Subhayan18/CRUST')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN'))" && Rscript -e "install.packages(c('BisqueRNA', 'Seurat'))"
 
 # Waiting for restore github action
 RUN sleep 1h
