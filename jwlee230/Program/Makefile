@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
-MEMS = 25
+CPUS = 30
+MEMS = 200
 PARALLEL = 30
 PWD := $(shell pwd)
 TOOLS =
@@ -47,11 +47,11 @@ GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
 TREMBL_TSV = Data/Homo_sapiens.GRCh38.104.uniprot.tsv.gz
 GENE_CENCUS_ONE_CSV = Data/CGC_tier1.csv
 GENE_CENCUS_BOTH_CSV = Data/CGC_both.csv
-LUNG_SINGLECELL_ANNOTATION_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_cell_annotation.txt
-LUNG_SINGLECELL_RAW_MATRIX_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.txt
-LUNG_SINGLECELL_RAW_MATRIX_RDS = Data/Lung_SingleCell/GSE131907_Lung_Cancer_raw_UMI_matrix.rds
-LUNG_SINGLECELL_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.txt
-LUNG_SINGLECELL_NORMALIZED_MATRIX_RDS = Data/Lung_SingleCell/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.rds
+LUNG_GSE131907_ANNOTATION_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_Lung_Cancer_cell_annotation.txt
+LUNG_GSE131907_RAW_MATRIX_RDS = Data/Lung_SingleCell/GSE131907/GSE131907_Lung_Cancer_raw_UMI_matrix.rds
+LUNG_GSE131907_NORMALIZED_MATRIX_RDS = Data/Lung_SingleCell/GSE131907/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.rds
+LUNG_GSE131907_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.txt
+LUNG_GSE162498_11_TUMORS_RDS = Data/Lung_SingleCell/GSE162498/GSE162498_NSCLC_CD3_11tumors.Rds
 KNOWN_GENE_GTF = Data/hg38.gtf.gz
 ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
 ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
@@ -1069,7 +1069,7 @@ Output/CIBERSORTx/STAR.SQC.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix O
 Output/CIBERSORTx/STAR.ADC.tsv: Python/aggregate_RSEM_cibersort.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/CIBERSORTx build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_NORMALIZED_MATRIX_TXT) | build.log
+Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_NORMALIZED_MATRIX_TXT) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/CIBERSORTx/%.tsv Output/CIBERSORTx/GSE131907_signature.tsv | build.log
@@ -1228,23 +1228,26 @@ step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predicti
 .PHONY: step27
 
 # Step 28 (MuSiC)
-Output/MuSiC:
+Output/Deconvolution Output/MuSiC:
 	mkdir -p $@
 
-Output/MuSiC/Bowtie2.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/MuSiC build.log
+Output/Deconvolution/Bowtie2.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/Bowtie2.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/MuSiC build.log
+Output/Deconvolution/Bowtie2.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/STAR.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/MuSiC build.log
+Output/Deconvolution/STAR.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/STAR.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/MuSiC build.log
+Output/Deconvolution/STAR.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.tsv: R/run_MuSiC.R Output/MuSiC/%.RSEM.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_RAW_MATRIX_RDS) | build.log
+Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | build.log Output/MuSiC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/MuSiC
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/MuSiC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -1255,11 +1258,11 @@ Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv |
 Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step28-prepare: Output/MuSiC/Bowtie2.SQC.RSEM.tsv Output/MuSiC/Bowtie2.ADC.RSEM.tsv Output/MuSiC/STAR.SQC.RSEM.tsv Output/MuSiC/STAR.ADC.RSEM.tsv
-step28-MuSiC: Output/MuSiC/Bowtie2.SQC.tsv Output/MuSiC/Bowtie2.ADC.tsv Output/MuSiC/STAR.SQC.tsv Output/MuSiC/STAR.ADC.tsv
-step28-heatmap: Output/MuSiC/Bowtie2.SQC.heatmap.pdf Output/MuSiC/Bowtie2.ADC.heatmap.pdf Output/MuSiC/STAR.SQC.heatmap.pdf Output/MuSiC/STAR.ADC.heatmap.pdf
-step28-violin: Output/MuSiC/Bowtie2.SQC.violin.tar Output/MuSiC/Bowtie2.ADC.violin.tar Output/MuSiC/STAR.SQC.violin.tar Output/MuSiC/STAR.ADC.violin.tar
-step28-cluster: Output/MuSiC/Bowtie2.SQC.cluster.pdf Output/MuSiC/Bowtie2.ADC.cluster.pdf Output/MuSiC/STAR.SQC.cluster.pdf Output/MuSiC/STAR.ADC.cluster.pdf
+step28-prepare: Output/Deconvolution/Bowtie2.SQC.RSEM.tsv Output/Deconvolution/Bowtie2.ADC.RSEM.tsv Output/Deconvolution/STAR.SQC.RSEM.tsv Output/Deconvolution/STAR.ADC.RSEM.tsv
+step28-MuSiC: Output/MuSiC/Bowtie2.SQC.GSE131907.tsv Output/MuSiC/Bowtie2.ADC.GSE131907.tsv Output/MuSiC/STAR.SQC.GSE131907.tsv Output/MuSiC/STAR.ADC.GSE131907.tsv Output/MuSiC/Bowtie2.SQC.GSE162498.tsv Output/MuSiC/Bowtie2.ADC.GSE162498.tsv Output/MuSiC/STAR.SQC.GSE162498.tsv Output/MuSiC/STAR.ADC.GSE162498.tsv
+step28-heatmap: Output/MuSiC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/MuSiC/STAR.SQC.GSE131907.heatmap.pdf Output/MuSiC/STAR.ADC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/MuSiC/STAR.SQC.GSE162498.heatmap.pdf Output/MuSiC/STAR.ADC.GSE162498.heatmap.pdf
+step28-violin: Output/MuSiC/Bowtie2.SQC.GSE131907.violin.tar Output/MuSiC/Bowtie2.ADC.GSE131907.violin.tar Output/MuSiC/STAR.SQC.GSE131907.violin.tar Output/MuSiC/STAR.ADC.GSE131907.violin.tar Output/MuSiC/Bowtie2.SQC.GSE162498.violin.tar Output/MuSiC/Bowtie2.ADC.GSE162498.violin.tar Output/MuSiC/STAR.SQC.GSE162498.violin.tar Output/MuSiC/STAR.ADC.GSE162498.violin.tar
+step28-cluster: Output/MuSiC/Bowtie2.SQC.GSE131907.cluster.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.cluster.pdf Output/MuSiC/STAR.SQC.GSE131907.cluster.pdf Output/MuSiC/STAR.ADC.GSE131907.cluster.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.cluster.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.cluster.pdf Output/MuSiC/STAR.SQC.GSE162498.cluster.pdf Output/MuSiC/STAR.ADC.GSE162498.cluster.pdf
 step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster
 .PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28
 
@@ -1267,8 +1270,11 @@ step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster
 Output/BisqueRNA:
 	mkdir -p $@
 
-Output/BisqueRNA/%.tsv: R/run_BisqueRNA.R Output/MuSiC/%.RSEM.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_RAW_MATRIX_RDS) | Output/BisqueRNA build.log
+Output/BisqueRNA/%.GSE131907.tsv: R/run_BisqueRNA.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/BisqueRNA build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/BisqueRNA
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_BisqueRNA.py Output/BisqueRNA/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -1279,10 +1285,10 @@ Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/Bisqu
 Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.tsv Output/BisqueRNA/Bowtie2.ADC.tsv Output/BisqueRNA/STAR.SQC.tsv Output/BisqueRNA/STAR.ADC.tsv
-step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.heatmap.pdf Output/BisqueRNA/STAR.SQC.heatmap.pdf Output/BisqueRNA/STAR.ADC.heatmap.pdf
-step29-violin: Output/BisqueRNA/Bowtie2.SQC.violin.tar Output/BisqueRNA/Bowtie2.ADC.violin.tar Output/BisqueRNA/STAR.SQC.violin.tar Output/BisqueRNA/STAR.ADC.violin.tar
-step29-cluster: Output/BisqueRNA/Bowtie2.SQC.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.cluster.pdf Output/BisqueRNA/STAR.SQC.cluster.pdf Output/BisqueRNA/STAR.ADC.cluster.pdf
+step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.GSE131907.tsv Output/BisqueRNA/Bowtie2.ADC.GSE131907.tsv Output/BisqueRNA/STAR.SQC.GSE131907.tsv Output/BisqueRNA/STAR.ADC.GSE131907.tsv Output/BisqueRNA/Bowtie2.SQC.GSE162498.tsv Output/BisqueRNA/Bowtie2.ADC.GSE162498.tsv Output/BisqueRNA/STAR.SQC.GSE162498.tsv Output/BisqueRNA/STAR.ADC.GSE162498.tsv
+step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE162498.heatmap.pdf
+step29-violin: Output/BisqueRNA/Bowtie2.SQC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE131907.violin.tar Output/BisqueRNA/STAR.SQC.GSE131907.violin.tar Output/BisqueRNA/STAR.ADC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.SQC.GSE162498.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE162498.violin.tar Output/BisqueRNA/STAR.SQC.GSE162498.violin.tar Output/BisqueRNA/STAR.ADC.GSE162498.violin.tar
+step29-cluster: Output/BisqueRNA/Bowtie2.SQC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE162498.cluster.pdf
 step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster
 .PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29
 
@@ -1290,8 +1296,11 @@ step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster
 Output/SCDC:
 	mkdir -p $@
 
-Output/SCDC/%.tsv: R/run_SCDC.R Output/MuSiC/%.RSEM.tsv $(LUNG_SINGLECELL_ANNOTATION_TXT) $(LUNG_SINGLECELL_RAW_MATRIX_RDS) | Output/SCDC build.log
+Output/SCDC/%.GSE131907.tsv: R/run_SCDC.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/SCDC build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/%.GSE162498.tsv: R/run_SCDC_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/SCDC
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/SCDC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/SCDC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -1302,10 +1311,10 @@ Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | b
 Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step30-SCDC: Output/SCDC/Bowtie2.SQC.tsv Output/SCDC/Bowtie2.ADC.tsv Output/SCDC/STAR.SQC.tsv Output/SCDC/STAR.ADC.tsv
-step30-heatmap: Output/SCDC/Bowtie2.SQC.heatmap.pdf Output/SCDC/Bowtie2.ADC.heatmap.pdf Output/SCDC/STAR.SQC.heatmap.pdf Output/SCDC/STAR.ADC.heatmap.pdf
-step30-violin: Output/SCDC/Bowtie2.SQC.violin.tar Output/SCDC/Bowtie2.ADC.violin.tar Output/SCDC/STAR.SQC.violin.tar Output/SCDC/STAR.ADC.violin.tar
-step30-cluster: Output/SCDC/Bowtie2.SQC.cluster.pdf Output/SCDC/Bowtie2.ADC.cluster.pdf Output/SCDC/STAR.SQC.cluster.pdf Output/SCDC/STAR.ADC.cluster.pdf
+step30-SCDC: Output/SCDC/Bowtie2.SQC.GSE131907.tsv Output/SCDC/Bowtie2.ADC.GSE131907.tsv Output/SCDC/STAR.SQC.GSE131907.tsv Output/SCDC/STAR.ADC.GSE131907.tsv Output/SCDC/Bowtie2.SQC.GSE162498.tsv Output/SCDC/Bowtie2.ADC.GSE162498.tsv Output/SCDC/STAR.SQC.GSE162498.tsv Output/SCDC/STAR.ADC.GSE162498.tsv
+step30-heatmap: Output/SCDC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/SCDC/STAR.SQC.GSE131907.heatmap.pdf Output/SCDC/STAR.ADC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/SCDC/STAR.SQC.GSE162498.heatmap.pdf Output/SCDC/STAR.ADC.GSE162498.heatmap.pdf
+step30-violin: Output/SCDC/Bowtie2.SQC.GSE131907.violin.tar Output/SCDC/Bowtie2.ADC.GSE131907.violin.tar Output/SCDC/STAR.SQC.GSE131907.violin.tar Output/SCDC/STAR.ADC.GSE131907.violin.tar Output/SCDC/Bowtie2.SQC.GSE162498.violin.tar Output/SCDC/Bowtie2.ADC.GSE162498.violin.tar Output/SCDC/STAR.SQC.GSE162498.violin.tar Output/SCDC/STAR.ADC.GSE162498.violin.tar
+step30-cluster: Output/SCDC/Bowtie2.SQC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE131907.cluster.pdf Output/SCDC/STAR.SQC.GSE131907.cluster.pdf Output/SCDC/STAR.ADC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.SQC.GSE162498.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE162498.cluster.pdf Output/SCDC/STAR.SQC.GSE162498.cluster.pdf Output/SCDC/STAR.ADC.GSE162498.cluster.pdf
 step30: step30-SCDC step30-heatmap step30-violin step30-cluster
 .PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
