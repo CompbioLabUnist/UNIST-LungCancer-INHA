@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot
 import pandas
 import seaborn
-import statannot
+import statannotations.Annotator
 import step00
 
 input_data = pandas.DataFrame()
@@ -24,7 +24,7 @@ def run(cell: str) -> str:
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
 
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order)
-    statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=cell, order=order, test="Mann-Whitney", box_pairs=itertools.combinations(order, 2), text_format="star", loc="inside", verbose=0)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(cell)
     matplotlib.pyplot.ylabel("Proportion")
