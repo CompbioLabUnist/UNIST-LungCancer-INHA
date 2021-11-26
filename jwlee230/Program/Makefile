@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 30
-MEMS = 200
+CPUS = 2
+MEMS = 20
 PARALLEL = 30
 PWD := $(shell pwd)
 TOOLS =
@@ -196,7 +196,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1673,7 +1673,7 @@ step33-Bar-Recurrence: Output/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Recurren
 step33: step33-SigProfiler step33-Violin-Subtype step33-Violin-Recurrence step33-Violin-Smoking step33-Bar-SQC step33-Bar-ADC step33-Bar-Subtype step33-Bar-Smoking step33-Bar-Recurrence
 .PHONY: step33-SigProfiler step33-Violin-Subtype step33-Violin-Recurrence step33-Violin-Smoking step33-Bar-SQC step33-Bar-ADC step33-Bar-Subtype step33-Bar-Smoking step33-Bar-Recurrence step33
 
-# Step 34 (Gene analysis upon clinical data with WES data)
+# Step 34 (Short variants analysis upon clinical data with WES data)
 Output/Gene_Clinical:
 	mkdir -p $@
 
@@ -1764,9 +1764,6 @@ Output/Gene_Clinical/Bowtie2-SQC.Primary.Smoking.tsv Output/Gene_Clinical/Bowtie
 Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Precancer.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Precancer" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.tsv Output/Gene_Clinical/Bowtie2-ADC.Primary.Smoking.pdf: Python/plot_gene_clinical_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --stage "Primary" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
-
 step34-BWA-Recur: Output/Gene_Clinical/BWA-SQC.Recur.pdf Output/Gene_Clinical/BWA-ADC.Recur.pdf
 step34-Bowtie2-Recur: Output/Gene_Clinical/Bowtie2-SQC.Recur.pdf Output/Gene_Clinical/Bowtie2-ADC.Recur.pdf
 step34-BWA-Stage-Recur: Output/Gene_Clinical/BWA-SQC.CIS.Recur.pdf Output/Gene_Clinical/BWA-SQC.Precancer.Recur.pdf Output/Gene_Clinical/BWA-SQC.Primary.Recur.pdf Output/Gene_Clinical/BWA-ADC.AAH.Recur.pdf Output/Gene_Clinical/BWA-ADC.Precancer.Recur.pdf Output/Gene_Clinical/BWA-ADC.Primary.Recur.pdf
@@ -1823,10 +1820,22 @@ Output/PureCN/Reference/hg38.txt Output/PureCN/Reference/hg38.bed: $(REFERENCE_F
 	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/IntervalFile.R --fasta=$(addprefix /,$(filter %.fasta,$^)) --infile=$(addprefix /,$(filter %.bed,$^)) --offtarget --mappability=$(addprefix /,$(filter %.bw,$^)) --genome="hg38" --outfile=$(addprefix /,$(@D)/hg38.txt) --export=$(addprefix /,$(@D)/hg38.bed) --force 1> $@.stdout 2> $@.stderr
 
 Output/PureCN/BWA/%.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz: Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/PureCN/Reference/hg38.txt | Output/PureCN/BWA build.log
-	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --outdir=$(addprefix /,$(@D)) --force 
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --outdir=$(addprefix /,$(@D)) --force 1> $@.stdout 2> $@.stderr
 
-step37: Output/PureCN/Reference/hg38.txt Output/PureCN/BWA/33P1.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz
+Output/PureCN/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz: Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/PureCN/Reference/hg38.txt | Output/PureCN/Bowtie2 build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --outdir=$(addprefix /,$(@D)) --force 1> $@.stdout 2> $@.stderr
+
+step37: Output/PureCN/Reference/hg38.txt $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID)))
 .PHONY: step37
+
+# Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
+Output/Gene_Clinical_Venn:
+	mkdir -p $@
+
+Output/Gene_Clinical_Venn/BWA-SQC.pdf: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC
+
+step38: Output/Gene_Clinical_Venn/BWA-SQC.pdf
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
