@@ -75,7 +75,7 @@ if __name__ == "__main__":
     for j, (column, color) in tqdm.tqdm(enumerate(zip(signatures, itertools.cycle(matplotlib.colors.TABLEAU_COLORS)))):
         matplotlib.pyplot.bar(range(input_data.shape[0]), list(input_data.loc[:, column]), bottom=input_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
 
-    matplotlib.pyplot.xlabel("Samples")
+    matplotlib.pyplot.xlabel("{0} Samples".format(input_data.shape[0]))
     if args.absolute:
         matplotlib.pyplot.ylabel("Counts")
     elif args.relative:

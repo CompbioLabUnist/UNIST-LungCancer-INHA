@@ -90,7 +90,7 @@ if __name__ == "__main__":
             for k, (column, color) in enumerate(zip(signatures, itertools.cycle(matplotlib.colors.TABLEAU_COLORS))):
                 axs[i][j].bar(range(drawing_data.shape[0]), list(drawing_data.loc[:, column]), bottom=drawing_data.iloc[:, :k].sum(axis="columns"), color=color, edgecolor=color, label=column)
 
-            axs[i][j].set_xlabel("{0} Samples".format(subtype))
+            axs[i][j].set_xlabel("{1} {0} Samples".format(subtype, drawing_data.shape[0]))
             if args.absolute:
                 axs[i][j].set_ylabel("Counts")
             elif args.relative:
