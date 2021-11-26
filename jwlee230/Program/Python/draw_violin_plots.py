@@ -11,10 +11,15 @@ import numpy
 import pandas
 import scipy
 import seaborn
-import statannot
+import statannotations.Annotator
+import tqdm
 import step00
 
 input_data = pandas.DataFrame()
+
+
+def read_coldata(filename: str):
+    data = pandas.read_csv(filename, sep="\t")
 
 
 def run(gene: str) -> str:
@@ -32,14 +37,10 @@ def run(gene: str) -> str:
 
     stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
 
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax)
-    statannot.add_stat_annotation(ax, data=input_data, x="Stage", y=gene, order=stage_order, test="Mann-Whitney", box_pairs=itertools.combinations(stage_order, 2), text_format="star", loc="outside", verbose=0)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.tight_layout()
 
@@ -47,40 +48,40 @@ def run(gene: str) -> str:
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
-    return fig_name
+    return fig_name2021-10-05T18:03:08+0900
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("count", help="Count TSV file(s)", type=str, nargs="+")
+    parser.add_argument("input", help="Input TPM TSV file", type=str)
+    parser.add_argument("coldata", help="Coldata file for selecting samples", type=str, nargs="+")
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--pvalue", help="P-value threshold", type=float, default=0.05)
-    parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
 
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".tsv"), args.count)):
-        raise ValueError("Count must end with .TSV!!")
+    if not args.input.endswith(".tsv"):
+        raise ValueError("Input must end with .tsv!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    for input_file in args.count:
-        input_data = input_data.append(pandas.read_csv(input_file, sep="\t", index_col="gene_name").T)
-    input_data.drop_duplicates(inplace=True)
-    input_data = input_data[[c for c in list(input_data) if len(input_data[c].unique()) > 1]]
-    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    for stage in set(input_data["Stage"]):
-        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
-            input_data = input_data.loc[~(input_data["Stage"] == stage)]
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    input_data = pandas.read_csv(args.input, sep="\t", index_col="gene_name")
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = sorted(filter(None, pool.map(run, list(input_data.columns)[:-1])))
+        patient_data = pool.map(read_coldata, args.coldata)
+    print(patient_data)
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        tar_files = []
 
     with tarfile.open(args.output, "w") as tar:
-        for f in tar_files:
+        for f in tqdm.tqdm(tar_files):
             tar.add(f, arcname=f)

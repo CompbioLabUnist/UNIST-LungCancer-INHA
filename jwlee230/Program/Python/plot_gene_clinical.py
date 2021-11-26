@@ -134,14 +134,14 @@ if __name__ == "__main__":
 
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(args.input))), index=gene_list, columns=control_samples + case_samples, dtype=int)
     with multiprocessing.Pool(args.cpus) as pool:
-        for gene in tqdm.tqdm(list(heatmap_data.index)):
-            heatmap_data.loc[gene, :] = pool.starmap(query_mutect, [(gene, sample) for sample in (control_samples + case_samples)])
+        for sample in tqdm.tqdm(list(heatmap_data.columns)):
+            heatmap_data.loc[:, sample] = pool.starmap(query_mutect, [(gene, sample) for gene in gene_list])
     print(heatmap_data)
 
     mutation_data = pandas.DataFrame(index=gene_list, columns=control_samples + case_samples, dtype=str)
     with multiprocessing.Pool(args.cpus) as pool:
-        for sample in tqdm.tqdm(list(heatmap_data.columns)):
-            heatmap_data.loc[:, sample] = pool.starmap(query_mutect, [(gene, sample) for gene in gene_list])
+        for sample in tqdm.tqdm(list(mutation_data.columns)):
+            mutation_data.loc[:, sample] = pool.starmap(query_mutation, [(gene, sample) for gene in gene_list])
     print(mutation_data)
 
     exact_test_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), 4)), index=gene_list, columns=["Fisher", "Chi2", "Barnard", "Boschloo"], dtype=float)
@@ -150,10 +150,11 @@ if __name__ == "__main__":
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
     print(exact_test_data)
 
-    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False).iloc[:100, :]
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False)
     print(exact_test_data)
 
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
+    mutation_data = mutation_data.loc[exact_test_data.index, :]
 
     fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(exact_test_data.columns) + len(case_samples) + 15, exact_test_data.shape[0] + 5), gridspec_kw={"width_ratios": [len(control_samples) + 5, len(exact_test_data.columns) + 5, len(case_samples) + 5]})
 

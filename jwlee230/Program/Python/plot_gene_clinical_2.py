@@ -156,10 +156,11 @@ if __name__ == "__main__":
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
     print(exact_test_data)
 
-    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False).iloc[:100, :]
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False)
     print(exact_test_data)
 
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
+    mutation_data = mutation_data.loc[exact_test_data.index, :]
 
     fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(control_samples) + len(exact_test_data.columns) + len(case_samples) + 15, exact_test_data.shape[0] + 5), gridspec_kw={"width_ratios": [len(control_samples) + 5, len(exact_test_data.columns) + 5, len(case_samples) + 5]})
 
