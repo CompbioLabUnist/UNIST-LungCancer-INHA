@@ -3,7 +3,6 @@ plot_gene_clinical_2.py: Plot the importance of gene upon clinical data with can
 """
 import argparse
 import collections
-import itertools
 import multiprocessing
 import typing
 import matplotlib
@@ -63,7 +62,7 @@ def query_heatmap(gene: str, derivation: str) -> typing.Union[float, None]:
 
 
 def query_mutation(gene: str, sample: str) -> str:
-    return ",".join(sorted(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample) & (mutect_data["Hugo_Symbol"] == gene), "Variant_Classification"]))
+    return ",".join(sorted(list(map(lambda x: step00.nonsynonymous_notations[x], mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample) & (mutect_data["Hugo_Symbol"] == gene), "Variant_Classification"]))))
 
 
 if __name__ == "__main__":
@@ -156,9 +155,17 @@ if __name__ == "__main__":
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
     print(exact_test_data)
 
-    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", ascending=False)
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
+    heatmap_data = heatmap_data.loc[exact_test_data.index, :]
+    mutation_data = mutation_data.loc[exact_test_data.index, :]
     print(exact_test_data)
 
+    mutation_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if (x in control_samples) else "{0}-{1}".format(x, args.compare[2]), list(mutation_data.columns)))
+    output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
+    output_data.to_csv(args.table, sep="\t")
+    print(output_data)
+
+    exact_test_data = exact_test_data.iloc[:100, :]
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
     mutation_data = mutation_data.loc[exact_test_data.index, :]
 
@@ -175,9 +182,3 @@ if __name__ == "__main__":
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.figure)
     matplotlib.pyplot.close(fig)
-
-    mutation_data = mutation_data.loc[:, sorted(mutation_data.columns, key=step00.sorting)]
-    mutation_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if (x in control_samples) else "{0}-{1}".format(x, args.compare[2]), list(mutation_data.columns)))
-    output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
-    output_data.to_csv(args.table, sep="\t")
-    print(output_data)
