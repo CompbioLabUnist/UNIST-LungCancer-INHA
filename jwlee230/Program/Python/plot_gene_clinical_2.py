@@ -3,6 +3,7 @@ plot_gene_clinical_2.py: Plot the importance of gene upon clinical data with can
 """
 import argparse
 import collections
+import itertools
 import multiprocessing
 import typing
 import matplotlib
@@ -14,6 +15,7 @@ import seaborn
 import tqdm
 import step00
 
+mutect_data = pandas.DataFrame()
 mutation_set: collections.Counter = collections.Counter()
 heatmap_data = pandas.DataFrame()
 
@@ -58,6 +60,10 @@ def query_heatmap(gene: str, derivation: str) -> typing.Union[float, None]:
         return scipy.stats.boschloo_exact(confusion_matrix).pvalue
     else:
         raise Exception("Something went wrong!!")
+
+
+def query_mutation(gene: str, sample: str) -> str:
+    return ",".join(sorted(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample) & (mutect_data["Hugo_Symbol"] == gene), "Variant_Classification"]))
 
 
 if __name__ == "__main__":
@@ -134,13 +140,19 @@ if __name__ == "__main__":
 
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(args.input))), index=gene_list, columns=control_samples + case_samples, dtype=int)
     with multiprocessing.Pool(args.cpus) as pool:
-        for gene in tqdm.tqdm(list(heatmap_data.index)):
-            heatmap_data.loc[gene, :] = pool.starmap(query_mutect, [(gene, sample) for sample in (control_samples + case_samples)])
+        for sample in tqdm.tqdm(list(heatmap_data.columns)):
+            heatmap_data.loc[:, sample] = pool.starmap(query_mutect, [(gene, sample) for gene in gene_list])
     print(heatmap_data)
+
+    mutation_data = pandas.DataFrame(index=gene_list, columns=control_samples + case_samples, dtype=str)
+    with multiprocessing.Pool(args.cpus) as pool:
+        for sample in tqdm.tqdm(list(mutation_data.columns)):
+            mutation_data.loc[:, sample] = pool.starmap(query_mutation, [(gene, sample) for gene in gene_list])
+    print(mutation_data)
 
     exact_test_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), 4)), index=gene_list, columns=["Fisher", "Chi2", "Barnard", "Boschloo"], dtype=float)
     with multiprocessing.Pool(args.cpus) as pool:
-        for derivation in tqdm.tqdm(exact_test_data.columns):
+        for derivation in tqdm.tqdm(list(exact_test_data.columns)):
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
     print(exact_test_data)
 
@@ -163,8 +175,8 @@ if __name__ == "__main__":
     fig.savefig(args.figure)
     matplotlib.pyplot.close(fig)
 
-    heatmap_data = heatmap_data.loc[:, sorted(heatmap_data.columns, key=step00.sorting)]
-    heatmap_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if (x in control_samples) else "{0}-{1}".format(x, args.compare[2]), list(heatmap_data.columns)))
-    output_data = pandas.concat([exact_test_data, heatmap_data], axis="columns", join="outer", verify_integrity=True)
-    output_data.to_csv(args.table, sep="\t", float_format="%.2e")
+    mutation_data = mutation_data.loc[:, sorted(mutation_data.columns, key=step00.sorting)]
+    mutation_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if (x in control_samples) else "{0}-{1}".format(x, args.compare[2]), list(mutation_data.columns)))
+    output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
+    output_data.to_csv(args.table, sep="\t")
     print(output_data)
