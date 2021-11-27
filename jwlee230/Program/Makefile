@@ -1869,17 +1869,17 @@ step37: Output/PureCN/Reference/hg38.txt $(addprefix Output/PureCN/BWA/,$(addsuf
 Output/Gene_Clinical_Venn:
 	mkdir -p $@
 
-Output/Gene_Clinical_Venn/BWA-SQC.pdf: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+Output/Gene_Clinical_Venn/BWA-SQC.pdf Output/Gene_Clinical_Venn/BWA-SQC.tsv: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).pdf $(basename $@).tsv) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical_Venn/BWA-ADC.pdf: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+Output/Gene_Clinical_Venn/BWA-ADC.pdf Output/Gene_Clinical_Venn/BWA-ADC.tsv: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).pdf $(basename $@).tsv) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical_Venn/Bowtie2-SQC.pdf: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+Output/Gene_Clinical_Venn/Bowtie2-SQC.pdf Output/Gene_Clinical_Venn/Bowtie2-SQC.tsv: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).pdf $(basename $@).tsv) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Gene_Clinical_Venn/Bowtie2-ADC.pdf: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+Output/Gene_Clinical_Venn/Bowtie2-ADC.pdf Output/Gene_Clinical_Venn/Bowtie2-ADC.tsv: Python/plot_gene_clinical_venn.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Gene_Clinical_Venn
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).pdf $(basename $@).tsv) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step38: Output/Gene_Clinical_Venn/BWA-SQC.pdf Output/Gene_Clinical_Venn/BWA-ADC.pdf Output/Gene_Clinical_Venn/Bowtie2-SQC.pdf Output/Gene_Clinical_Venn/Bowtie2-ADC.pdf
 .PHONY: step38

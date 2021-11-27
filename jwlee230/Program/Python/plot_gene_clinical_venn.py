@@ -2,21 +2,24 @@
 plot_gene_clinical_venn.py: Plot venn diagram the importance of gene upon clinical data
 """
 import argparse
-import collections
 import multiprocessing
-import typing
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import pandas
 import seaborn
 import tqdm
 import venn
 import step00
 
+mutect_data = pandas.DataFrame()
+
 
 def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
+
+
+def query(gene: str, stage: str) -> int:
+    return mutect_data.loc[(mutect_data["Cancer_subtype"] == stage) & (mutect_data["Hugo_Symbol"] == gene), :].shape[0]
 
 
 if __name__ == "__main__":
@@ -24,7 +27,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("figure", help="Output PDF file", type=str)
+    parser.add_argument("table", help="Output TSV files", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -41,8 +45,10 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .MAF!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
+    elif not args.figure.endswith(".pdf"):
         raise ValueError("Figure must end with .PDF!!")
+    elif not args.table.endswith(".tsv"):
+        raise ValueError("Table must end with .TSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
@@ -79,7 +85,18 @@ if __name__ == "__main__":
         input_data[stage] = set(mutect_data.loc[(mutect_data["Cancer_subtype"] == stage), "Hugo_Symbol"])
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    venn.venn(input_data, ax=ax, fmt="{size:d}", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+    venn.venn(input_data, ax=ax, fmt="{size:d} ({percentage:.1f}%)", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
 
-    fig.savefig(args.output)
+    fig.savefig(args.figure)
     matplotlib.pyplot.close(fig)
+
+    gene_set = set()
+    for stage in tqdm.tqdm(selected_stage_list):
+        gene_set |= input_data[stage]
+
+    table_data = pandas.DataFrame(index=sorted(gene_set), columns=selected_stage_list, dtype=int)
+    with multiprocessing.Pool(args.cpus) as pool:
+        for stage in tqdm.tqdm(selected_stage_list):
+            table_data.loc[:, stage] = pool.starmap(query, [(gene, stage) for gene in sorted(gene_set)])
+    print(table_data)
+    table_data.to_csv(args.table, sep="\t")
