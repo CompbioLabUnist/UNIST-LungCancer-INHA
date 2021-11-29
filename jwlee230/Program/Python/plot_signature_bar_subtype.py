@@ -54,14 +54,6 @@ if __name__ == "__main__":
     print(input_data)
     print(signatures)
 
-    if args.absolute:
-        input_data.sort_values(by="Total", ascending=False, inplace=True)
-    elif args.relative:
-        for index in list(input_data.index):
-            input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
-        input_data.sort_values(by=signatures, ascending=False, inplace=True)
-    else:
-        raise Exception("Something went wrong!!")
     input_data = input_data.loc[:, signatures + ["Total"]]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
@@ -75,12 +67,15 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(nrows=len(order), figsize=(32, 9 * len(order)), sharey=True)
 
     for i, subtype in tqdm.tqdm(enumerate(order)):
-        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), :]
+        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), signatures + ["Total"]].copy()
 
         if args.absolute:
-            drawing_data.sort_values(by="Total", ascending=False, inplace=True)
+            drawing_data.sort_values(by=sorted(signatures, key=lambda x: sum(drawing_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
+            drawing_data.sort_values(by="Total", kind="stable", ascending=False, inplace=True)
         elif args.relative:
-            drawing_data.sort_values(by=signatures, ascending=False, inplace=True)
+            for index in list(drawing_data.index):
+                drawing_data.loc[index, :] = drawing_data.loc[index, :] / drawing_data.loc[index, "Total"]
+            drawing_data.sort_values(by=sorted(signatures, key=lambda x: sum(drawing_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
         else:
             raise Exception("Something went wrong!!")
 

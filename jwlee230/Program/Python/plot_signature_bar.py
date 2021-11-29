@@ -55,12 +55,13 @@ if __name__ == "__main__":
     print(signatures)
 
     if args.absolute:
-        input_data.sort_values(by="Total", ascending=False, inplace=True)
+        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
+        input_data.sort_values(by="Total", kind="stable", ascending=False, inplace=True)
         input_data = input_data.loc[:, signatures]
     elif args.relative:
         for index in list(input_data.index):
             input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
-        input_data.sort_values(by=signatures, ascending=False, inplace=True)
+        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
         input_data = input_data.loc[:, signatures]
     else:
         raise Exception("Something went wrong!!")
