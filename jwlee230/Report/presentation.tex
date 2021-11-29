@@ -227,7 +227,7 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item Exome (n=289) + Transcriptome (n=166)
+            \item Exome (WES) (n=289) + Transcriptome (WTS) (n=166)
             \item Normal + \{Primary, CIS + AIS, AAH, Dysplasia, MIA\}
             \begin{itemize}
                 \item Carcinoma in situ
@@ -725,12 +725,14 @@
 
         \begin{table}
             \caption{Number of WTS LUSC samples}
-            \input{tables/WTS_samples/WTS_SQC_smoking.tex}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WTS_samples/WTS_SQC_smoking.tex}}
         \end{table}
 
         \begin{table}
             \caption{Number of WTS LUAD samples}
-            \input{tables/WTS_samples/WTS_ADC_smoking.tex}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WTS_samples/WTS_ADC_smoking.tex}}
         \end{table}
     \end{frame}
 
@@ -1877,31 +1879,56 @@
         \frametitle{SBS Signatures}
 
         \begin{block}{SBS1}
-            content...
+            \begin{itemize}
+                \item An endogenous mutational process \cite{signature2}
+                \item generates G$>$T mismatches in double-stranded DNA
+                \item Failure $\Downarrow$ to detect \& remove these mismatches
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS2}
-            content...
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
+                \begin{enumerate}
+                    \item APOBEC3A is probably responsible in human cancer
+                    \item APOBEC3B may also contribute
+                \end{enumerate}
+                \item may be generated directly by DNA replication
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS4}
-            content...
+            \begin{itemize}
+                \item Tobacco smoking \cite{signature3}
+                \item Exposed to tabacco carcinogens \textit{e.g.} benzopyrene
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS5}
-            content...
+            \begin{itemize}
+                \item Unknown \cite{signature3}
+                \item SBS5 $\Uparrow$ in bladder cancer
+                \item SBS5 $\Uparrow$ in many cancer types $\because$ Tobacco smoking
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS10b}
-            content...
+            \begin{itemize}
+                \item Polymerase $\epsilon$ exonuclease domain mutations \cite{signature1}
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS13}
-            content...
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature4}
+                \item SBS13 is usually found with SBS2
+            \end{itemize}
         \end{block}
 
         \begin{block}{SBS87}
-            content...
+            \begin{itemize}
+                \item Thiopurine chemotherapy treatment \cite{signature5}
+            \end{itemize}
         \end{block}
     \end{frame}
 
@@ -2121,11 +2148,16 @@
         \frametitle{DBS Signatures}
 
         \begin{block}{DBS2}
-            content...
+            \begin{itemize}
+                \item Tobacco smoking \cite{signature6}
+                \item Other endogenous/exogenous mutagens \textit{e.g.} acetaldehyde
+            \end{itemize}
         \end{block}
 
         \begin{block}{DBS7}
-            content...
+            \begin{itemize}
+                \item Defective $\Downarrow$ DNA mismatch repair \cite{signature1}
+            \end{itemize}
         \end{block}
 
         \begin{block}{DBS78A}
