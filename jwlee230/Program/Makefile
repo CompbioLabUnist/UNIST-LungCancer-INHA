@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 2
 MEMS = 20
-PARALLEL = 15
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1857,13 +1857,34 @@ Output/PureCN/Reference/hg38.txt Output/PureCN/Reference/hg38.bed: $(REFERENCE_F
 	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/IntervalFile.R --fasta=$(addprefix /,$(filter %.fasta,$^)) --infile=$(addprefix /,$(filter %.bed,$^)) --offtarget --mappability=$(addprefix /,$(filter %.bw,$^)) --genome="hg38" --outfile=$(addprefix /,$(@D)/hg38.txt) --export=$(addprefix /,$(@D)/hg38.bed) --force 1> $@.stdout 2> $@.stderr
 
 Output/PureCN/BWA/%.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz: Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/PureCN/Reference/hg38.txt | Output/PureCN/BWA build.log
-	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --out-dir=$(addprefix /,$(@D)) --force --skip-gc-norm 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --out-dir=$(addprefix /,$(@D)) --force --skip-gc-norm --parallel --cores=$(CPUS) --seed="12345" 1> $@.stdout 2> $@.stderr
 
 Output/PureCN/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz: Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/PureCN/Reference/hg38.txt | Output/PureCN/Bowtie2 build.log
 	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/Coverage.R --bam=$(addprefix /,$(filter %.bam,$^)) --intervals=$(addprefix /,$(filter %.txt,$^)) --out-dir=$(addprefix /,$(@D)) --force --skip-gc-norm 1> $@.stdout 2> $@.stderr
 
-step37: Output/PureCN/Reference/hg38.txt $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID)))
-.PHONY: step37
+Output/PureCN/BWA/Normal_coverages.list: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_NORMAL_ID))) | build.log
+	$(DOCKER) ls -1 $(addprefix /,$(sort $^)) > $@ 
+
+Output/PureCN/Bowtie2/Normal_coverages.list: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_NORMAL_ID))) | build.log
+	$(DOCKER) ls -1 $(addprefix /,$(sort $^)) > $@
+
+Output/PureCN/BWA/interval_weights_hg38.png Output/PureCN/BWA/normalDB_hg38.rds Output/PureCN/BWA/low_coverage_targets_hg38.bed: Output/PureCN/BWA/Normal_coverages.list | build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/NormalDB.R --coverage-files=$(addprefix /,$(filter %.list,$^)) --genome="hg38" --out-dir=$(addprefix /,$(@D)) --force 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2/interval_weights_hg38.png Output/PureCN/Bowtie2/normalDB_hg38.rds Output/PureCN/Bowtie2/low_coverage_targets_hg38.bed: Output/PureCN/Bowtie2/Normal_coverages.list | build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/NormalDB.R --coverage-files=$(addprefix /,$(filter %.list,$^)) --genome="hg38" --out-dir=$(addprefix /,$(@D)) --force 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA/%_segmentation.pdf Output/PureCN/BWA/%.csv Output/PureCN/BWA/%.pdf Output/PureCN/BWA/%_local_optima.pdf Output/PureCN/BWA/%_dnacopy.seg Output/PureCN/BWA/%.log: Output/PureCN/Reference/hg38.txt Output/PureCN/BWA/%.BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz Output/PureCN/BWA/normalDB_hg38.rds | build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/PureCN.R --sampleid=$* --tumor=$(addprefix /,$(filter %.txt.gz,$^)) --normaldb=$(addprefix /,$(filter %.rds,$^)) --genome="hg38" --parallel --cores=$(CPUS) --out=$(addprefix /,$(@D)) --force --post-optimize --seed "12345" --intervals=$(addprefix /,$(filter %.txt,$^)) --model="betabin" --out-vcf 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2/%_segmentation.pdf Output/PureCN/Bowtie2/%.csv Output/PureCN/Bowtie2/%.pdf Output/PureCN/Bowtie2/%_local_optima.pdf Output/PureCN/Bowtie2/%_dnacopy.seg Output/PureCN/Bowtie2/%.log: Output/PureCN/Reference/hg38.txt Output/PureCN/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz Output/PureCN/Bowtie2/normalDB_hg38.rds | build.log
+	$(DOCKER) $(R) $(PURECN_EXTDATA_DIR)/PureCN.R --sampleid=$* --tumor=$(addprefix /,$(filter %.txt.gz,$^)) --normaldb=$(addprefix /,$(filter %.rds,$^)) --genome="hg38" --parallel --cores=$(CPUS) --out=$(addprefix /,$(@D)) --force --post-optimize --seed "12345" --intervals=$(addprefix /,$(filter %.txt,$^)) --model="betabin" --out-vcf 1> $@.stdout 2> $@.stderr
+
+step37-Reference: Output/PureCN/Reference/hg38.txt
+step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID))))
+step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID))))
+step37: step37-Reference step37-BWA step37-Bowtie2
+.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37
 
 # Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
 Output/Gene_Clinical_Venn:
