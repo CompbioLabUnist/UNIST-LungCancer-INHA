@@ -848,14 +848,15 @@
 
         \begin{block}{AKR1C1 \& AKR1C2}
             \begin{enumerate}
-                \item They are down-regulated in CIS, but up-regulated in Primary.
-                \item They regulate steroids \cite{AKR1C1-1} and hormones \cite{AKR1C1-2} .
-                \item They promote the metastasis of NSCLC \cite{AKR1C1-3}.
+                \item Down-regulated in CIS, but up-regulated in Primary.
+                \item Regulate steroids \cite{AKR1C1-1} and hormones \cite{AKR1C1-2} .
+                \item Promote the metastasis of NSCLC \cite{AKR1C1-3}.
             \end{enumerate}
         \end{block}
 
-        \begin{block}{Down-regulation of SFTPC}
+        \begin{block}{SFTPC}
             \begin{enumerate}
+                \item Down-regulate in Primary than Normal.
                 \item A pulmonary surfactant associated protein \cite{SFTPC4}.
                 \item SFTPC $\Downarrow$ $\Rightarrow$ Poor survival in LUAD \cite{SFTPC1}.
                 \item Associated with lung disease in adult \cite{SFTPC2} and baby \cite{SFTPC3}.
@@ -987,7 +988,7 @@
                 \item Down-regulated in AIS, but up-regulated in Primary.
                 \item K$^+$ voltage-dependent channels $ \Rightarrow $ Various physiological functions \cite{KCNQ3-1, KCNQ3-2, KCNQ3-3}.
                 \item Up-regulated microRNAs in hypoxia-induced LUAD \cite{KCNQ3-4}.
-                \item KCNQ gene family is associated with lung disease \cite{KCNQ3-5}.
+                \item KCNQ gene family is associated with lung diseases \cite{KCNQ3-5}.
             \end{enumerate}
         \end{block}
 
@@ -1199,12 +1200,15 @@
         \begin{block}{RECQL4}
             \begin{enumerate}
                 \item Highly up-regulated in Non-recur patients.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{ASPA}
-            \begin{enumerate}
-                \item Highly down-regulated in Non-recur patients.
+                \item DNA-dependent ATPase \cite{RECQL4-1}
+                \item RECQL4 modulate chromosome segregation \cite{RECQL4-1}
+                \item RECQL5 promotes metastasis \& resistance in NSCLC \cite{RECQL4-3}
+                \item RECQL4 $\Uparrow$ $\Rightarrow$ Poor prognosis in breast cancer \cite{RECQL4-2}
+                \begin{enumerate}
+                    \item Overall survival
+                    \item Distant metastasis-free survival
+                    \item Relapse-free survival
+                \end{enumerate}
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -1310,18 +1314,25 @@
         \begin{block}{AKR1C1}
             \begin{enumerate}
                 \item Down-regulated in CIS, but up-regulated in Primary.
+                \item Regulate steroids \cite{AKR1C1-1} and hormones \cite{AKR1C1-2}.
+                \item Promote the metastasis of NSCLC \cite{AKR1C1-3}
             \end{enumerate}
         \end{block}
 
         \begin{block}{ADAM23}
             \begin{enumerate}
                 \item Down-regulated in CIS, but up-regulated in Primary.
+                \item Play a role in cell-cell and cell-matrix interactions \cite{ADAM23-1}
+                \item Suppresses metastasis in lung carcinoma cells \cite{ADAM23-2}
+                \item ADAM protein was lower in NSCLC than in normal tissue \& benign pulmonary lesions \cite{ADAM23-3}
             \end{enumerate}
         \end{block}
 
         \begin{block}{FAM107A}
             \begin{enumerate}
                 \item Up-regulated in CIS, but down-regulated in Primary.
+                \item May play a role in tumor development \cite{FAM107A1}
+                \item Negatively regulates focal adhesion assembly \cite{FAM107A2}
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -1427,18 +1438,24 @@
         \begin{block}{AKR1C1 \& AKR1C2}
             \begin{enumerate}
                 \item Down-regulated in CIS, but up-regulated in Primary.
+                \item Regulate steroids \cite{AKR1C1-1} and hormones \cite{AKR1C1-2}
+                \item Promote the metastasis of NSCLC \cite{AKR1C1-3}
             \end{enumerate}
         \end{block}
 
         \begin{block}{CYP4F11}
             \begin{enumerate}
                 \item Down-regulated in CIS, but up-regulated in Primary.
+                \item Involved in the metabolism, including fatty acid and their derivatives \cite{CYP4F11-1, CYP4F11-2, CYP4F11-3}
+                \item CYP4F11 showed a strong association with survival in colorectal cancer \cite{CYP4F11-4}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{LRRC36}
             \begin{enumerate}
                 \item Up-regulated in CIS, but down-regulated in Primary.
+                \item Leucine-rich repeat-containing protein 36
+                \item LRRC36 is positively correlated with survival in LUAD \cite{LRRC36-1}.
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -1553,12 +1570,19 @@
         \begin{block}{KCNQ3}
             \begin{enumerate}
                 \item Down-regulated in AIS, but up-regulated in Primary.
+                \item K$^+$ voltage-dependent channels $\Rightarrow$ Various physiological functions \cite{KCNQ3-1, KCNQ3-2, KCNQ3-3}
+                \item Up-regulated microRNAs in hypoxia-induced LUAD \cite{KCNQ3-4}
+                \item KCNQ gene family is associated with lung diseases \cite{KCNQ3-5}
             \end{enumerate}
         \end{block}
 
         \begin{block}{BLACAT1}
             \begin{enumerate}
                 \item Down-regulated in AIS, but up-regulated in Primary.
+                \item Bladder cancer-associated transcript 1
+                \item Chemo-resistance of NSCLC \cite{BLACAT1-1}
+                \item Predicts poor prognosis in SCLC \cite{BLACAT1-2}
+                \item Up-regulated in many human cancers \cite{BLACAT1-3}
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -2409,9 +2433,24 @@
     \subsection{Clinical Data with Point Mutation}
     \begin{frame}
         \frametitle{Mutect2?}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Workflow/somatic_short_variants.png}
+            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+        \end{figure}
     \end{frame}
 
     \subsubsection{For Smoking}
+    \begin{frame}
+        \frametitle{LUSC with Smoking}
+
+        \begin{table}
+            \caption{LUSC WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
+        \end{table}
+    \end{frame}
+
     \begin{frame}[allowframebreaks]
         \frametitle{Clinical Data about LUSC for Smoking}
 
@@ -2430,6 +2469,16 @@
             \end{array}$
             \caption{Clinical Data about LUSC for Smoking with Precancer/Primary}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUAD with Smoking}
+
+        \begin{table}
+            \caption{LUAD WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_ADC_smoking.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
