@@ -1,0 +1,65 @@
+	Fisher	Chi2	Barnard	Boschloo	39A1-NO	39A2-NO	51A1-NO	54A1-NO	65A1-NO	cn107A1-NO	cn95A-NO	cn101C-NO	cn105C-NO	cn106C-NO	cn107C-NO	cn108C-NO	cn110C-NO	cn97C-NO	52M1-NO	39P1-NO	51P1-NO	52P1-NO	54P1-NO	65P1-NO	cn101P-NO	cn105P-NO	cn106P-NO	cn107P-NO	cn108P-NO	cn110P-NO	cn95P-NO	cn97P-NO	55A1-YES	55A2-YES	61A1-YES	61A2-YES	62A1-YES	62A2-YES	62A3-YES	62A4-YES	cn112C-YES	cn93C-YES	55P1-YES	61P1-YES	62P1-YES	cn112P-YES	cn93P-YES
+ABCA8	2.5058896228050784	2.2257824766163337	2.3886504480391837	2.6414757700828004																													Missense	Missense,Missense			Missense					Missense,Splice site			Missense		
+NEB	2.1965170326912036	1.9131148608212463	2.3995240844155745	2.4363129123244693		Missense						Missense	Missense	Missense,Nonsense	Missense				Missense		Missense,Missense	Missense,Missense	Missense		Nonsense	Missense	Missense			Missense		Missense	Nonsense														
+RELN	2.0868347310821322	1.6268519402234245	2.078039075195163	2.291021999209726	Missense	Nonsense	Missense	Missense							Missense				Missense	Missense			Missense			Missense			Missense																		
+SDK2	2.0868347310821322	1.6268519402234245	2.078039075195163	2.291021999209726	Missense	Missense		Frameshift indel				Missense	Missense				Missense		Missense	Missense,Missense		Missense						Missense																			
+CFAP91	1.9562177009368031	1.689829008295392	1.419250396638979	2.080708578691693																														Missense	Missense	Nonsense								Missense			
+DGKH	1.9562177009368031	1.689829008295392	1.419250396638979	2.080708578691693																																	Missense	Missense							Missense		Missense
+ABCC8	1.8436424254937995	1.5866901787579129	1.9230131635869958	1.8794096713966721	Missense															Missense														Missense		Missense,Nonsense	Missense	Missense		Missense			Missense				
+MAN2B2	1.8352532171129954	1.581059457124286	1.7203198334627836	1.9105633458370261																	Missense															Missense,Missense	Missense				Splice site	Missense			Missense		
+MAP3K6	1.8352532171129954	1.581059457124286	1.7203198334627836	1.9105633458370261																		Missense											Missense			Frameshift indel		Missense	Missense					Missense			
+SCN10A	1.8352532171129954	1.581059457124286	1.7203198334627836	1.9105633458370261																							Missense								Nonsense		Missense	Missense				Missense				Missense	
+THSD4	1.8352532171129954	1.581059457124286	1.7203198334627836	1.9105633458370261																											Missense		Missense	Missense				Missense		Missense							Missense
+CELSR2	1.7723761638739006	1.4215181851563925	1.7838634596850405	2.0136726273715717	Missense		Missense	Missense			Missense				Missense		Missense		Missense							Nonsense		Missense																			
+DOCK2	1.7723761638739006	1.4215181851563925	1.7838634596850405	2.0136726273715717			Missense									Missense		Missense	Missense	Missense	Missense					Missense	In frame indel	Missense																			
+LRP2	1.4852042575876678	1.2568722772950496	1.5852973351188149	1.6442723435145015	Missense,Missense	Missense					Missense	Missense	Missense		Missense				Missense,Missense	Missense			Missense				Splice site			Missense										Nonsense							
+ALMS1	1.4465099060198119	1.2245209804099786	1.7061876466820194	1.7666888129387823		Missense		Nonsense					Missense		Missense	Missense				Missense		Missense									Missense																
+CCDC168	1.4465099060198119	1.2245209804099786	1.7061876466820194	1.7666888129387823									Missense	Nonsense	Nonsense		Missense					Missense	Missense			Missense	Missense																				
+ADGRA2	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense										Missense			Missense	
+ARHGEF40	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense		Nonsense						Missense				
+ATP12A	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																																Missense		Missense								Missense	
+CA9	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																														Missense									Missense	Missense			
+CCDC136	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Splice site			Missense		Missense,Splice site									
+CLIC6	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense	Missense			Missense										
+CNOT4	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Nonsense		Missense										Missense,Missense
+CRYL1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Nonsense			Missense						Missense					
+CYP3A5	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense									Missense			Missense
+DEPDC5	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense	Nonsense								Missense					
+DUS2	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																														Missense		Missense		Missense									
+ERC2	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																																		Missense				Missense		Missense			
+GJA9	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense								Missense	Missense			
+GPR139	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense										Missense,Missense			Missense	
+IL17B	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense					Missense		Missense							
+KIF3A	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense		Missense									Missense			
+KRR1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense	Missense											Missense
+LNX1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense,Missense							Missense		Missense			
+MGAT5B	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																														Missense		Missense,Missense		Missense									
+NPRL3	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense	Missense						Missense					
+PINX1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																																						Missense	Missense				Missense
+POLR1B	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Nonsense		Missense	Missense									
+SGCA	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																														Missense	Missense									Missense			
+SLC15A1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense		Missense									Missense			
+TGM5	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																															Missense							Missense	Frameshift indel,Missense				
+TIA1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																																				Missense		Missense			Missense		
+TMEM117	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																																Missense	Missense					Missense					
+VWA2	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense	Missense									Missense				
+WWC1	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense		Missense							Missense					
+ZBTB46	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																														Missense		Missense									Nonsense		
+ZSCAN20	1.433338955656466	1.1680358951198277	1.5560079121846142	1.5030450800595787																													Missense				Missense	Missense,Missense									
+CCDC88A	1.4003915514018692	1.128124324855279	1.1503776652645517	1.4326394689153232	Missense				Missense																								Missense	Missense	Missense			Missense									Missense
+ZNF462	1.4003915514018692	1.128124324855279	1.1503776652645517	1.4326394689153232				Missense																				Missense						Missense		Missense			Nonsense				Missense		Missense		
+CADPS	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506																		Missense											Missense						Splice site			Missense,Missense		Missense			
+CENPE	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506	Missense																																Missense	Missense		Missense					Missense		
+CHST11	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506	Missense																												Missense	Missense				Missense				Missense					
+IQGAP3	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506																						Frameshift indel									Missense	Nonsense								Missense			Missense
+NCOA1	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506	Missense																												Missense		Missense		Missense										Missense
+RNF123	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506						Missense																							Missense			Missense		Frameshift indel			Missense						
+SOBP	1.3683053606701345	1.0986898005737182	1.3067407360264935	1.4146428780556506																		Missense											Missense,Missense	Missense						Missense					Missense		
+ADAMTS20	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense			Missense		Missense,Missense									Missense,Missense									Missense	Splice site			Missense															
+KRAS	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858										Missense	Missense						Missense		Missense				Missense	Missense		Missense																	
+MGAT4B	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense		Missense		Missense							Missense			Missense		Missense					Missense																					
+MROH2B	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense	Missense,Missense			Splice site																Missense	Missense	Missense				Missense																
+PLXNA4	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense								Missense,Missense					Missense				Missense	Frameshift indel,Missense			Missense,Nonsense		Missense																			
+USP9X	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense	Missense		Missense			Missense									Missense										Missense		Missense,Missense															
+VAV1	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense			Missense					Missense		Missense	Missense							Frameshift indel			Missense																					
+VCAN	1.116232119625134	1.0344862855106916	1.1503776652643436	1.5331178561452858	Missense		Missense	Missense									Missense						Missense				Missense	Missense,Nonsense																			
