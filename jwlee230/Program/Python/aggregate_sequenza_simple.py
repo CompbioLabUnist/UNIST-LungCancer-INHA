@@ -92,8 +92,8 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-", legend="Primary")
-        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--", legend="Precancer")
+        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-", label="Primary")
+        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--", label="Precancer")
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
         axs[0][i].set_xticks([])
@@ -106,14 +106,14 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[1][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-", legend="Primary")
-        axs[1][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--", legend="Precancer")
+        axs[1][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-", label="Primary")
+        axs[1][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--", label="Precancer")
         axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].invert_yaxis()
         axs[1][i].set_xticks([])
         axs[1][i].set_xlabel(chromosome[3:])
         if i == 0:
-            axs[2][i].legend(loc="lower center")
+            axs[1][i].legend(loc="lower center")
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
