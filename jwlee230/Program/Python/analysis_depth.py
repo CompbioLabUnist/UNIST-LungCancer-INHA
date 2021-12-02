@@ -46,7 +46,7 @@ if __name__ == "__main__":
         depth_data = pandas.concat(objs=pool.map(get_depth, args.input), axis="index", ignore_index=True, copy=False)
     print(depth_data)
 
-    patient_colors = dict(zip(list(map(step00.get_patient, args.input)), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
+    patient_colors = dict(zip(sorted(set(list(map(step00.get_patient, args.input)))), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
     sample_colors = dict(list(map(lambda x: (x, matplotlib.colors.XKCD_COLORS[patient_colors[step00.get_patient(x)]]), list(map(step00.get_id, args.input)))))
     print(patient_colors)
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     seaborn.barplot(data=depth_data, x="ID", y="Depth", palette=sample_colors, ax=ax)
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(list(map(step00.get_patient, args.input)))))
+    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(sorted(set(list(map(step00.get_patient, args.input)))))))
     matplotlib.pyplot.ylabel("Depth")
     matplotlib.pyplot.title("Depth of coverage")
     matplotlib.pyplot.grid(True)
