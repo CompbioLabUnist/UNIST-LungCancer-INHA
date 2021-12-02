@@ -16,7 +16,7 @@ def get_depth(file_name: str) -> float:
     """
     get_depth: get depth of coverage from file
     """
-    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], skiprows=1, memory_map=True, verbose=True)
+    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], dtype={"CHROM": str, "POS": int, "Depth": int}, skiprows=1, memory_map=True, verbose=True)
     data["ID"] = step00.get_id(file_name)
     data["Patient"] = step00.get_patient(file_name)
     data["Subtype"] = step00.get_long_sample_type(file_name)
