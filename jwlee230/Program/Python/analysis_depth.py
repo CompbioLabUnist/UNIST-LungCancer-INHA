@@ -16,8 +16,7 @@ def get_depth(file_name: str) -> float:
     """
     get_depth: get depth of coverage from file
     """
-    print(file_name)
-    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], skiprows=1)
+    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], skiprows=1, memory_map=True, verbose=True)
     data["ID"] = step00.get_id(file_name)
     data["Patient"] = step00.get_patient(file_name)
     data["Subtype"] = step00.get_long_sample_type(file_name)
@@ -44,11 +43,12 @@ if __name__ == "__main__":
     IDs = list(map(step00.get_id, args.input))
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        depth_data = pandas.concat(objs=pool.map(get_depth, args.input), axis="index", ignore_index=True)
+        depth_data = pandas.concat(objs=pool.map(get_depth, args.input), axis="index", ignore_index=True, copy=False)
     print(depth_data)
 
-    patient_colors = dict(zip(sorted(set(depth_data["Patient"])), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
-    sample_colors = dict(list(map(lambda x: (x, matplotlib.colors.XKCD_COLORS[patient_colors[step00.get_patient(x)]]), sorted(set(depth_data["ID"])))))
+    patient_colors = dict(zip(list(map(step00.get_patient, args.input)), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
+    sample_colors = dict(list(map(lambda x: (x, matplotlib.colors.XKCD_COLORS[patient_colors[step00.get_patient(x)]]), list(map(step00.get_id, args.input)))))
+    print(patient_colors)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     seaborn.barplot(data=depth_data, x="ID", y="Depth", palette=sample_colors, ax=ax)
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(set(depth_data["ID"])), len(set(depth_data["Patient"]))))
+    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(list(map(step00.get_patient, args.input)))))
     matplotlib.pyplot.ylabel("Depth")
     matplotlib.pyplot.title("Depth of coverage")
     matplotlib.pyplot.grid(True)
