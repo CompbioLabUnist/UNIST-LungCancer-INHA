@@ -2,12 +2,13 @@
 analysis_depth.py: analysis samtools depth
 """
 import argparse
+import itertools
 import multiprocessing
 import matplotlib
 import matplotlib.colors
 import matplotlib.pyplot
-import numpy
 import pandas
+import seaborn
 import step00
 
 
@@ -16,8 +17,11 @@ def get_depth(file_name: str) -> float:
     get_depth: get depth of coverage from file
     """
     print(file_name)
-    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], usecols=["Depth"], skiprows=1)
-    return numpy.mean(data["Depth"])
+    data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], skiprows=1)
+    data["ID"] = step00.get_id(file_name)
+    data["Patient"] = step00.get_patient(file_name)
+    data["Subtype"] = step00.get_long_sample_type(file_name)
+    return data
 
 
 if __name__ == "__main__":
@@ -36,31 +40,26 @@ if __name__ == "__main__":
     elif args.cpus < 0:
         raise ValueError("CPUS must be positive!!")
 
-    args.input.sort()
-    IDs = list(map(lambda x: x.split(".")[0], list(map(lambda x: x.split("/")[-1], args.input))))
+    args.input.sort(key=step00.sorting)
+    IDs = list(map(step00.get_id, args.input))
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        depths = pool.map(get_depth, args.input)
+        depth_data = pandas.concat(objs=pool.map(get_depth, args.input), axis="index", ignore_index=True)
+    print(depth_data)
+
+    patient_colors = dict(zip(sorted(set(depth_data["Patient"])), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
+    sample_colors = dict(list(map(lambda x: (x, matplotlib.colors.XKCD_COLORS[patient_colors[step00.get_patient(x)]]), sorted(set(depth_data["ID"])))))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
-    colors = list(matplotlib.colors.TABLEAU_COLORS.keys())
-    colors_length = len(colors)
-    used_color = 1
-    previous_patient = ""
-    for i, (ID, depth) in enumerate(zip(IDs, depths)):
-        patient = step00.get_patient(ID)
-        if previous_patient != patient:
-            previous_patient = patient
-            used_color += 1
-
-        matplotlib.pyplot.bar(i, depth, color=matplotlib.colors.TABLEAU_COLORS[colors[used_color % colors_length]])
+    seaborn.barplot(data=depth_data, x="ID", y="Depth", palette=sample_colors, ax=ax)
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} Patients".format(used_color))
+    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(set(depth_data["ID"])), len(set(depth_data["Patient"]))))
     matplotlib.pyplot.ylabel("Depth")
     matplotlib.pyplot.title("Depth of coverage")
     matplotlib.pyplot.grid(True)
