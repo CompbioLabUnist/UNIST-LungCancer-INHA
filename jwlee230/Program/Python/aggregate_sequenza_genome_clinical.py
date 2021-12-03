@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     case_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in case_patients, set(input_data["sample"]))), key=step00.sorting_by_type)
     case_primary_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", case_sample_list))
-    case_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", case_sample_list))
+    case_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", case_sample_list))
 
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
