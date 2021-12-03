@@ -111,10 +111,14 @@ ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 
 # QAPA
 ADD Tools/QAPA.zip /Tools/
-RUN cd /Tools && unzip QAPA.zip && cd qapa-master && conda install -c conda-forge mamba && mamba env create -f environment.yml
+RUN cd /Tools && unzip QAPA.zip && cd qapa-master && conda install -c bioconda -c conda-forge mamba && mamba env create -f environment.yml
 
 # SigProfiler
 RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; genInstall.install('GRCh38')"
+
+# Mobster
+RUN cd /Tools && git clone "https://github.com/jyhehir/mobster.git" && cd mobster
+RUN conda install -c bioconda -c conda-forge mobster
 
 VOLUME /Output
 VOLUME /Data
