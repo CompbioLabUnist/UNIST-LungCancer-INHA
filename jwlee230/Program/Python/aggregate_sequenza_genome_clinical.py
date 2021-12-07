@@ -161,5 +161,6 @@ if __name__ == "__main__":
             axs[5][i].set_ylabel("Primary")
             axs[5][i].legend(title=args.compare[0], loc="lower center")
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

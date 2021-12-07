@@ -115,5 +115,6 @@ if __name__ == "__main__":
         if i == 0:
             axs[1][i].legend(loc="lower center")
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

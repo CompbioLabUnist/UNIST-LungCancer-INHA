@@ -113,5 +113,6 @@ if __name__ == "__main__":
         axs[2][i].set_xticks([])
         axs[2][i].set_xlabel(chromosome[3:])
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
