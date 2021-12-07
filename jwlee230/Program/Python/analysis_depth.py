@@ -33,7 +33,7 @@ if __name__ == "__main__":
     if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .pdf!!")
+        raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 0:
         raise ValueError("CPUS must be positive!!")
 
@@ -59,8 +59,8 @@ if __name__ == "__main__":
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(sorted(set(list(map(step00.get_patient, args.input)))))))
     matplotlib.pyplot.ylabel("Depth")
-    matplotlib.pyplot.title("Depth of coverage")
     matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
