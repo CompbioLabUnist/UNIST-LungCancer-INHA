@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 2
-MEMS = 20
-PARALLEL = 20
+CPUS = 1
+MEMS = 200
+PARALLEL = 2
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -220,7 +220,7 @@ Output/FastQC/WTS/%_fastqc.zip: Data/WTS/%.fastq.gz | Output/FastQC/WTS build.lo
 	$(DOCKER) fastqc --outdir $(addprefix /,$(@D)) --format fastq --noextract $(sort $(addprefix /,$^)) --dir $(TMPFS) --threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/FastQC/FastQC_WTS.pdf: Python/aggregate_fastqc.py $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --threshold 5 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --threshold 2 1> $@.stdout 2> $@.stderr
 
 step02: $(addprefix Output/FastQC/WTS/,$(addsuffix _fastqc.zip,$(sort $(shell ls -1 Data/WTS/*.fastq.gz | cut --delimiter / --fields 3 | cut --delimiter . --fields 1)))) Output/FastQC/FastQC_WTS.pdf
 .PHONY: step02
@@ -1843,8 +1843,14 @@ Output/CollectMultipleMetrics/BWA/%.alignment_summary_metrics.txt Output/Collect
 Output/CollectMultipleMetrics/Bowtie2/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution.pdf Output/CollectMultipleMetrics/Bowtie2/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/Bowtie2
 	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
-step36-BWA: $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
-step36-Bowtie2: $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .alignment_summary_metrics.txt,$(WES_ID)))
+Output/CollectMultipleMetrics/BWA.pdf: Python/analysis_quality_distribution.py $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .quality_distribution_metrics.txt,$(WES_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CollectMultipleMetrics/Bowtie2.pdf: Python/analysis_quality_distribution.py $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .quality_distribution_metrics.txt,$(WES_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step36-BWA: $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .quality_distribution_metrics.txt,$(WES_ID))) Output/CollectMultipleMetrics/BWA.pdf
+step36-Bowtie2: $(addprefix Output/CollectMultipleMetrics/Bowtie2/,$(addsuffix .quality_distribution_metrics.txt,$(WES_ID))) Output/CollectMultipleMetrics/Bowtie2.pdf
 step36: step36-BWA step36-Bowtie2
 .PHONY: step36-BWA step36-Bowtie2 step36
 
