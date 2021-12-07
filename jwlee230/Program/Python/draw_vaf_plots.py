@@ -38,7 +38,7 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
 
     merged_data = pandas.concat(objs=[first_data, second_data], axis="columns", join="outer", sort=True, copy=False).fillna(value=0.0)
     merged_data["gene_census"] = list(map(lambda x: x[6] in gene_set, list(merged_data.index)))
-    merged_data["mutation"] = list(map(lambda x: x[7] if x[7] in step00.nonsynonymous_mutations else "SYN", list(merged_data.index)))
+    merged_data["mutation"] = list(map(lambda x: x[7] in step00.nonsynonymous_mutations, list(merged_data.index)))
 
     print("{0} vs {1}: {2}".format(first_name, second_name, merged_data.shape))
 
