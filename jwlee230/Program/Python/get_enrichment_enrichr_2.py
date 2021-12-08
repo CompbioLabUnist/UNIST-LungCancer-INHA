@@ -105,4 +105,8 @@ if __name__ == "__main__":
         pandas.DataFrame(columns=["Term name", "Overlapping genes...", "Adjusted p-value"], index=[0], data=[["None", "", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
     else:
         enrichment_data.loc[:, wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
-        enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]].to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        rows = enrichment_data.shape[0]
+        enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
+        if rows > 3:
+            enrichment_data.columns = ["Term name ({0})".format(rows), "Overlapping genes...", "Adjusted p-value"]
+        enrichment_data.to_latex(args.output + ".tex", index=False, float_format="%.2e")
