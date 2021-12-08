@@ -31,7 +31,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".txt"), args.input)):
-        raise ValueError("INPUT must end with .txt!!")
+        raise ValueError("INPUT must end with .TXT!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
@@ -54,6 +54,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="columns", copy=False)
+    print(input_data)
 
     input_data.columns = list(map(lambda x: x.split("/")[-2], args.input))
     input_data = input_data.T
