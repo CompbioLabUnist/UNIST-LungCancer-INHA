@@ -1972,12 +1972,38 @@ Output/PureCN/Bowtie2-sequenza-SQC.pdf: Python/aggregate_purecn.py $(addprefix O
 Output/PureCN/Bowtie2-sequenza-ADC.pdf: Python/aggregate_purecn.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/BWA-genome-SQC.pdf: Python/aggregate_PureCN_genome.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-genome-ADC.pdf: Python/aggregate_PureCN_genome.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-SQC.pdf: Python/aggregate_PureCN_genome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-ADC.pdf: Python/aggregate_PureCN_genome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-SQC.pdf: Python/aggregate_ureCN_simple.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-ADC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-SQC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-ADC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-default: Output/PureCN/BWA-sequenza-SQC.pdf Output/PureCN/BWA-sequenza-ADC.pdf Output/PureCN/Bowtie2-sequenza-SQC.pdf Output/PureCN/Bowtie2-sequenza-ADC.pdf
-step37: step37-Reference step37-BWA step37-Bowtie2
-.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37
+step37-genome: Output/PureCN/BWA-genome-SQC.pdf Output/PureCN/BWA-genome-ADC.pdf Output/PureCN/Bowtie2-genome-SQC.pdf Output/PureCN/Bowtie2-genome-ADC.pdf
+step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf
+step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple
+.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37
 
 # Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
 Output/Gene_Clinical_Venn:

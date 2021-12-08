@@ -1,0 +1,119 @@
+"""
+aggregate_PureCN_genome.py: Aggregate PureCN results as genome view
+"""
+import argparse
+import multiprocessing
+import matplotlib
+import matplotlib.pyplot
+import numpy
+import pandas
+import seaborn
+import tqdm
+import step00
+
+watching = "seg.mean"
+
+
+def get_data(file_name: str) -> pandas.DataFrame:
+    data = pandas.read_csv(file_name, sep="\t")
+    data["chrom"] = list(map(lambda x: "chr" + str(x), data["chrom"]))
+    data["ID"] = step00.get_id(file_name)
+    return data
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("size", help="SIZE file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
+    parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
+    args = parser.parse_args()
+
+    if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
+        raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output must end with .PDF!!")
+    elif args.cpus < 1:
+        raise ValueError("CPUs must be positive!!")
+    elif not (0 < args.threshold < 1):
+        raise ValueError("Threshold must be (0, 1)")
+
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    if args.SQC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+    elif args.ADC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
+    print(input_data)
+
+    chromosome_list = list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_list))
+    sample_list = sorted(set(input_data["ID"]), key=step00.sorting_by_type)
+    primary_cancer_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", sample_list))
+    precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", sample_list))
+    print(chromosome_list)
+    print(len(sample_list), sample_list)
+
+    size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
+    print(size_data)
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
+    fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list) + 16), gridspec_kw={"height_ratios": [8, len(sample_list), 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+
+    for i, chromosome in enumerate(chromosome_list):
+        chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
+
+        for _, row in tqdm.tqdm(input_data.loc[(input_data["chrom"] == chromosome)].iterrows()):
+            chromosome_data.loc[row["ID"], row["loc.start"] // step00.big:row["loc.end"] // step00.big] = numpy.power(2, row[watching])
+
+        primary_proportion = list()
+        precancer_proportion = list()
+        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+            primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list))
+            precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list))
+
+        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-")
+        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--")
+        axs[0][i].set_ylim(bottom=0, top=1)
+        axs[0][i].set_xlabel(chromosome[3:])
+
+        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
+        axs[1][i].set_xlabel(chromosome[3:])
+
+        primary_proportion = list()
+        precancer_proportion = list()
+        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+            primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list))
+            precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list))
+
+        axs[2][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-")
+        axs[2][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--")
+        axs[2][i].set_ylim(bottom=0, top=1)
+        axs[2][i].invert_yaxis()
+        axs[2][i].set_xticks([])
+        axs[2][i].set_xlabel(chromosome[3:])
+
+    matplotlib.pyplot.tight_layout()
+    fig.savefig(args.output)
+    matplotlib.pyplot.close(fig)
