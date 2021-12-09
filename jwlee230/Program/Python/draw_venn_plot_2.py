@@ -46,7 +46,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    venn.venn(input_data, ax=ax, fmt="{size:d}", fontsize=step00.matplotlib_parameters["font.size"])
+    venn.venn(input_data, ax=ax, fmt="{size:d}({percentage:.1f}%)", fontsize=step00.matplotlib_parameters["font.size"])
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

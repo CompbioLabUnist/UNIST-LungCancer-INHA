@@ -51,9 +51,9 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     if len(args.DEG) == 6:
-        venn.pseudovenn(input_data, ax=ax, fmt="{size:d}", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+        venn.pseudovenn(input_data, ax=ax, fmt="{size:d} ({percentage:.1f}%)", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
     elif 0 < len(args.DEG) < 6:
-        venn.venn(input_data, ax=ax, fmt="{size:d}", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+        venn.venn(input_data, ax=ax, fmt="{size:d} ({percentage:.1f}%)", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
     else:
         raise Exception("Something went wrong!!")
 
