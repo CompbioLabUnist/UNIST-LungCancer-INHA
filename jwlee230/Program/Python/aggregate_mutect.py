@@ -99,6 +99,7 @@ if __name__ == "__main__":
         driver_data = driver_data.loc[(driver_data["Gene"].isin(mutect_data["Hugo_Symbol"])) & ~(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
     else:
         raise Exception("Something went wrong!!")
+
     for column in step00.MutEnricher_pval_columns:
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
 
