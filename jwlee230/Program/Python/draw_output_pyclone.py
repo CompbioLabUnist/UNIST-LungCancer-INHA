@@ -4,10 +4,12 @@ convert_mutect2_pyclone.py: convert Mutect2 result to PyClone input format
 import argparse
 import typing
 from adjustText import adjust_text
+import gtfparse
 import matplotlib
 import matplotlib.pyplot
 import pandas
 import seaborn
+import tqdm
 import step00
 
 mutenricher_set = set()
@@ -16,11 +18,11 @@ census_set = set()
 
 def is_included(gene: str) -> str:
     if (gene in mutenricher_set) and (gene in census_set):
-        return "Census+Driver"
+        return "CGC+Driver"
     elif gene in mutenricher_set:
         return "Driver"
     elif gene in census_set:
-        return "Census"
+        return "CGC"
     else:
         return "None"
 
@@ -31,6 +33,7 @@ if __name__ == "__main__":
     parser.add_argument("loci", help="Pyclone loci TSV file", type=str)
     parser.add_argument("driver", help="MutEnricher driver gene TSV file (not necessarily TSV)", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
+    parser.add_argument("known", help="Known gene GTF.gz file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
@@ -44,6 +47,8 @@ if __name__ == "__main__":
         raise ValueError("Loci must end with .TSV!!")
     elif not args.census.endswith(".csv"):
         raise ValueError("Census must end with .CSV!!")
+    elif not args.known.endswith(".gtf.gz"):
+        raise ValueError("Known must end with .GTF.gz!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
     elif not (0 < args.p < 1):
@@ -60,20 +65,26 @@ if __name__ == "__main__":
     print(pyclone_data)
 
     census_data = pandas.read_csv(args.census)
+    census_set = set(census_data["Gene Symbol"])
     print(census_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
-    driver_data = driver_data.loc[(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
-    for column in step00.MutEnricher_pval_columns:
-        driver_data = driver_data.loc[(driver_data[column] < args.p)]
     driver_data["chromosome"] = list(map(lambda x: x.replace("-", ":").split(":")[0], driver_data["coordinates"]))
     driver_data["start"] = list(map(lambda x: int(x.replace("-", ":").split(":")[1]), driver_data["coordinates"]))
     driver_data["end"] = list(map(lambda x: int(x.replace("-", ":").split(":")[2]), driver_data["coordinates"]))
+    driver_data = driver_data.loc[(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
+
+    for column in step00.MutEnricher_pval_columns:
+        driver_data = driver_data.loc[(driver_data[column] < args.p)]
+
     print(driver_data)
 
+    gtf_data = gtfparse.read_gtf(args.known)
+    print(gtf_data)
+
     gene_names: typing.List[typing.List[str]] = list()
-    for index, row in pyclone_data.iterrows():
-        tmp_data = driver_data.loc[(driver_data["chromosome"] == row["chromosome"]) & (driver_data["start"] <= row["start"]) & (row["end"] <= driver_data["end"]), "Gene"]
+    for index, row in tqdm.tqdm(pyclone_data.iterrows()):
+        tmp_data = gtf_data.loc[(gtf_data["seqname"] == row["chromosome"]) & (gtf_data["start"] <= row["start"]) & (row["end"] <= gtf_data["end"]), "gene_id"]
 
         if tmp_data.empty:
             gene_names.append([])
@@ -82,11 +93,11 @@ if __name__ == "__main__":
 
     pyclone_data["gene"] = gene_names
     pyclone_data = pyclone_data.explode("gene", ignore_index=True)
-    pyclone_data.dropna(inplace=True)
+    # pyclone_data.dropna(inplace=True)
     print(pyclone_data)
 
     mutenricher_set = set(driver_data["Gene"])
-    print(driver_data)
+    print(sorted(mutenricher_set))
 
     pyclone_data["Database"] = list(map(is_included, pyclone_data["gene"]))
     pyclone_data.rename(columns={"cluster_id": "Cluster ID"}, inplace=True)
@@ -102,20 +113,20 @@ if __name__ == "__main__":
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Cancer Cell Fraction")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] == "Census+Driver":
+            if row["Database"] == "CGC+Driver":
                 texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     elif args.VAF:
         seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
         matplotlib.pyplot.ylabel("Variant Allele Frequency")
         for index, row in pyclone_data.iterrows():
-            if row["Database"] == "Census+Driver":
+            if row["Database"] == "CGC+Driver":
                 texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
     else:
         raise Exception("Something went wrong!!")
 
     matplotlib.pyplot.xlabel("Samples")
     matplotlib.pyplot.ylim(-0.1, 1.1)
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k"}, ax=ax, lim=10 ** 6)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k"}, ax=ax, lim=step00.big)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
