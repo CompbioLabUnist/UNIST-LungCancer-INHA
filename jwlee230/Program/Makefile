@@ -2044,6 +2044,42 @@ Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf: Python/aggregate_PureCN_simple_cli
 Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/BWA-violin-SQC.pdf: Python/aggregate_PureCN_violin.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-violin-ADC.pdf: Python/aggregate_PureCN_violin.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-SQC.pdf: Python/aggregate_PureCN_violin.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-ADC.pdf: Python/aggregate_PureCN_violin.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-violin-SQC.Smoking.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-violin-ADC.Smoking.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
@@ -2052,8 +2088,10 @@ step37-genome: Output/PureCN/BWA-genome-SQC.pdf Output/PureCN/BWA-genome-ADC.pdf
 step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf
 step37-genome-clinical: Output/PureCN/BWA-genome-SQC.Recurrence.pdf Output/PureCN/BWA-genome-ADC.Recurrence.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.pdf Output/PureCN/BWA-genome-SQC.Smoking.pdf Output/PureCN/BWA-genome-ADC.Smoking.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.pdf
 step37-simple-clinical: Output/PureCN/BWA-simple-SQC.Recurrence.pdf Output/PureCN/BWA-simple-ADC.Recurrence.pdf Output/PureCN/Bowtie2-simple-SQC.Recurrence.pdf Output/PureCN/Bowtie2-simple-ADC.Recurrence.pdf Output/PureCN/BWA-simple-SQC.Smoking.pdf Output/PureCN/BWA-simple-ADC.Smoking.pdf Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf
-step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical
-.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37
+step37-violin: Output/PureCN/BWA-violin-SQC.pdf Output/PureCN/BWA-violin-ADC.pdf Output/PureCN/Bowtie2-violin-SQC.pdf Output/PureCN/Bowtie2-violin-ADC.pdf
+step37-violin-clinical: Output/PureCN/BWA-violin-SQC.Recurrence.pdf Output/PureCN/BWA-violin-ADC.Recurrence.pdf Output/PureCN/Bowtie2-violin-SQC.Recurrence.pdf Output/PureCN/Bowtie2-violin-ADC.pdf Output/PureCN/BWA-violin-SQC.Smoking.pdf Output/PureCN/BWA-violin-ADC.Smoking.pdf Output/PureCN/Bowtie2-violin-SQC.Smoking.pdf Output/PureCN/Bowtie2-violin-ADC.Smoking.pdf
+step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical
+.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical step37
 
 # Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
 Output/Gene_Clinical_Venn:
