@@ -1,10 +1,12 @@
 """
-aggregate_sequenza_violin.py: Violin plot for PRE-PRI comparing over chromosomes
+aggregate_sequenza_violin.py: Violin plot Sequenza data for PRE-PRI comparing over chromosomes
 """
 import argparse
+import itertools
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
 import seaborn
 import statannotations.Annotator
@@ -55,14 +57,23 @@ if __name__ == "__main__":
     print(patients)
 
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in patients, args.input))
+    sample_list = list(map(lambda x: x.split("/")[-2], args.input))
+    print(sample_list)
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
-    input_data["PRE/PRI"] = list(map(step00.get_simple_sample_type, input_data["sample"]))
+    input_data["length"] = input_data["end.pos"] - input_data["start.pos"] + 1
     print(input_data)
 
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
     print(chromosome_list)
+
+    output_data = pandas.DataFrame(data=itertools.product(sample_list, chromosome_list, [0]), columns=["Sample", "Chromosome", watching])
+    for sample, chromosome in tqdm.tqdm(itertools.product(sample_list, chromosome_list)):
+        tmp_data = input_data.loc[(input_data["sample"] == sample) & (input_data["chromosome"] == chromosome)]
+        output_data.loc[(output_data["Sample"] == sample) & (output_data["Chromosome"] == chromosome), watching] = numpy.average(tmp_data[watching], weights=tmp_data["length"])
+    output_data["PRE/PRI"] = list(map(step00.get_simple_sample_type, output_data["Sample"]))
+    print(output_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -71,7 +82,7 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(ncols=6, nrows=len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0), figsize=(64, 48))
 
     for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
-        drawing_data = input_data.loc[(input_data["chromosome"] == chromosome)]
+        drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
 
         seaborn.violinplot(data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"], inner="box", ax=axs[i // 6][i % 6])
         statannotations.Annotator.Annotator(axs[i // 6][i % 6], [("Precancer", "Primary")], data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
