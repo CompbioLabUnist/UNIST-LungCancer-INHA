@@ -199,7 +199,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1984,7 +1984,7 @@ Output/PureCN/Bowtie2-genome-SQC.pdf: Python/aggregate_PureCN_genome.py $(addpre
 Output/PureCN/Bowtie2-genome-ADC.pdf: Python/aggregate_PureCN_genome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/PureCN/BWA-simple-SQC.pdf: Python/aggregate_ureCN_simple.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/PureCN/BWA-simple-SQC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/PureCN/BWA-simple-ADC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
@@ -1996,14 +1996,64 @@ Output/PureCN/Bowtie2-simple-SQC.pdf: Python/aggregate_PureCN_simple.py $(addpre
 Output/PureCN/Bowtie2-simple-ADC.pdf: Python/aggregate_PureCN_simple.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/BWA-genome-SQC.Recurrence.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-genome-ADC.Recurrence.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-SQC.Recurrence.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-ADC.Recurrence.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-genome-SQC.Smoking.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-genome-ADC.Smoking.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-SQC.Smoking.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-genome-ADC.Smoking.pdf: Python/aggregate_PureCN_genome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-SQC.Recurrence.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-ADC.Recurrence.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-SQC.Recurrence.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-ADC.Recurrence.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-SQC.Smoking.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-simple-ADC.Smoking.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf: Python/aggregate_PureCN_simple_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-default: Output/PureCN/BWA-sequenza-SQC.pdf Output/PureCN/BWA-sequenza-ADC.pdf Output/PureCN/Bowtie2-sequenza-SQC.pdf Output/PureCN/Bowtie2-sequenza-ADC.pdf
 step37-genome: Output/PureCN/BWA-genome-SQC.pdf Output/PureCN/BWA-genome-ADC.pdf Output/PureCN/Bowtie2-genome-SQC.pdf Output/PureCN/Bowtie2-genome-ADC.pdf
 step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf
-step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple
-.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37
+step37-genome-clinical: Output/PureCN/BWA-genome-SQC.Recurrence.pdf Output/PureCN/BWA-genome-ADC.Recurrence.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.pdf Output/PureCN/BWA-genome-SQC.Smoking.pdf Output/PureCN/BWA-genome-ADC.Smoking.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.pdf
+step37-simple-clinical: Output/PureCN/BWA-simple-SQC.Recurrence.pdf Output/PureCN/BWA-simple-ADC.Recurrence.pdf Output/PureCN/Bowtie2-simple-SQC.Recurrence.pdf Output/PureCN/Bowtie2-simple-ADC.Recurrence.pdf Output/PureCN/BWA-simple-SQC.Smoking.pdf Output/PureCN/BWA-simple-ADC.Smoking.pdf Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf
+step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical
+.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37
 
 # Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
 Output/Gene_Clinical_Venn:
@@ -2029,9 +2079,11 @@ Output/CNVkit Output/CNVkit/BWA Output/CNVkit/Bowtie2:
 	mkdir -p $@
 
 Output/CNVkit/BWA.tmp: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) | build.log Output/CNVkit/BWA
-	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster
+	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(wordlist 1,3,$(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster $(wordlist 1,3,$(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_TUMOR_ID)))))
 
 step39-Reference: Output/CNVkit/BWA.tmp
+step39: step39-Reference
+.PHONY: step39-Reference step39
 
 # Step ## (Mobster)
 
