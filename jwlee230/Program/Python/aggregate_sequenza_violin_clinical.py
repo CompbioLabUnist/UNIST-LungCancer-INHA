@@ -85,7 +85,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(ncols=6, nrows=len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0), figsize=(64, 48))
+    fig, axs = matplotlib.pyplot.subplots(ncols=6, nrows=len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0), figsize=(6 * 11, 12 * (len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0))))
 
     for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
