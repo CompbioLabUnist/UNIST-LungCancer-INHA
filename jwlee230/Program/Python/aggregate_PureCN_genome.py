@@ -93,10 +93,14 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-")
-        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--")
+        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-", label="Primary")
+        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--", label="Precancer")
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
+
+        if i == 0:
+            axs[0][i].set_ylabel("Ratio")
+            axs[0][i].legend(loc="upper center")
 
         seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
         axs[1][i].set_xlabel(chromosome[3:])
@@ -107,12 +111,16 @@ if __name__ == "__main__":
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[2][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-")
-        axs[2][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--")
+        axs[2][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-", label="Primary")
+        axs[2][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--", label="Precancer")
         axs[2][i].set_ylim(bottom=0, top=1)
         axs[2][i].invert_yaxis()
         axs[2][i].set_xticks([])
         axs[2][i].set_xlabel(chromosome[3:])
+
+        if i == 0:
+            axs[2][i].set_ylabel("Ratio")
+            axs[2][i].legend(loc="lower center")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)

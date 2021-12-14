@@ -109,6 +109,7 @@ if __name__ == "__main__":
         axs[0][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="red", linestyle="-", label=args.compare[2])
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
+
         if i == 0:
             axs[0][i].set_ylabel("Primary")
             axs[0][i].legend(title=args.compare[0], loc="upper center")
@@ -117,6 +118,7 @@ if __name__ == "__main__":
         axs[1][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="lightsalmon", linestyle="-", label=args.compare[2])
         axs[1][i].set_ylim(bottom=0, top=1)
         axs[1][i].set_xlabel(chromosome[3:])
+
         if i == 0:
             axs[1][i].set_ylabel("Precancer")
             axs[1][i].legend(title=args.compare[0], loc="upper center")
@@ -137,6 +139,7 @@ if __name__ == "__main__":
         axs[2][i].invert_yaxis()
         axs[2][i].set_xticks([])
         axs[2][i].set_xlabel(chromosome[3:])
+
         if i == 0:
             axs[2][i].set_ylabel("Precancer")
             axs[2][i].legend(title=args.compare[0], loc="lower center")
@@ -147,6 +150,7 @@ if __name__ == "__main__":
         axs[3][i].invert_yaxis()
         axs[3][i].set_xticks([])
         axs[3][i].set_xlabel(chromosome[3:])
+
         if i == 0:
             axs[3][i].set_ylabel("Primary")
             axs[3][i].legend(title=args.compare[0], loc="lower center")

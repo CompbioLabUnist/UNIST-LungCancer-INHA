@@ -97,7 +97,9 @@ if __name__ == "__main__":
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
         axs[0][i].set_xticks([])
+
         if i == 0:
+            axs[0][i].set_ylabel("Ratio")
             axs[0][i].legend(loc="upper center")
 
         primary_proportion = list()
@@ -112,7 +114,9 @@ if __name__ == "__main__":
         axs[1][i].invert_yaxis()
         axs[1][i].set_xticks([])
         axs[1][i].set_xlabel(chromosome[3:])
+
         if i == 0:
+            axs[1][i].set_ylabel("Ratio")
             axs[1][i].legend(loc="lower center")
 
     matplotlib.pyplot.tight_layout()

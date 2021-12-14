@@ -93,7 +93,6 @@ if __name__ == "__main__":
 
     pyclone_data["gene"] = gene_names
     pyclone_data = pyclone_data.explode("gene", ignore_index=True)
-    # pyclone_data.dropna(inplace=True)
     print(pyclone_data)
 
     mutenricher_set = set(driver_data["Gene"])

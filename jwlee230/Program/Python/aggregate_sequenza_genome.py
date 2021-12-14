@@ -96,6 +96,7 @@ if __name__ == "__main__":
         axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--")
         axs[0][i].set_ylim(bottom=0, top=1)
         axs[0][i].set_xlabel(chromosome[3:])
+        axs[0][i].set_ylabel("Ratio")
 
         seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
         axs[1][i].set_xlabel(chromosome[3:])
@@ -112,6 +113,7 @@ if __name__ == "__main__":
         axs[2][i].invert_yaxis()
         axs[2][i].set_xticks([])
         axs[2][i].set_xlabel(chromosome[3:])
+        axs[2][i].set_ylabel("Ratio")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
