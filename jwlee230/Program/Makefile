@@ -41,6 +41,7 @@ REFERENCE_HAPMAP_VCF = $(REFERENCE_DIR)/hapmap_3.3.hg38.vcf.gz
 REFERENCE_OMNI_VCF = $(REFERENCE_DIR)/1000G_omni2.5.hg38.vcf.gz
 REFERENCE_SIZE_TSV = $(REFERENCE_DIR)/hg38.chrom.sizes
 REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
+REFERENCE_BAND = Data/cytoBand.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
 LIBRARY_BED_GZ = $(LIBRARY_BED).gz
 GENCODE_GTF = Data/GENCODE/gencode.v38.annotation.gtf
@@ -468,40 +469,40 @@ Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf: Python/aggregate_sequenza_simple
 Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))

@@ -156,3 +156,12 @@ def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str 
         return TP / (2 * (TP + FN)) + TN / (2 * (TN + FP))
     else:
         raise Exception("Something went wrong!!")
+
+
+def get_band_data(filename: str) -> pandas.DataFrame:
+    """
+    get_band_data: get chromosome band data including p-arm and q-arm information
+    """
+    data = pandas.read_csv(filename, sep="\t", names=["chrom", "chrom_start", "chrom_end", "name", "gie_stain"], verbose=True).dropna(axis="index")
+    data["arm"] = list(map(lambda x: x[0], data["name"]))
+    return data
