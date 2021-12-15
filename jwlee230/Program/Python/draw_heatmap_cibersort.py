@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(cibersort_data.shape[1], cibersort_data.shape[0]))
 
-    seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="Reds")
+    seaborn.heatmap(data=cibersort_data, xticklabels=True, yticklabels=True, cbar=False, square=False, ax=ax, cmap="Reds", vmin=0, vmax=1)
 
     matplotlib.pyplot.xticks(fontsize="xx-small")
     matplotlib.pyplot.yticks(fontsize="xx-small")
