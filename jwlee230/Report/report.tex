@@ -51,6 +51,12 @@
 \renewcommand{\bibname}{\hfill\bfseries\Large References \hfill\hfill}
 \renewcommand{\abstractname}{\bfseries\Large Abstract \hfill\hfill}
 
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\topfraction}{0.01}
+\renewcommand{\bottomfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.01}
+\setcounter{totalnumber}{1}
+
 \newcounter{lemma}
 \newcounter{proposition}
 \newcounter{theorem}
@@ -76,7 +82,7 @@
     right = 1in
 }
 
-\title{Lung Pre-cancer Analysis}
+\title{Lung Precancer Analysis}
 
 \author{Jaewoong Lee}
 
@@ -106,8 +112,8 @@
     \newpage
 
     \begin{center}
-        \hbox{ }
-        \hbox{ }
+        \hbox{}
+        \hbox{}
 
         \huge <\@title>
         \vspace{5cm}
@@ -154,6 +160,12 @@
                 \caption{Common cancer survival rates \protect\cite{lung6}}
                 \label{fig:cancer-survival}
             \end{figure}
+
+        \subsection{Non-small cell lung cancer}
+
+            \subsubsection{Lung adenocarcinoma}
+
+            \subsubsection{Lung squamous cell carcinoma}
 
         \subsection{Precancer}
 
@@ -523,11 +535,6 @@
 
         \subsection{Bulk Cell Deconvolution}
             \subsubsection{Single-cell Reference Data}
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.7 \linewidth]{figures/CIBERSORTx/reference.jpg}
-                    \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
-                \end{figure}
 
             \subsubsection{CIBERSORTx}
                 \begin{figure}[p]
@@ -559,91 +566,10 @@
                 \end{figure}
 
             \subsubsection{BisqueRNA}
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/BisqueRNA/clustermap/Bowtie2.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and BisqueRNA in ADC}
-                    \label{fig:Deconvolution-BisqueRNA-Bowtie2-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/Bowtie2.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and BisqueRNA in SQC}
-                    \label{fig:Deconvolution-BisqueRNA-Bowtie2-cluster-SQC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/BisqueRNA/clustermap/STAR.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and BisqueRNA in ADC}
-                    \label{fig:Deconvolution-BisqueRNA-STAR-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and BisqueRNA in SQC}
-                    \label{fig:Deconvolution-BisqueRNA-STAR-cluster-SQC}
-                \end{figure}
 
             \subsubsection{MuSiC}
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/MuSiC/clustermap/Bowtie2.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and MuSiC in ADC}
-                    \label{fig:Deconvolution-MuSiC-Bowtie2-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/Bowtie2.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and MuSiC in SQC}
-                    \label{fig:Deconvolution-MuSiC-Bowtie2-cluster-SQC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/MuSiC/clustermap/STAR.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and MuSiC in ADC}
-                    \label{fig:Deconvolution-MuSiC-STAR-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/STAR.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and MuSiC in SQC}
-                    \label{fig:Deconvolution-MuSiC-STAR-cluster-SQC}
-                \end{figure}
 
             \subsubsection{SCDC}
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/SCDC/clustermap/Bowtie2.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and SCDC in ADC}
-                    \label{fig:Deconvolution-SCDC-Bowtie2-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/SCDC/clustermap/Bowtie2.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by Bowtie2 and SCDC in SQC}
-                    \label{fig:Deconvolution-SCDC-Bowtie2-cluster-SQC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=0.6 \linewidth]{figures/SCDC/clustermap/STAR.ADC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and SCDC in ADC}
-                    \label{fig:Deconvolution-SCDC-STAR-cluster-ADC}
-                \end{figure}
-
-                \begin{figure}[p]
-                    \centering
-                    \includegraphics[width=\linewidth]{figures/SCDC/clustermap/STAR.SQC.cluster.pdf}
-                    \caption{Cell deconvolution clustermap by STAR and SCDC in SQC}
-                    \label{fig:Deconvolution-SCDC-STAR-cluster-SQC}
-                \end{figure}
     \newpage
 
     \section{Discussion}
