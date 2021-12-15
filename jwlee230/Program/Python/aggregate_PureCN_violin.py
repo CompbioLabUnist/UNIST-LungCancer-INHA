@@ -4,6 +4,7 @@ aggregate_PureCN_violin.py: Violin plot PureCN data for PRE-PRI comparing over c
 import argparse
 import itertools
 import multiprocessing
+import typing
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -14,6 +15,7 @@ import tqdm
 import step00
 
 watching = "seg.mean"
+band_data = pandas.DataFrame()
 
 
 def get_data(file_name: str) -> pandas.DataFrame:
@@ -24,11 +26,22 @@ def get_data(file_name: str) -> pandas.DataFrame:
     return data
 
 
+def query_band(chromosome: str, start: int, end: int) -> typing.List[str]:
+    answer = list()
+
+    answer += list(band_data.loc[(band_data["chrom"] == chromosome) & (band_data["chrom_start"] <= start) & (start <= band_data["chrom_end"]), "arm"])
+    answer += list(band_data.loc[(band_data["chrom"] == chromosome) & (start <= band_data["chrom_start"]) & (band_data["chrom_end"] <= end), "arm"])
+    answer += list(band_data.loc[(band_data["chrom"] == chromosome) & (band_data["chrom_start"] <= end) & (end <= band_data["chrom_end"]), "arm"])
+
+    return sorted(set(answer))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("band", help="Chromosome band txt file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
@@ -50,6 +63,9 @@ if __name__ == "__main__":
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
 
+    band_data = step00.get_band_data(args.band)
+    print(band_data)
+
     if args.SQC:
         patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
     elif args.ADC:
@@ -64,16 +80,24 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
+        input_data["arm"] = pool.starmap(query_band, input_data[["chrom", "loc.start", "loc.end"]].itertuples(index=False, name=None))
     input_data["length"] = input_data["loc.end"] - input_data["loc.start"] + 1
+    input_data = input_data.explode(column="arm", ignore_index=True).dropna(axis="index", subset=["arm"])
+    input_data["chrom-arm"] = list(map(lambda x: "-".join(x), input_data[["chrom", "arm"]].itertuples(index=False, name=None)))
     print(input_data)
 
-    chromosome_list = list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_list))
+    chromosome_list = list(map(lambda x: "-".join(x), itertools.product(list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_list)), ["p", "q"])))
     print(chromosome_list)
 
     output_data = pandas.DataFrame(data=itertools.product(sample_list, chromosome_list, [0]), columns=["Sample", "Chromosome", watching])
-    for sample, chromosome in tqdm.tqdm(itertools.product(sample_list, chromosome_list)):
-        tmp_data = input_data.loc[(input_data["ID"] == sample) & (input_data["chrom"] == chromosome)]
+    for sample, chromosome in tqdm.tqdm(list(itertools.product(sample_list, chromosome_list))):
+        tmp_data = input_data.loc[(input_data["ID"] == sample) & (input_data["chrom-arm"] == chromosome)]
+
+        if tmp_data.empty:
+            continue
+
         output_data.loc[(output_data["Sample"] == sample) & (output_data["Chromosome"] == chromosome), watching] = numpy.average(tmp_data[watching], weights=tmp_data["length"])
+
     output_data["PRE/PRI"] = list(map(step00.get_simple_sample_type, output_data["Sample"]))
     print(output_data)
 
@@ -81,15 +105,19 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(ncols=6, nrows=len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0), figsize=(6 * 11, 12 * (len(chromosome_list) // 6 + (1 if len(chromosome_list) % 6 else 0))))
+    ncols = 8
+    additional_row = (1 if len(chromosome_list) % ncols else 0)
 
-    for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
+    fig, axs = matplotlib.pyplot.subplots(ncols=ncols, nrows=len(chromosome_list) // ncols + additional_row, figsize=(ncols * 11, 12 * (len(chromosome_list) // ncols + additional_row)))
+
+    for i, chromosome in tqdm.tqdm(list(enumerate(chromosome_list))):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
 
-        seaborn.violinplot(data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"], inner="box", ax=axs[i // 6][i % 6])
-        statannotations.Annotator.Annotator(axs[i // 6][i % 6], [("Precancer", "Primary")], data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"], inner="box", ax=axs[i // ncols][i % ncols])
+        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], [("Precancer", "Primary")], data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-        axs[i // 6][i % 6].set_title(chromosome)
+        axs[i // ncols][i % ncols].set_title(chromosome)
+        axs[i // ncols][i % ncols].set_xlabel("")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
