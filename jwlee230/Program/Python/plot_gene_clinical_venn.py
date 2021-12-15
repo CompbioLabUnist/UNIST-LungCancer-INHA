@@ -85,8 +85,9 @@ if __name__ == "__main__":
         input_data[stage] = set(mutect_data.loc[(mutect_data["Cancer_subtype"] == stage), "Hugo_Symbol"])
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    venn.venn(input_data, ax=ax, fmt="{size:d} ({percentage:.1f}%)", fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+    venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.figure)
     matplotlib.pyplot.close(fig)
 

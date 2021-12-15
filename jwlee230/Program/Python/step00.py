@@ -28,6 +28,7 @@ nonsynonymous_notations = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In 
 nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame indel": "navy", "Frameshift indel": "gold", "Splice site": "darkviolet", "LOH": "orange", "TSS": "chocolate", "Nonstop": "crimson", "Absent": "lightgray", "Multiple": "black"}
 
 derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
+venn_format = "{size:d} ({percentage:.1f}%)"
 
 
 def file_list(path: str) -> typing.List[str]:
