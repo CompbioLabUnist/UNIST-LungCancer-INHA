@@ -63,7 +63,7 @@ if __name__ == "__main__":
     band_data["chrom-arm"] = list(map(lambda x: "-".join(x), band_data[["chrom", "arm"]].itertuples(index=False, name=None)))
     print(band_data)
 
-    cgc_one_data = pandas.read_csv(args.one, usecols=["Gene Symbol", "Genome Location"])
+    cgc_one_data = pandas.read_csv(args.one)
     cgc_one_data = cgc_one_data.loc[~(cgc_one_data["Genome Location"].str.contains(":-"))]
     with multiprocessing.Pool(args.cpus) as pool:
         cgc_one_data["Chromosome"] = pool.map(get_chromosome, cgc_one_data["Genome Location"])
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     cgc_one_set = set(cgc_one_data["Gene Symbol"])
     print(cgc_one_data)
 
-    cgc_both_data = pandas.read_csv(args.both, usecols=["Gene Symbol", "Genome Location"])
+    cgc_both_data = pandas.read_csv(args.both)
     cgc_both_data = cgc_both_data.loc[~(cgc_both_data["Genome Location"].str.contains(":-"))]
     with multiprocessing.Pool(args.cpus) as pool:
         cgc_both_data["Chromosome"] = pool.map(get_chromosome, cgc_both_data["Genome Location"])
@@ -85,26 +85,30 @@ if __name__ == "__main__":
     print(cgc_both_data)
 
     for chromosome in tqdm.tqdm(chromosome_list):
-        tmp_data = cgc_one_data.loc[(cgc_one_data["Chromosome-Arm"] == chromosome), ["Gene Symbol", "Genome Location"]]
+        tmp_data = cgc_one_data.loc[(cgc_one_data["Chromosome-Arm"] == chromosome), ["Gene Symbol", "Name"]]
+        if tmp_data.empty:
+            tmp_data = pandas.DataFrame(data=[["None", ""]], columns=["Gene Symbol", "Name"])
 
         file_list.append("{0}.CGC-1.tsv".format(chromosome))
         tmp_data.to_csv(file_list[-1], sep="\t", header=True, index=False)
 
         if (l := tmp_data.shape[0]) > length_limit:
-            tmp_data.columns = ["Gene Symbol ({0})".format(l), "Genome Location"]
+            tmp_data.columns = ["Gene Symbol ({0})".format(l), "Name"]
             tmp_data = tmp_data.iloc[:length_limit, :]
 
         file_list.append("{0}.CGC-1.tex".format(chromosome))
         tmp_data.to_latex(file_list[-1], header=True, index=False)
 
     for chromosome in tqdm.tqdm(chromosome_list):
-        tmp_data = cgc_both_data.loc[(cgc_both_data["Chromosome-Arm"] == chromosome) & ~(cgc_both_data["Gene Symbol"].isin(cgc_one_set)), ["Gene Symbol", "Genome Location"]]
+        tmp_data = cgc_both_data.loc[(cgc_both_data["Chromosome-Arm"] == chromosome) & ~(cgc_both_data["Gene Symbol"].isin(cgc_one_set)), ["Gene Symbol", "Name"]]
+        if tmp_data.empty:
+            tmp_data = pandas.DataFrame(data=[["None", ""]], columns=["Gene Symbol", "Name"])
 
         file_list.append("{0}.CGC-2.tsv".format(chromosome))
         tmp_data.to_csv(file_list[-1], sep="\t", header=True, index=False)
 
         if (l := tmp_data.shape[0]) > length_limit:
-            tmp_data.columns = ["Gene Symbol ({0})".format(l), "Genome Location"]
+            tmp_data.columns = ["Gene Symbol ({0})".format(l), "Name"]
             tmp_data = tmp_data.iloc[:length_limit, :]
 
         file_list.append("{0}.CGC-2.tex".format(chromosome))
