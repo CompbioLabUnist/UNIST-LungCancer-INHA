@@ -98,7 +98,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.scatter(pyclone_data.loc[~(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == first_name), watching], pyclone_data.loc[~(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == second_name), watching], c="black", marker="*", alpha=0.3, s=15 ** 2, edgecolor="none", label="Functional mutations")
     matplotlib.pyplot.scatter(pyclone_data.loc[(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == first_name), watching], pyclone_data.loc[(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == second_name), watching], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Cancer genes")
 
-    for mutation in tqdm.tqdm(pyclone_data.loc[(pyclone_data["sample_id"] == first_name), "mutation_id"]):
+    for mutation in tqdm.tqdm(pyclone_data.loc[(pyclone_data["sample_id"] == first_name) & (pyclone_data["gene_census"]) & (pyclone_data["mutation"]), "mutation_id"]):
         first = pyclone_data.loc[(pyclone_data["mutation_id"] == mutation) & (pyclone_data["sample_id"] == first_name), watching].to_numpy()[0]
         second = pyclone_data.loc[(pyclone_data["mutation_id"] == mutation) & (pyclone_data["sample_id"] == second_name), watching].to_numpy()[0]
 
