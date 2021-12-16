@@ -140,7 +140,7 @@
     \begin{frame}
         \frametitle{Type of Lung Cancer}
 
-        Types of lung cancer:
+        Types of lung cancer \cite{lung2}:
         \begin{enumerate}
             \item Adenocarcinoma (LUAD) (40 \%) $\bigstar$
             \item Squamous cell carcinoma (LUSC) (25 \%) $\bigstar$
@@ -149,23 +149,50 @@
             \item Adenosquamous carcinoma ($<$ 5 \%)
             \item Carcinoid ($<$ 5 \%)
             \item Bronchioalveolar (Bronchial gland carcinoma)
+            \item ...
         \end{enumerate}
-        \cite{lung1, lung2}
     \end{frame}
 
     \subsection{Non-small cell lung cancer}
     \begin{frame}
-        \frametitle{Non-small cell lung cancer (LSCLC)}
+        \frametitle{Non-small cell lung cancer (NSCLC)}
+
+        Types of NSCLC \cite{NSCLC-1}:
+        \begin{itemize}
+            \item Adenocarcinoma (ICDO 8140/3)
+            \item Squamous cell carcinoma (ICDO 8070/3)
+            \item Large-cell carcinoma (ICDO 8012/3)
+            \item ...
+        \end{itemize}
     \end{frame}
 
     \subsection{LUAD}
     \begin{frame}
         \frametitle{LUAD}
+
+        TCGA LUAD \cite{LUAD-1}
+        \begin{itemize}
+            \item 81 \% patients reported past/present tobacco smoking.
+            \item Candidate driver genes: RTK, RAS, and RAF (38 \%)
+            \item Cancer-associated mutations: KRAS (32 \%), EGFR (11 \%), and BRAF (7 \%)
+            \item Enriched mutations: TP53, KEAP1, NF1, and RIT1 ($p < 0.01$)
+            \item Fusions: ROS1 and RET
+        \end{itemize}
     \end{frame}
 
     \subsection{LUSC}
     \begin{frame}
         \frametitle{LUSC}
+
+        TCGA LUSC \cite{LUSC-1}
+        \begin{itemize}
+            \item 96 \% patients reported past/present tobacco smoking.
+            \item Not present EGFR and ALK fusions.
+            \item Recurrent mutations: TP53, NFE2L2, KEAP1, BAI3, FBXW7, GRM8, MUC16, RUNX1T1, STK11, and ERBB4
+            \item High rate of copy number alteration compared with other TCGA projects.
+            \item Amplication of NFE2L2, MYC, CDK6, MDM2, BCL2L1, and EYS.
+            \item Deletion of FOXP1, PTEN, and NF1
+        \end{itemize}
     \end{frame}
 
     \subsection{LUAD vs. LUSC}
@@ -409,6 +436,9 @@
             \includegraphics[width=\linewidth]{figures/FastQC/BWA.pdf}
             \caption{Coverage Depth Plot}
         \end{figure}
+
+        Tumor DNA: 97.6 $\times$; Germline DNA: 95.8 $\times$ in TCGA LUAD \cite{LUAD-1}
+        Mean 121 $\times$, with 83 \% of target bases above 30 $\times$ in TCGA LUSC \cite{LUSC-1}
     \end{frame}
 
     \begin{frame}
