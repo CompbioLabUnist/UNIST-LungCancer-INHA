@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     if enrichment_data.empty:
         enrichment_data = pandas.DataFrame(columns=wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(wanted_columns))])
-        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
         fig.savefig(args.output + ".pdf")
         matplotlib.pyplot.close(fig)
     else:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
         rows = enrichment_data.shape[0]
         drawing_data = enrichment_data.iloc[:10, :]
-        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
         if args.up:
             ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
