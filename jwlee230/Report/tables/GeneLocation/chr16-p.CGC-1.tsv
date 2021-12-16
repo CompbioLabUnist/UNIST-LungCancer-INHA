@@ -1,15 +1,15 @@
-Gene Symbol	Genome Location
-AXIN1	16:287440-352659
-CIITA	16:10877198-10924983
-CREBBP	16:3725054-3880726
-ERCC4	16:13920157-13952345
-FUS	16:31180110-31194871
-GRIN2A	16:9753404-10182754
-IL21R	16:27402162-27452042
-MYH11	16:15703172-15857011
-PALB2	16:23603170-23641310
-RMI2	16:11345431-11351762
-SOCS1	16:11254417-11256200
-TNFRSF17	16:11965107-11968068
-TRAF7	16:2155765-2178129
-TSC2	16:2047465-2088720
+Gene Symbol	Name
+AXIN1	axin 1
+CIITA	class II, major histocompatibility complex, transactivator
+CREBBP	CREB binding protein (CBP)
+ERCC4	excision repair cross-complementing rodent repair deficiency, complementation group 4
+FUS	fusion, derived from t(12;16) malignant liposarcoma
+GRIN2A	glutamate receptor, ionotropic, N-methyl D-aspartate 2A
+IL21R	interleukin 21 receptor
+MYH11	myosin, heavy polypeptide 11, smooth muscle
+PALB2	partner and localizer of BRCA2
+RMI2	RecQ mediated genome instability 2
+SOCS1	suppressor of cytokine signaling 1
+TNFRSF17	tumor necrosis factor receptor superfamily, member 17
+TRAF7	tumour necrosis factor receptor-associated factor 7
+TSC2	tuberous sclerosis 2 gene

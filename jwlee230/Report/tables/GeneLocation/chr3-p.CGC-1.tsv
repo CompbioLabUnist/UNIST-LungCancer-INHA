@@ -1,18 +1,18 @@
-Gene Symbol	Genome Location
-BAP1	3:52401013-52410350
-CACNA1D	3:53495049-53813733
-CTNNB1	3:41220551-41239888
-FANCD2	3:10026414-10099660
-FHIT	3:59751407-61251459
-FOXP1	3:70954715-71583989
-MITF	3:69739435-69968336
-MLH1	3:36993332-37050918
-MYD88	3:38138478-38143019
-PBRM1	3:52547841-52685836
-PPARG	3:12351472-12434356
-RAF1	3:12583601-12664226
-RHOA	3:49359145-49412202
-SETD2	3:47016689-47163967
-TGFBR2	3:30606601-30694142
-VHL	3:10141008-10152220
-XPC	3:14145147-14178783
+Gene Symbol	Name
+BAP1	BRCA1 associated protein-1 (ubiquitin carboxy-terminal hydrolase)
+CACNA1D	calcium channel, voltage-dependent, L type, alpha 1D subunit
+CTNNB1	catenin (cadherin-associated protein), beta 1
+FANCD2	Fanconi anemia, complementation group D2
+FHIT	fragile histidine triad gene
+FOXP1	forkhead box P1
+MITF	melanogenesis-associated transcription factor
+MLH1	E.coli MutL homolog gene
+MYD88	myeloid differentiation primary response gene (88)
+PBRM1	polybromo 1
+PPARG	peroxisome proliferative activated receptor, gamma
+RAF1	v-raf-1 murine leukemia viral oncogene homolog 1
+RHOA	ras homolog family member A
+SETD2	SET domain containing 2
+TGFBR2	transforming growth factor beta receptor II
+VHL	von Hippel-Lindau syndrome gene
+XPC	xeroderma pigmentosum, complementation group C

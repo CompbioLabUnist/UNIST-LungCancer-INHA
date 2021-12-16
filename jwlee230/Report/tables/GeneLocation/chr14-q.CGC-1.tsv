@@ -1,19 +1,19 @@
-Gene Symbol	Genome Location
-AKT1	14:104769349-104794124
-BCL11B	14:99169287-99271228
-CCNB1IP1	14:20311368-20333312
-DICER1	14:95086228-95158010
-FOXA1	14:37589984-37595034
-GOLGA5	14:92794231-92839963
-GPHN	14:66507407-67181803
-HIF1A	14:61697622-61748259
-HSP90AA1	14:102081049-102139686
-KTN1	14:55580317-55684579
-MAX	14:65075544-65102470
-NIN	14:50725840-50831121
-NKX2-1	14:36516392-36520228
-RAD51B	14:67819779-68611565
-SIX1	14:60643415-60649462
-TCL1A	14:95709968-95714196
-TRIP11	14:91965991-92040059
-TSHR	14:80955043-81146302
+Gene Symbol	Name
+AKT1	v-akt murine thymoma viral oncogene homolog 1
+BCL11B	B-cell CLL/lymphoma 11B  (CTIP2)
+CCNB1IP1	cyclin B1 interacting protein 1, E3 ubiquitin protein ligase
+DICER1	dicer 1, ribonuclease type III
+FOXA1	forkhead box A1
+GOLGA5	golgi autoantigen, golgin subfamily a, 5  (PTC5)
+GPHN	gephyrin (GPH)
+HIF1A	hypoxia inducible factor 1 alpha subunit
+HSP90AA1	heat shock protein 90kDa alpha (cytosolic), class A member 1
+KTN1	kinectin 1 (kinesin receptor)
+MAX	Myc associated factor X
+NIN	ninein (GSK3B interacting protein)
+NKX2-1	NK2 homeobox 1
+RAD51B	RAD51 paralog B
+SIX1	SIX homeobox 1
+TCL1A	T-cell leukemia/lymphoma 1A
+TRIP11	thyroid hormone receptor interactor 11
+TSHR	thyroid stimulating hormone receptor

@@ -1,16 +1,16 @@
-Gene Symbol	Genome Location
-ALK	2:29192774-29921566
-BCL11A	2:60457192-60555154
-DCTN1	2:74361154-74380355
-DNMT3A	2:25227855-25342590
-EML4	2:42169350-42332548
-EPAS1	2:46297402-46386703
-FBXO11	2:47806920-47905793
-MSH2	2:47402969-47483228
-MSH6	2:47783082-47810101
-MYCN	2:15940564-15947007
-NCOA1	2:24491932-24770702
-REL	2:60881521-60931610
-STRN	2:36843640-36966472
-WDCP	2:24029340-24047353
-XPO1	2:61477849-61538283
+Gene Symbol	Name
+ALK	anaplastic lymphoma kinase (Ki-1)
+BCL11A	B-cell CLL/lymphoma 11A
+DCTN1	dynactin 1
+DNMT3A	DNA (cytosine-5-)-methyltransferase 3 alpha
+EML4	echinoderm microtubule associated protein like 4
+EPAS1	endothelial PAS domain protein 1
+FBXO11	F-box protein 11
+MSH2	mutS homolog 2 (E. coli)
+MSH6	mutS homolog 6 (E. coli)
+MYCN	v-myc myelocytomatosis viral related oncogene, neuroblastoma derived (avian)
+NCOA1	nuclear receptor coactivator 1
+REL	v-rel reticuloendotheliosis viral oncogene homolog (avian)
+STRN	striatin, calmodulin binding protein
+WDCP	chromosome 2 open reading frame 44
+XPO1	exportin 1 (CRM1 homolog, yeast)

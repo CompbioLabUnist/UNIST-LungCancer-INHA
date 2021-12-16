@@ -1,16 +1,16 @@
-Gene Symbol	Genome Location
-B2M	15:44711477-44718877
-BLM	15:90717327-90816165
-BUB1B	15:40161026-40221136
-CRTC3	15:90530068-90642813
-FES	15:90884412-90895776
-IDH2	15:90083045-90102504
-KNL1	15:40594020-40664342
-MAP2K1	15:66386817-66492312
-MYO5A	15:52307283-52529050
-NTRK3	15:87876757-88256731
-NUTM1	15:34343315-34357728
-PML	15:73994717-74046771
-SMAD3	15:67065845-67195195
-TCF12	15:56918623-57288514
-USP8	15:50424382-50514419
+Gene Symbol	Name
+B2M	beta-2-microglobulin
+BLM	Bloom Syndrome
+BUB1B	BUB1 budding uninhibited by benzimidazoles 1 homolog beta (yeast)
+CRTC3	CREB regulated transcription coactivator 3
+FES	FES proto-oncogene, tyrosine kinase
+IDH2	isocitrate dehydrogenase 2 (NADP+), mitochondrial
+KNL1	cancer susceptibility candidate 5
+MAP2K1	mitogen-activated protein kinase kinase 1
+MYO5A	myosin VA (heavy chain 12, myoxin)
+NTRK3	neurotrophic tyrosine kinase, receptor, type 3
+NUTM1	NUT midline carcinoma, family member 1
+PML	promyelocytic leukemia
+SMAD3	SMAD family member 3
+TCF12	transcription factor 12 (HTF4, helix-loop-helix transcription factors 4)
+USP8	ubiquitin specific peptidase 8

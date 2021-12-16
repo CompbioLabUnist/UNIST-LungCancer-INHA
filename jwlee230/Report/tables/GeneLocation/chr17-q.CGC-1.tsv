@@ -1,31 +1,31 @@
-Gene Symbol	Genome Location
-ASPSCR1	17:81977550-82017404
-AXIN2	17:65528563-65561647
-BRCA1	17:43044295-43125483
-BRIP1	17:61681266-61863521
-CANT1	17:78991717-79009817
-CD79B	17:63928740-63932336
-CDK12	17:39462039-39535146
-CLTC	17:59619689-59696956
-COL1A1	17:50183289-50201632
-DDX5	17:64499616-64506521
-ERBB2	17:39700080-39728662
-ETV4	17:43527844-43546432
-H3F3B	17:75776434-75779779
-HLF	17:55265012-55325065
-LASP1	17:38869859-38921770
-MLLT6	17:38705542-38729803
-MSI2	17:57256534-57684685
-NF1	17:31094927-31377677
-PPM1D	17:60600183-60666280
-PRKAR1A	17:68512379-68533423
-RARA	17:40309194-40356796
-RNF213	17:80260868-80398786
-RNF43	17:58353676-58417533
-SMARCE1	17:40624962-40648864
-SPOP	17:49598884-49678110
-SRSF2	17:76734115-76737333
-STAT3	17:42313324-42388568
-STAT5B	17:42199168-42276406
-SUZ12	17:31937018-32001045
-TAF15	17:35809455-35847242
+Gene Symbol	Name
+ASPSCR1	alveolar soft part sarcoma chromosome region, candidate 1
+AXIN2	axin 2
+BRCA1	familial breast/ovarian cancer gene 1
+BRIP1	BRCA1 interacting protein C-terminal helicase 1
+CANT1	calcium activated nucleotidase 1
+CD79B	CD79b molecule, immunoglobulin-associated beta
+CDK12	cyclin-dependent kinase 12
+CLTC	clathrin, heavy polypeptide (Hc)
+COL1A1	collagen, type I, alpha 1
+DDX5	DEAD (Asp-Glu-Ala-Asp) box polypeptide 5
+ERBB2	v-erb-b2 erythroblastic leukemia viral oncogene homolog 2, neuro/glioblastoma derived oncogene homolog (avian)
+ETV4	ets variant gene 4 (E1A enhancer binding protein, E1AF)
+H3F3B	H3 histone, family 3B (H3.3B)
+HLF	hepatic leukemia factor
+LASP1	LIM and SH3 protein 1
+MLLT6	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 6 (AF17)
+MSI2	musashi homolog 2 (Drosophila)
+NF1	neurofibromatosis type 1 gene
+PPM1D	protein phosphatase, Mg2+/Mn2+ dependent 1D
+PRKAR1A	protein kinase, cAMP-dependent, regulatory, type I, alpha (tissue specific extinguisher 1)
+RARA	retinoic acid receptor, alpha
+RNF213	ring finger protein 213
+RNF43	ring finger protein 43
+SMARCE1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily e, member 1
+SPOP	speckle type POZ protein
+SRSF2	serine/arginine-rich splicing factor 2
+STAT3	signal transducer and activator of transcription 3 (acute-phase response factor)
+STAT5B	signal transducer and activator of transcription 5B
+SUZ12	suppressor of zeste 12 homolog (Drosophila)
+TAF15	TAF15 RNA polymerase II, TATA box binding protein (TBP)-associated factor, 68kDa

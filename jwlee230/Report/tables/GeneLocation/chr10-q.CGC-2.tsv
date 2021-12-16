@@ -1,7 +1,7 @@
-Gene Symbol	Genome Location
-A1CF	10:50799421-50885675
-CPEB3	10:92048642-92243279
-CYP2C8	10:95036773-95069497
-MGMT	10:129467184-129768007
-SHTN1	10:116883377-117005577
-VTI1A	10:112447258-112818744
+Gene Symbol	Name
+A1CF	APOBEC1 complementation factor
+CPEB3	cytoplasmic polyadenylation element binding protein 3
+CYP2C8	cytochrome P450 family 2 subfamily C member 8
+MGMT	O-6-methylguanine-DNA methyltransferase
+SHTN1	KIAA1598
+VTI1A	vesicle transport through interaction with t-SNAREs homolog 1A

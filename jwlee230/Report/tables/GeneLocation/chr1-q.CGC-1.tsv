@@ -1,25 +1,25 @@
-Gene Symbol	Genome Location
-ABL2	1:179099327-179229601
-ARNT	1:150809705-150876768
-BCL9	1:147541412-147626216
-CDC73	1:193122017-193253901
-DDR2	1:162632465-162787400
-ELK4	1:205607943-205631962
-FCGR2B	1:161663161-161678654
-FCRL4	1:157573749-157598080
-FH	1:241497603-241519761
-H3F3A	1:226063977-226072001
-LMNA	1:156114707-156140089
-MDM4	1:204516383-204558120
-MLLT11	1:151057758-151068497
-MUC1	1:155185826-155192915
-NTRK1	1:156860894-156881642
-PBX1	1:164559635-164851831
-PDE4DIP	1:148889463-149033016
-PRCC	1:156767500-156800817
-PRRX1	1:170663906-170739419
-PTPRC	1:198639007-198757476
-SDHC	1:161314257-161375340
-SLC45A3	1:205657851-205680459
-TPM3	1:154167465-154192211
-TPR	1:186311652-186375325
+Gene Symbol	Name
+ABL2	c-abl oncogene 2, non-receptor tyrosine kinase
+ARNT	aryl hydrocarbon receptor nuclear translocator
+BCL9	B-cell CLL/lymphoma 9
+CDC73	cell division cycle 73
+DDR2	discoidin domain receptor 2
+ELK4	ELK4, ETS-domain protein (SRF accessory protein 1)
+FCGR2B	Fc fragment of IgG, low affinity IIb, receptor for (CD32)
+FCRL4	Fc receptor-like 4
+FH	fumarate hydratase
+H3F3A	H3 histone, family 3A
+LMNA	lamin A/C
+MDM4	Mdm4 p53 binding protein homolog
+MLLT11	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 11
+MUC1	mucin 1, transmembrane
+NTRK1	neurotrophic tyrosine kinase, receptor, type 1
+PBX1	pre-B-cell leukemia transcription factor 1
+PDE4DIP	phosphodiesterase 4D interacting protein (myomegalin)
+PRCC	papillary renal cell carcinoma (translocation-associated)
+PRRX1	paired related homeobox 1
+PTPRC	protein tyrosine phosphatase, receptor type, C
+SDHC	succinate dehydrogenase complex, subunit C, integral membrane protein, 15kDa
+SLC45A3	solute carrier family 45, member 3
+TPM3	tropomyosin 3
+TPR	translocated promoter region

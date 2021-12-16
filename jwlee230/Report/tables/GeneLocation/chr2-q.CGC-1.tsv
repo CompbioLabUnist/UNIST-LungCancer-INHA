@@ -1,24 +1,24 @@
-Gene Symbol	Genome Location
-ACKR3	2:236569641-236582358
-ACSL3	2:222860934-222944639
-ACVR1	2:157736444-157875111
-ACVR2A	2:147844517-147930824
-AFF3	2:99551121-100106128
-ATIC	2:215311817-215349763
-BARD1	2:214725646-214809704
-CASP8	2:201258036-201287711
-CREB1	2:207529892-207603431
-CXCR4	2:136114349-136116243
-ERBB4	2:211375717-212538841
-ERCC3	2:127257290-127294176
-FEV	2:218981087-218985657
-HOXD11	2:176107286-176109588
-HOXD13	2:176092891-176095938
-IDH1	2:208236265-208254322
-LRP1B	2:140231423-142131701
-NFE2L2	2:177230305-177265131
-PAX3	2:222199888-222298981
-PAX8	2:113215997-113278921
-RANBP2	2:108719481-108785811
-SF3B1	2:197389784-197435091
-TMEM127	2:96248516-96265994
+Gene Symbol	Name
+ACKR3	atypical chemokine receptor 3
+ACSL3	acyl-CoA synthetase long-chain family member 3
+ACVR1	activin A receptor, type I
+ACVR2A	activin A receptor type 2A
+AFF3	AF4/FMR2 family, member 3
+ATIC	5-aminoimidazole-4-carboxamide ribonucleotide formyltransferase/IMP cyclohydrolase
+BARD1	BRCA1 associated RING domain 1
+CASP8	caspase 8, apoptosis-related cysteine peptidase
+CREB1	cAMP responsive element binding protein 1
+CXCR4	C-X-C motif chemokine receptor 4
+ERBB4	erb-b2 receptor tyrosine kinase 4
+ERCC3	excision repair cross-complementing rodent repair deficiency, complementation group 3 (xeroderma pigmentosum group B complementing)
+FEV	FEV protein - (HSRNAFEV)
+HOXD11	homeo box D11
+HOXD13	homeo box D13
+IDH1	isocitrate dehydrogenase 1 (NADP+), soluble
+LRP1B	LDL receptor related protein 1B
+NFE2L2	nuclear factor (erythroid-derived 2)-like 2 (NRF2)
+PAX3	paired box gene 3
+PAX8	paired box gene 8
+RANBP2	RAN binding protein 2
+SF3B1	splicing factor 3b, subunit 1, 155kDa
+TMEM127	transmembrane protein 127

@@ -1,22 +1,22 @@
-Gene Symbol	Genome Location
-ATR	3:142449237-142578826
-BCL6	3:187721377-187745727
-CBLB	3:105655461-105869043
-CNBP	3:129170102-129183910
-EIF4A2	3:186783547-186789900
-ETV5	3:186046308-186109112
-FOXL2	3:138944224-138947140
-GATA2	3:128479427-128493185
-LPP	3:188212933-188890671
-MAP3K13	3:185363120-185489097
-MECOM	3:169083499-169146305
-MLF1	3:158582835-158606459
-PIK3CA	3:179148523-179240093
-PIK3CB	3:138652699-138759359
-POLQ	3:121431431-121546006
-RPN1	3:128619970-128650849
-SOX2	3:181711924-181714436
-TBL1XR1	3:177019355-177196478
-TFG	3:100709425-100748966
-TP63	3:189631427-189897279
-WWTR1	3:149517235-149703273
+Gene Symbol	Name
+ATR	ATR serine/threonine kinase
+BCL6	B-cell CLL/lymphoma 6
+CBLB	Cas-Br-M (murine) ecotropic retroviral transforming sequence b
+CNBP	CCHC-type zinc finger, nucleic acid binding protein
+EIF4A2	eukaryotic translation initiation factor 4A, isoform 2
+ETV5	ets variant gene 5
+FOXL2	forkhead box L2
+GATA2	GATA binding protein 2
+LPP	LIM domain containing preferred translocation partner in lipoma
+MAP3K13	mitogen-activated protein kinase kinase kinase 13
+MECOM	MDS1 and EVI1 complex locus
+MLF1	myeloid leukemia factor 1
+PIK3CA	phosphoinositide-3-kinase, catalytic, alpha polypeptide
+PIK3CB	phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit beta
+POLQ	DNA polymerase theta
+RPN1	ribophorin I
+SOX2	SRY (sex determining region Y)-box 2
+TBL1XR1	transducin (beta)-like 1 X-linked receptor 1
+TFG	TRK-fused gene
+TP63	tumor protein p63
+WWTR1	WW domain containing transcription regulator 1

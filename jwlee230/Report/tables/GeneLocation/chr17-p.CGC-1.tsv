@@ -1,10 +1,10 @@
-Gene Symbol	Genome Location
-FLCN	17:17212212-17237139
-GAS7	17:9913850-10198551
-MAP2K4	17:12020834-12143830
-NCOR1	17:16029157-16215549
-PER1	17:8140472-8152435
-RABEP1	17:5282300-5385812
-TP53	17:7668402-7687538
-USP6	17:5116438-5174991
-YWHAE	17:1344272-1400378
+Gene Symbol	Name
+FLCN	folliculin
+GAS7	growth arrest-specific 7
+MAP2K4	mitogen-activated protein kinase kinase 4
+NCOR1	nuclear receptor corepressor 1
+PER1	period homolog 1 (Drosophila)
+RABEP1	rabaptin, RAB GTPase binding effector protein 1
+TP53	tumor protein p53
+USP6	ubiquitin specific peptidase 6 (Tre-2 oncogene)
+YWHAE	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, epsilon polypeptide (14-3-3 epsilon)
