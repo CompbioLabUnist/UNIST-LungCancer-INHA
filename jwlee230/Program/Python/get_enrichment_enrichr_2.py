@@ -3,9 +3,14 @@ get_enrichment_enrichr_2.py: compare two results & get enrichment information wi
 """
 import argparse
 import json
+import matplotlib
+import matplotlib.pyplot
 import numpy
 import pandas
+import seaborn
 import requests
+import tqdm
+import step00
 
 wanted_columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
 addlist_url = "https://maayanlab.cloud/Enrichr/addList"
@@ -67,10 +72,9 @@ if __name__ == "__main__":
         genes = set(case_data.loc[(case_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (case_data["padj"] < args.padj) & (case_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]].index)
     else:
         raise Exception("Something went wrong!!")
-
     print(sorted(genes))
 
-    for control_file in args.control:
+    for control_file in tqdm.tqdm(args.control):
         control_data = read_TSV(control_file)
 
         if args.up:
@@ -84,7 +88,6 @@ if __name__ == "__main__":
             genes -= tmp_genes
         elif args.intersect:
             genes &= tmp_genes
-
     print(sorted(genes))
 
     if genes:
@@ -96,17 +99,41 @@ if __name__ == "__main__":
         enrichment_data = enrichment_data.loc[(enrichment_data["P-value"] < args.padj) & (enrichment_data["Adjusted p-value"] < args.padj)]
         enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + "({0})".format(len(x))), enrichment_data["Overlapping genes"]))
         enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
-        print(enrichment_data)
     else:
-        enrichment_data = pandas.DataFrame(columns=["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"])
+        enrichment_data = pandas.DataFrame(columns=wanted_columns)
+
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     if enrichment_data.empty:
-        pandas.DataFrame(columns=wanted_columns, index=[0], data=[["None"] + [""] * (len(wanted_columns) - 1)]).to_csv(args.output + ".tsv", sep="\t", index=False)
-        pandas.DataFrame(columns=["Term name", "Overlapping genes...", "Adjusted p-value"], index=[0], data=[["None", "", ""]]).to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        enrichment_data = pandas.DataFrame(columns=wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(wanted_columns))])
+        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+        fig.savefig(args.output + ".pdf")
+        matplotlib.pyplot.close(fig)
     else:
-        enrichment_data.loc[:, wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
-        rows = enrichment_data.shape[0]
-        enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
-        if rows > 3:
-            enrichment_data.columns = ["Term name ({0})".format(rows), "Overlapping genes...", "Adjusted p-value"]
-        enrichment_data.to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
+        enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
+        print(enrichment_data)
+
+        drawing_data = enrichment_data.iloc[:10, :]
+        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 2 * drawing_data.shape[0]))
+
+        ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
+        for index, row in drawing_data.iterrows():
+            matplotlib.pyplot.text(0, index, "{0}: {1}".format(row["Term name"], row["Overlapping genes..."]), color="k", horizontalalignment="left", verticalalignment="center")
+
+        matplotlib.pyplot.yticks([])
+        matplotlib.pyplot.xlabel("-log10(Padj)")
+        ax.invert_yaxis()
+        matplotlib.pyplot.tight_layout()
+
+        fig.savefig(args.output + ".pdf")
+        matplotlib.pyplot.close(fig)
+
+    enrichment_data.loc[:, wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
+    rows = enrichment_data.shape[0]
+    enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
+    if rows > 3:
+        enrichment_data.columns = ["Term name ({0})".format(rows), "Overlapping genes...", "Adjusted p-value"]
+    enrichment_data.to_latex(args.output + ".tex", index=False, float_format="%.2e")
