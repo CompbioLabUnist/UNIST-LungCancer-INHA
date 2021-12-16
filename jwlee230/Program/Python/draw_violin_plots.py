@@ -19,7 +19,7 @@ input_data = pandas.DataFrame()
 
 
 def read_coldata(filename: str):
-    data = pandas.read_csv(filename, sep="\t")
+    return pandas.read_csv(filename, sep="\t")
 
 
 def run(gene: str) -> str:
@@ -40,7 +40,7 @@ def run(gene: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(stage_order, 2)), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.tight_layout()
 
@@ -48,7 +48,7 @@ def run(gene: str) -> str:
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
-    return fig_name2021-10-05T18:03:08+0900
+    return fig_name
 
 
 if __name__ == "__main__":

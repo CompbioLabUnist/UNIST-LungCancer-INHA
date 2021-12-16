@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 2
 MEMS = 20
-PARALLEL = 50
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1049,88 +1049,88 @@ Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM
 Output/RSEM/Plots/Violin/%.ADC.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/%.TPM.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.coldata Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.coldata | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
-Output/RSEM/Enrichment/%.Up.KEGG.tsv Output/RSEM/Enrichment/%.Up.KEGG.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.Up.KEGG.tsv Output/RSEM/Enrichment/%.Up.KEGG.tex Output/RSEM/Enrichment/%.Up.KEGG.pdf: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Down.KEGG.tsv Output/RSEM/Enrichment/%.Down.KEGG.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.Down.KEGG.tsv Output/RSEM/Enrichment/%.Down.KEGG.tex Output/RSEM/Enrichment/%.Down.KEGG.pdf: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Up.MSigDB.tsv Output/RSEM/Enrichment/%.Up.MSigDB.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.Up.MSigDB.tsv Output/RSEM/Enrichment/%.Up.MSigDB.tex Output/RSEM/Enrichment/%.Up.MSigDB.pdf: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.Down.MSigDB.tsv Output/RSEM/Enrichment/%.Down.MSigDB.tex: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.Down.MSigDB.tsv Output/RSEM/Enrichment/%.Down.MSigDB.tex Output/RSEM/Enrichment/%.Down.MSigDB.pdf: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Recur.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Recur.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Nonrecur.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Both.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-CIS.Both.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Recur.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Recur.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Nonrecur.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --subtract 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --up --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.KEGG.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.KEGG.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.KEGG.tex Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.KEGG.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "KEGG_2021_Human" --down --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Both.Up.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --up --intersect 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.tex: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
+Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.tsv Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.tex Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.pdf: Python/get_enrichment_enrichr_2.py Output/RSEM/DEG/%.SQC.Nonrecur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --intersect 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
