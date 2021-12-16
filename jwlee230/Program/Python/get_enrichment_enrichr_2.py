@@ -116,6 +116,7 @@ if __name__ == "__main__":
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
         print(enrichment_data)
 
+        rows = enrichment_data.shape[0]
         drawing_data = enrichment_data.iloc[:10, :]
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 2 * drawing_data.shape[0]))
 
@@ -125,6 +126,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.yticks([])
         matplotlib.pyplot.xlabel("-log10(Padj)")
+        matplotlib.pyplot.ylabel("{0} pathways".format(rows))
         ax.invert_yaxis()
         matplotlib.pyplot.tight_layout()
 
