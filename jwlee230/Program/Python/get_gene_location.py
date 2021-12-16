@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     chromosome_list = list(map(lambda x: "-".join(x), itertools.product(step00.chromosome_list, ["p", "q"])))
     file_list = list()
-    length_limit = 3
+    length_limit = 5
 
     band_data = step00.get_band_data(args.band)
     band_data["chrom-arm"] = list(map(lambda x: "-".join(x), band_data[["chrom", "arm"]].itertuples(index=False, name=None)))

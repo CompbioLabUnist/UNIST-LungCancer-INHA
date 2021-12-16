@@ -57,6 +57,7 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
 
     data = merged_data.loc[(merged_data["gene_census"]) & (merged_data["mutation"])]
     matplotlib.pyplot.scatter(data["first_VAF"], data["second_VAF"], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Cancer genes")
+
     for index, d in data.iterrows():
         if (d["first_VAF"] > 0.6) and (d["second_VAF"] == 0.0):
             texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
@@ -73,7 +74,7 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
     matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
     matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
     matplotlib.pyplot.legend(loc="upper right")
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 6)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
 
     figure_name = "{0}+{1}.pdf".format(first_name, second_name)
     fig.savefig(figure_name)

@@ -12,26 +12,11 @@ import seaborn
 import tqdm
 import step00
 
-mutenricher_set = set()
-census_set = set()
-
-
-def is_included(gene: str) -> str:
-    if (gene in mutenricher_set) and (gene in census_set):
-        return "CGC+Driver"
-    elif gene in mutenricher_set:
-        return "Driver"
-    elif gene in census_set:
-        return "CGC"
-    else:
-        return "None"
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("loci", help="Pyclone loci TSV file", type=str)
-    parser.add_argument("driver", help="MutEnricher driver gene TSV file (not necessarily TSV)", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("known", help="Known gene GTF.gz file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
@@ -54,10 +39,14 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P-value must be (0, 1)!!")
 
+    first_name = step00.get_id(args.output)
+    second_name = step00.get_paired_primary(first_name)
+
     try:
         pyclone_data = pandas.read_csv(args.loci, sep="\t")
     except pandas.errors.EmptyDataError:
         pyclone_data = pandas.DataFrame(columns=["mutation_id", "sample_id", "cluster_id", "cellular_prevalence", "cellular_prevalence_std", "variant_allele_frequency"])
+
     pyclone_data.sort_values(by="sample_id", inplace=True, ignore_index=True)
     pyclone_data["chromosome"] = list(map(lambda x: x.split(":")[0], pyclone_data["mutation_id"]))
     pyclone_data["start"] = list(map(lambda x: int(x.split(":")[1]), pyclone_data["mutation_id"]))
@@ -67,17 +56,6 @@ if __name__ == "__main__":
     census_data = pandas.read_csv(args.census)
     census_set = set(census_data["Gene Symbol"])
     print(census_data)
-
-    driver_data = pandas.read_csv(args.driver, sep="\t")
-    driver_data["chromosome"] = list(map(lambda x: x.replace("-", ":").split(":")[0], driver_data["coordinates"]))
-    driver_data["start"] = list(map(lambda x: int(x.replace("-", ":").split(":")[1]), driver_data["coordinates"]))
-    driver_data["end"] = list(map(lambda x: int(x.replace("-", ":").split(":")[2]), driver_data["coordinates"]))
-    driver_data = driver_data.loc[(driver_data["Gene"].isin(census_data["Gene Symbol"]))]
-
-    for column in step00.MutEnricher_pval_columns:
-        driver_data = driver_data.loc[(driver_data[column] < args.p)]
-
-    print(driver_data)
 
     gtf_data = gtfparse.read_gtf(args.known)
     print(gtf_data)
@@ -89,16 +67,14 @@ if __name__ == "__main__":
         if tmp_data.empty:
             gene_names.append([])
         else:
-            gene_names.append(list(tmp_data.to_numpy()))
+            gene_names.append(sorted(set(tmp_data.to_numpy())))
 
     pyclone_data["gene"] = gene_names
     pyclone_data = pyclone_data.explode("gene", ignore_index=True)
     print(pyclone_data)
 
-    mutenricher_set = set(driver_data["Gene"])
-    print(sorted(mutenricher_set))
-
-    pyclone_data["Database"] = list(map(is_included, pyclone_data["gene"]))
+    pyclone_data["gene_census"] = list(map(lambda x: x in census_set, pyclone_data["gene"]))
+    pyclone_data["mutation"] = list(map(lambda x: not x.endswith("nan"), pyclone_data["mutation_id"]))
     pyclone_data.rename(columns={"cluster_id": "Cluster ID"}, inplace=True)
     print(pyclone_data)
 
@@ -108,24 +84,46 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
     texts = list()
+
     if args.CCF:
-        seaborn.lineplot(data=pyclone_data, x="sample_id", y="cellular_prevalence", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
-        matplotlib.pyplot.ylabel("Cancer Cell Fraction")
-        for index, row in pyclone_data.iterrows():
-            if row["Database"] == "CGC+Driver":
-                texts.append(matplotlib.pyplot.text(row["sample_id"], row["cellular_prevalence"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
+        name = "CCF"
+        watching = "cellular_prevalence"
     elif args.VAF:
-        seaborn.lineplot(data=pyclone_data, x="sample_id", y="variant_allele_frequency", hue="Cluster ID", style="Database", legend="brief", ax=ax, estimator=None, units="gene")
-        matplotlib.pyplot.ylabel("Variant Allele Frequency")
-        for index, row in pyclone_data.iterrows():
-            if row["Database"] == "CGC+Driver":
-                texts.append(matplotlib.pyplot.text(row["sample_id"], row["variant_allele_frequency"], row["gene"], fontsize="small", horizontalalignment="center", bbox={"facecolor": "white", "alpha": 0.5}))
+        name = "VAF"
+        watching = "variant_allele_frequency"
     else:
         raise Exception("Something went wrong!!")
 
-    matplotlib.pyplot.xlabel("Samples")
+    matplotlib.pyplot.scatter(pyclone_data.loc[~(pyclone_data["gene_census"]) & ~(pyclone_data["mutation"]) & (pyclone_data["sample_id"] == first_name), watching], pyclone_data.loc[~(pyclone_data["gene_census"]) & ~(pyclone_data["mutation"]) & (pyclone_data["sample_id"] == second_name), watching], c="tab:gray", marker="o", alpha=0.3, s=12 ** 2, edgecolor="none", label="Synonymous mutations")
+    matplotlib.pyplot.scatter(pyclone_data.loc[~(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == first_name), watching], pyclone_data.loc[~(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == second_name), watching], c="black", marker="*", alpha=0.3, s=15 ** 2, edgecolor="none", label="Functional mutations")
+    matplotlib.pyplot.scatter(pyclone_data.loc[(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == first_name), watching], pyclone_data.loc[(pyclone_data["gene_census"]) & (pyclone_data["mutation"]) & (pyclone_data["sample_id"] == second_name), watching], c="tab:red", marker="*", alpha=1.0, s=20 ** 2, edgecolor="none", label="Cancer genes")
+
+    for mutation in tqdm.tqdm(pyclone_data.loc[(pyclone_data["sample_id"] == first_name), "mutation_id"]):
+        first = pyclone_data.loc[(pyclone_data["mutation_id"] == mutation) & (pyclone_data["sample_id"] == first_name), watching].to_numpy()[0]
+        second = pyclone_data.loc[(pyclone_data["mutation_id"] == mutation) & (pyclone_data["sample_id"] == second_name), watching].to_numpy()[0]
+
+        gene = pyclone_data.loc[(pyclone_data["mutation_id"] == mutation) & (pyclone_data["sample_id"] == first_name), "gene"].to_numpy()[0]
+        protein = mutation.split(":")[-1]
+
+        if (gene == "nan") or (protein == "nan"):
+            continue
+
+        if (first > 0.6) and (second == 0.0):
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+        elif (first > 0.6) and (second > 0.6):
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+        elif (first > 0.0) and (second > 0.0):
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+
+    matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
+    matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.xlim(-0.1, 1.1)
     matplotlib.pyplot.ylim(-0.1, 1.1)
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k"}, ax=ax, lim=step00.big)
+    matplotlib.pyplot.xlabel("{2} of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name), name))
+    matplotlib.pyplot.ylabel("{2} of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name), name))
+    matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
+    matplotlib.pyplot.legend(loc="upper right")
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
