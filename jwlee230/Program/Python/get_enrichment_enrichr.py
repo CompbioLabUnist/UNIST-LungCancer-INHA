@@ -93,7 +93,11 @@ if __name__ == "__main__":
         drawing_data = enrichment_data.iloc[:10, :]
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
-        ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
+        if args.up:
+            ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
+        elif args.down:
+            ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:cyan")
+
         for index, row in drawing_data.iterrows():
             matplotlib.pyplot.text(0, index, "{0}: {1}".format(row["Term name"], row["Overlapping genes..."]), color="k", horizontalalignment="left", verticalalignment="center")
 
