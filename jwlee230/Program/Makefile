@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 2
+CPUS = 20
 MEMS = 20
 PARALLEL = 50
 PWD := $(shell pwd)
@@ -2178,6 +2178,16 @@ Output/CNVkit/Bowtie2/Reference.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_RE
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
 step39: step39-Reference
 .PHONY: step39-Reference step39
+
+# Step 40 (Gene Location)
+Output/Gene_Location:
+	mkdir -p $@
+
+Output/Gene_Location/gene.tar: Python/get_gene_location.py $(GENE_CENCUS_ONE_CSV) $(GENE_CENCUS_BOTH_CSV) $(REFERENCE_BAND) | build.log Output/Gene_Location
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step40: Output/Gene_Location/gene.tar
+.PHONY: step40
 
 # Step ## (Mobster)
 Output/Mobster:
