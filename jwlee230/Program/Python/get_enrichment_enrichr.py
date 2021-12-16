@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
         rows = enrichment_data.shape[0]
         drawing_data = enrichment_data.iloc[:10, :]
-        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 2 * drawing_data.shape[0]))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
         ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
         for index, row in drawing_data.iterrows():
