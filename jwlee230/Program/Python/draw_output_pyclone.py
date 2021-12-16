@@ -88,9 +88,11 @@ if __name__ == "__main__":
     if args.CCF:
         name = "CCF"
         watching = "cellular_prevalence"
+        loc = "lower left"
     elif args.VAF:
         name = "VAF"
         watching = "variant_allele_frequency"
+        loc = "upper right"
     else:
         raise Exception("Something went wrong!!")
 
@@ -109,11 +111,11 @@ if __name__ == "__main__":
             continue
 
         if (first > 0.6) and (second == 0.0):
-            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}, horizontalalignment="center", verticalalignment="center"))
         elif (first > 0.6) and (second > 0.6):
-            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}, horizontalalignment="center", verticalalignment="center"))
         elif (first > 0.0) and (second > 0.0):
-            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(first, second, "{0}: {1}".format(gene, protein), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}, horizontalalignment="center", verticalalignment="center"))
 
     matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
     matplotlib.pyplot.grid(True)
@@ -122,7 +124,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xlabel("{2} of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name), name))
     matplotlib.pyplot.ylabel("{2} of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name), name))
     matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
-    matplotlib.pyplot.legend(loc="upper right")
+    matplotlib.pyplot.legend(loc=loc)
     adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
 
     fig.savefig(args.output)
