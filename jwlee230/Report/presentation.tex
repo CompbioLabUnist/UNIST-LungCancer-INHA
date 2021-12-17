@@ -112,7 +112,6 @@
         \frametitle{Lung Cancer?}
 
         \begin{block}{The most common cancer}
-            The most common form of cancer: \\
             12.3 \% of all cancers \cite{lung3}
         \end{block}
 
@@ -129,7 +128,7 @@
             \caption{Common cancer survival rates \protect\cite{lung6}}
         \end{figure}
 
-        \begin{block}{Survival rate (More than 5 yr)}
+        \begin{block}{Survival rate (More than 5 year)}
             \begin{itemize}
                 \item Tyroid: 68.4 \%
                 \item Lung: 35.4 \%
@@ -252,19 +251,19 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item Exome (WES) (n=289) + Transcriptome (WTS) (n=166)
-            \item Normal + \{Primary, CIS + AIS, AAH, Dysplasia, MIA\}
+            \item Exome (WES) (sample n=289) + Transcriptome (WTS) (sample n=166)
+            \item Normal + \{AAH, CIS + AIS, Dysplasia, MIA\} + Primary
             \begin{itemize}
-                \item Carcinoma in situ
                 \item Adenocarcinoma in situ
                 \item Atypical adenomatous hyperplasia
+                \item Carcinoma \textit{in situ}
                 \item Dysplasia
                 \item Minimally invasive adenocarcinoma
             \end{itemize}
             \item Adenocarcinoma (LUAD) \& Squamouse cell carcinoma (LUSC)
             \begin{enumerate}
-                \item Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ LUAD (n=28)
-                \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (n=80)
+                \item Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ LUAD (patient n=28)
+                \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (patient n=80)
             \end{enumerate}
         \end{itemize}
     \end{frame}
@@ -2159,63 +2158,93 @@
         \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
 
         \begin{block}{CD4/8-MCM5}
-            content...
+            \begin{enumerate}
+                \item CD4/8-MCM5 have higher proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4/8-TOP2A}
-            content...
+            \begin{enumerate}
+                \item CD4/8-TOP2A have lower proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-CCR8}
-            content...
+            \begin{enumerate}
+                 \item CD4-CCR8 is gradually increased along tumor progression.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-GZMA}
-            content...
+            \begin{enumerate}
+                \item CD4-GZMA have higher proportion in CIS than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-HSPH1}
-            content...
+            \begin{enumerate}
+                \item CD4-HSPH1 have higher proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-IL32}
-            content...
+            \begin{enumerate}
+                \item CD4-IL32 have lower proportion in Primary than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-MAL}
-            content...
+            \begin{enumerate}
+                \item CD4-MAL have lower proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-SELL}
-            content...
+            \begin{enumerate}
+                \item CD4-SELL have higher proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-SESN1}
-            content...
+            \begin{enumerate}
+                \item CD4-SESN1 have higher proportion in Primary than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-TNFRSF18}
-            content...
+            \begin{enumerate}
+                \item CD4-TNFRSF18 have lower proportion in Primary than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-FCGR3A}
-            content...
+            \begin{enumerate}
+                \item CD8-FCGR3A have lower proportion in Primary than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-GZMH}
-            content...
+            \begin{enumerate}
+                \item CD8-GZMH have lower proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-GZMK}
-            content...
+            \begin{enumerate}
+                \item CD8-GZMK have higher proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-LAYN}
-            content...
+            \begin{enumerate}
+                \item CD8-LAYN have higher proportion in Primary.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-SLC4A10}
-            content...
+            \begin{enumerate}
+                \item CD8-SLC4A1 have lower proportion in Primary.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -2249,15 +2278,21 @@
         \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
 
         \begin{block}{CD4-GZM}
-            content...
+            \begin{enumerate}
+                \item CD4-GZM have higher proportion in AIS than Normal.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-SESN1}
-            content...
+           \begin{enumerate}
+               \item CD4-SESN1 have higher proportion in AIS than Normal.
+           \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-TNFRSF18}
-            content...
+            \begin{enumerate}
+                \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -2265,23 +2300,23 @@
         \frametitle{Findings in Bulk Cell Deconvolution}
     \end{frame}
 
-    \subsection{Discovery of Gene Fusion}
-    \begin{frame}
-        \frametitle{Arriba?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Arriba.png}
-            \caption{Benchmark of Arriba versus alternative methods \protect\cite{Arriba1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Gene Fusion Discovery}
-    \end{frame}
+%    \subsection{Discovery of Gene Fusion}
+%    \begin{frame}
+%        \frametitle{Arriba?}
+%
+%        \begin{figure}
+%            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Arriba.png}
+%            \caption{Benchmark of Arriba versus alternative methods \protect\cite{Arriba1}}
+%        \end{figure}
+%    \end{frame}
+%
+%    \begin{frame}
+%        \frametitle{Findings in Gene Fusion Discovery}
+%    \end{frame}
 
     \subsection{Discovery of Mutational Signature}
     \begin{frame}
-        \frametitle{Mutation Signature?}
+        \frametitle{Mutational Signature?}
 
         \begin{figure}
             \includegraphics[width=0.6 \linewidth]{figures/LungCancer/signatures.jpg}
@@ -3007,39 +3042,16 @@
         \frametitle{Notable genes in LUSC for Smoking}
 
         \begin{block}{INSYN2B}
-            content...
-        \end{block}
-
-        \begin{block}{SGK3}
-            content...
-        \end{block}
-
-        \begin{block}{SCN10A}
-            content...
-        \end{block}
-
-        \begin{block}{INSYN2B}
-            content...
-        \end{block}
-
-        \begin{block}{DLG4}
-            content...
-        \end{block}
-
-        \begin{block}{RIT1}
-            content...
+            \begin{enumerate}
+                \item INSYN2B is the best indicator for Smoking.
+                \item INSYN2B is the best indicator for Smoking in Precancer.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{COMT}
-            content...
-        \end{block}
-
-        \begin{block}{PTCRA}
-            content...
-        \end{block}
-
-        \begin{block}{MAGEB6}
-            content...
+            \begin{enumerate}
+                \item COMT is the best indicator for Smoking in Primary.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -3077,39 +3089,21 @@
         \frametitle{Notable genes in LUAD for Smoking}
 
         \begin{block}{CREBRF}
-            content...
-        \end{block}
-
-        \begin{block}{FOXP1}
-            content...
-        \end{block}
-
-        \begin{block}{MAJIN}
-            content...
+            \begin{enumerate}
+                \item CREBRF is the best indicator for Smoking.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{ACTR10}
-            content...
-        \end{block}
-
-        \begin{block}{ADAMTS14}
-            content...
-        \end{block}
-
-        \begin{block}{ADH4}
-            content...
+            \begin{enumerate}
+                \item ACTR10 is the best indicator for Smoking in Precancer.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{AADACL3}
-            content...
-        \end{block}
-
-        \begin{block}{ABAT}
-            content...
-        \end{block}
-
-        \begin{block}{ABRAXAS2}
-            content...
+            \begin{enumerate}
+                \item AADACL3 is the best indicator for Smoking in Primary.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -3148,39 +3142,21 @@
         \frametitle{Notable genes in LUSC with Recurrence}
 
         \begin{block}{TRAT1}
-            content...
-        \end{block}
-
-        \begin{block}{ADGRV1}
-            content...
-        \end{block}
-
-        \begin{block}{MT-ND5}
-            content...
+            \begin{enumerate}
+                \item TRAT1 is the best indicator for Recurrence.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{HMG20A}
-            content...
-        \end{block}
-
-        \begin{block}{TRAT1}
-            content...
-        \end{block}
-
-        \begin{block}{ACAT2}
-            content...
+            \begin{enumerate}
+                \item HMG20A is the best indicator for Recurrence in Precancer.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{ZNF711}
-            content...
-        \end{block}
-
-        \begin{block}{VMP1}
-            content...
-        \end{block}
-
-        \begin{block}{RERE}
-            content...
+            \begin{enumerate}
+                \item ZNF711 is the best indicator for Recurrence in Primary.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -3218,44 +3194,26 @@
         \frametitle{Notable genes in LUSC with Recurrence}
 
         \begin{block}{EP400}
-            content...
-        \end{block}
-
-        \begin{block}{FLG}
-            content...
-        \end{block}
-
-        \begin{block}{CENPE}
-            content...
+            \begin{enumerate}
+                \item EP400 is the best indicator for Recurrence.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{CENPE}
-            content...
-        \end{block}
-
-        \begin{block}{F8}
-            content...
-        \end{block}
-
-        \begin{block}{RELN}
-            content...
+            \begin{enumerate}
+                \item CENPE is the best indicator for Recurrence in Precancer.
+            \end{enumerate}
         \end{block}
 
         \begin{block}{INPP5A}
-            content...
-        \end{block}
-
-        \begin{block}{MTF2}
-            content...
-        \end{block}
-
-        \begin{block}{HECTD1}
-            content...
+            \begin{enumerate}
+                \item INPP5A is the best indicator for Recurrence in Primary.
+            \end{enumerate}
         \end{block}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Findings in Clinical Data with Point Mutation}
+        \frametitle{Findings in Clinical Data with Point Mutations}
     \end{frame}
 
     \section{Discussion}
