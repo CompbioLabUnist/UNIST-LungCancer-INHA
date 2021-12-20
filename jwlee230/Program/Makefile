@@ -18,7 +18,7 @@ PAIRED_NORMAL = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")N
 PAIRED_PRIMARY = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")P$(shell echo $* | grep --perl-regexp --only-match "\d$$" > /dev/null && echo "1")
 
 # Options
-VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --tmpfs $(TMPFS)
+VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --volume $(abspath misc):/misc:ro --tmpfs $(TMPFS)
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G" --env NUMEXPR_MAX_THREADS=$(CPUS)
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
@@ -200,7 +200,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40
+latest: step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -2247,9 +2247,17 @@ Output/CNVkit/BWA/Reference.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLA
 Output/CNVkit/Bowtie2/Reference.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) | build.log Output/CNVkit/Bowtie2
 	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster --output-dir $(addprefix /,$(@D)) $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_TUMOR_ID)))) 1> $@.stdout 2> $@.stderr
 
+Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cns: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) Output/CNVkit/BWA/Reference.tsv $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log
+	$(DOCKER) cnvkit.py batch --reference $(addprefix /,$(filter %.tsv,$^)) --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(PAIRED_NORMAL)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --cluster --scatter --diagram --output-dir $(addprefix /,$(@D)) $(addprefix /,Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam) 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cns: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) Output/CNVkit/Bowtie2/Reference.tsv $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log
+	$(DOCKER) cnvkit.py batch --reference $(addprefix /,$(filter %.tsv,$^)) --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(PAIRED_NORMAL)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --cluster --scatter --diagram --output-dir $(addprefix /,$(@D)) $(addprefix /,Output/WES/$*.Bowtie2.Sort.MarkDuplicate.BQSR.bam) 1> $@.stdout 2> $@.stderr
+
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
-step39: step39-Reference
-.PHONY: step39-Reference step39
+step39-BWA: $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_TUMOR_ID)))
+step39-Bowtie2: $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_TUMOR_ID)))
+step39: step39-Reference step39-BWA step39-Bowtie2
+.PHONY: step39-Reference step39-BWA step39-Bowtie2 step39
 
 # Step 40 (Gene Location)
 Output/Gene_Location:
@@ -2261,9 +2269,35 @@ Output/Gene_Location/gene.tar: Python/get_gene_location.py $(GENE_CENCUS_ONE_CSV
 step40: Output/Gene_Location/gene.tar
 .PHONY: step40
 
-# Step ## (Mobster)
-Output/Mobster:
+# Step 41 (Mobster)
+Output/Mobster/BWA Output/Mobster/Bowtie2:
 	mkdir -p $@
+
+Output/Mobster/BWA/%_predictions.txt: misc/Mobster.properties Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log Output/Mobster/BWA
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(addprefix /,$(filter %.bam,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+
+Output/Mobster/Bowtie2/%_predictions.txt: misc/Mobster.properties Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/Mobster/Bowtie2
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(addprefix /,$(filter %.bam,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+
+step41-BWA: $(addprefix Output/Mobster/BWA/,$(addsuffix _predictions.txt,$(filter-out 33P1,$(WES_ID))))
+step41-Bowtie2: $(addprefix Output/Mobster/Bowtie2/,$(addsuffix _predictions.txt,$(filter-out 33P1,$(WES_ID))))
+step41: step41-BWA step41-Bowtie2
+.PHONY: step41-BWA step41-Bowtie2 step41
+
+# Step 42 (CollectRnaSeqMetrics)
+Output/CollectRnaSeqMetrics/STAR Output/CollectRnaSeqMetrics/Bowtie2:
+	mkdir -p $@
+
+Output/CollectRnaSeqMetrics/STAR/%.RNA_metrics: $(UCSC_REFFLAT_TXT) Output/RSEM/Bowtie2/%.genome.bam | Output/CollectRnaSeqMetrics/STAR build.log
+	$(DOCKER) $(PICARD) CollectRnaSeqMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --REF_FLAT $(addprefix /,$(filter %.txt,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/CollectRnaSeqMetrics/Bowtie2/%.RNA_metrics: $(UCSC_REFFLAT_TXT) Output/RSEM/Bowtie2/%.genome.bam | Output/CollectRnaSeqMetrics/Bowtie2 build.log
+	$(DOCKER) $(PICARD) CollectRnaSeqMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --REF_FLAT $(addprefix /,$(filter %.txt,$^)) 1> $@.stdout 2> $@.stderr
+
+step42-STAR: $(addprefix Output/CollectRnaSeqMetrics/STAR/,$(addsuffix .RNA_metrics,$(WTS_ID)))
+step42-Bowtie2: $(addprefix Output/CollectRnaSeqMetrics/Bowtie2/,$(addsuffix .RNA_metrics,$(WTS_ID)))
+step42: step42-STAR step42-Bowtie2
+.PHONY: step42-STAR step42-Bowtie2 step42
 
 # Step ## (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
