@@ -86,7 +86,7 @@ if __name__ == "__main__":
     input_data["chrom-arm"] = list(map(lambda x: "-".join(x), input_data[["chrom", "arm"]].itertuples(index=False, name=None)))
     print(input_data)
 
-    chromosome_list = list(map(lambda x: "-".join(x), itertools.product(list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_list)), ["p", "q"])))
+    chromosome_list = list(map(lambda x: "-".join(x), itertools.product(list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_full_list)), ["p", "q"])))
     print(chromosome_list)
 
     output_data = pandas.DataFrame(data=itertools.product(sample_list, chromosome_list, [0]), columns=["Sample", "Chromosome", watching])
