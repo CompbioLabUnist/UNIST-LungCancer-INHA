@@ -47,8 +47,6 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.threshold < 1):
