@@ -35,7 +35,6 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
-    group_sorting = parser.add_mutually_exclusive_group(required=True)
 
     group_sorting = parser.add_mutually_exclusive_group(required=True)
     group_sorting.add_argument("--patient", help="Sorting by patient first", action="store_true", default=False)
