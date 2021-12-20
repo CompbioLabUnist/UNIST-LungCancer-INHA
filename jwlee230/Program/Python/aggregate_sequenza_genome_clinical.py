@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Sequenza output segments.txt file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("output", help="Output file basename", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
@@ -35,14 +35,16 @@ if __name__ == "__main__":
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
+    group_sorting = parser.add_mutually_exclusive_group(required=True)
+    group_sorting.add_argument("--patient", help="Sorting by patient first", action="store_true", default=False)
+    group_sorting.add_argument("--type", help="Sorting by type first", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".txt"), args.input)):
         raise ValueError("INPUT must end with .TXT!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.threshold < 1):
@@ -65,6 +67,15 @@ if __name__ == "__main__":
 
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in control_patients, args.input)) + list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in case_patients, args.input))
 
+    if args.patient:
+        args.input.sort(key=lambda x: step00.sorting(x.split("/")[-2]))
+    elif args.type:
+        args.input.sort(key=lambda x: step00.sorting_by_type(x.split("/")[-2]))
+    else:
+        raise Exception("Something went wrong!!")
+
+    sample_list = list(map(lambda x: x.split("/")[-2], args.input))
+
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
     print(input_data)
@@ -72,11 +83,11 @@ if __name__ == "__main__":
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
     print(chromosome_list)
 
-    control_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in control_patients, set(input_data["sample"]))), key=step00.sorting_by_type)
+    control_sample_list = list(filter(lambda x: step00.get_patient(x) in control_patients, sample_list))
     control_primary_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", control_sample_list))
     control_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", control_sample_list))
 
-    case_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in case_patients, set(input_data["sample"]))), key=step00.sorting_by_type)
+    case_sample_list = list(filter(lambda x: step00.get_patient(x) in case_patients, sample_list))
     case_primary_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", case_sample_list))
     case_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", case_sample_list))
 
@@ -92,7 +103,7 @@ if __name__ == "__main__":
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
 
-        for _, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
+        for index, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
             chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
 
         control_primary_proportion = list()
@@ -168,5 +179,6 @@ if __name__ == "__main__":
             axs[5][i].legend(title=args.compare[0], loc="lower center")
 
     matplotlib.pyplot.tight_layout()
-    fig.savefig(args.output)
+    fig.savefig(args.output + ".pdf")
+    fig.savefig(args.output + ".png")
     matplotlib.pyplot.close(fig)

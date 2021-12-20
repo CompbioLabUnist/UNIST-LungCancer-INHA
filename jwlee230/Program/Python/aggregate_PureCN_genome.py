@@ -27,13 +27,17 @@ if __name__ == "__main__":
     parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("output", help="Output file basename", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
+    group_sorting = parser.add_mutually_exclusive_group(required=True)
+    group_sorting.add_argument("--patient", help="Sorting by patient first", action="store_true", default=False)
+    group_sorting.add_argument("--type", help="Sorting by type first", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -61,16 +65,24 @@ if __name__ == "__main__":
 
     args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
 
+    if args.patient:
+        args.input.sort(key=step00.sorting)
+    elif args.type:
+        args.input.sort(key=step00.sorting_by_type)
+    else:
+        raise Exception("Something went wrong!!")
+
+    sample_list = list(map(step00.get_id, args.input))
+    print(len(sample_list), sample_list)
+
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
     print(input_data)
 
     chromosome_list = list(filter(lambda x: x in set(input_data["chrom"]), step00.chromosome_list))
-    sample_list = sorted(set(input_data["ID"]), key=step00.sorting_by_type)
     primary_cancer_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", sample_list))
     precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", sample_list))
     print(chromosome_list)
-    print(len(sample_list), sample_list)
 
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
@@ -84,7 +96,7 @@ if __name__ == "__main__":
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
-        for _, row in tqdm.tqdm(input_data.loc[(input_data["chrom"] == chromosome)].iterrows()):
+        for index, row in tqdm.tqdm(input_data.loc[(input_data["chrom"] == chromosome)].iterrows()):
             chromosome_data.loc[row["ID"], row["loc.start"] // step00.big:row["loc.end"] // step00.big] = numpy.power(2, row[watching])
 
         primary_proportion = list()
@@ -99,7 +111,7 @@ if __name__ == "__main__":
         axs[0][i].set_xlabel(chromosome[3:])
 
         if i == 0:
-            axs[0][i].set_ylabel("Ratio")
+            axs[0][i].set_ylabel("Proportion")
             axs[0][i].legend(loc="upper center")
 
         seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
@@ -119,9 +131,10 @@ if __name__ == "__main__":
         axs[2][i].set_xlabel(chromosome[3:])
 
         if i == 0:
-            axs[2][i].set_ylabel("Ratio")
+            axs[2][i].set_ylabel("Proportion")
             axs[2][i].legend(loc="lower center")
 
     matplotlib.pyplot.tight_layout()
-    fig.savefig(args.output)
+    fig.savefig(args.output + ".pdf")
+    fig.savefig(args.output + ".png")
     matplotlib.pyplot.close(fig)
