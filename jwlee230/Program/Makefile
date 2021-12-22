@@ -1,4 +1,4 @@
-# Variables
+#2021-12-22T11:18:05+0900 Variables
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
@@ -2245,13 +2245,11 @@ Output/CNVkit/BWA/Reference.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLA
 	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster --output-dir $(addprefix /,$(@D)) $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_TUMOR_ID)))) 1> $@.stdout 2> $@.stderr
 
 Output/CNVkit/Bowtie2/Reference.tsv: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) | build.log Output/CNVkit/Bowtie2
-	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster --output-dir $(addprefix /,$(@D)) $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_TUMOR_ID)))) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) cnvkit.py batch --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --output-reference $(addprefix /,$@) --scatter --diagram --cluster --output-dir $(addprefix /,$(@D)) $(addprefix /,$(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_TUMOR_ID)))) 1> $@.stdout 2> $@.stderr
 
-Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cns: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) Output/CNVkit/BWA/Reference.tsv $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log
-	$(DOCKER) cnvkit.py batch --reference $(addprefix /,$(filter %.tsv,$^)) --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(PAIRED_NORMAL)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --cluster --scatter --diagram --output-dir $(addprefix /,$(@D)) $(addprefix /,Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam) 1> $@.stdout 2> $@.stderr
+Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/BWA/%.BWA.Sort.MarkDuplicate.BQSR.cns: Output/CNVkit/BWA/Reference.tsv
 
-Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cns: $(REFERENCE_FASTA) $(LIBRARY_BED) $(UCSC_REFFLAT_TXT) Output/CNVkit/Bowtie2/Reference.tsv $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log
-	$(DOCKER) cnvkit.py batch --reference $(addprefix /,$(filter %.tsv,$^)) --processes $(CPUS) --normal $(addprefix /,$(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(PAIRED_NORMAL)))) --fasta $(addprefix /,$(filter %.fasta,$^)) --targets $(addprefix /,$(filter %.bed,$^)) --annotate $(addprefix /,$(filter %.txt,$^)) --cluster --scatter --diagram --output-dir $(addprefix /,$(@D)) $(addprefix /,Output/WES/$*.Bowtie2.Sort.MarkDuplicate.BQSR.bam) 1> $@.stdout 2> $@.stderr
+Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cns: Output/CNVkit/Bowtie2/Reference.tsv
 
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
 step39-BWA: $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_TUMOR_ID)))
@@ -2273,14 +2271,26 @@ step40: Output/Gene_Location/gene.tar
 Output/Mobster/BWA Output/Mobster/Bowtie2:
 	mkdir -p $@
 
-Output/Mobster/BWA/%_predictions.txt: misc/Mobster.properties Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log Output/Mobster/BWA
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(addprefix /,$(filter %.bam,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+Output/Mobster/BWA/SQC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Mobster/Bowtie2/%_predictions.txt: misc/Mobster.properties Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/Mobster/Bowtie2
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(addprefix /,$(filter %.bam,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+Output/Mobster/BWA/ADC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/BWA
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-step41-BWA: $(addprefix Output/Mobster/BWA/,$(addsuffix _predictions.txt,$(filter-out 33P1,$(WES_ID))))
-step41-Bowtie2: $(addprefix Output/Mobster/Bowtie2/,$(addsuffix _predictions.txt,$(filter-out 33P1,$(WES_ID))))
+Output/Mobster/BWA/%_predictions.txt: misc/Mobster.properties Output/Mobster/BWA/%.txt | build.log
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(shell cat $(Filter %.txt,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+
+Output/Mobster/Bowtie2/SQC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/Bowtie2
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Mobster/Bowtie2/ADC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/Bowtie2
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Mobster/Bowtie2/%_predictions.txt: misc/Mobster.properties Output/Mobster/Bowtie2/%.txt | build.log
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(shell cat $(Filter %.txt,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+
+step41-BWA: Ouput/Mobster/BWA/SQC.txt Output/Mobster/BWA/ADC.txt Output/Mobster/BWA/SQC_predictions.txt Output/Mobster/BWA/ADC_predictions.txt
+step41-Bowtie2: Ouput/Mobster/Bowtie2/SQC.txt Output/Mobster/Bowtie2/ADC.txt Output/Mobster/Bowtie2/SQC_predictions.txt Output/Mobster/Bowtie2/ADC_predictions.txt
 step41: step41-BWA step41-Bowtie2
 .PHONY: step41-BWA step41-Bowtie2 step41
 
