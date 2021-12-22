@@ -44,3 +44,5 @@ if __name__ == "__main__":
 
     with open(args.output, "w") as f:
         f.write(",".join(args.input))
+        f.write("\n")
+        f.write(",".join(list(map(step00.get_id, args.input))))

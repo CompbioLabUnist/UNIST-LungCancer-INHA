@@ -2278,7 +2278,7 @@ Output/Mobster/BWA/ADC.txt: Python/make_input_mobster.py $(addprefix Output/WES/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/BWA/%_predictions.txt: misc/Mobster.properties Output/Mobster/BWA/%.txt | build.log
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(shell cat $(Filter %.txt,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/Bowtie2/SQC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -2287,7 +2287,7 @@ Output/Mobster/Bowtie2/ADC.txt: Python/make_input_mobster.py $(addprefix Output/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/Bowtie2/%_predictions.txt: misc/Mobster.properties Output/Mobster/Bowtie2/%.txt | build.log
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $(shell cat $(Filter %.txt,$^)) -out $* -sn $* 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
 
 step41-BWA: Ouput/Mobster/BWA/SQC.txt Output/Mobster/BWA/ADC.txt Output/Mobster/BWA/SQC_predictions.txt Output/Mobster/BWA/ADC_predictions.txt
 step41-Bowtie2: Ouput/Mobster/Bowtie2/SQC.txt Output/Mobster/Bowtie2/ADC.txt Output/Mobster/Bowtie2/SQC_predictions.txt Output/Mobster/Bowtie2/ADC_predictions.txt
