@@ -64,6 +64,7 @@ if __name__ == "__main__":
     print(sorted(case_patients))
 
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in control_patients, args.input)) + list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in case_patients, args.input))
+    sample_list = list(map(step00.get_id, args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
@@ -72,88 +73,73 @@ if __name__ == "__main__":
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
     print(chromosome_list)
 
-    control_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in control_patients, set(input_data["sample"]))), key=step00.sorting_by_type)
-    control_primary_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", control_sample_list))
-    control_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", control_sample_list))
-
-    case_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in case_patients, set(input_data["sample"]))), key=step00.sorting_by_type)
-    case_primary_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", case_sample_list))
-    case_precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", case_sample_list))
+    control_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in control_patients, sample_list)), key=step00.sorting_by_type)
+    case_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in case_patients, sample_list)), key=step00.sorting_by_type)
 
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
+
+    stage_set = set(map(step00.get_long_sample_type, args.input))
+    stage_list = list(reversed(list(filter(lambda x: x in stage_set, step00.long_sample_type_list))))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=4, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 32), gridspec_kw={"width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=2 * len(stage_list), ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 8 * len(stage_list) * 2), gridspec_kw={"width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
 
-        for _, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
+        for index, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
             chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
 
-        control_primary_proportion = list()
-        control_precancer_proportion = list()
-        case_primary_proportion = list()
-        case_precancer_proportion = list()
-        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_primary_list))) / len(control_primary_list))
-            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_precancer_list))) / len(control_precancer_list))
-            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_primary_list))) / len(case_primary_list))
-            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_precancer_list))) / len(case_precancer_list))
+        for j, stage in enumerate(stage_list):
+            control_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, control_sample_list))
+            case_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, case_sample_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="red", linestyle="--", label=args.compare[1])
-        axs[0][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="red", linestyle="-", label=args.compare[2])
-        axs[0][i].set_ylim(bottom=0, top=1)
-        axs[0][i].set_xlabel(chromosome[3:])
+            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            for k in tqdm.tqdm(range(chromosome_data.shape[1])):
+                if control_stage_sample_list:
+                    control_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] >= (1 + args.threshold), case_stage_sample_list))) / len(case_stage_sample_list)
 
-        if i == 0:
-            axs[0][i].set_ylabel("Primary")
-            axs[0][i].legend(title=args.compare[0], loc="upper center")
+            axs[j][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label=args.compare[1])
+            axs[j][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label=args.compare[2])
 
-        axs[1][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="lightsalmon", linestyle="--", label=args.compare[1])
-        axs[1][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="lightsalmon", linestyle="-", label=args.compare[2])
-        axs[1][i].set_ylim(bottom=0, top=1)
-        axs[1][i].set_xlabel(chromosome[3:])
+            axs[j][i].set_xticks([])
+            axs[j][i].set_ylim(bottom=0, top=1)
+            axs[j][i].set_xlabel(chromosome[3:])
 
-        if i == 0:
-            axs[1][i].set_ylabel("Precancer")
-            axs[1][i].legend(title=args.compare[0], loc="upper center")
+            if i == 0:
+                axs[j][i].set_ylabel(stage)
+                axs[j][i].legend(title=args.compare[0], loc="upper center")
 
-        control_primary_proportion = list()
-        control_precancer_proportion = list()
-        case_primary_proportion = list()
-        case_precancer_proportion = list()
-        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-            control_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_primary_list))) / len(control_primary_list))
-            control_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_precancer_list))) / len(control_precancer_list))
-            case_primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_primary_list))) / len(case_primary_list))
-            case_precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_precancer_list))) / len(case_precancer_list))
+        for j, stage in enumerate(stage_list):
+            control_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, control_sample_list))
+            case_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, case_sample_list))
 
-        axs[2][i].plot(range(chromosome_data.shape[1]), control_precancer_proportion, color="cyan", linestyle="--", label=args.compare[1])
-        axs[2][i].plot(range(chromosome_data.shape[1]), case_precancer_proportion, color="cyan", linestyle="-", label=args.compare[2])
-        axs[2][i].set_ylim(bottom=0, top=1)
-        axs[2][i].invert_yaxis()
-        axs[2][i].set_xticks([])
-        axs[2][i].set_xlabel(chromosome[3:])
+            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            for k in tqdm.tqdm(range(chromosome_data.shape[1])):
+                if control_stage_sample_list:
+                    control_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] <= (1 - args.threshold), case_stage_sample_list))) / len(case_stage_sample_list)
 
-        if i == 0:
-            axs[2][i].set_ylabel("Precancer")
-            axs[2][i].legend(title=args.compare[0], loc="lower center")
+            axs[-1 - j][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label=args.compare[1])
+            axs[-1 - j][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label=args.compare[2])
 
-        axs[3][i].plot(range(chromosome_data.shape[1]), control_primary_proportion, color="navy", linestyle="--", label=args.compare[1])
-        axs[3][i].plot(range(chromosome_data.shape[1]), case_primary_proportion, color="navy", linestyle="-", label=args.compare[2])
-        axs[3][i].set_ylim(bottom=0, top=1)
-        axs[3][i].invert_yaxis()
-        axs[3][i].set_xticks([])
-        axs[3][i].set_xlabel(chromosome[3:])
+            axs[-1 - j][i].set_xticks([])
+            axs[-1 - j][i].set_ylim(bottom=0, top=1)
+            axs[-1 - j][i].set_xlabel(chromosome[3:])
+            axs[-1 - j][i].invert_yaxis()
 
-        if i == 0:
-            axs[3][i].set_ylabel("Primary")
-            axs[3][i].legend(title=args.compare[0], loc="lower center")
+            if i == 0:
+                axs[-1 - j][i].set_ylabel(stage)
+                axs[-1 - j][i].legend(title=args.compare[0], loc="lower center")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
