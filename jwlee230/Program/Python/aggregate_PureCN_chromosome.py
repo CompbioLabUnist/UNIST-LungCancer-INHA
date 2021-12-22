@@ -18,7 +18,7 @@ watching = "seg.mean"
 
 def get_data(file_name: str) -> pandas.DataFrame:
     data = pandas.read_csv(file_name, sep="\t")
-    data["chrom"] = list(map(lambda x: "chr" + str(x), data["chrom"]))
+    data["chrom"] = list(map(lambda x: "chrX" if str(x) == "23" else ("chr" + str(x)), data["chrom"]))
     data["ID"] = step00.get_id(file_name)
     return data
 
@@ -105,14 +105,13 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-
     for chromosome in tqdm.tqdm(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
         for _, row in input_data.loc[(input_data["chrom"] == chromosome)].iterrows():
             chromosome_data.loc[row["ID"], row["loc.start"] // step00.big:row["loc.end"] // step00.big] = numpy.power(2, row[watching])
 
-        fig, axs = matplotlib.pyplot.subplots(figsize=(64, 36), nrows=2, sharex=True)
+        fig, axs = matplotlib.pyplot.subplots(figsize=(64, 18 * 2), nrows=2, sharex=True)
 
         primary_proportion = list()
         precancer_proportion = list()

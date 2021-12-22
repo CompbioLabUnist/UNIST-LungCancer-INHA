@@ -2217,6 +2217,30 @@ Output/PureCN/Bowtie2-chromosome-SQC.tar: Python/aggregate_PureCN_chromosome.py 
 Output/PureCN/Bowtie2-chromosome-ADC.tar: Python/aggregate_PureCN_chromosome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/BWA-chromosome-SQC.Recurrence.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-chromosome-ADC.Recurrence.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-chromosome-SQC.Smoking.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-chromosome-ADC.Smoking.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-SQC.Recurrence.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-ADC.Recurrence.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-SQC.Smoking.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-ADC.Smoking.tar: Python/aggregate_PureCN_chromosome_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
@@ -2228,8 +2252,9 @@ step37-simple-clinical: Output/PureCN/BWA-simple-SQC.Recurrence.pdf Output/PureC
 step37-violin: Output/PureCN/BWA-violin-SQC.pdf Output/PureCN/BWA-violin-ADC.pdf Output/PureCN/Bowtie2-violin-SQC.pdf Output/PureCN/Bowtie2-violin-ADC.pdf
 step37-violin-clinical: Output/PureCN/BWA-violin-SQC.Recurrence.pdf Output/PureCN/BWA-violin-ADC.Recurrence.pdf Output/PureCN/Bowtie2-violin-SQC.Recurrence.pdf Output/PureCN/Bowtie2-violin-ADC.pdf Output/PureCN/BWA-violin-SQC.Smoking.pdf Output/PureCN/BWA-violin-ADC.Smoking.pdf Output/PureCN/Bowtie2-violin-SQC.Smoking.pdf Output/PureCN/Bowtie2-violin-ADC.Smoking.pdf
 step37-chromosome: Output/PureCN/BWA-chromosome-SQC.tar Output/PureCN/BWA-chromosome-ADC.tar Output/PureCN/Bowtie2-chromosome-SQC.tar Output/PureCN/Bowtie2-chromosome-ADC.tar
-step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical
-.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical step37
+step37-chromosome-clinical: Output/PureCN/BWA-chromosome-SQC.Recurrence.tar Output/PureCN/BWA-chromosome-ADC.Recurrence.tar Output/PureCN/BWA-chromosome-SQC.Smoking.tar Output/PureCN/BWA-chromosome-ADC.Smoking.tar Output/PureCN/Bowtie2-chromosome-SQC.Recurrence.tar Output/PureCN/Bowtie2-chromosome-ADC.Recurrence.tar tput/PureCN/Bowtie2-chromosome-SQC.Smoking.tar Output/PureCN/Bowtie2-chromosome-ADC.Smoking.tar
+step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical step37-chromosome step37-chromosome-clinical
+.PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical step37-chromosome step37-chromosome-clinical step37
 
 # Step 38 (Short variants analysis upon clinical data with WES data as Venn diagram)
 Output/Gene_Clinical_Venn:
