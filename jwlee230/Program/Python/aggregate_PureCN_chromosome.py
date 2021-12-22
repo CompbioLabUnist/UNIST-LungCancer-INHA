@@ -1,8 +1,10 @@
 """
-aggregate_PureCN_simple.py: Aggregate PureCN results as simple view
+aggregate_PureCN_chromosome.py: Aggregate PureCN results as chromosome view
 """
 import argparse
 import multiprocessing
+import tarfile
+import adjustText
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -21,13 +23,26 @@ def get_data(file_name: str) -> pandas.DataFrame:
     return data
 
 
+def get_chromosome(location: str) -> str:
+    return "chr" + location.split(":")[0]
+
+
+def get_start(location: str) -> int:
+    return int(location.replace("-", ":").split(":")[1])
+
+
+def get_end(location: str) -> int:
+    return int(location.replace("-", ":").split(":")[2])
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("cgc", help="CGC Tier 1 CSV files", type=str)
+    parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
 
@@ -41,8 +56,10 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
+    elif not args.cgc.endswith(".csv"):
+        raise ValueError("CGC must end with .CSV!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.threshold < 1):
@@ -75,51 +92,73 @@ if __name__ == "__main__":
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
 
+    cgc_data = pandas.read_csv(args.cgc)
+    cgc_data = cgc_data.loc[~(cgc_data["Genome Location"].str.contains(":-"))]
+    with multiprocessing.Pool(args.cpus) as pool:
+        cgc_data["Chromosome"] = pool.map(get_chromosome, cgc_data["Genome Location"])
+        cgc_data["Start"] = pool.map(get_start, cgc_data["Genome Location"])
+        cgc_data["End"] = pool.map(get_end, cgc_data["Genome Location"])
+    print(cgc_data)
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=2, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, 16), gridspec_kw={"width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    figures = list()
 
-    for i, chromosome in enumerate(chromosome_list):
+    for chromosome in tqdm.tqdm(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
-        for _, row in tqdm.tqdm(input_data.loc[(input_data["chrom"] == chromosome)].iterrows()):
+        for _, row in input_data.loc[(input_data["chrom"] == chromosome)].iterrows():
             chromosome_data.loc[row["ID"], row["loc.start"] // step00.big:row["loc.end"] // step00.big] = numpy.power(2, row[watching])
+
+        fig, axs = matplotlib.pyplot.subplots(figsize=(64, 36), nrows=2, sharex=True)
 
         primary_proportion = list()
         precancer_proportion = list()
-        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+        for j in range(chromosome_data.shape[1]):
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[0][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-", label="Primary")
-        axs[0][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--", label="Precancer")
-        axs[0][i].set_xticks([])
-        axs[0][i].set_ylim(bottom=0, top=1)
-        axs[0][i].set_xlabel(chromosome[3:])
-
-        if i == 0:
-            axs[0][i].set_ylabel("Proportion")
-            axs[0][i].legend(loc="upper center")
+        axs[0].plot(range(chromosome_data.shape[1]), primary_proportion, color="red", linestyle="-", label="Primary")
+        axs[0].plot(range(chromosome_data.shape[1]), precancer_proportion, color="lightsalmon", linestyle="--", label="Precancer")
+        axs[0].set_ylim(bottom=0, top=1)
+        axs[0].set_xlabel("{0} ({1:.1e} steps)".format(chromosome, step00.big))
+        axs[0].set_ylabel("Proportion")
+        axs[0].legend(loc="upper left")
 
         primary_proportion = list()
         precancer_proportion = list()
-        for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+        for j in range(chromosome_data.shape[1]):
             primary_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), primary_cancer_list))) / len(primary_cancer_list))
             precancer_proportion.append(len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), precancer_list))) / len(precancer_list))
 
-        axs[1][i].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-", label="Primary")
-        axs[1][i].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--", label="Precancer")
-        axs[1][i].set_ylim(bottom=0, top=1)
-        axs[1][i].invert_yaxis()
-        axs[1][i].set_xticks([])
-        axs[1][i].set_xlabel(chromosome[3:])
+        axs[1].plot(range(chromosome_data.shape[1]), primary_proportion, color="navy", linestyle="-", label="Primary")
+        axs[1].plot(range(chromosome_data.shape[1]), precancer_proportion, color="cyan", linestyle="--", label="Precancer")
+        axs[1].set_ylim(bottom=0, top=1)
+        axs[1].invert_yaxis()
+        axs[1].set_xlabel("{0} ({1:.1e} steps)".format(chromosome, step00.big))
+        axs[1].set_ylabel("Proportion")
+        axs[1].legend(loc="lower left")
 
-        if i == 0:
-            axs[1][i].set_ylabel("Proportion")
-            axs[1][i].legend(loc="lower center")
+        upper_texts = list()
+        lower_texts = list()
+        for index, row in cgc_data.loc[(cgc_data["Chromosome"] == chromosome)].iterrows():
+            x = (row["Start"] + row["End"]) / (2 * step00.big)
 
-    matplotlib.pyplot.tight_layout()
-    fig.savefig(args.output)
-    matplotlib.pyplot.close(fig)
+            axs[0].axvline(x=x, color="k", linestyle="--")
+            axs[1].axvline(x=x, color="k", linestyle="--")
+
+            upper_texts.append(axs[0].text(x, 0.5, row["Gene Symbol"], color="k", fontsize="small", horizontalalignment="left", bbox={"color": "white", "alpha": 0.8}))
+            lower_texts.append(axs[1].text(x, 0.5, row["Gene Symbol"], color="k", fontsize="small", horizontalalignment="left", bbox={"color": "white", "alpha": 0.8}))
+
+        matplotlib.pyplot.tight_layout()
+        adjustText.adjust_text(upper_texts, autoalign="y", ax=axs[0], lim=step00.big)
+        adjustText.adjust_text(lower_texts, autoalign="y", ax=axs[1], lim=step00.big)
+        figures.append("{0}.pdf".format(chromosome))
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    with tarfile.open(args.output, "w") as tar:
+        for figure in tqdm.tqdm(figures):
+            tar.add(figure, arcname=figure)

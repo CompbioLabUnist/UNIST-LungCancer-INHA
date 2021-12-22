@@ -2205,6 +2205,18 @@ Output/PureCN/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_PureCN_violin_cli
 Output/PureCN/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_PureCN_violin_clinical.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/BWA-chromosome-SQC.tar: Python/aggregate_PureCN_chromosome.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/BWA-chromosome-ADC.tar: Python/aggregate_PureCN_chromosome.py $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-SQC.tar: Python/aggregate_PureCN_chromosome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/Bowtie2-chromosome-ADC.tar: Python/aggregate_PureCN_chromosome.py $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(filter-out 33P1,$(WES_TUMOR_ID))))
@@ -2215,6 +2227,7 @@ step37-genome-clinical: Output/PureCN/BWA-genome-SQC.Recurrence.pdf Output/PureC
 step37-simple-clinical: Output/PureCN/BWA-simple-SQC.Recurrence.pdf Output/PureCN/BWA-simple-ADC.Recurrence.pdf Output/PureCN/Bowtie2-simple-SQC.Recurrence.pdf Output/PureCN/Bowtie2-simple-ADC.Recurrence.pdf Output/PureCN/BWA-simple-SQC.Smoking.pdf Output/PureCN/BWA-simple-ADC.Smoking.pdf Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf
 step37-violin: Output/PureCN/BWA-violin-SQC.pdf Output/PureCN/BWA-violin-ADC.pdf Output/PureCN/Bowtie2-violin-SQC.pdf Output/PureCN/Bowtie2-violin-ADC.pdf
 step37-violin-clinical: Output/PureCN/BWA-violin-SQC.Recurrence.pdf Output/PureCN/BWA-violin-ADC.Recurrence.pdf Output/PureCN/Bowtie2-violin-SQC.Recurrence.pdf Output/PureCN/Bowtie2-violin-ADC.pdf Output/PureCN/BWA-violin-SQC.Smoking.pdf Output/PureCN/BWA-violin-ADC.Smoking.pdf Output/PureCN/Bowtie2-violin-SQC.Smoking.pdf Output/PureCN/Bowtie2-violin-ADC.Smoking.pdf
+step37-chromosome: Output/PureCN/BWA-chromosome-SQC.tar Output/PureCN/BWA-chromosome-ADC.tar Output/PureCN/Bowtie2-chromosome-SQC.tar Output/PureCN/Bowtie2-chromosome-ADC.tar
 step37: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical
 .PHONY: step37-Reference step37-BWA step37-Bowtie2 step37-genome step37-simple step37-genome-clinical step37-simple-clinical step37-violin step37-violin-clinical step37
 
@@ -2278,7 +2291,7 @@ Output/Mobster/BWA/ADC.txt: Python/make_input_mobster.py $(addprefix Output/WES/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/BWA/%_predictions.txt: misc/Mobster.properties Output/Mobster/BWA/%.txt | build.log
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) mobster -Xmx$(MEMS)g -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/Bowtie2/SQC.txt: Python/make_input_mobster.py $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Mobster/Bowtie2
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -2287,7 +2300,7 @@ Output/Mobster/Bowtie2/ADC.txt: Python/make_input_mobster.py $(addprefix Output/
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Mobster/Bowtie2/%_predictions.txt: misc/Mobster.properties Output/Mobster/Bowtie2/%.txt | build.log
-	$(WORKDIR_DOCKER) mobster -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) mobster -Xmx$(MEMS)g -properties $(addprefix /,$(filter %.properties,$^)) -in $$(cat $(filter %.txt,$^) | head -n 1) -out $* -sn $$(cat $(filter %.txt,$^) | head -n 2 | tail -n 1) 1> $@.stdout 2> $@.stderr
 
 step41-BWA: Ouput/Mobster/BWA/SQC.txt Output/Mobster/BWA/ADC.txt Output/Mobster/BWA/SQC_predictions.txt Output/Mobster/BWA/ADC_predictions.txt
 step41-Bowtie2: Ouput/Mobster/Bowtie2/SQC.txt Output/Mobster/Bowtie2/ADC.txt Output/Mobster/Bowtie2/SQC_predictions.txt Output/Mobster/Bowtie2/ADC_predictions.txt

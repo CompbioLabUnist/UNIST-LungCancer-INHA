@@ -11,6 +11,7 @@ tmpfs = "/tmpfs"
 chromosome_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22".split()
 chromosome_full_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX".split()
 big = 10 ** 6
+small = 10 ** 3
 
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
 
