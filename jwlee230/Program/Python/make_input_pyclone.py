@@ -1,5 +1,5 @@
 """
-convert_mutect2_pyclone.py: convert Mutect2 result to PyClone input format
+make_input_pyclone.py: make(convert) Mutect2 result to PyClone input format
 """
 import argparse
 import multiprocessing
