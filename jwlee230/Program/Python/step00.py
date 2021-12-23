@@ -18,10 +18,12 @@ matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize"
 long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
 long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primary"]
 sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
-SQC_stage_list = ("Normal", "Dysplasia", "CIS+AIS", "Primary")
-ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
+# SQC_stage_list = ("Normal", "Dysplasia", "CIS+AIS", "Primary")
+# ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
-stage_color_code = {"Normal": "tab:green", "Primary": "black", "Dysplasia": "tab:red", "CIS+AIS": "tab:red", "AAH": "tab:red", "MIA": "tab:red"}
+
+stage_color_code = {"Normal": "green", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "black"}
+stage_linestyle = {"Normal": "-", "Dysplasia": ":", "AAH": ":", "CIS+AIS": "-.", "MIA": "--", "Primary": "-"}
 
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
