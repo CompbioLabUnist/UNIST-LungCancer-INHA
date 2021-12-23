@@ -1,5 +1,5 @@
 """
-aggregate_RSEM_4.py: aggregate RSEM results with TPM values
+aggregate_RSEM_5.py: aggregate RSEM results with FPKM values
 """
 import argparse
 import gtfparse
@@ -13,7 +13,7 @@ trembl_ID_set = set()
 
 
 def read_RSEM(filename: str) -> pandas.DataFrame:
-    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "TPM"], index_col="gene_id")
+    data = pandas.read_csv(filename, sep="\t", usecols=["gene_id", "FPKM"], index_col="gene_id")
     data.columns = [filename.split("/")[-1].split(".")[0]]
     return data
 
