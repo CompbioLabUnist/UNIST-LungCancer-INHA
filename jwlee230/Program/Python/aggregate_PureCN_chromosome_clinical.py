@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
-    parser.add_argument("cgc", help="CGC Tier 1 CSV files", type=str)
+    parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
