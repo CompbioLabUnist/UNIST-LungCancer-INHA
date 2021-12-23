@@ -76,6 +76,9 @@ if __name__ == "__main__":
     sample_list = list(map(lambda x: x.split("/")[-2], args.input))
     print(sample_list)
 
+    stage_set = set(map(step00.get_long_sample_type, sample_list))
+    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
         input_data["arm"] = pool.starmap(query_band, input_data[["chromosome", "start.pos", "end.pos"]].itertuples(index=False, name=None))
@@ -87,7 +90,7 @@ if __name__ == "__main__":
     chromosome_list = list(map(lambda x: "-".join(x), itertools.product(list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_full_list)), ["p", "q"])))
     print(chromosome_list)
 
-    output_data = pandas.DataFrame(data=itertools.product(sample_list, chromosome_list, [0]), columns=["Sample", "Chromosome", watching])
+    output_data = pandas.DataFrame(data=itertools.product(sample_list, chromosome_list, [1]), columns=["Sample", "Chromosome", watching])
     for sample, chromosome in tqdm.tqdm(list(itertools.product(sample_list, chromosome_list))):
         tmp_data = input_data.loc[(input_data["sample"] == sample) & (input_data["chrom"] == chromosome)]
 
@@ -96,7 +99,7 @@ if __name__ == "__main__":
 
         output_data.loc[(output_data["Sample"] == sample) & (output_data["Chromosome"] == chromosome), watching] = numpy.average(tmp_data[watching], weights=tmp_data["length"])
 
-    output_data["PRE/PRI"] = list(map(step00.get_simple_sample_type, output_data["Sample"]))
+    output_data["Stage"] = list(map(step00.get_long_sample_type, output_data["Sample"]))
     print(output_data)
 
     matplotlib.use("Agg")
@@ -106,13 +109,14 @@ if __name__ == "__main__":
     ncols = 8
     additional_row = (1 if len(chromosome_list) % ncols else 0)
 
-    fig, axs = matplotlib.pyplot.subplots(ncols=ncols, nrows=len(chromosome_list) // ncols + additional_row, figsize=(ncols * 11, 12 * (len(chromosome_list) // ncols + additional_row)))
+    fig, axs = matplotlib.pyplot.subplots(ncols=ncols, nrows=len(chromosome_list) // ncols + additional_row, figsize=(ncols * 4 * len(stage_list), 12 * (len(chromosome_list) // ncols + additional_row)))
 
     for i, chromosome in tqdm.tqdm(list(enumerate(chromosome_list))):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
+        drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
 
-        seaborn.violinplot(data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"], inner="box", ax=axs[i // ncols][i % ncols])
-        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], [("Precancer", "Primary")], data=drawing_data, x="PRE/PRI", y=watching, order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", ax=axs[i // ncols][i % ncols])
+        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         axs[i // ncols][i % ncols].set_title(chromosome)
         axs[i // ncols][i % ncols].set_xlabel("")

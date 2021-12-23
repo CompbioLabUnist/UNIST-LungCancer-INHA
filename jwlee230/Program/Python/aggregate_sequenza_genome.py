@@ -83,7 +83,7 @@ if __name__ == "__main__":
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
 
-    stage_set = set(map(step00.get_long_sample_type, args.input))
+    stage_set = set(map(step00.get_long_sample_type, sample_list))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
     matplotlib.use("Agg")
@@ -100,9 +100,11 @@ if __name__ == "__main__":
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
-            proportion = [0 for _ in range(chromosome_data.shape[1])]
+            proportion = [1 for _ in range(chromosome_data.shape[1])]
+
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
                 proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), stage_sample_list))) / len(stage_sample_list)
+
             axs[0][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
 
         axs[0][i].set_ylim(bottom=0, top=1)
@@ -118,9 +120,11 @@ if __name__ == "__main__":
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
-            proportion = [0 for _ in range(chromosome_data.shape[1])]
+            proportion = [1 for _ in range(chromosome_data.shape[1])]
+
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
                 proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), stage_sample_list))) / len(stage_sample_list)
+
             axs[2][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
 
         axs[2][i].set_ylim(bottom=0, top=1)

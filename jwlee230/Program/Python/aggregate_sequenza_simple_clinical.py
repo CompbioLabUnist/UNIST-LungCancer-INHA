@@ -64,7 +64,7 @@ if __name__ == "__main__":
     print(sorted(case_patients))
 
     args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in control_patients, args.input)) + list(filter(lambda x: step00.get_patient(x.split("/")[-2]) in case_patients, args.input))
-    sample_list = list(map(step00.get_id, args.input))
+    sample_list = list(map(lambda x: x.split("/")[-2], args.input))
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
 
-    stage_set = set(map(step00.get_long_sample_type, args.input))
+    stage_set = set(map(step00.get_long_sample_type, sample_list))
     stage_list = list(reversed(list(filter(lambda x: x in stage_set, step00.long_sample_type_list))))
 
     matplotlib.use("Agg")
@@ -98,8 +98,8 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, control_sample_list))
             case_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, case_sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for k in tqdm.tqdm(range(chromosome_data.shape[1])):
                 if control_stage_sample_list:
                     control_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
@@ -121,8 +121,8 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, control_sample_list))
             case_stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, case_sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for k in tqdm.tqdm(range(chromosome_data.shape[1])):
                 if control_stage_sample_list:
                     control_proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)

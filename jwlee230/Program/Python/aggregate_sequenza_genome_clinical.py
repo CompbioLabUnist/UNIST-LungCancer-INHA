@@ -94,7 +94,7 @@ if __name__ == "__main__":
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
     print(size_data)
 
-    stage_set = set(map(step00.get_long_sample_type, args.input))
+    stage_set = set(map(step00.get_long_sample_type, sample_list))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
     matplotlib.use("Agg")
@@ -116,11 +116,14 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in control_patients), sample_list))
             case_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in case_patients), sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-                control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
-                case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+                if control_stage_sample_list:
+                    control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+
             axs[0][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label="{0}: {1}".format(stage, args.compare[1]))
             axs[0][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label="{0}: {1}".format(stage, args.compare[1]))
 
@@ -138,11 +141,14 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in control_patients), sample_list))
             case_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in case_patients), sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-                control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
-                case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+                if control_stage_sample_list:
+                    control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), case_stage_sample_list))) / len(case_stage_sample_list)
+
             axs[1][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label="{0}: {1}".format(stage, args.compare[1]))
             axs[1][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label="{0}: {1}".format(stage, args.compare[2]))
 
@@ -172,11 +178,14 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in control_patients), sample_list))
             case_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in case_patients), sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-                control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
-                case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+                if control_stage_sample_list:
+                    control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_stage_sample_list))) / len(case_stage_sample_list)
+
             axs[4][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label="{0}: {1}".format(stage, args.compare[1]))
             axs[4][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label="{0}: {1}".format(stage, args.compare[2]))
 
@@ -196,11 +205,14 @@ if __name__ == "__main__":
             control_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in control_patients), sample_list))
             case_stage_sample_list = list(filter(lambda x: (step00.get_long_sample_type(x) == stage) and (step00.get_patient(x) in case_patients), sample_list))
 
-            control_proportion = [0 for _ in range(chromosome_data.shape[1])]
-            case_proportion = [0 for _ in range(chromosome_data.shape[1])]
+            control_proportion = [1 for _ in range(chromosome_data.shape[1])]
+            case_proportion = [1 for _ in range(chromosome_data.shape[1])]
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
-                control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
-                case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+                if control_stage_sample_list:
+                    control_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), control_stage_sample_list))) / len(control_stage_sample_list)
+                if case_stage_sample_list:
+                    case_proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), case_stage_sample_list))) / len(control_stage_sample_list)
+
             axs[5][i].plot(control_proportion, color=step00.stage_color_code[stage], linestyle="--", label="{0}: {1}".format(stage, args.compare[1]))
             axs[5][i].plot(case_proportion, color=step00.stage_color_code[stage], linestyle="-", label="{0}: {1}".format(stage, args.compare[1]))
 
