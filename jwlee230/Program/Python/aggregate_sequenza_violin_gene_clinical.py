@@ -99,7 +99,7 @@ if __name__ == "__main__":
     cgc_data.set_index("Gene Symbol", verify_integrity=True, inplace=True)
     print(cgc_data)
 
-    gene_list = list(cgc_data.index)[:10]
+    gene_list = list(cgc_data.index)
 
     chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_full_list))
     print(chromosome_list)
