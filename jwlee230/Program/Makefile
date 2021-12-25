@@ -541,6 +541,42 @@ Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin
 Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Sequenza/BWA-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/BWA-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/Bowtie2-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
 step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf
 step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.pdf
@@ -549,8 +585,10 @@ step13-genome-Clinical: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Seq
 step13-simple-Clinical: Output/Sequenza/BWA-simple-SQC.Recurrence.pdf Output/Sequenza/BWA-simple-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf Output/Sequenza/BWA-simple-SQC.Smoking.pdf Output/Sequenza/BWA-simple-ADC.Smoking.pdf Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf
 step13-violin: Output/Sequenza/BWA-violin-SQC.pdf Output/Sequenza/BWA-violin-ADC.pdf Output/Sequenza/Bowtie2-violin-SQC.pdf Output/Sequenza/Bowtie2-violin-ADC.pdf
 step13-violin-Clinical: Output/Sequenza/BWA-violin-SQC.Recurrence.pdf Output/Sequenza/BWA-violin-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf Output/Sequenza/BWA-violin-SQC.Smoking.pdf Output/Sequenza/BWA-violin-ADC.Smoking.pdf Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf
-step13: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical
-.PHONY: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical step13
+step13-gene: Output/Sequenza/BWA-gene-SQC.tar Output/Sequenza/BWA-gene-ADC.tar Output/Sequenza/Bowtie2-gene-SQC.tar Output/Sequenza/Bowtie2-gene-ADC.tar
+step313-gene-clinical: Output/Sequenza/BWA-gene-SQC.Recurrence.tar Output/Sequenza/BWA-gene-ADC.Recurrence.tar Output/Sequenza/Bowtie2-gene-SQC.Recurrence.tar Output/Sequenza/Bowtie2-gene-ADC.Recurrence.tar Output/Sequenza/BWA-gene-SQC.Smoking.tar Output/Sequenza/BWA-gene-ADC.Smoking.tar Output/Sequenza/Bowtie2-gene-SQC.Smoking.tar Output/Sequenza/Bowtie2-gene-ADC.Smoking.tar
+step13: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical step13-gene step313-gene-clinical
+.PHONY: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical step13-gene step313-gene-clinical step13
 
 # Step 14 (Mutect2)
 Output/Mutect2/BWA Output/Mutect2/Bowtie2:
