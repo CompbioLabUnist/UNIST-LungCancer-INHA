@@ -9,7 +9,7 @@ import pandas
 
 tmpfs = "/tmpfs"
 chromosome_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22".split()
-chromosome_full_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX".split()
+chromosome_full_list = chromosome_list + ["chrX"]
 big = 10 ** 6
 small = 10 ** 3
 
@@ -22,7 +22,7 @@ sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA":
 # ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
 
-stage_color_code = {"Normal": "green", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "black"}
+stage_color_code = {"Normal": "cyan", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "silver"}
 stage_linestyle = {"Normal": "-", "Dysplasia": ":", "AAH": ":", "CIS+AIS": "-.", "MIA": "--", "Primary": "-"}
 
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
