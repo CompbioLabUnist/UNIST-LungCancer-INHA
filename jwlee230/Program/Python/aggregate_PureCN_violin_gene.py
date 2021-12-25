@@ -146,8 +146,9 @@ if __name__ == "__main__":
 
         drawing_data = output_data.loc[(output_data["Gene"] == gene), :]
         drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
+        drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
-        seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", ax=ax)
+        seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, ax=ax)
         statannotations.Annotator.Annotator(ax, list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(gene)

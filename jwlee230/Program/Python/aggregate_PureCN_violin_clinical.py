@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(ncols=ncols, nrows=len(chromosome_list) // ncols + additional_row, figsize=(ncols * 4 * len(stage_list), 12 * (len(chromosome_list) // ncols + additional_row)))
 
-    for i, chromosome in tqdm.tqdm(enumerate(chromosome_list)):
+    for i, chromosome in tqdm.tqdm(list(enumerate(chromosome_list))):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
         drawing_stage_list = list(filter(lambda x: (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[1]), "Stage"])) and (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[2]), "Stage"])), stage_list))
 
