@@ -97,7 +97,7 @@ if __name__ == "__main__":
     input_data = input_data.loc[~(input_data["chromosome"] == "chrX")]
     print(input_data)
 
-    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
+    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_full_list))
     sample_list = sorted(set(input_data["sample"]), key=step00.sorting)
     primary_cancer_list = list(filter(lambda x: step00.get_long_sample_type(x) == "Primary", sample_list))
     precancer_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", sample_list))

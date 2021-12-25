@@ -70,7 +70,7 @@ if __name__ == "__main__":
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
     print(input_data)
 
-    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_list))
+    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_full_list))
     print(chromosome_list)
 
     control_sample_list = sorted(list(filter(lambda x: step00.get_patient(x) in control_patients, sample_list)), key=step00.sorting_by_type)
