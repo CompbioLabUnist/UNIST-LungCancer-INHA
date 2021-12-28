@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 4
+CPUS = 2
 MEMS = 40
-PARALLEL = 10
+PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -200,7 +200,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step41 step42
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -2400,10 +2400,122 @@ Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-SQC.png: Pytho
 Output/CNVkit/Bowtie2-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-ADC.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
+Output/CNVkit/BWA-genome-SQC.patient.pdf Output/CNVkit/BWA-genome-SQC.patient.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-ADC.patient.pdf Output/CNVkit/BWA-genome-ADC.patient.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.patient.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-ADC.Recurrence.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-SQC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-SQC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-ADC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-SQC.Smoking.pdf Output/CNVkit/BWA-genome-SQC.Smoking.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-ADC.Smoking.pdf Output/CNVkit/BWA-genome-ADC.Smoking.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-SQC.Smoking.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-ADC.Smoking.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-SQC.Smoking.patient.pdf Output/CNVkit/BWA-genome-SQC.Smoking.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-genome-ADC.Smoking.patient.pdf Output/CNVkit/BWA-genome-ADC.Smoking.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-SQC.pdf: Python/aggregate_CNVkit_violin.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-ADC.pdf: Python/aggregate_CNVkit_violin.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-SQC.pdf: Python/aggregate_CNVkit_violin.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-ADC.pdf: Python/aggregate_CNVkit_violin.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-SQC.Smoking.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-violin-ADC.Smoking.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_CNVkit_violin_clinical.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-chromosome-SQC.tar: Python/aggregate_CNVkit_chromosome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-chromosome-ADC.tar: Python/aggregate_CNVkit_chromosome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-chromosome-SQC.tar: Python/aggregate_CNVkit_chromosome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-chromosome-ADC.tar: Python/aggregate_CNVkit_chromosome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
-step39-genome: Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-ADC.pdf
-step39: step39-Reference step39-BWA step39-Bowtie2
-.PHONY: step39-Reference step39-BWA step39-Bowtie2 step39
+step39-genome: Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-ADC.pdf Output/CNVkit/BWA-genome-SQC.patient.pdf Output/CNVkit/BWA-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.pdf
+step39-genome-clinical: Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-SQC.Smoking.pdf Output/CNVkit/BWA-genome-ADC.Smoking.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.pdf Output/CNVkit/BWA-genome-SQC.Smoking.patient.pdf Output/CNVkit/BWA-genome-ADC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.pdf
+step39-violin: Output/CNVkit/BWA-violin-SQC.pdf Output/CNVkit/BWA-violin-ADC.pdf Output/CNVkit/Bowtie2-violin-SQC.pdf Output/CNVkit/Bowtie2-violin-ADC.pdf
+step39-violin-clinical: Output/CNVkit/BWA-violin-SQC.Recurrence.pdf Output/CNVkit/BWA-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/BWA-violin-SQC.Smoking.pdf Output/CNVkit/BWA-violin-ADC.Smoking.pdf Output/CNVkit/Bowtie2-violin-SQC.Smoking.pdf Output/CNVkit/Bowtie2-violin-ADC.Smoking.pdf
+step39-chromosome: Output/CNVkit/BWA-chromosome-SQC.tar Output/CNVkit/BWA-chromosome-ADC.tar Output/CNVkit/Bowtie2-chromosome-SQC.tar Output/CNVkit/Bowtie2-chromosome-ADC.tar
+step39: step39-Reference step39-genome step39-genome-clinical step39-chromosome
+.PHONY: step39-Reference step39-genome step39-genome-clinical step39-chromosome step39
 
 # Step 40 (Gene Location)
 Output/Gene_Location:
