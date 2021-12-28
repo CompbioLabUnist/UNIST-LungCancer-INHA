@@ -19,11 +19,12 @@ def run(cell: str) -> str:
     print("Running:", cell)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
     tmp = set(cibersort_data["Stage"])
-
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
+    pallete = list(map(lambda x: step00.stage_color_code[x], order))
 
-    seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order)
+    seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order, pallete=pallete)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=cibersort_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(cell)
