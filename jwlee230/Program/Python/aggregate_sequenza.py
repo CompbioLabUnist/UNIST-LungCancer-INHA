@@ -61,12 +61,17 @@ if __name__ == "__main__":
     input_data["type"] = list(map(lambda x: step00.long_sample_type_dict[x], list(map(step00.get_sample_type, list(input_data.index)))))
     print(input_data)
 
+    sample_list = list(map(lambda x: x.split("/")[-2], args.input))
+    stage_set = set(map(step00.get_long_sample_type, sample_list))
+    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+    drawing_palette = list(map(lambda x: step00.stage_color_code[x], stage_list))
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     order = list(filter(lambda x: x in set(input_data["type"]), step00.long_sample_type_list))
-    g = seaborn.JointGrid(data=input_data, x="cellularity", y="ploidy", hue="type", hue_order=order, xlim=(-0.1, 1.1), height=24, ratio=5)
+    g = seaborn.JointGrid(data=input_data, x="cellularity", y="ploidy", hue="type", hue_order=order, xlim=(-0.1, 1.1), height=24, ratio=5, palette=drawing_palette)
     g.plot_joint(seaborn.scatterplot, s=1000, legend="full")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
 
