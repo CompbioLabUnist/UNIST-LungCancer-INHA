@@ -98,7 +98,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=6, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(control_sample_list + case_sample_list) + 32), gridspec_kw={"height_ratios": [8, 8, len(control_sample_list), len(case_sample_list), 8, 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=6, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(control_sample_list) + len(case_sample_list) + 8 * 4), gridspec_kw={"height_ratios": [8, 8, len(control_sample_list), len(case_sample_list), 8, 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(control_sample_list + case_sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=control_sample_list + case_sample_list, dtype=float)
