@@ -1,18 +1,19 @@
 """
-aggregate_fusioncatcher.py: Aggregate FusionCatcher results as CoMut plot
+aggregate_fusioncatcher.py: Aggregate FusionCatcher results as heatmap plot
 """
 import argparse
-import collections
 import multiprocessing
-from comut import comut
 import matplotlib
+import matplotlib.pyplot
+import numpy
 import pandas
+import seaborn
 import step00
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
     data = pandas.read_csv(filename, sep="\t", low_memory=False)
-    data["sample"] = filename.split("/")[-1].split(".")[0]
+    data["sample"] = step00.get_id(filename)
     return data
 
 
@@ -20,8 +21,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="FusionCatcher output .tsv files", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+
+    group_subtype = parser.add_mutually_exclusive_group(required=True)
+    group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group_subtype.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -29,24 +35,47 @@ if __name__ == "__main__":
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    args.input.sort(key=step00.sorting)
-    print(args.input)
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    if args.SQC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+    elif args.ADC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+    else:
+        raise Exception("Something went wrong!!")
+    print(sorted(patients))
+
+    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        input_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
+    print(input_data)
+
+    first_gene_set = set(input_data.iloc[:, 0])
+    second_gene_set = set(input_data.iloc[:, 1])
+
+    output_data = pandas.DataFrame(data=numpy.zeros((len(first_gene_set), len(second_gene_set))), index=sorted(first_gene_set), columns=sorted(second_gene_set), dtype=int)
+    for index, row in input_data.iterrows():
+        output_data.loc[row[0], row[1]] += 1
+    print(output_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    my_comut = comut.CoMut()
-    my_comut.samples = sorted(list(map(lambda x: x.split("/")[-1].split(".")[0], args.input)), key=step00.sorting)
+    fig, ax = matplotlib.pyplot.subplots(figsize=(len(first_gene_set), len(second_gene_set)))
 
-    with multiprocessing.Pool(args.cpus) as pool:
-        fusioncatcher_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-    print(fusioncatcher_data)
+    seaborn.heatmap(data=output_data, cmap="Reds", square=False, linecolor="k", linewidths=0.1, xticklabels=True, yticklabels=True, ax=ax)
 
-    indicator_data = pandas.DataFrame()
-    indicator_data["sample"] = my_comut.samples
-    indicator_data["group"] = list(map(lambda x: hash(step00.get_patient(x)), indicator_data["sample"]))
-    print(indicator_data)
-    my_comut.add_sample_indicators(indicator_data, name="Same patient")
+    matplotlib.pyplot.xlabel("3' fusion gene")
+    matplotlib.pyplot.ylabel("5' fusion gene")
+    matplotlib.pyplot.tight_layout()
+
+    fig.savefig(args.output)
+    matplotlib.pyplot.close(fig)

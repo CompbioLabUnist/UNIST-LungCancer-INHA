@@ -1456,13 +1456,35 @@ Output/FusionCatcher/STAR/%.tsv: Python/filter_fusioncatcher.py Output/FusionCat
 Output/FusionCatcher/Bowtie2/%.tsv: Python/filter_fusioncatcher.py Output/FusionCatcher/Bowtie2/%/normal.tsv Output/FusionCatcher/Bowtie2/%/tumor.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/FusionCatcher/Plot/ADC.STAR.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(filter-out %N,$(ADC_WTS_SAMPLES)))) | Output/FusionCatcher/Plot build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+Output/FusionCatcher/Plot/ADC.STAR.heatmap.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/SQC.STAR.heatmap.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/ADC.Bowtie2.heatmap.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/SQC.Bowtie2.heatmap.pdf: Python/aggregate_fusioncatcher.py $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/ADC.STAR.circos.pdf: Python/aggregate_fusioncatcher_circos.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/SQC.STAR.circos.pdf: Python/aggregate_fusioncatcher_circos.py $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV)| Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/ADC.Bowtie2.circos.pdf: Python/aggregate_fusioncatcher_circos.py $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/FusionCatcher/Plot/SQC.Bowtie2.circos.pdf: Python/aggregate_fusioncatcher_circos.py $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | Output/FusionCatcher/Plot build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 step26-prepar: Output/FusionCatcher/Reference/human_v102/genes.fa
 step26-STAR: $(addprefix Output/FusionCatcher/STAR/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/STAR/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
 step26-Bowtie: $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
-step26-Plot:
+step26-heatmap: Output/FusionCatcher/Plot/ADC.STAR.heatmap.pdf Output/FusionCatcher/Plot/SQC.STAR.heatmap.pdf Output/FusionCatcher/Plot/ADC.Bowtie2.heatmap.pdf Output/FusionCatcher/Plot/SQC.Bowtie2.heatmap.pdf
+step26-circos: Output/FusionCatcher/Plot/ADC.STAR.circos.pdf Output/FusionCatcher/Plot/SQC.STAR.circos.pdf Output/FusionCatcher/Plot/ADC.Bowtie2.circos.pdf Output/FusionCatcher/Plot/SQC.Bowtie2.circos.pdf
 step26: step26-prepare step26-STAR step26-Bowtie
 .PHONY: step26-prepare step26-STAR step26-Bowtie step26
 
