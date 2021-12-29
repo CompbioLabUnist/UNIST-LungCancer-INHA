@@ -85,13 +85,14 @@ if __name__ == "__main__":
     print(cgc_both_data)
 
     for chromosome in tqdm.tqdm(chromosome_list):
-        tmp_data = cgc_one_data.loc[(cgc_one_data["Chromosome-Arm"] == chromosome), ["Gene Symbol", "Name"]]
+        tmp_data = cgc_one_data.loc[(cgc_one_data["Chromosome-Arm"] == chromosome), ["Gene Symbol", "Name", "Chromosome", "Start", "End"]]
         if tmp_data.empty:
-            tmp_data = pandas.DataFrame(data=[["None", ""]], columns=["Gene Symbol", "Name"])
+            tmp_data = pandas.DataFrame(data=[["None", "", "", "", ""]], columns=["Gene Symbol", "Name", "Chromosome", "Start", "End"])
 
         file_list.append("{0}.CGC-1.tsv".format(chromosome))
         tmp_data.to_csv(file_list[-1], sep="\t", header=True, index=False)
 
+        tmp_data = tmp_data.loc[:, ["Gene Symbol", "Name"]]
         if (l := tmp_data.shape[0]) > length_limit:
             tmp_data.columns = ["Gene Symbol ({0})".format(l), "Name"]
             tmp_data = tmp_data.iloc[:length_limit, :]
@@ -100,13 +101,14 @@ if __name__ == "__main__":
         tmp_data.to_latex(file_list[-1], header=True, index=False)
 
     for chromosome in tqdm.tqdm(chromosome_list):
-        tmp_data = cgc_both_data.loc[(cgc_both_data["Chromosome-Arm"] == chromosome) & ~(cgc_both_data["Gene Symbol"].isin(cgc_one_set)), ["Gene Symbol", "Name"]]
+        tmp_data = cgc_both_data.loc[(cgc_both_data["Chromosome-Arm"] == chromosome) & ~(cgc_both_data["Gene Symbol"].isin(cgc_one_set)), ["Gene Symbol", "Name", "Chromosome", "Start", "End"]]
         if tmp_data.empty:
-            tmp_data = pandas.DataFrame(data=[["None", ""]], columns=["Gene Symbol", "Name"])
+            tmp_data = pandas.DataFrame(data=[["None", "", "", "", ""]], columns=["Gene Symbol", "Name", "Chromosome", "Start", "End"])
 
         file_list.append("{0}.CGC-2.tsv".format(chromosome))
         tmp_data.to_csv(file_list[-1], sep="\t", header=True, index=False)
 
+        tmp_data = tmp_data.loc[:, ["Gene Symbol", "Name"]]
         if (l := tmp_data.shape[0]) > length_limit:
             tmp_data.columns = ["Gene Symbol ({0})".format(l), "Name"]
             tmp_data = tmp_data.iloc[:length_limit, :]
