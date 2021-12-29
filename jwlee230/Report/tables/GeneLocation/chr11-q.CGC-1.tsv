@@ -1,21 +1,21 @@
-Gene Symbol	Name
-ARHGEF12	RHO guanine nucleotide exchange factor (GEF) 12 (LARG)
-ATM	ataxia telangiectasia mutated
-BCL9L	B-cell CLL/lymphoma 9-like
-BIRC3	baculoviral IAP repeat-containing 3
-CBL	Cas-Br-M (murine) ecotropic retroviral transforming
-CCND1	cyclin D1
-DDX10	DEAD (Asp-Glu-Ala-Asp) box polypeptide 10
-DDX6	DEAD (Asp-Glu-Ala-Asp) box polypeptide 6
-FLI1	Friend leukemia virus integration 1
-KCNJ5	potassium inwardly-rectifying channel; subfamily J; member 5
-KMT2A	lysine (K)-specific methyltransferase 2A
-MAML2	mastermind-like 2 (Drosophila)
-MEN1	multiple endocrine neoplasia type 1 gene
-NUMA1	nuclear mitotic apparatus protein 1
-PAFAH1B2	platelet-activating factor acetylhydrolase, isoform Ib, beta subunit 30kDa
-PICALM	phosphatidylinositol binding clathrin assembly protein (CALM)
-POU2AF1	POU domain, class 2, associating factor 1 (OBF1)
-SDHAF2	succinate dehydrogenase complex assembly factor 2
-SDHD	succinate dehydrogenase complex, subunit D, integral membrane protein
-ZBTB16	zinc finger and BTB domain containing 16
+Gene Symbol	Name	Chromosome	Start	End
+ARHGEF12	RHO guanine nucleotide exchange factor (GEF) 12 (LARG)	chr11	120337078	120489936
+ATM	ataxia telangiectasia mutated	chr11	108222832	108369099
+BCL9L	B-cell CLL/lymphoma 9-like	chr11	118893875	118910904
+BIRC3	baculoviral IAP repeat-containing 3	chr11	102317495	102337734
+CBL	Cas-Br-M (murine) ecotropic retroviral transforming	chr11	119206276	119308149
+CCND1	cyclin D1	chr11	69641087	69654474
+DDX10	DEAD (Asp-Glu-Ala-Asp) box polypeptide 10	chr11	108665025	108940930
+DDX6	DEAD (Asp-Glu-Ala-Asp) box polypeptide 6	chr11	118747766	118790948
+FLI1	Friend leukemia virus integration 1	chr11	128693770	128813267
+KCNJ5	potassium inwardly-rectifying channel; subfamily J; member 5	chr11	128891356	128921035
+KMT2A	lysine (K)-specific methyltransferase 2A	chr11	118436490	118526832
+MAML2	mastermind-like 2 (Drosophila)	chr11	95976598	96343180
+MEN1	multiple endocrine neoplasia type 1 gene	chr11	64803524	64811294
+NUMA1	nuclear mitotic apparatus protein 1	chr11	72002864	72080687
+PAFAH1B2	platelet-activating factor acetylhydrolase, isoform Ib, beta subunit 30kDa	chr11	117144267	117171048
+PICALM	phosphatidylinositol binding clathrin assembly protein (CALM)	chr11	85958814	86068929
+POU2AF1	POU domain, class 2, associating factor 1 (OBF1)	chr11	111352252	111379692
+SDHAF2	succinate dehydrogenase complex assembly factor 2	chr11	61430073	61447529
+SDHD	succinate dehydrogenase complex, subunit D, integral membrane protein	chr11	112086773	112095794
+ZBTB16	zinc finger and BTB domain containing 16	chr11	114059593	114250676

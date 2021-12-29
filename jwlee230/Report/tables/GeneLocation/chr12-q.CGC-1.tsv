@@ -1,27 +1,27 @@
-Gene Symbol	Name
-ARID2	AT rich interactive domain 2
-ATF1	activating transcription factor 1
-BCL7A	B-cell CLL/lymphoma 7A
-BTG1	B-cell translocation gene 1, anti-proliferative
-CDK4	cyclin-dependent kinase 4
-CLIP1	CAP-GLY domain containing linker protein 1
-COL2A1	collagen, type II, alpha 1
-DDIT3	DNA-damage-inducible transcript 3
-ERBB3	erb-b2 receptor tyrosine kinase 3
-HMGA2	high mobility group AT-hook 2 (HMGIC)
-HNF1A	HNF1 homeobox A
-HOXC11	homeo box C11
-HOXC13	homeo box C13
-KMT2D	lysine (K)-specific methyltransferase 2D
-LRIG3	leucine-rich repeats and immunoglobulin-like domains 3
-MDM2	Mdm2 p53 binding protein homolog
-NAB2	NGFI-A binding protein 2
-NCOR2	nuclear receptor corepressor 2
-POLE	polymerase (DNA directed), epsilon, catalytic subunit
-PTPN11	protein tyrosine phosphatase, non-receptor type 11
-PTPRB	protein tyrosine phosphatase, receptor type, B
-SH2B3	SH2B adaptor protein 3
-SMARCD1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily d, member 1
-STAT6	signal transducer and activator of transcription 6, interleukin-4 induced
-TBX3	T-box 3
-WIF1	WNT inhibitory factor 1
+Gene Symbol	Name	Chromosome	Start	End
+ARID2	AT rich interactive domain 2	chr12	45729665	45908040
+ATF1	activating transcription factor 1	chr12	50764292	50821122
+BCL7A	B-cell CLL/lymphoma 7A	chr12	122019422	122062044
+BTG1	B-cell translocation gene 1, anti-proliferative	chr12	92140278	92145897
+CDK4	cyclin-dependent kinase 4	chr12	57747727	57752521
+CLIP1	CAP-GLY domain containing linker protein 1	chr12	122271434	122422569
+COL2A1	collagen, type II, alpha 1	chr12	47972965	48004486
+DDIT3	DNA-damage-inducible transcript 3	chr12	57516589	57520517
+ERBB3	erb-b2 receptor tyrosine kinase 3	chr12	56079861	56103505
+HMGA2	high mobility group AT-hook 2 (HMGIC)	chr12	65824460	65915447
+HNF1A	HNF1 homeobox A	chr12	120978749	121001269
+HOXC11	homeo box C11	chr12	53973126	53977643
+HOXC13	homeo box C13	chr12	53938765	53946544
+KMT2D	lysine (K)-specific methyltransferase 2D	chr12	49018975	49055324
+LRIG3	leucine-rich repeats and immunoglobulin-like domains 3	chr12	58872149	58920522
+MDM2	Mdm2 p53 binding protein homolog	chr12	68808176	68850686
+NAB2	NGFI-A binding protein 2	chr12	57088894	57095476
+NCOR2	nuclear receptor corepressor 2	chr12	124324415	124495252
+POLE	polymerase (DNA directed), epsilon, catalytic subunit	chr12	132623762	132687359
+PTPN11	protein tyrosine phosphatase, non-receptor type 11	chr12	112419112	112504764
+PTPRB	protein tyrosine phosphatase, receptor type, B	chr12	70515866	70637440
+SH2B3	SH2B adaptor protein 3	chr12	111405948	111451623
+SMARCD1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily d, member 1	chr12	50084972	50100712
+STAT6	signal transducer and activator of transcription 6, interleukin-4 induced	chr12	57095408	57111433
+TBX3	T-box 3	chr12	114670255	114683590
+WIF1	WNT inhibitory factor 1	chr12	65050626	65121566

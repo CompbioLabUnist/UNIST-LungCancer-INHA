@@ -1,4 +1,4 @@
-Gene Symbol	Name
-NTHL1	nth like DNA glycosylase 1
-PRKCB	protein kinase C beta
-SNX29	RUN domain containing 2A
+Gene Symbol	Name	Chromosome	Start	End
+NTHL1	nth like DNA glycosylase 1	chr16	2039815	2047866
+PRKCB	protein kinase C beta	chr16	23835983	24220611
+SNX29	RUN domain containing 2A	chr16	11976738	12574289

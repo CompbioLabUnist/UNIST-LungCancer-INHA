@@ -1,6 +1,6 @@
-Gene Symbol	Name
-ASXL2	additional sex combs like 2, transcriptional regulator
-BIRC6	baculoviral IAP repeat containing 6
-CTNNA2	catenin alpha 2
-PCBP1	poly(rC) binding protein 1
-SIX2	SIX homeobox 2
+Gene Symbol	Name	Chromosome	Start	End
+ASXL2	additional sex combs like 2, transcriptional regulator	chr2	25741925	25780309
+BIRC6	baculoviral IAP repeat containing 6	chr2	32357028	32618899
+CTNNA2	catenin alpha 2	chr2	79651552	80648689
+PCBP1	poly(rC) binding protein 1	chr2	70087454	70089203
+SIX2	SIX homeobox 2	chr2	45005161	45009430

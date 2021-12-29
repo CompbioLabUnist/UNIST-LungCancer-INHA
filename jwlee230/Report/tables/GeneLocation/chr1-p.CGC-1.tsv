@@ -1,31 +1,31 @@
-Gene Symbol	Name
-ARID1A	AT rich interactive domain 1A (SWI-like)
-ATP1A1	ATPase, Na+/K+ transporting, alpha 1 polypeptide
-BCL10	B-cell CLL/lymphoma 10
-CAMTA1	calmodulin binding transcription activator 1
-CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)
-CSF3R	colony stimulating factor 3 receptor (granulocyte)
-EPS15	epidermal growth factor receptor pathway substrate 15 (AF1p)
-FUBP1	far upstream element (FUSE) binding protein 1
-JAK1	Janus kinase 1
-JUN	jun oncogene
-LCK	lymphocyte-specific protein tyrosine kinase
-MPL	myeloproliferative leukaemia virus oncogene, thrombopoietin receptor
-MTOR	mechanistic target of rapamycin
-MUTYH	mutY homolog (E. coli)
-MYCL	v-myc avian myelocytomatosis viral oncogene lung carcinoma derived homolog
-NOTCH2	Notch homolog 2
-NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog
-PAX7	paired box gene 7
-PRDM16	PR domain containing 16
-RBM15	RNA binding motif protein 15
-RPL22	ribosomal protein L22 (EAP)
-RPL5	ribososomal protein L5
-SDHB	succinate dehydrogenase complex, subunit B, iron sulfur (Ip)
-SFPQ	splicing factor proline/glutamine rich(polypyrimidine tract binding protein associated)
-SPEN	spen family transcriptional repressor
-STIL	SCL/TAL1 interrupting locus
-TAL1	T-cell acute lymphocytic leukemia 1 (SCL)
-TENT5C	family with sequence similarity 46, member C
-TNFRSF14	tumor necrosis factor receptor superfamily, member 14 (herpesvirus entry mediator)
-TRIM33	tripartite motif-containing 33 (PTC7,TIF1G)
+Gene Symbol	Name	Chromosome	Start	End
+ARID1A	AT rich interactive domain 1A (SWI-like)	chr1	26696033	26782110
+ATP1A1	ATPase, Na+/K+ transporting, alpha 1 polypeptide	chr1	116373867	116404772
+BCL10	B-cell CLL/lymphoma 10	chr1	85266248	85277090
+CAMTA1	calmodulin binding transcription activator 1	chr1	6785324	7769706
+CDKN2C	cyclin-dependent kinase inhibitor 2C (p18, inhibits CDK4)	chr1	50960745	50974633
+CSF3R	colony stimulating factor 3 receptor (granulocyte)	chr1	36466043	36483278
+EPS15	epidermal growth factor receptor pathway substrate 15 (AF1p)	chr1	51354263	51519328
+FUBP1	far upstream element (FUSE) binding protein 1	chr1	77948405	77979086
+JAK1	Janus kinase 1	chr1	64833229	64966504
+JUN	jun oncogene	chr1	58780788	58784327
+LCK	lymphocyte-specific protein tyrosine kinase	chr1	32251239	32286165
+MPL	myeloproliferative leukaemia virus oncogene, thrombopoietin receptor	chr1	43337849	43352772
+MTOR	mechanistic target of rapamycin	chr1	11106535	11262507
+MUTYH	mutY homolog (E. coli)	chr1	45329242	45340388
+MYCL	v-myc avian myelocytomatosis viral oncogene lung carcinoma derived homolog	chr1	39895426	39902013
+NOTCH2	Notch homolog 2	chr1	119911553	120069626
+NRAS	neuroblastoma RAS viral (v-ras) oncogene homolog	chr1	114704469	114716894
+PAX7	paired box gene 7	chr1	18631006	18736138
+PRDM16	PR domain containing 16	chr1	3069211	3438621
+RBM15	RNA binding motif protein 15	chr1	110338506	110346677
+RPL22	ribosomal protein L22 (EAP)	chr1	6185020	6199612
+RPL5	ribososomal protein L5	chr1	92831983	92841924
+SDHB	succinate dehydrogenase complex, subunit B, iron sulfur (Ip)	chr1	17018722	17054170
+SFPQ	splicing factor proline/glutamine rich(polypyrimidine tract binding protein associated)	chr1	35182932	35193148
+SPEN	spen family transcriptional repressor	chr1	15847864	15940460
+STIL	SCL/TAL1 interrupting locus	chr1	47250142	47314140
+TAL1	T-cell acute lymphocytic leukemia 1 (SCL)	chr1	47216292	47229771
+TENT5C	family with sequence similarity 46, member C	chr1	117605934	117628372
+TNFRSF14	tumor necrosis factor receptor superfamily, member 14 (herpesvirus entry mediator)	chr1	2556366	2563829
+TRIM33	tripartite motif-containing 33 (PTC7,TIF1G)	chr1	114392777	114511160

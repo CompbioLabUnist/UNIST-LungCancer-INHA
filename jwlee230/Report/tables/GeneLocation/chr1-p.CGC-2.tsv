@@ -1,8 +1,8 @@
-Gene Symbol	Name
-ARHGEF10L	Rho guanine nucleotide exchange factor 10 like
-CASP9	caspase 9
-ID3	inhibitor of DNA binding 3, HLH protein
-MDS2	myelodysplastic syndrome 2
-PRDM2	PR/SET domain 2
-SKI	SKI proto-oncogene
-THRAP3	thyroid hormone receptor associated protein 3 (TRAP150)
+Gene Symbol	Name	Chromosome	Start	End
+ARHGEF10L	Rho guanine nucleotide exchange factor 10 like	chr1	17539835	17697869
+CASP9	caspase 9	chr1	15492270	15524295
+ID3	inhibitor of DNA binding 3, HLH protein	chr1	23557918	23559794
+MDS2	myelodysplastic syndrome 2	chr1	23581495	23640568
+PRDM2	PR/SET domain 2	chr1	13704855	13825079
+SKI	SKI proto-oncogene	chr1	2228695	2310119
+THRAP3	thyroid hormone receptor associated protein 3 (TRAP150)	chr1	36224416	36305357

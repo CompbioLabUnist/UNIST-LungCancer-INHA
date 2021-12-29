@@ -1,6 +1,6 @@
-Gene Symbol	Name
-DROSHA	drosha ribonuclease III
-IL7R	interleukin 7 receptor
-LIFR	leukemia inhibitory factor receptor
-SDHA	succinate dehydrogenase complex, subunit A, flavoprotein (Fp)
-TERT	telomerase reverse transcriptase
+Gene Symbol	Name	Chromosome	Start	End
+DROSHA	drosha ribonuclease III	chr5	31400497	31532061
+IL7R	interleukin 7 receptor	chr5	35856849	35879603
+LIFR	leukemia inhibitory factor receptor	chr5	38474963	38595404
+SDHA	succinate dehydrogenase complex, subunit A, flavoprotein (Fp)	chr5	218241	256700
+TERT	telomerase reverse transcriptase	chr5	1253167	1295047

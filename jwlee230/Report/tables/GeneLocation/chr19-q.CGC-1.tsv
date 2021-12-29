@@ -1,15 +1,15 @@
-Gene Symbol	Name
-AKT2	v-akt murine thymoma viral oncogene homolog 2
-BAX	BCL2 associated X, apoptosis regulator
-BCL3	B-cell CLL/lymphoma 3
-CBLC	Cas-Br-M (murine) ecotropic retroviral transforming sequence c
-CCNE1	cyclin E1
-CD79A	CD79a molecule, immunoglobulin-associated alpha
-CEBPA	CCAAT/enhancer binding protein (C/EBP), alpha
-CIC	capicua homolog
-CNOT3	CCR4-NOT transcription complex subunit 3
-ERCC2	excision repair cross-complementing rodent repair deficiency, complementation group 2 (xeroderma pigmentosum D)
-KLK2	kallikrein-related peptidase 2
-POLD1	DNA polymerase delta 1, catalytic subunit
-PPP2R1A	protein phosphatase 2, regulatory subunit A, alpha
-ZNF331	zinc finger protein 331
+Gene Symbol	Name	Chromosome	Start	End
+AKT2	v-akt murine thymoma viral oncogene homolog 2	chr19	40230317	40285395
+BAX	BCL2 associated X, apoptosis regulator	chr19	48954929	48961798
+BCL3	B-cell CLL/lymphoma 3	chr19	44748547	44760044
+CBLC	Cas-Br-M (murine) ecotropic retroviral transforming sequence c	chr19	44777869	44800634
+CCNE1	cyclin E1	chr19	29811898	29824308
+CD79A	CD79a molecule, immunoglobulin-associated alpha	chr19	41877120	41881372
+CEBPA	CCAAT/enhancer binding protein (C/EBP), alpha	chr19	33299934	33302564
+CIC	capicua homolog	chr19	42284665	42295797
+CNOT3	CCR4-NOT transcription complex subunit 3	chr19	54141396	54155680
+ERCC2	excision repair cross-complementing rodent repair deficiency, complementation group 2 (xeroderma pigmentosum D)	chr19	45349837	45370587
+KLK2	kallikrein-related peptidase 2	chr19	50873249	50880567
+POLD1	DNA polymerase delta 1, catalytic subunit	chr19	50384340	50418010
+PPP2R1A	protein phosphatase 2, regulatory subunit A, alpha	chr19	52190039	52229533
+ZNF331	zinc finger protein 331	chr19	53521024	53580269

@@ -1,14 +1,14 @@
-Gene Symbol	Name
-AFF1	AF4/FMR2 family, member 1
-FAT1	FAT atypical cadherin 1
-FAT4	FAT atypical cadherin 4
-FBXW7	F-box and WD-40 domain protein 7 (archipelago homolog, Drosophila)
-FIP1L1	FIP1 like 1 (S. cerevisiae)
-IL2	interleukin 2
-KDR	vascular endothelial growth factor receptor 2
-KIT	v-kit Hardy-Zuckerman 4 feline sarcoma viral oncogene homolog
-LEF1	lymphoid enhancer binding factor 1
-PDGFRA	platelet-derived growth factor, alpha-receptor
-PTPN13	protein tyrosine phosphatase, non-receptor type 13
-RAP1GDS1	RAP1, GTP-GDP dissociation stimulator 1
-TET2	tet oncogene family member 2
+Gene Symbol	Name	Chromosome	Start	End
+AFF1	AF4/FMR2 family, member 1	chr4	86935002	87141054
+FAT1	FAT atypical cadherin 1	chr4	186587783	186723855
+FAT4	FAT atypical cadherin 4	chr4	125316399	125492932
+FBXW7	F-box and WD-40 domain protein 7 (archipelago homolog, Drosophila)	chr4	152320544	152536063
+FIP1L1	FIP1 like 1 (S. cerevisiae)	chr4	53377645	53459668
+IL2	interleukin 2	chr4	122451470	122456725
+KDR	vascular endothelial growth factor receptor 2	chr4	55078259	55125595
+KIT	v-kit Hardy-Zuckerman 4 feline sarcoma viral oncogene homolog	chr4	54657918	54740715
+LEF1	lymphoid enhancer binding factor 1	chr4	108047545	108168422
+PDGFRA	platelet-derived growth factor, alpha-receptor	chr4	54229097	54298247
+PTPN13	protein tyrosine phosphatase, non-receptor type 13	chr4	86594315	86815171
+RAP1GDS1	RAP1, GTP-GDP dissociation stimulator 1	chr4	98261518	98442334
+TET2	tet oncogene family member 2	chr4	105146293	105279816

@@ -1,18 +1,18 @@
-Gene Symbol	Name
-BMPR1A	bone morphogenetic protein receptor, type IA
-CCDC6	coiled-coil domain containing 6
-FAS	Fas cell surface death receptor
-FGFR2	fibroblast growth factor receptor 2
-KAT6B	K(lysine) acetyltransferase 6B
-NCOA4	nuclear receptor coactivator 4 - PTC3 (ELE1)
-NFKB2	nuclear factor of kappa light polypeptide gene enhancer in B-cells 2 (p49/p100)
-NT5C2	5'-nucleotidase, cytosolic II
-NUTM2B	NUT family member 2B
-NUTM2D	NUT family member 2A
-PRF1	perforin 1 (pore forming protein)
-PTEN	phosphatase and tensin homolog gene
-RET	ret proto-oncogene
-SUFU	suppressor of fused homolog (Drosophila)
-TCF7L2	transcription factor 7-like 2
-TET1	tet methylcytosine dioxygenase 1
-TLX1	T-cell leukemia, homeobox 1 (HOX11)
+Gene Symbol	Name	Chromosome	Start	End
+BMPR1A	bone morphogenetic protein receptor, type IA	chr10	86756650	86932838
+CCDC6	coiled-coil domain containing 6	chr10	59788763	59906656
+FAS	Fas cell surface death receptor	chr10	88990657	89015785
+FGFR2	fibroblast growth factor receptor 2	chr10	121479857	121598403
+KAT6B	K(lysine) acetyltransferase 6B	chr10	74826625	75032622
+NCOA4	nuclear receptor coactivator 4 - PTC3 (ELE1)	chr10	46006412	46030607
+NFKB2	nuclear factor of kappa light polypeptide gene enhancer in B-cells 2 (p49/p100)	chr10	102394597	102402524
+NT5C2	5'-nucleotidase, cytosolic II	chr10	103088018	103193306
+NUTM2B	NUT family member 2B	chr10	79703227	79712757
+NUTM2D	NUT family member 2A	chr10	87357668	87367195
+PRF1	perforin 1 (pore forming protein)	chr10	70597349	70602775
+PTEN	phosphatase and tensin homolog gene	chr10	87863113	87971930
+RET	ret proto-oncogene	chr10	43077027	43130351
+SUFU	suppressor of fused homolog (Drosophila)	chr10	102503987	102633535
+TCF7L2	transcription factor 7-like 2	chr10	112950407	113167493
+TET1	tet methylcytosine dioxygenase 1	chr10	68560656	68694482
+TLX1	T-cell leukemia, homeobox 1 (HOX11)	chr10	101130505	101137789

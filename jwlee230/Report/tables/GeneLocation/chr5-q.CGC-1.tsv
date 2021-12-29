@@ -1,16 +1,16 @@
-Gene Symbol	Name
-AFF4	AF4/FMR2 family, member 4
-APC	adenomatous polyposis of the colon gene
-ARHGAP26	Rho GTPase activating protein 26
-CD74	CD74 molecule, major histocompatibility complex, class II invariant chain
-EBF1	early B-cell factor 1
-FGFR4	fibroblast growth factor receptor 4
-FLT4	fms-related tyrosine kinase 4
-IL6ST	interleukin 6 signal transducer (gp130, oncostatin M receptor)
-ITK	IL2-inducible T-cell kinase
-MAP3K1	mitogen-activated protein kinase kinase kinase 1, E3 ubiquitin protein ligase
-NPM1	nucleophosmin (nucleolar phosphoprotein B23, numatrin)
-NSD1	nuclear receptor binding SET domain protein 1
-PDGFRB	platelet-derived growth factor receptor, beta polypeptide
-PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (alpha)
-TLX3	T-cell leukemia, homeobox 3 (HOX11L2)
+Gene Symbol	Name	Chromosome	Start	End
+AFF4	AF4/FMR2 family, member 4	chr5	132875379	132963634
+APC	adenomatous polyposis of the colon gene	chr5	112737888	112846239
+ARHGAP26	Rho GTPase activating protein 26	chr5	142770377	143229011
+CD74	CD74 molecule, major histocompatibility complex, class II invariant chain	chr5	150402152	150412751
+EBF1	early B-cell factor 1	chr5	158695920	159099761
+FGFR4	fibroblast growth factor receptor 4	chr5	177086886	177098144
+FLT4	fms-related tyrosine kinase 4	chr5	180601506	180649624
+IL6ST	interleukin 6 signal transducer (gp130, oncostatin M receptor)	chr5	55935095	55994993
+ITK	IL2-inducible T-cell kinase	chr5	157180826	157255191
+MAP3K1	mitogen-activated protein kinase kinase kinase 1, E3 ubiquitin protein ligase	chr5	56815574	56896152
+NPM1	nucleophosmin (nucleolar phosphoprotein B23, numatrin)	chr5	171387648	171411137
+NSD1	nuclear receptor binding SET domain protein 1	chr5	177133925	177300215
+PDGFRB	platelet-derived growth factor receptor, beta polypeptide	chr5	150113837	150155860
+PIK3R1	phosphoinositide-3-kinase, regulatory subunit 1 (alpha)	chr5	68215720	68301821
+TLX3	T-cell leukemia, homeobox 3 (HOX11L2)	chr5	171309284	171312134

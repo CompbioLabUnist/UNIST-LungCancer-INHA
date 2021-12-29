@@ -1,9 +1,9 @@
-Gene Symbol	Name
-FGFR1	fibroblast growth factor receptor 1
-HOOK3	hook homolog 3
-IKBKB	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase beta
-KAT6A	K(lysine) acetyltransferase 6A
-NRG1	neuregulin 1
-NSD3	Wolf-Hirschhorn syndrome candidate 1-like 1 (NSD3)
-PCM1	pericentriolar material 1  (PTC4)
-WRN	Werner syndrome (RECQL2)
+Gene Symbol	Name	Chromosome	Start	End
+FGFR1	fibroblast growth factor receptor 1	chr8	38411138	38467845
+HOOK3	hook homolog 3	chr8	42896932	43030539
+IKBKB	inhibitor of kappa light polypeptide gene enhancer in B-cells, kinase beta	chr8	42271302	42331608
+KAT6A	K(lysine) acetyltransferase 6A	chr8	41929479	42051987
+NRG1	neuregulin 1	chr8	32548635	32764407
+NSD3	Wolf-Hirschhorn syndrome candidate 1-like 1 (NSD3)	chr8	38269697	38382272
+PCM1	pericentriolar material 1  (PTC4)	chr8	17922840	18027968
+WRN	Werner syndrome (RECQL2)	chr8	31033801	31173769

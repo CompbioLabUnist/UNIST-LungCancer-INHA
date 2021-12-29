@@ -1,12 +1,12 @@
-Gene Symbol	Name
-CARS	cysteinyl-tRNA synthetase
-CREB3L1	cAMP responsive element binding protein 3-like 1
-DDB2	damage-specific DNA binding protein 2
-EXT2	multiple exostoses type 2 gene
-FANCF	Fanconi anemia, complementation group F
-HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog
-LMO1	LIM domain only 1 (rhombotin 1) (RBTN1)
-LMO2	LIM domain only 2 (rhombotin-like 1) (RBTN2)
-MYOD1	myogenic differentiation 1
-NUP98	nucleoporin 98kDa
-WT1	Wilms tumour 1 gene
+Gene Symbol	Name	Chromosome	Start	End
+CARS	cysteinyl-tRNA synthetase	chr11	3000922	3057437
+CREB3L1	cAMP responsive element binding protein 3-like 1	chr11	46277661	46321422
+DDB2	damage-specific DNA binding protein 2	chr11	47214942	47239240
+EXT2	multiple exostoses type 2 gene	chr11	44096197	44245429
+FANCF	Fanconi anemia, complementation group F	chr11	22622519	22626787
+HRAS	v-Ha-ras Harvey rat sarcoma viral oncogene homolog	chr11	532243	535550
+LMO1	LIM domain only 1 (rhombotin 1) (RBTN1)	chr11	8224304	8263858
+LMO2	LIM domain only 2 (rhombotin-like 1) (RBTN2)	chr11	33858576	33892289
+MYOD1	myogenic differentiation 1	chr11	17719568	17722131
+NUP98	nucleoporin 98kDa	chr11	3675010	3797792
+WT1	Wilms tumour 1 gene	chr11	32387775	32435630

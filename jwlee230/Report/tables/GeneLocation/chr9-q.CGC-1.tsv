@@ -1,17 +1,17 @@
-Gene Symbol	Name
-ABL1	v-abl Abelson murine leukemia viral oncogene homolog 1
-BRD3	bromodomain containing 3
-CNTRL	centriolin
-FANCC	Fanconi anemia, complementation group C
-GNAQ	guanine nucleotide binding protein (G protein), q polypeptide
-KLF4	Kruppel-like factor 4
-NOTCH1	Notch homolog 1, translocation-associated (Drosophila) (TAN1)
-NR4A3	nuclear receptor subfamily 4, group A, member 3 (NOR1)
-NUP214	nucleoporin 214kDa (CAN)
-PPP6C	protein phosphatase 6, catalytic subunit
-PTCH1	Homolog of Drosophila Patched gene
-SET	SET translocation
-SYK	spleen tyrosine kinase
-TAL2	T-cell acute lymphocytic leukemia 2
-TSC1	tuberous sclerosis 1 gene
-XPA	xeroderma pigmentosum, complementation group A
+Gene Symbol	Name	Chromosome	Start	End
+ABL1	v-abl Abelson murine leukemia viral oncogene homolog 1	chr9	130713946	130885683
+BRD3	bromodomain containing 3	chr9	134030305	134068017
+CNTRL	centriolin	chr9	121075012	121177608
+FANCC	Fanconi anemia, complementation group C	chr9	95099054	95317702
+GNAQ	guanine nucleotide binding protein (G protein), q polypeptide	chr9	77716087	78031458
+KLF4	Kruppel-like factor 4	chr9	107484852	107489646
+NOTCH1	Notch homolog 1, translocation-associated (Drosophila) (TAN1)	chr9	136494433	136545786
+NR4A3	nuclear receptor subfamily 4, group A, member 3 (NOR1)	chr9	99821855	99866891
+NUP214	nucleoporin 214kDa (CAN)	chr9	131125561	131234670
+PPP6C	protein phosphatase 6, catalytic subunit	chr9	125146574	125189939
+PTCH1	Homolog of Drosophila Patched gene	chr9	95442980	95508661
+SET	SET translocation	chr9	128683655	128696400
+SYK	spleen tyrosine kinase	chr9	90801787	90898549
+TAL2	T-cell acute lymphocytic leukemia 2	chr9	105662457	105663112
+TSC1	tuberous sclerosis 1 gene	chr9	132891348	132944633
+XPA	xeroderma pigmentosum, complementation group A	chr9	97674909	97697357

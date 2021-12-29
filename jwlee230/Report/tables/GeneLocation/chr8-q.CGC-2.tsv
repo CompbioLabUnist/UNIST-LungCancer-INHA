@@ -1,7 +1,7 @@
-Gene Symbol	Name
-CDH17	cadherin 17
-CNBD1	cyclic nucleotide binding domain containing 1
-COX6C	cytochrome c oxidase subunit VIc
-CSMD3	CUB and Sushi multiple domains 3
-FAM135B	family with sequence similarity 135 member B
-PABPC1	poly(A) binding protein cytoplasmic 1
+Gene Symbol	Name	Chromosome	Start	End
+CDH17	cadherin 17	chr8	94127171	94208587
+CNBD1	cyclic nucleotide binding domain containing 1	chr8	86866445	87382859
+COX6C	cytochrome c oxidase subunit VIc	chr8	99877866	99894062
+CSMD3	CUB and Sushi multiple domains 3	chr8	112222928	113437099
+FAM135B	family with sequence similarity 135 member B	chr8	138130023	138496822
+PABPC1	poly(A) binding protein cytoplasmic 1	chr8	100702916	100722712

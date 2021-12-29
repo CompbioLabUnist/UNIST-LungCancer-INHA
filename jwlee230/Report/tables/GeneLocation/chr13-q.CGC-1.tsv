@@ -1,9 +1,9 @@
-Gene Symbol	Name
-BRCA2	familial breast/ovarian cancer gene 2
-CDX2	caudal type homeo box transcription factor 2
-ERCC5	excision repair cross-complementing rodent repair deficiency, complementation group 5 (xeroderma pigmentosum, complementation group G (Cockayne syndrome))
-FLT3	fms-related tyrosine kinase 3
-FOXO1	forkhead box O1
-LATS2	large tumor suppressor kinase 2
-RB1	retinoblastoma gene
-ZMYM2	zinc finger protein 198
+Gene Symbol	Name	Chromosome	Start	End
+BRCA2	familial breast/ovarian cancer gene 2	chr13	32315474	32400266
+CDX2	caudal type homeo box transcription factor 2	chr13	27962137	27971139
+ERCC5	excision repair cross-complementing rodent repair deficiency, complementation group 5 (xeroderma pigmentosum, complementation group G (Cockayne syndrome))	chr13	102844844	102876001
+FLT3	fms-related tyrosine kinase 3	chr13	28003274	28100592
+FOXO1	forkhead box O1	chr13	40555667	40666597
+LATS2	large tumor suppressor kinase 2	chr13	20973032	21061547
+RB1	retinoblastoma gene	chr13	48303726	48481890
+ZMYM2	zinc finger protein 198	chr13	19958670	20091829

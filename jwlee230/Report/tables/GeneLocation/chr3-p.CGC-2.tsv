@@ -1,7 +1,7 @@
-Gene Symbol	Name
-CCR4	C-C motif chemokine receptor 4
-EPHA3	EPH receptor A3
-FBLN2	fibulin 2
-NCKIPSD	NCK interacting protein with SH3 domain
-ROBO2	roundabout guidance receptor 2
-SRGAP3	SLIT-ROBO Rho GTPase activating protein 3
+Gene Symbol	Name	Chromosome	Start	End
+CCR4	C-C motif chemokine receptor 4	chr3	32951574	32956349
+EPHA3	EPH receptor A3	chr3	89107524	89482134
+FBLN2	fibulin 2	chr3	13549131	13638422
+NCKIPSD	NCK interacting protein with SH3 domain	chr3	48673844	48685927
+ROBO2	roundabout guidance receptor 2	chr3	75906695	77647510
+SRGAP3	SLIT-ROBO Rho GTPase activating protein 3	chr3	8980591	9249379

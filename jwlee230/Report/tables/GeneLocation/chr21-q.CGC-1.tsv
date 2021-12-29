@@ -1,6 +1,6 @@
-Gene Symbol	Name
-ERG	v-ets erythroblastosis virus E26 oncogene like (avian)
-OLIG2	oligodendrocyte lineage transcription factor 2 (BHLHB1)
-RUNX1	runt-related transcription factor 1  (AML1)
-TMPRSS2	transmembrane protease, serine 2
-U2AF1	U2 small nuclear RNA auxiliary factor 1
+Gene Symbol	Name	Chromosome	Start	End
+ERG	v-ets erythroblastosis virus E26 oncogene like (avian)	chr21	38380027	38661694
+OLIG2	oligodendrocyte lineage transcription factor 2 (BHLHB1)	chr21	33025935	33029196
+RUNX1	runt-related transcription factor 1  (AML1)	chr21	34787801	35049344
+TMPRSS2	transmembrane protease, serine 2	chr21	41464553	41508065
+U2AF1	U2 small nuclear RNA auxiliary factor 1	chr21	43092956	43107587

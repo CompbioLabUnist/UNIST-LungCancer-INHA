@@ -1,16 +1,16 @@
-Gene Symbol	Name
-B2M	beta-2-microglobulin
-BLM	Bloom Syndrome
-BUB1B	BUB1 budding uninhibited by benzimidazoles 1 homolog beta (yeast)
-CRTC3	CREB regulated transcription coactivator 3
-FES	FES proto-oncogene, tyrosine kinase
-IDH2	isocitrate dehydrogenase 2 (NADP+), mitochondrial
-KNL1	cancer susceptibility candidate 5
-MAP2K1	mitogen-activated protein kinase kinase 1
-MYO5A	myosin VA (heavy chain 12, myoxin)
-NTRK3	neurotrophic tyrosine kinase, receptor, type 3
-NUTM1	NUT midline carcinoma, family member 1
-PML	promyelocytic leukemia
-SMAD3	SMAD family member 3
-TCF12	transcription factor 12 (HTF4, helix-loop-helix transcription factors 4)
-USP8	ubiquitin specific peptidase 8
+Gene Symbol	Name	Chromosome	Start	End
+B2M	beta-2-microglobulin	chr15	44711477	44718877
+BLM	Bloom Syndrome	chr15	90717327	90816165
+BUB1B	BUB1 budding uninhibited by benzimidazoles 1 homolog beta (yeast)	chr15	40161026	40221136
+CRTC3	CREB regulated transcription coactivator 3	chr15	90530068	90642813
+FES	FES proto-oncogene, tyrosine kinase	chr15	90884412	90895776
+IDH2	isocitrate dehydrogenase 2 (NADP+), mitochondrial	chr15	90083045	90102504
+KNL1	cancer susceptibility candidate 5	chr15	40594020	40664342
+MAP2K1	mitogen-activated protein kinase kinase 1	chr15	66386817	66492312
+MYO5A	myosin VA (heavy chain 12, myoxin)	chr15	52307283	52529050
+NTRK3	neurotrophic tyrosine kinase, receptor, type 3	chr15	87876757	88256731
+NUTM1	NUT midline carcinoma, family member 1	chr15	34343315	34357728
+PML	promyelocytic leukemia	chr15	73994717	74046771
+SMAD3	SMAD family member 3	chr15	67065845	67195195
+TCF12	transcription factor 12 (HTF4, helix-loop-helix transcription factors 4)	chr15	56918623	57288514
+USP8	ubiquitin specific peptidase 8	chr15	50424382	50514419

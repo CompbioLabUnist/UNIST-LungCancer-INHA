@@ -1,16 +1,16 @@
-Gene Symbol	Name
-APOBEC3B	apolipoprotein B mRNA editing enzyme catalytic subunit 3B
-BCR	breakpoint cluster region
-CHEK2	CHK2 checkpoint homolog (S. pombe)
-CLTCL1	clathrin, heavy polypeptide-like 1
-EP300	300 kd E1A-Binding protein gene
-EWSR1	Ewing sarcoma breakpoint region 1 (EWS)
-LZTR1	leucine-zipper-like transcription regulator 1
-MAPK1	mitogen-activated protein kinase 1
-MN1	MN1 proto-oncogene, transcriptional regulator
-MRTFA	megakaryoblastic leukemia (translocation) 1
-MYH9	myosin, heavy polypeptide 9, non-muscle
-NF2	neurofibromatosis type 2 gene
-PATZ1	zinc finger protein 278 (ZSG)
-PDGFB	platelet-derived growth factor beta polypeptide (simian sarcoma viral (v-sis) oncogene homolog)
-SMARCB1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily b, member 1
+Gene Symbol	Name	Chromosome	Start	End
+APOBEC3B	apolipoprotein B mRNA editing enzyme catalytic subunit 3B	chr22	38982409	38992784
+BCR	breakpoint cluster region	chr22	23180210	23318037
+CHEK2	CHK2 checkpoint homolog (S. pombe)	chr22	28687763	28741838
+CLTCL1	clathrin, heavy polypeptide-like 1	chr22	19179473	19291714
+EP300	300 kd E1A-Binding protein gene	chr22	41091786	41180079
+EWSR1	Ewing sarcoma breakpoint region 1 (EWS)	chr22	29268316	29300343
+LZTR1	leucine-zipper-like transcription regulator 1	chr22	20982013	20999038
+MAPK1	mitogen-activated protein kinase 1	chr22	21754500	21867629
+MN1	MN1 proto-oncogene, transcriptional regulator	chr22	27748277	27801498
+MRTFA	megakaryoblastic leukemia (translocation) 1	chr22	40411390	40533635
+MYH9	myosin, heavy polypeptide 9, non-muscle	chr22	36281277	36388067
+NF2	neurofibromatosis type 2 gene	chr22	29603558	29698598
+PATZ1	zinc finger protein 278 (ZSG)	chr22	31325804	31346232
+PDGFB	platelet-derived growth factor beta polypeptide (simian sarcoma viral (v-sis) oncogene homolog)	chr22	39223359	39244751
+SMARCB1	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily b, member 1	chr22	23786963	23834505

@@ -1,8 +1,8 @@
-Gene Symbol	Name
-CLP1	cleavage and polyadenylation factor I subunit 1
-CTNND1	catenin delta 1
-EED	embryonic ectoderm development
-FAT3	FAT atypical cadherin 3
-FEN1	flap structure-specific endonuclease 1
-FOXR1	forkhead box R1
-MALAT1	metastasis associated lung adenocarcinoma transcript 1 ( lnc-RNA; non-protein coding)
+Gene Symbol	Name	Chromosome	Start	End
+CLP1	cleavage and polyadenylation factor I subunit 1	chr11	57657158	57661868
+CTNND1	catenin delta 1	chr11	57761797	57819178
+EED	embryonic ectoderm development	chr11	86245223	86278813
+FAT3	FAT atypical cadherin 3	chr11	92352541	92896470
+FEN1	flap structure-specific endonuclease 1	chr11	61792637	61797244
+FOXR1	forkhead box R1	chr11	118971707	118981291
+MALAT1	metastasis associated lung adenocarcinoma transcript 1 ( lnc-RNA; non-protein coding)	chr11	65497762	65506469

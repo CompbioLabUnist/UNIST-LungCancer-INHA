@@ -1,6 +1,6 @@
-Gene Symbol	Name
-FGFR3	fibroblast growth factor receptor 3
-NSD2	Wolf-Hirschhorn syndrome candidate 1(MMSET)
-PHOX2B	paired-like homeobox 2b
-RHOH	ras homolog family member H
-SLC34A2	solute carrier family 34 (sodium phosphate), member 2
+Gene Symbol	Name	Chromosome	Start	End
+FGFR3	fibroblast growth factor receptor 3	chr4	1793312	1808872
+NSD2	Wolf-Hirschhorn syndrome candidate 1(MMSET)	chr4	1892845	1982207
+PHOX2B	paired-like homeobox 2b	chr4	41744082	41748970
+RHOH	ras homolog family member H	chr4	40196907	40246967
+SLC34A2	solute carrier family 34 (sodium phosphate), member 2	chr4	25655844	25678748

@@ -1,5 +1,5 @@
-Gene Symbol	Name
-FKBP9	FK506 binding protein 9
-JAZF1	juxtaposed with another zinc finger gene 1
-MACC1	MET transcriptional regulator MACC1
-ZNF479	zinc finger protein 479
+Gene Symbol	Name	Chromosome	Start	End
+FKBP9	FK506 binding protein 9	chr7	32957404	33006930
+JAZF1	juxtaposed with another zinc finger gene 1	chr7	27830573	28180743
+MACC1	MET transcriptional regulator MACC1	chr7	20134655	20217390
+ZNF479	zinc finger protein 479	chr7	57119614	57139864

@@ -1,6 +1,6 @@
-Gene Symbol	Name
-C15orf65	chromosome 15 open reading frame 65
-CHD2	chromodomain helicase DNA binding protein 2
-HMGN2P46	high mobility group nucleosomal binding domain 2 pseudogene 46
-KNSTRN	kinetochore localized astrin/SPAG5 binding protein
-POLG	DNA polymerase gamma, catalytic subunit
+Gene Symbol	Name	Chromosome	Start	End
+C15orf65	chromosome 15 open reading frame 65	chr15	55408548	55418712
+CHD2	chromodomain helicase DNA binding protein 2	chr15	92900320	93028005
+HMGN2P46	high mobility group nucleosomal binding domain 2 pseudogene 46	chr15	45511136	45556730
+KNSTRN	kinetochore localized astrin/SPAG5 binding protein	chr15	40382721	40394245
+POLG	DNA polymerase gamma, catalytic subunit	chr15	89316305	89334847

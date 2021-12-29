@@ -1,10 +1,10 @@
-Gene Symbol	Name
-CD274	CD274 molecule
-CDKN2A	cyclin-dependent kinase inhibitor 2A (p16(INK4a)) gene
-FANCG	Fanconi anemia, complementation group G
-JAK2	Janus kinase 2
-MLLT3	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 3 (AF9)
-NFIB	nuclear factor I/B
-PAX5	paired box gene 5 (B-cell lineage specific activator protein)
-PDCD1LG2	programmed cell death 1 ligand 2
-PSIP1	PC4 and SFRS1 interacting protein 1 (LEDGF)
+Gene Symbol	Name	Chromosome	Start	End
+CD274	CD274 molecule	chr9	5450525	5470547
+CDKN2A	cyclin-dependent kinase inhibitor 2A (p16(INK4a)) gene	chr9	21968056	21974866
+FANCG	Fanconi anemia, complementation group G	chr9	35073838	35080016
+JAK2	Janus kinase 2	chr9	4985245	5128183
+MLLT3	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 3 (AF9)	chr9	20341665	20622543
+NFIB	nuclear factor I/B	chr9	14087569	14313667
+PAX5	paired box gene 5 (B-cell lineage specific activator protein)	chr9	36833275	37034185
+PDCD1LG2	programmed cell death 1 ligand 2	chr9	5510570	5571254
+PSIP1	PC4 and SFRS1 interacting protein 1 (LEDGF)	chr9	15464066	15511019

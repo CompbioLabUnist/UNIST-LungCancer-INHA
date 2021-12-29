@@ -1,6 +1,6 @@
-Gene Symbol	Name
-ABI1	abl-interactor 1
-GATA3	GATA binding protein 3
-KIF5B	kinesin family member 5B
-KLF6	Kruppel-like factor 6
-MLLT10	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 10 (AF10)
+Gene Symbol	Name	Chromosome	Start	End
+ABI1	abl-interactor 1	chr10	26746593	26860935
+GATA3	GATA binding protein 3	chr10	8054653	8075203
+KIF5B	kinesin family member 5B	chr10	32009010	32056431
+KLF6	Kruppel-like factor 6	chr10	3775996	3785275
+MLLT10	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 10 (AF10)	chr10	21534343	21743630

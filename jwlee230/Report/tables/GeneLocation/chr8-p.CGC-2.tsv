@@ -1,4 +1,4 @@
-Gene Symbol	Name
-ANK1	ankyrin 1
-ARHGEF10	Rho guanine nucleotide exchange factor 10
-LEPROTL1	leptin receptor overlapping transcript like 1
+Gene Symbol	Name	Chromosome	Start	End
+ANK1	ankyrin 1	chr8	41653225	41896762
+ARHGEF10	Rho guanine nucleotide exchange factor 10	chr8	1824015	1958641
+LEPROTL1	leptin receptor overlapping transcript like 1	chr8	30095480	30138348

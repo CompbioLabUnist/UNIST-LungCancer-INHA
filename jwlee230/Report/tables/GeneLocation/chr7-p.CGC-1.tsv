@@ -1,12 +1,12 @@
-Gene Symbol	Name
-CARD11	caspase recruitment domain family, member 11
-EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)
-ETV1	ets variant gene 1
-HNRNPA2B1	heterogeneous nuclear ribonucleoprotein A2/B1
-HOXA11	homeo box A11
-HOXA13	homeo box A13
-HOXA9	homeo box A9
-IKZF1	IKAROS family zinc finger 1
-PMS2	PMS2 postmeiotic segregation increased 2 (S. cerevisiae)
-RAC1	ras-related C3 botulinum toxin substrate 1 (rho family, small GTP binding protein Rac1)
-SFRP4	secreted frizzled related protein 4
+Gene Symbol	Name	Chromosome	Start	End
+CARD11	caspase recruitment domain family, member 11	chr7	2906141	3043945
+EGFR	epidermal growth factor receptor (erythroblastic leukemia viral (v-erb-b) oncogene homolog, avian)	chr7	55019101	55211628
+ETV1	ets variant gene 1	chr7	13891228	13989946
+HNRNPA2B1	heterogeneous nuclear ribonucleoprotein A2/B1	chr7	26189927	26200746
+HOXA11	homeo box A11	chr7	27181515	27185216
+HOXA13	homeo box A13	chr7	27194364	27200106
+HOXA9	homeo box A9	chr7	27162435	27165530
+IKZF1	IKAROS family zinc finger 1	chr7	50304669	50405101
+PMS2	PMS2 postmeiotic segregation increased 2 (S. cerevisiae)	chr7	5973239	6009125
+RAC1	ras-related C3 botulinum toxin substrate 1 (rho family, small GTP binding protein Rac1)	chr7	6374539	6402520
+SFRP4	secreted frizzled related protein 4	chr7	37905932	37916915

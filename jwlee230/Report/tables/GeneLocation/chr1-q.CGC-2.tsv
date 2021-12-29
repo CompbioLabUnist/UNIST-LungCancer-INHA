@@ -1,6 +1,6 @@
-Gene Symbol	Name
-AKT3	v-akt murine thymoma viral oncogene homolog 3
-ELF3	E74 like ETS transcription factor 3
-RGS7	regulator of G protein signaling 7
-S100A7	S100 calcium binding protein A7
-SETDB1	SET domain bifurcated 1
+Gene Symbol	Name	Chromosome	Start	End
+AKT3	v-akt murine thymoma viral oncogene homolog 3	chr1	243499720	243843282
+ELF3	E74 like ETS transcription factor 3	chr1	202007945	202016009
+RGS7	regulator of G protein signaling 7	chr1	240775515	241357230
+S100A7	S100 calcium binding protein A7	chr1	153457744	153460701
+SETDB1	SET domain bifurcated 1	chr1	150926339	150964735

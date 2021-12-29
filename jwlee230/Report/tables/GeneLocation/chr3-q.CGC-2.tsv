@@ -1,7 +1,7 @@
-Gene Symbol	Name
-GMPS	guanine monphosphate synthetase
-IGF2BP2	insulin like growth factor 2 mRNA binding protein 2
-MB21D2	Mab-21 domain containing 2
-MUC4	mucin 4, cell surface associated
-STAG1	stromal antigen 1
-TFRC	transferrin receptor (p90, CD71)
+Gene Symbol	Name	Chromosome	Start	End
+GMPS	guanine monphosphate synthetase	chr3	155870536	155944026
+IGF2BP2	insulin like growth factor 2 mRNA binding protein 2	chr3	185643975	185825012
+MB21D2	Mab-21 domain containing 2	chr3	192796815	192918161
+MUC4	mucin 4, cell surface associated	chr3	195746765	195812277
+STAG1	stromal antigen 1	chr3	136336233	136752368
+TFRC	transferrin receptor (p90, CD71)	chr3	196049284	196082189

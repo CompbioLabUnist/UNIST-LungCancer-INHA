@@ -1,18 +1,18 @@
-Gene Symbol	Name
-BAP1	BRCA1 associated protein-1 (ubiquitin carboxy-terminal hydrolase)
-CACNA1D	calcium channel, voltage-dependent, L type, alpha 1D subunit
-CTNNB1	catenin (cadherin-associated protein), beta 1
-FANCD2	Fanconi anemia, complementation group D2
-FHIT	fragile histidine triad gene
-FOXP1	forkhead box P1
-MITF	melanogenesis-associated transcription factor
-MLH1	E.coli MutL homolog gene
-MYD88	myeloid differentiation primary response gene (88)
-PBRM1	polybromo 1
-PPARG	peroxisome proliferative activated receptor, gamma
-RAF1	v-raf-1 murine leukemia viral oncogene homolog 1
-RHOA	ras homolog family member A
-SETD2	SET domain containing 2
-TGFBR2	transforming growth factor beta receptor II
-VHL	von Hippel-Lindau syndrome gene
-XPC	xeroderma pigmentosum, complementation group C
+Gene Symbol	Name	Chromosome	Start	End
+BAP1	BRCA1 associated protein-1 (ubiquitin carboxy-terminal hydrolase)	chr3	52401013	52410350
+CACNA1D	calcium channel, voltage-dependent, L type, alpha 1D subunit	chr3	53495049	53813733
+CTNNB1	catenin (cadherin-associated protein), beta 1	chr3	41220551	41239888
+FANCD2	Fanconi anemia, complementation group D2	chr3	10026414	10099660
+FHIT	fragile histidine triad gene	chr3	59751407	61251459
+FOXP1	forkhead box P1	chr3	70954715	71583989
+MITF	melanogenesis-associated transcription factor	chr3	69739435	69968336
+MLH1	E.coli MutL homolog gene	chr3	36993332	37050918
+MYD88	myeloid differentiation primary response gene (88)	chr3	38138478	38143019
+PBRM1	polybromo 1	chr3	52547841	52685836
+PPARG	peroxisome proliferative activated receptor, gamma	chr3	12351472	12434356
+RAF1	v-raf-1 murine leukemia viral oncogene homolog 1	chr3	12583601	12664226
+RHOA	ras homolog family member A	chr3	49359145	49412202
+SETD2	SET domain containing 2	chr3	47016689	47163967
+TGFBR2	transforming growth factor beta receptor II	chr3	30606601	30694142
+VHL	von Hippel-Lindau syndrome gene	chr3	10141008	10152220
+XPC	xeroderma pigmentosum, complementation group C	chr3	14145147	14178783

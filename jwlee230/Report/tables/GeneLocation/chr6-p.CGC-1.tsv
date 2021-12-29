@@ -1,17 +1,17 @@
-Gene Symbol	Name
-CCND3	cyclin D3
-DAXX	death-domain associated protein
-DEK	DEK oncogene (DNA binding)
-FANCE	Fanconi anemia, complementation group E
-HIST1H3B	histone cluster 1, H3b
-HIST1H4I	histone 1, H4i (H4FM)
-HLA-A	major histocompatibility complex, class I, A
-HMGA1	high mobility group AT-hook 1
-HSP90AB1	heat shock protein 90kDa alpha (cytosolic), class B member 1
-IRF4	interferon regulatory factor 4
-NFKBIE	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon
-PIM1	pim-1 oncogene
-POU5F1	POU domain, class 5, transcription factor 1
-SRSF3	serine/arginine-rich splicing factor 3
-TFEB	transcription factor EB
-TRIM27	tripartite motif-containing 27
+Gene Symbol	Name	Chromosome	Start	End
+CCND3	cyclin D3	chr6	41934933	41941848
+DAXX	death-domain associated protein	chr6	33318558	33323014
+DEK	DEK oncogene (DNA binding)	chr6	18223868	18264823
+FANCE	Fanconi anemia, complementation group E	chr6	35452361	35467103
+HIST1H3B	histone cluster 1, H3b	chr6	26031650	26032060
+HIST1H4I	histone 1, H4i (H4FM)	chr6	27138588	27139881
+HLA-A	major histocompatibility complex, class I, A	chr6	29941260	29945884
+HMGA1	high mobility group AT-hook 1	chr6	34236873	34246230
+HSP90AB1	heat shock protein 90kDa alpha (cytosolic), class B member 1	chr6	44247866	44253883
+IRF4	interferon regulatory factor 4	chr6	391739	411447
+NFKBIE	nuclear factor of kappa light polypeptide gene enhancer in B-cells inhibitor, epsilon	chr6	44258166	44265788
+PIM1	pim-1 oncogene	chr6	37170203	37175426
+POU5F1	POU domain, class 5, transcription factor 1	chr6	31164337	31170693
+SRSF3	serine/arginine-rich splicing factor 3	chr6	36594368	36605600
+TFEB	transcription factor EB	chr6	41683978	41736259
+TRIM27	tripartite motif-containing 27	chr6	28903002	28923989

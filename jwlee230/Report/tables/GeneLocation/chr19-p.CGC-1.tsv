@@ -1,20 +1,20 @@
-Gene Symbol	Name
-BRD4	bromodomain containing 4
-CALR	calreticulin
-CRTC1	CREB regulated transcription coactivator 1
-DNAJB1	DnaJ heat shock protein family (Hsp40) member B1
-DNM2	dynamin 2
-ELL	ELL gene (11-19 lysine-rich leukemia gene)
-FSTL3	follistatin-like 3 (secreted glycoprotein)
-GNA11	guanine nucleotide binding protein (G protein), alpha 11 (Gq class)
-JAK3	Janus kinase 3
-KEAP1	kelch like ECH associated protein 1
-LYL1	lymphoblastic leukemia derived sequence 1
-MAP2K2	mitogen-activated protein kinase kinase 2
-MLLT1	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 1 (ENL)
-PRKACA	protein kinase cAMP-activated catalytic subunit alpha
-SH3GL1	SH3-domain GRB2-like 1 (EEN)
-SMARCA4	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 4
-STK11	serine/threonine kinase 11 gene (LKB1)
-TCF3	transcription factor 3 (E2A immunoglobulin enhancer binding factors E12/E47)
-TPM4	tropomyosin 4
+Gene Symbol	Name	Chromosome	Start	End
+BRD4	bromodomain containing 4	chr19	15235519	15280451
+CALR	calreticulin	chr19	12938607	12944489
+CRTC1	CREB regulated transcription coactivator 1	chr19	18683678	18782333
+DNAJB1	DnaJ heat shock protein family (Hsp40) member B1	chr19	14514770	14518420
+DNM2	dynamin 2	chr19	10718131	10831903
+ELL	ELL gene (11-19 lysine-rich leukemia gene)	chr19	18442663	18522127
+FSTL3	follistatin-like 3 (secreted glycoprotein)	chr19	676365	683399
+GNA11	guanine nucleotide binding protein (G protein), alpha 11 (Gq class)	chr19	3094410	3124004
+JAK3	Janus kinase 3	chr19	17824786	17848032
+KEAP1	kelch like ECH associated protein 1	chr19	10486120	10503741
+LYL1	lymphoblastic leukemia derived sequence 1	chr19	13099033	13102867
+MAP2K2	mitogen-activated protein kinase kinase 2	chr19	4090321	4124129
+MLLT1	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 1 (ENL)	chr19	6210379	6279948
+PRKACA	protein kinase cAMP-activated catalytic subunit alpha	chr19	14091688	14117744
+SH3GL1	SH3-domain GRB2-like 1 (EEN)	chr19	4360370	4400547
+SMARCA4	SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 4	chr19	10960825	11062282
+STK11	serine/threonine kinase 11 gene (LKB1)	chr19	1206464	1228435
+TCF3	transcription factor 3 (E2A immunoglobulin enhancer binding factors E12/E47)	chr19	1609290	1652329
+TPM4	tropomyosin 4	chr19	16067538	16102943

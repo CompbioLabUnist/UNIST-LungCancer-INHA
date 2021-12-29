@@ -1,4 +1,4 @@
-Gene Symbol	Name
-CCR7	C-C motif chemokine receptor 7
-KAT7	lysine acetyltransferase 7
-SEPT9	septin 9
+Gene Symbol	Name	Chromosome	Start	End
+CCR7	C-C motif chemokine receptor 7	chr17	40553769	40565472
+KAT7	lysine acetyltransferase 7	chr17	49788555	49835030
+SEPT9	septin 9	chr17	77281410	77500592

@@ -1,11 +1,11 @@
-Gene Symbol	Name
-CCND2	cyclin D2
-CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)
-CHD4	chromodomain helicase DNA binding protein 4
-ERC1	ELKS/RAB6-interacting/CAST family member 1
-ETNK1	ethanolamine kinase 1
-ETV6	ets variant gene 6 (TEL oncogene)
-KDM5A	lysine (K)-specific demethylase 5A, JARID1A
-KRAS	v-Ki-ras2 Kirsten rat sarcoma 2 viral oncogene homolog
-PPFIBP1	PTPRF interacting protein, binding protein 1 (liprin beta 1)
-ZNF384	zinc finger protein 384 (CIZ/NMP4)
+Gene Symbol	Name	Chromosome	Start	End
+CCND2	cyclin D2	chr12	4273772	4305350
+CDKN1B	cyclin-dependent kinase inhibitor 1B (p27, Kip1)	chr12	12717124	12722371
+CHD4	chromodomain helicase DNA binding protein 4	chr12	6570088	6607476
+ERC1	ELKS/RAB6-interacting/CAST family member 1	chr12	1027747	1495924
+ETNK1	ethanolamine kinase 1	chr12	22625075	22690665
+ETV6	ets variant gene 6 (TEL oncogene)	chr12	11649854	11895402
+KDM5A	lysine (K)-specific demethylase 5A, JARID1A	chr12	280129	389454
+KRAS	v-Ki-ras2 Kirsten rat sarcoma 2 viral oncogene homolog	chr12	25209431	25250803
+PPFIBP1	PTPRF interacting protein, binding protein 1 (liprin beta 1)	chr12	27524206	27695564
+ZNF384	zinc finger protein 384 (CIZ/NMP4)	chr12	6666648	6689510
