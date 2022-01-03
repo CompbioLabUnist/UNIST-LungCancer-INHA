@@ -1,4 +1,6 @@
-FROM ubuntu:20.04
+FROM mathworks/matlab:r2021b
+USER root
+WORKDIR /
 LABEL maintainer="jwlee230@unist.ac.kr"
 
 # apt install & update
@@ -118,6 +120,9 @@ RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; ge
 # Mobster
 RUN cd /Tools && git clone "https://github.com/jyhehir/mobster.git" && cd mobster && git-lfs pull
 RUN conda install -c bioconda -c conda-forge mobster
+
+# Gistic
+ADD Tools/Gistic.tar.gz /Tools/
 
 VOLUME /Output
 VOLUME /Data
