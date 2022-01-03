@@ -1,4 +1,4 @@
-#2021-12-22T11:18:05+0900 Variables
+# Variables
 DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
@@ -8,8 +8,8 @@ MEMS = 40
 PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
-DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
-WORKDIR_DOCKER = docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
+DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
+WORKDIR_DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
 PYTHON = python3 -B
 R = Rscript --vanilla
 BASH = /bin/bash
@@ -20,6 +20,7 @@ PAIRED_PRIMARY = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")P
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --volume $(abspath misc):/misc:ro --tmpfs $(TMPFS)
 RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G" --env NUMEXPR_MAX_THREADS=$(CPUS)
+ENV_OPTS = --env MLM_LICENSE_FILE=/misc/license.lic
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
@@ -171,6 +172,10 @@ Docker/Tools/annovar.latest.tar.gz: | Docker/Tools
 	touch $@
 TOOLS += Docker/Tools/annovar.latest.tar.gz
 
+Docker/Tools/Gistic.tar.gz: | Docker/Tools
+	wget "ftp://ftp.broadinstitute.org/distribution/GISTIC2.0/GISTIC_2_0_23.tar.gz" -O $@
+TOOLS += Docker/Tools/Gistic.tar.gz
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
@@ -200,7 +205,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step40 step42
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -730,6 +735,9 @@ Output/HaplotypeCaller/BWA/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/HaplotypeC
 
 Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/HaplotypeCaller/Bowtie2/%.VQSR.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller/BWA-SQC.pdf: Python/aggregate_haplotypecaller.py $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.maf,$(WES_TUMOR_ID))) $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include --patient
 
 step15-BWA: $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .sample_map.tsv,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .genomicsdb/callset.json,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.recal,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .VQSR.PASS.maf,$(WES_TUMOR_ID)))
 step15-Bowtie2: $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .g.vcf.gz,$(WES_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .sample_map.tsv,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.recal,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/HaplotypeCaller/Bowtie2/,$(addsuffix .VQSR.PASS.maf,$(WES_TUMOR_ID)))
@@ -1485,8 +1493,8 @@ step26-STAR: $(addprefix Output/FusionCatcher/STAR/,$(addsuffix /normal.tsv,$(WT
 step26-Bowtie: $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix /normal.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/FusionCatcher/Bowtie2/,$(addsuffix .tsv,$(WTS_TUMOR_ID)))
 step26-heatmap: Output/FusionCatcher/Plot/ADC.STAR.heatmap.pdf Output/FusionCatcher/Plot/SQC.STAR.heatmap.pdf Output/FusionCatcher/Plot/ADC.Bowtie2.heatmap.pdf Output/FusionCatcher/Plot/SQC.Bowtie2.heatmap.pdf
 step26-circos: Output/FusionCatcher/Plot/ADC.STAR.circos.pdf Output/FusionCatcher/Plot/SQC.STAR.circos.pdf Output/FusionCatcher/Plot/ADC.Bowtie2.circos.pdf Output/FusionCatcher/Plot/SQC.Bowtie2.circos.pdf
-step26: step26-prepare step26-STAR step26-Bowtie
-.PHONY: step26-prepare step26-STAR step26-Bowtie step26
+step26: step26-prepare step26-STAR step26-Bowtie step26-heatmap step26-circos
+.PHONY: step26-prepare step26-STAR step26-Bowtie step26-heatmap step26-circos step26
 
 # Step 27 (STAR-Fusion)
 Output/STAR-Fusion:
