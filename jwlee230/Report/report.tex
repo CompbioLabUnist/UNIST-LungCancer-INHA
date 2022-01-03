@@ -47,6 +47,7 @@
 \renewcommand{\contentsname}{\hfill\bfseries\Large Contents\hfill}
 \renewcommand{\listfigurename}{\hfill\bfseries\Large List of Figures\hfill}
 \renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\listtablename}{\hfill\bfseries\Large List of Tables\hfill}
 \newcommand{\qed}{\hfill\blacksquare}
 \renewcommand{\bibname}{\hfill\bfseries\Large References \hfill\hfill}
 \renewcommand{\abstractname}{\bfseries\Large Abstract \hfill\hfill}
@@ -139,12 +140,16 @@
     \thispagestyle{empty}
     \newpage
 
-    \tableofcontents{}
+    \tableofcontents
     \thispagestyle{empty}
     \vfill
     \newpage
 
-    \listoffigures{}
+    \listoffigures
+    \thispagestyle{empty}
+    \newpage
+
+    \listoftables
     \thispagestyle{empty}
     \newpage
 
@@ -189,7 +194,19 @@
                 Minimally invasive adenocarcinoma (MIA)
 
         \subsection{Data Composition}
+            \begin{table}[p]
+                \centering
+                \label{tb:WES-composition}
+                \caption{WES Data Composition}
+                \input{tables/WES_samples/WES_samples.tex}
+            \end{table}
 
+            \begin{table}[p]
+                \centering
+                \label{tb:WTS-composition}
+                \caption{WTS Data Composition}
+                \input{tables/WTS_samples/WTS_samples.tex}
+            \end{table}
     \newpage
 
     \section{Methods}
@@ -266,7 +283,7 @@
                         \mbox{(b) Bowtie2} \\
                     \end{array}$
                     \label{fig:comut-SQC}
-                    \caption[Comut Plot by LUSC]{Comut Plot by LUSC}
+                    \caption{Comut Plot by LUSC}
                 \end{figure}
 
                 \begin{figure}[p]
@@ -281,7 +298,7 @@
                         \mbox{(b) Bowtie2} \\
                     \end{array}$
                     \label{fig:comut-ADC}
-                    \caption[Comut Plot by LUAD]{Comut Plot by LUAD}
+                    \caption{Comut Plot by LUAD}
                 \end{figure}
 
             \subsubsection{Somatic Short Variant with Clinical Data}
@@ -319,6 +336,12 @@
     \newpage
 
     \section{Discussion}
+        \subsection{General Conclusions}
+
+        \subsection{Plan for Future}
+
+        \subsection{Future Perspective}
+
     \newpage
 
     \addcontentsline{toc}{section}{References}
