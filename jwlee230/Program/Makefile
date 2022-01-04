@@ -19,8 +19,8 @@ PAIRED_PRIMARY = $(shell echo $* | grep --perl-regexp --only-match "^(cn)?\d+")P
 
 # Options
 VOLUME_OPTS = --volume $(abspath Output):/Output --volume $(abspath Data):/Data:ro --volume $(abspath Python):/Python:ro --volume $(abspath R):/R:ro --volume $(abspath Bash):/Bash:ro --volume $(abspath misc):/misc:ro --tmpfs $(TMPFS)
-RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G" --env NUMEXPR_MAX_THREADS=$(CPUS)
-ENV_OPTS = --env MLM_LICENSE_FILE=/misc/license.lic
+RUN_OPTS = --tty --cpus="$(CPUS)" --memory="$(MEMS)G"
+ENV_OPTS = --env MLM_LICENSE_FILE=/misc/license.lic --env NUMEXPR_MAX_THREADS=$(CPUS)
 JAVA_OPTS = -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xmx$(MEMS)g
 GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
@@ -186,7 +186,7 @@ build: build.log
 .PHONY: build
 
 interactive: build.log
-	docker run --rm $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) $(BASH) || true
+	docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) --interactive $(IMAGE_NAME) $(BASH) || true
 .PHONY: interactive
 
 delete: build.log
