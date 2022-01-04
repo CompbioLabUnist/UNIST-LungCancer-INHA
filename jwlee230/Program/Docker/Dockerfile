@@ -5,7 +5,7 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 # apt install & update
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 51716619E084DAB9 && add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync git-lfs
+RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 51716619E084DAB9 && add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync git-lfs libncurses5
 
 # TOOL directory
 RUN mkdir /Tools
@@ -123,6 +123,8 @@ RUN conda install -c bioconda -c conda-forge mobster
 
 # Gistic
 ADD Tools/Gistic.tar.gz /Tools/
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
+RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig
 
 VOLUME /Output
 VOLUME /Data
