@@ -4,12 +4,13 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 2
-MEMS = 40
+MEMS = 10
 PARALLEL = 20
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
 WORKDIR_DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) --workdir $(addprefix /,$(@D)) $(IMAGE_NAME)
+TOOLS_DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) --workdir "/Tools" $(IMAGE_NAME)
 PYTHON = python3 -B
 R = Rscript --vanilla
 BASH = /bin/bash
@@ -42,6 +43,7 @@ REFERENCE_HAPMAP_VCF = $(REFERENCE_DIR)/hapmap_3.3.hg38.vcf.gz
 REFERENCE_OMNI_VCF = $(REFERENCE_DIR)/1000G_omni2.5.hg38.vcf.gz
 REFERENCE_SIZE_TSV = $(REFERENCE_DIR)/hg38.chrom.sizes
 REFERENCE_CENTROMERE = Data/UCSC_hg38_centromere.txt
+REFERENCE_BLACKLIST = Data/UCSC_hg38_blacklist.txt
 REFERENCE_BAND = Data/cytoBand.txt
 LIBRARY_BED = Data/S04380110_Regions.bed
 LIBRARY_BED_GZ = $(LIBRARY_BED).gz
@@ -205,7 +207,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step40 step42
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step40 step42 step43
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -2419,7 +2421,7 @@ Output/CNVkit/Bowtie2/%.Bowtie2.Sort.MarkDuplicate.BQSR.cnr Output/CNVkit/Bowtie
 	$(DOCKER) touch $(addprefix /,$@)
 
 Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-SQC.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type
 
 Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/BWA-genome-ADC.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
@@ -2539,13 +2541,14 @@ Output/CNVkit/Bowtie2-chromosome-ADC.tar: Python/aggregate_CNVkit_chromosome.py 
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
+step39-CNVkit: $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(filter-out 33P1,$(WES_TUMOR_ID))))
 step39-genome: Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-ADC.pdf Output/CNVkit/BWA-genome-SQC.patient.pdf Output/CNVkit/BWA-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.pdf
 step39-genome-clinical: Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-SQC.Smoking.pdf Output/CNVkit/BWA-genome-ADC.Smoking.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.pdf Output/CNVkit/BWA-genome-SQC.Smoking.patient.pdf Output/CNVkit/BWA-genome-ADC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.pdf
 step39-violin: Output/CNVkit/BWA-violin-SQC.pdf Output/CNVkit/BWA-violin-ADC.pdf Output/CNVkit/Bowtie2-violin-SQC.pdf Output/CNVkit/Bowtie2-violin-ADC.pdf
 step39-violin-clinical: Output/CNVkit/BWA-violin-SQC.Recurrence.pdf Output/CNVkit/BWA-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/BWA-violin-SQC.Smoking.pdf Output/CNVkit/BWA-violin-ADC.Smoking.pdf Output/CNVkit/Bowtie2-violin-SQC.Smoking.pdf Output/CNVkit/Bowtie2-violin-ADC.Smoking.pdf
 step39-chromosome: Output/CNVkit/BWA-chromosome-SQC.tar Output/CNVkit/BWA-chromosome-ADC.tar Output/CNVkit/Bowtie2-chromosome-SQC.tar Output/CNVkit/Bowtie2-chromosome-ADC.tar
-step39: step39-Reference step39-genome step39-genome-clinical step39-chromosome
-.PHONY: step39-Reference step39-genome step39-genome-clinical step39-chromosome step39
+step39: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-chromosome
+.PHONY: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-chromosome step39
 
 # Step 40 (Gene Location)
 Output/Gene_Location:
@@ -2599,9 +2602,47 @@ step42-Bowtie2: $(addprefix Output/CollectRnaSeqMetrics/Bowtie2/,$(addsuffix .RN
 step42: step42-STAR step42-Bowtie2
 .PHONY: step42-STAR step42-Bowtie2 step42
 
-# Step ## (Gistic2.0)
+# Step 43 (Gistic2.0)
 # http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
 # ftp://ftp.broadinstitute.org/pub/GISTIC2.0/INSTALL.txt
+Output/Gistic:
+	mkdir -p $@
+
+Output/Gistic/hg38.refgene.mat: | Output/Gistic
+	wget "ftp://ftp.broadinstitute.org/distribution/GISTIC2.0/refgenes/hg38.UCSC.add_miR.160920.refgene.mat" -O $@
+	touch $@
+
+Output/Gistic/BWA-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC.tsv
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC.tsv
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC.tsv
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC.tsv
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+step43-CNVkit: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC.tsv Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.tsv Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.tsv Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt
+step43: step43-CNVkit
+.PHONY: step43-CNVkit step43
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
