@@ -2,7 +2,6 @@
 aggregate_CNVkit_genome.py: Aggregate CNVkit results as genome view
 """
 import argparse
-import itertools
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
@@ -12,6 +11,7 @@ import seaborn
 import tqdm
 import step00
 
+input_data = pandas.DataFrame()
 watching = "log2"
 
 
@@ -19,6 +19,34 @@ def get_data(file_name: str) -> pandas.DataFrame:
     data = pandas.read_csv(file_name, sep="\t")
     data["ID"] = step00.get_id(file_name)
     return data
+
+
+def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> float:
+    tmp_data = input_data.loc[(input_data["ID"] == sample) & (input_data["chromosome"] == chromosome), :]
+
+    a = list()
+    weights = list()
+
+    get_data = tmp_data.loc[(tmp_data["start"] <= start) & (end <= tmp_data["end"]), :]
+    a += list(get_data["exp"])
+    weights += list(get_data["weight"] * (end - start + 1))
+
+    get_data = tmp_data.loc[(tmp_data["start"] <= start) & (start <= tmp_data["end"]), :]
+    a += list(get_data["exp"])
+    weights += list(get_data["weight"] * (get_data["end"] - start + 1))
+
+    get_data = tmp_data.loc[(tmp_data["start"] <= end) & (end <= tmp_data["end"]), :]
+    a += list(get_data["exp"])
+    weights += list(get_data["weight"] * (end - get_data["start"] + 1))
+
+    get_data = tmp_data.loc[(start <= tmp_data["start"]) & (tmp_data["end"] <= end), :]
+    a += list(get_data["exp"])
+    weights += list(get_data["weight"] * (get_data["end"] - get_data["start"] + 1))
+
+    if a and weights:
+        return numpy.average(a=a, weights=weights)
+    else:
+        return 1
 
 
 if __name__ == "__main__":
@@ -78,7 +106,8 @@ if __name__ == "__main__":
     input_data["exp"] = numpy.power(2, input_data[watching])
     print(input_data)
 
-    chromosome_list = list(filter(lambda x: x in set(input_data["chromosome"]), step00.chromosome_full_list))
+    chromosome_set = set(input_data["chromosome"])
+    chromosome_list = list(filter(lambda x: x in chromosome_set, step00.chromosome_full_list))
     print(chromosome_list)
 
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
@@ -96,30 +125,9 @@ if __name__ == "__main__":
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
-        for sample, step in tqdm.tqdm(list(itertools.product(sample_list, chromosome_data.columns))):
-            tmp_data = input_data.loc[(input_data["ID"] == sample) & (input_data["chromosome"] == chromosome), :]
-            start, end = step * step00.big, (step + 1) * step00.big
-            a = list()
-            weights = list()
-
-            for index, row in tmp_data.loc[(tmp_data["start"] <= start) & (end <= tmp_data["end"]), :].iterrows():
-                a.append(row["exp"])
-                weights.append(row["weight"] * (end - start + 1))
-
-            for index, row in tmp_data.loc[(tmp_data["start"] <= start) & (start <= tmp_data["end"]), :].iterrows():
-                a.append(row["exp"])
-                weights.append(row["weight"] * (row["end"] - start + 1))
-
-            for index, row in tmp_data.loc[(tmp_data["start"] <= end) & (end <= tmp_data["end"]), :].iterrows():
-                a.append(row["exp"])
-                weights.append(row["weight"] * (end - row["start"] + 1))
-
-            for index, row in tmp_data.loc[(start <= tmp_data["start"]) & (tmp_data["end"] <= end), :].iterrows():
-                a.append(row["exp"])
-                weights.append(row["weight"] * (row["end"] - row["start"] + 1))
-
-            if a and weights:
-                chromosome_data.loc[sample, step] = numpy.average(a=a, weights=weights)
+        with multiprocessing.Pool(args.cpus) as pool:
+            for sample in tqdm.tqdm(sample_list):
+                chromosome_data.loc[sample, :] = pool.starmap(get_chromosome_data, [(sample, chromosome, step * step00.big, (step + 1) * step00.big) for step in list(chromosome_data.columns)])
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
