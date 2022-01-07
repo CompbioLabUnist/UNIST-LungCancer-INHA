@@ -3,7 +3,7 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 50
+CPUS = 10
 MEMS = 500
 PARALLEL = 1
 PWD := $(shell pwd)
@@ -2615,34 +2615,51 @@ Output/Gistic/hg38.refgene.mat: | Output/Gistic
 Output/Gistic/BWA-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
 Output/Gistic/BWA-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
 Output/Gistic/Bowtie2-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC.tsv
+Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC.tsv
+Output/Gistic/BWA-CNVkit.SQC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.SQC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC-%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC.tsv
+Output/Gistic/BWA-CNVkit.ADC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --stage "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC-%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC.tsv
-	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
-	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
-
-step43-CNVkit: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC.tsv Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.tsv Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.tsv Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt
-step43: step43-CNVkit
-.PHONY: step43-CNVkit step43
+step43-SQC: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.tsv Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt
+step43-ADC: Output/Gistic/BWA-CNVkit.ADC.tsv Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.tsv Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt
+step43-SQC-stage: Output/Gistic/BWA-CNVkit.SQC-Dysplasia.tsv Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-AAH.tsv Output/Gistic/BWA-CNVkit.SQC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.SQC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-Primary.tsv Output/Gistic/BWA-CNVkit.SQC-Primary/all_data_by_genes.txt
+step43-ADC-stage: Output/Gistic/BWA-CNVkit.ADC-AAH.tsv Output/Gistic/BWA-CNVkit.ADC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.ADC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-MIA.tsv Output/Gistic/BWA-CNVkit.ADC-MIA/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-Primary.tsv Output/Gistic/BWA-CNVkit.ADC-Primary/all_data_by_genes.txt
+step43: step43-SQC step43-ADC step43-SQC-stage step43-ADC-stage
+.PHONY: step43-SQC step43-ADC step43-SQC-stage step43-ADC-stage step43
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
