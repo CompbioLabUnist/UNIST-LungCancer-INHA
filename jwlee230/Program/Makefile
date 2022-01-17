@@ -2615,49 +2615,99 @@ Output/Gistic/hg38.refgene.mat: | Output/Gistic
 Output/Gistic/BWA-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC.tsv | build.log
+Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC/focal_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC/amp_genes.conf_99.txt Output/Gistic/BWA-CNVkit.SQC/del_genes.conf_99.txt Output/Gistic/BWA-CNVkit.SQC/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.SQC.tar: Python/draw_violin_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC.tsv | build.log
+Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC/focal_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC/amp_genes.conf_99.txt Output/Gistic/BWA-CNVkit.ADC/del_genes.conf_99.txt Output/Gistic/BWA-CNVkit.ADC/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC.tar: Python/draw_violin_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.SQC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC.tsv | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/focal_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC/amp_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC/del_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC.tar: Python/draw_violin_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.ADC.tsv: Python/merge_CNVkit_Gistic.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC.tsv | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/focal_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC/amp_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC/del_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC.tar: Python/draw_violin_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.SQC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC-%.tsv | build.log
+Output/Gistic/BWA-CNVkit.SQC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/focal_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-%/amp_genes.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-%/del_genes.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-%/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.SQC-%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Dysplasia" "CIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Dysplasia" "CIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.ADC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --stage "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/focal_data_by_genes.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC-%.tsv | build.log
+Output/Gistic/BWA-CNVkit.ADC-%/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/all_thresholded.by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/focal_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-%/amp_genes.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-%/del_genes.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-%/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/BWA-CNVkit.ADC-%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
 
-step43-SQC: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.tsv Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt
-step43-ADC: Output/Gistic/BWA-CNVkit.ADC.tsv Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.tsv Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt
-step43-SQC-stage: Output/Gistic/BWA-CNVkit.SQC-Dysplasia.tsv Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-AAH.tsv Output/Gistic/BWA-CNVkit.SQC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.SQC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-Primary.tsv Output/Gistic/BWA-CNVkit.SQC-Primary/all_data_by_genes.txt
-step43-ADC-stage: Output/Gistic/BWA-CNVkit.ADC-AAH.tsv Output/Gistic/BWA-CNVkit.ADC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.ADC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-MIA.tsv Output/Gistic/BWA-CNVkit.ADC-MIA/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-Primary.tsv Output/Gistic/BWA-CNVkit.ADC-Primary/all_data_by_genes.txt
+Output/Gistic/BWA-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "AAH" "AIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/BWA-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC-%/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-%/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-%/focal_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-%/amp_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-%/del_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-%/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.SQC-%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Dysplasia" "CIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Dysplasia" "CIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC-%.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --stage "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC-%/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-%/all_thresholded.by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-%/focal_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-%/amp_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-%/del_genes.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-%/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic/Bowtie2-CNVkit.ADC-%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "AAH" "AIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
+
+Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-CIS+AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
+
+step43-SQC: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.tsv Output/Gistic/Bowtie2-CNVkit.SQC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC.tar Output/Gistic/Bowtie2-CNVkit.SQC.tar
+step43-ADC: Output/Gistic/BWA-CNVkit.ADC.tsv Output/Gistic/BWA-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.tsv Output/Gistic/Bowtie2-CNVkit.ADC/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC.tar Output/Gistic/Bowtie2-CNVkit.ADC.tar
+step43-SQC-stage: Output/Gistic/BWA-CNVkit.SQC-Dysplasia.tsv Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-AAH.tsv Output/Gistic/BWA-CNVkit.SQC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.SQC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC-Primary.tsv Output/Gistic/BWA-CNVkit.SQC-Primary/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.SQC.Amplification.pdf Output/Gistic/BWA-CNVkit.SQC.Deletion.pdf Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia.tsv Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-AAH.tsv Output/Gistic/Bowtie2-CNVkit.SQC-AAH/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS+AIS.tsv Output/Gistic/Bowtie2-CNVkit.SQC-CIS+AIS/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.tsv Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.pdf Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.pdf
+step43-ADC-stage: Output/Gistic/BWA-CNVkit.ADC-AAH.tsv Output/Gistic/BWA-CNVkit.ADC-AAH/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-CIS+AIS.tsv Output/Gistic/BWA-CNVkit.ADC-CIS+AIS/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-MIA.tsv Output/Gistic/BWA-CNVkit.ADC-MIA/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC-Primary.tsv Output/Gistic/BWA-CNVkit.ADC-Primary/all_data_by_genes.txt Output/Gistic/BWA-CNVkit.ADC.Amplification.pdf Output/Gistic/BWA-CNVkit.ADC.Deletion.pdf Output/Gistic/Bowtie2-CNVkit.ADC-AAH.tsv Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-CIS+AIS.tsv Output/Gistic/Bowtie2-CNVkit.ADC-CIS+AIS/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-MIA.tsv Output/Gistic/Bowtie2-CNVkit.ADC-MIA/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.tsv Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_data_by_genes.txt Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.pdf Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.pdf
 step43: step43-SQC step43-ADC step43-SQC-stage step43-ADC-stage
 .PHONY: step43-SQC step43-ADC step43-SQC-stage step43-ADC-stage step43
 
