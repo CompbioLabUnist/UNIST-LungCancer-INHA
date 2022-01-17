@@ -845,6 +845,19 @@
         \frametitle{Findings in PureCN}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{Gistic?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Gistic.jpg}
+            \caption{Effects of arm-level events on GISTIC results \protect\cite{gistic-1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Gistic}
+    \end{frame}
+
     \subsection{Single Nucleotide Variations Analysis}
     \begin{frame}
         \frametitle{Mutect2?}
@@ -1016,6 +1029,1321 @@
 
     \begin{frame}
         \frametitle{Findings in Tumor Evolution Trajectories Analysis}
+    \end{frame}
+
+    \subsection{Bulk Cell Deconvolution}
+    \begin{frame}
+        \frametitle{BisqueRNA?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Bisque.jpg}
+            \caption{Workflow for BisqueRNA \protect\cite{Bisque1}}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Reference by \protect\citeA{singlecell1}}
+    \begin{frame}
+        \frametitle{Reference Single-cell Data}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_1.jpg}
+            \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plot in LUSC}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.SQC.GSE131907.cluster.pdf}
+            \caption{Cluster Plot in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ActivatedDCs.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/AT2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/CD1c+DCs.pdf}
+                \\
+                \mbox{(a) Activated DCs} & \mbox{(b) Alveolar type II} & \mbox{(c) Langerhans cells} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Ciliated.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ExhaustedTfh.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/mo-Mac.pdf}
+                \\
+                \mbox{(d) Ciliated cells} & \mbox{\tiny (e) Exhausted T follicular helper} & \mbox{(f) Mo \& Mac} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/pDCs.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/PleuralMac.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Treg.pdf}
+                \\
+                \mbox{(g) Plasmacytoid DCs} & \mbox{(h) Pleural Mac} & \mbox{(i) Regulatory T cells} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/tS1.pdf}
+                &
+                &
+                \\
+                \mbox{(j) Transcriptional states 1} &  & \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
+
+        \begin{block}{Activated DCs}
+            \begin{enumerate}
+                \item Activated DCs have higher proportion in Normal samples.
+                \item DCs are central regulators of adaptive immune response, \textit{e.g.} anti-tumoral responses .
+                \item DCs establish a rare immune cell population in tumors .
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Alveolar type II}
+            \begin{enumerate}
+                \item Alveolar type II have lower proportion in Normal samples.
+                \item Alveolar type II proliferate to restore epithelium, and participate in innate immune response \cite{ATII-1}.
+                \item Capability of initiating lung cancer development \cite{ATII-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD1c+ DCs (Langerhans cells; LCs)}
+            \begin{enumerate}
+                \item LCs have higher proportion in Normal samples.
+                \item LCs impact on pathology by inducing tolerance or mediating inflammation \cite{LCs-1}
+                \item LCs facilitate DNA damage and squamous cell carcinoma \cite{LCs-2}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Ciliated cells}
+            \begin{enumerate}
+                \item Ciliated cells have higher proportion in Normal samples.
+                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
+                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Exhausted T follicular helper cells (Tfh)}
+            \begin{enumerate}
+                \item Exhausted Tfh is gradually decreased along cancer worsen.
+                \item Tfh cell response is critical for viral infection \cite{Tfh-1, Tfh-2}.
+                \item Down-regulated Tfh exhaustion correlate with compromise CD8 T-cell immunity \cite{Tfh-3}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Monocyte \& Macrophage}
+            \begin{enumerate}
+                \item Monocyte \& Macrophage have lower proportion in Normal samples.
+                \item Monocyte is a regulator of tumor development \& progression \cite{monocyte-1}.
+                \item Macrophage is a regulator of link between inflammation \& cancer \cite{macrophage-1}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Plasmacytoid DCs (pDCs)}
+            \begin{enumerate}
+                \item pDCs have higher proportion in Normal samples.
+                \item pDCs bring capacities of innate \& adaptive immunity \cite{pDCs-1}.
+                \item Infiltrated pDCs in neoplasms $\Rightarrow$ Poor prognosis \cite{pDCs-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Pleural Macrophages}
+            \begin{enumerate}
+                \item Pleural macrophages have higher proportion in Normal samples.
+                \item Neutrophil recruitment in pleural inflammation \cite{PleuralMac-1}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Regulatory T cells (Tregs)}
+            \begin{enumerate}
+                \item Tregs have higher proportion in Normal samples.
+                \item Elevation of Tregs $\Uparrow$ in solid tumors \& hematologic malignancies \cite{Tregs-1}.
+                \item Increasing Tregs $\Uparrow$ along metastatic stage in NSCLC \cite{Tregs-2} ??.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Tumor cell states 1 (tS1)}
+            \begin{enumerate}
+                \item tS1 have lower proportion in Normal samples.
+                \item Represent a de-regulation of normal differentiation programs \cite{singlecell1}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plot in LUAD}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE131907.cluster.pdf}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Ciliated.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Club.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/MAST.pdf}
+                \\
+                \mbox{(a) Ciliated cells} & \mbox{(b) Club Cell} & \mbox{(c) Mast cell} \\
+            \end{array}$
+            \caption{Violin Plots in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/NK.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Smoothmusclecells.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Tip-likeECs.pdf}
+                \\
+                \mbox{(d) NK cells} & \mbox{(e) Smooth muscle cells} & \mbox{(f) Tip-like ECs} \\
+            \end{array}$
+            \caption{Violin Plots in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
+
+        \begin{block}{Cilited cells}
+            \begin{enumerate}
+                \item Cilited cells have higher proportion in Normal than Primary samples.
+                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
+                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Club cells}
+            \begin{enumerate}
+                \item Club cells have higher proportion in Normal than Primary samples.
+                \item Club cells form LUAD in adult mice \cite{club-1}.
+                \item Club cells in smoking-associated LUAD \cite{club-2}.
+                \item Increasing club cells $\Rightarrow$ Good indicator of advanced bronchopulmonary dysplasia \cite{club-3}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Mast cells}
+            \begin{enumerate}
+                \item Mast cells have higher proportion in Normal than Primary samples.
+                \item Mast cells activated by lung cancer-derived extracellular vesicles \cite{mast-1}.
+                \item Mast cell promote $\Uparrow$ tumor metastasis \cite{mast-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Natural Killer cells (NK cells)}
+            \begin{enumerate}
+                \item NK cells have higher proportion in Primary than Normal samples.
+                \item NK cells play a major role in innate immune system \cite{NK-2}.
+                \item NK cells can induce immune response against tumor cells \cite{NK-3}.
+                \item NK cells may induce tumor regression in lung cancer \cite{NK-1} ??.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Smooth muscle cells}
+            \begin{enumerate}
+                \item Smooth muscle cells have higher proportion in Primary than Normal samples.
+                \item Hypoxia is a characteristic feature of solid tumors \cite{hypoxia-1, hypoxia-2}.
+                \item $\therefore$ Smooth muscle cells pathway is up-regulated in cancer \cite{smooth-1, smooth-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Tip-like endothelial cells (ECs)}
+            \begin{enumerate}
+                \item Tip-like ECs have lower proportion in Primary than Normal samples.
+                \item Tip-like ECs were determined into migratory \& basement-membrane remodeling phenotypes \cite{tip-2}.
+                \item Tip-like ECs replaced with immature ones in NSCLC \cite{tip-1}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{Reference by \protect\citeA{singlecell2}}
+    \begin{frame}
+        \frametitle{Reference Single-cell Data}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_2.png}
+            \caption{Characterization of CD3$^+$ TILs in NSCLC \protect\cite{singlecell2}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plots in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.GSE162498.cluster.pdf}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-MCM5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-TOP2A.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-CCR8.pdf}
+                \\
+                \mbox{(a) CD4/8-MCM5} & \mbox{(b) CD4/8-TOP2A} & \mbox{(c) CD4-CCR8} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-MAL.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-SELL.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD8-SLC4A10.pdf}
+                \\
+                \mbox{(d) CD4-MAL} & \mbox{(e) CD4-SELL} & \mbox{(f) CD8-SLC4A10} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
+
+        \begin{block}{CD4/8-MCM5}
+            \begin{enumerate}
+                \item CD4/8-MCM5 have lower proportion in Normal.
+                \item MCM5, mini-chromosome maintenance protein 5, acts as component of MCM complex \cite{MCM5-1}.
+                \item MCM5, thus, play a major role in replication and cell cycle progression \cite{MCM5-2}.
+                \item MCM5 could be adverse prognostic marker for NSCLC \cite{MCM5-3} and lung cancer \cite{MCM5-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4/8-TOP2A}
+            \begin{enumerate}
+                \item CD4/8-TOP2A have higher proportion in Normal.
+                \item TOP2A, topoisomerase IIA, have an essential role for modulating DNA topology \& cell division \cite{TOP2A-1}.
+                \item TOP2A over-expressed $\Uparrow$ in bladder cancer \cite{TOP2A-2}, LUAD \cite{TOP2A-3} and NSCLC \cite{TOP2A-4} ??
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-CCR8}
+            \begin{enumerate}
+                \item CD4-CCR8 is gradually increased along tumor progression.
+                \item CCR8, C-C chemokine receptor type 8, might modulate monocyte chemotaxis and tymic cell line apoptosis \cite{CCR8-1}.
+                \item CCR8 up-regulated along tumor progression in bladder \cite{CCR8-2}, colon \cite{CCR8-3}, and breast cancer \cite{CCR8-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-MAL}
+            \begin{enumerate}
+                \item CD4-MAL have lower proportion in Primary.
+                \item MAL, myelin and lymphocyte protein, play a role in indirect route for egress of transcytosing cargo \cite{MAL-1}.
+                \item Over-expression of MAL was correlated with worse prognostic factors in uterine carcinoma \cite{MAL-2}.
+                \item MAL was highly methylated in gastric cancer \cite{MAL-3}.
+                \item MAL acts as a tumor suppressor or a tumor progression factor among cancer types \cite{MAL-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-SELL}
+            \begin{enumerate}
+                \item CD4-SELL have higher proportion in Primary.
+                \item SELL, a calcium-dependent lectin, controls cell adhesion with neighboring cells \cite{SELL-1, SELL-2}.
+                \item SELL over-expressed in breast cancer \cite{SELL-3}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD8-SLC4A10}
+            \begin{enumerate}
+                \item CD8-SLC4A10 have lower proportion in Primary.
+                \item SLC4A10, sodium-driven chloride bicarbonate exchanger, have an essential role in regulating intracellular pH \cite{SLC4A10-1}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plots in LUAD}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE162498.cluster.pdf}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Violin Plots in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-GZMA.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-SESN1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-TNFRSF18.pdf}
+                \\
+                \mbox{(a) CD4-GZMA} & \mbox{(b) CD4-SESN1} & \mbox{(c) CD4-TNFRSF18} \\
+            \end{array}$
+            \caption{Violin Plots in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
+
+        \begin{block}{CD4-GZM}
+            \begin{enumerate}
+                \item CD4-GZM have higher proportion in AIS than Normal.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-SESN1}
+            \begin{enumerate}
+                \item CD4-SESN1 have higher proportion in AIS than Normal.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-TNFRSF18}
+            \begin{enumerate}
+                \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Bulk Cell Deconvolution}
+    \end{frame}
+
+        \subsection{Discovery of Mutational Signature}
+    \begin{frame}
+        \frametitle{Mutational Signature?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/LungCancer/signatures.jpg}
+            \caption{Mutation Burdens across PCAWG tumor types \protect\cite{signature1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SigProfiler?}
+
+        \begin{figure}
+            \includegraphics[width=0.4 \linewidth]{figures/Workflow/SigProfiler.jpg}
+            \caption{Classification of mutation signatures by SigProfiler \protect\cite{SigProfiler1, SigProfiler2, SigProfiler3}}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Single Base Substitutions (SBS)}
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS Signatures}
+
+        \begin{block}{SBS1}
+            \begin{itemize}
+                \item An endogenous mutational process \cite{signature2}
+                \item generates G$>$T mismatches in double-stranded DNA
+                \item Failure $\Downarrow$ to detect \& remove these mismatches
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS2}
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
+                \begin{enumerate}
+                    \item APOBEC3A is probably responsible in human cancer
+                    \item APOBEC3B may also contribute
+                \end{enumerate}
+                \item may be generated directly by DNA replication
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS4}
+            \begin{itemize}
+                \item Tobacco smoking \cite{signature3}
+                \item Exposed to tabacco carcinogens \textit{e.g.} benzopyrene
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS5}
+            \begin{itemize}
+                \item Unknown \cite{signature3}
+                \item SBS5 $\Uparrow$ in bladder cancer
+                \item SBS5 $\Uparrow$ in many cancer types $\because$ Tobacco smoking
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS10b}
+            \begin{itemize}
+                \item Polymerase $\epsilon$ exonuclease domain mutations \cite{signature1}
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS13}
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature4}
+                \item SBS13 is usually found with SBS2
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS87}
+            \begin{itemize}
+                \item Thiopurine chemotherapy treatment \cite{signature5}
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUSC with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype \& Smoking in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS5.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS5 Signature in LUSC with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS10b.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS10b.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS10b Signature in LUSC with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS87.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS87.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS87 Signature in LUSC with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUSC with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype \& Recurrence in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS1.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS1 Signature in LUSC with Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUAD with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype \& Smoking in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS1.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS1 Signature in LUAD with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS5.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS5 Signature in LUAD with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS10b.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS10b.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS10b Signature in LUAD with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS87.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS87.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS87 Signature in LUAD with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{SBS in LUAD with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Subtype \& Recurrence in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.Relative/SBS1.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS1 Signature in LUAD with Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Double Base Substitutions (DBS)}
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS Signatures}
+
+        \begin{block}{DBS2}
+            \begin{itemize}
+                \item Tobacco smoking \cite{signature6}
+                \item Other endogenous/exogenous mutagens \textit{e.g.} acetaldehyde
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{DBS7}
+            \begin{itemize}
+                \item Defective $\Downarrow$ DNA mismatch repair \cite{signature1}
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{DBS78A}
+            content...
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS2.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS2.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS2 Signature in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS78A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS78A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS78A Signature in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS in LUSC with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype \& Smoking in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Absolute/DBS78A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Relative/DBS78A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS78A Signature in LUSC with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DBS in LUSC with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype \& Recurrence in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS2.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS2.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS2 Signature in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS7.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS7.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS7 Signature in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS78A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS78A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS78A Signature in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS in LUAD with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype \& Smoking in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Absolute/DBS78A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Relative/DBS78A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS78A Signature in LUSC in Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DBS in LUAD with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{DBS Bar Plot by Cancer Subtype \& Recurrence in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Short insertions \& Deletions (Indels)}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Indel signatures}
+
+        \begin{block}{ID83A}
+            content...
+        \end{block}
+
+        \begin{block}{ID83B}
+            content...
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Indels in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Absolute/ID83A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Relative/ID83A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel83A Signature in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Absolute/ID83B.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Relative/ID83B.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel83B Signature in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Indel in LUSC with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype \& Smoking in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Smoking.Absolute/ID83A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Smoking.Relative/ID83A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel83A Signature in LUSC with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Indel in LUSC with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype \& Recurrence in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Indels in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Absolute/ID83A.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Relative/ID83A.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel83A Signature in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Absolute/ID83B.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Relative/ID83B.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel83B Signature in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Indel in LUAD with Smoking}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype \& Smoking in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Indel in LUAD with Recurrence}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Recurrence.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Recurrence.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{Indel Bar Plot by Cancer Subtype \& Recurrence in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Mutation Signature}
+    \end{frame}
+
+    \subsection{Clinical Data with Point Mutation}
+    \begin{frame}
+        \frametitle{Mutect2?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
+            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{For Smoking}
+    \begin{frame}
+        \frametitle{LUSC with Smoking}
+
+        \begin{table}
+            \caption{LUSC WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Clinical Data about LUSC for Smoking}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/GeneClinical/BWA-SQC.Smoking.pdf}
+            \caption{Clinical Data about LUSC for Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Precancer.Smoking.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Primary.Smoking.pdf}
+                \\
+                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
+            \end{array}$
+            \caption{Clinical Data about LUSC for Smoking with Precancer/Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Notable genes in LUSC for Smoking}
+
+        \begin{block}{INSYN2B}
+            \begin{enumerate}
+                \item INSYN2B is the best indicator for Smoking.
+                \item INSYN2B is the best indicator for Smoking in Precancer.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{COMT}
+            \begin{enumerate}
+                \item COMT is the best indicator for Smoking in Primary.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUAD with Smoking}
+
+        \begin{table}
+            \caption{LUAD WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_ADC_smoking.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Clinical Data about LUAD for Smoking}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Smoking.pdf}
+            \caption{Clinical Data about LUAD for Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Precancer.Smoking.pdf}
+                &
+                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Primary.Smoking.pdf}
+                \\
+                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
+            \end{array}$
+            \caption{Clinical Data about LUAD for Smoking with Precancer/Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Notable genes in LUAD for Smoking}
+
+        \begin{block}{CREBRF}
+            \begin{enumerate}
+                \item CREBRF is the best indicator for Smoking.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{ACTR10}
+            \begin{enumerate}
+                \item ACTR10 is the best indicator for Smoking in Precancer.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{AADACL3}
+            \begin{enumerate}
+                \item AADACL3 is the best indicator for Smoking in Primary.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{For Recurrence}
+    \begin{frame}
+        \frametitle{LUSC with Recurrence}
+
+        \begin{table}
+            \caption{LUSC WES Data with Recurrence}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_recurrence.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Clinical Data about LUSC for Recurrence}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/GeneClinical/BWA-SQC.Recur.pdf}
+            \caption{Clinical Data about LUSC for Recurrence}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Precancer.Recur.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Primary.Recur.pdf}
+                \\
+                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
+            \end{array}$
+            \caption{Clinical Data about LUSC for Recurrence with Precancer/Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Notable genes in LUSC with Recurrence}
+
+        \begin{block}{TRAT1}
+            \begin{enumerate}
+                \item TRAT1 is the best indicator for Recurrence.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{HMG20A}
+            \begin{enumerate}
+                \item HMG20A is the best indicator for Recurrence in Precancer.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{ZNF711}
+            \begin{enumerate}
+                \item ZNF711 is the best indicator for Recurrence in Primary.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{LUAD with Recurrence}
+
+        \begin{table}
+            \caption{LUAD WES Data with Recurrence}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_ADC_recurrence.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Clinical Data about LUAD for Recurrence}
+
+        \begin{figure}
+            \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Recur.pdf}
+            \caption{Clinical Data about LUAD for Recurrence}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Precancer.Recur.pdf}
+                &
+                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Primary.Recur.pdf}
+                \\
+                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
+            \end{array}$
+            \caption{Clinical Data about LUAD for Recurrence with Precancer/Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Notable genes in LUSC with Recurrence}
+
+        \begin{block}{EP400}
+            \begin{enumerate}
+                \item EP400 is the best indicator for Recurrence.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CENPE}
+            \begin{enumerate}
+                \item CENPE is the best indicator for Recurrence in Precancer.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{INPP5A}
+            \begin{enumerate}
+                \item INPP5A is the best indicator for Recurrence in Primary.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Clinical Data with Point Mutations}
     \end{frame}
 
     \subsection{Differences in Gene Expression Levels}
@@ -1822,419 +3150,6 @@
         \frametitle{Findings in DEG Analysis}
     \end{frame}
 
-    \subsection{Bulk Cell Deconvolution}
-    \begin{frame}
-        \frametitle{BisqueRNA?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Bisque.jpg}
-            \caption{Workflow for BisqueRNA \protect\cite{Bisque1}}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Reference by \protect\citeA{singlecell1}}
-    \begin{frame}
-        \frametitle{Reference Single-cell Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_1.jpg}
-            \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plot in LUSC}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.SQC.GSE131907.cluster.pdf}
-            \caption{Cluster Plot in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUSC}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ActivatedDCs.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/AT2.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/CD1c+DCs.pdf}
-                \\
-                \mbox{(a) Activated DCs} & \mbox{(b) Alveolar type II} & \mbox{(c) Langerhans cells} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                 \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Ciliated.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ExhaustedTfh.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/mo-Mac.pdf}
-                \\
-                \mbox{(d) Ciliated cells} & \mbox{\tiny (e) Exhausted T follicular helper} & \mbox{(f) Mo \& Mac} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/pDCs.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/PleuralMac.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Treg.pdf}
-                \\
-                \mbox{(g) Plasmacytoid DCs} & \mbox{(h) Pleural Mac} & \mbox{(i) Regulatory T cells} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/tS1.pdf}
-                &
-                &
-                \\
-                \mbox{(j) Transcriptional states 1} &  & \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
-
-        \begin{block}{Activated DCs}
-            \begin{enumerate}
-                \item Activated DCs have higher proportion in Normal samples.
-                \item DCs are central regulators of adaptive immune response, \textit{e.g.} anti-tumoral responses .
-                \item DCs establish a rare immune cell population in tumors .
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Alveolar type II}
-            \begin{enumerate}
-                \item Alveolar type II have lower proportion in Normal samples.
-                \item Alveolar type II proliferate to restore epithelium, and participate in innate immune response \cite{ATII-1}.
-                \item Capability of initiating lung cancer development \cite{ATII-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD1c+ DCs (Langerhans cells; LCs)}
-            \begin{enumerate}
-                \item LCs have higher proportion in Normal samples.
-                \item LCs impact on pathology by inducing tolerance or mediating inflammation \cite{LCs-1}
-                \item LCs facilitate DNA damage and squamous cell carcinoma \cite{LCs-2}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Ciliated cells}
-            \begin{enumerate}
-                \item Ciliated cells have higher proportion in Normal samples.
-                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
-                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Exhausted T follicular helper cells (Tfh)}
-            \begin{enumerate}
-                \item Exhausted Tfh is gradually decreased along cancer worsen.
-                \item Tfh cell response is critical for viral infection \cite{Tfh-1, Tfh-2}.
-                \item Down-regulated Tfh exhaustion correlate with compromise CD8 T-cell immunity \cite{Tfh-3}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Monocyte \& Macrophage}
-            \begin{enumerate}
-                \item Monocyte \& Macrophage have lower proportion in Normal samples.
-                \item Monocyte is a regulator of tumor development \& progression \cite{monocyte-1}.
-                \item Macrophage is a regulator of link between inflammation \& cancer \cite{macrophage-1}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Plasmacytoid DCs (pDCs)}
-            \begin{enumerate}
-                \item pDCs have higher proportion in Normal samples.
-                \item pDCs bring capacities of innate \& adaptive immunity \cite{pDCs-1}.
-                \item Infiltrated pDCs in neoplasms $\Rightarrow$ Poor prognosis \cite{pDCs-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Pleural Macrophages}
-            \begin{enumerate}
-                \item Pleural macrophages have higher proportion in Normal samples.
-                \item Neutrophil recruitment in pleural inflammation \cite{PleuralMac-1}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Regulatory T cells (Tregs)}
-            \begin{enumerate}
-                \item Tregs have higher proportion in Normal samples.
-                \item Elevation of Tregs $\Uparrow$ in solid tumors \& hematologic malignancies \cite{Tregs-1}.
-                \item Increasing Tregs $\Uparrow$ along metastatic stage in NSCLC \cite{Tregs-2} ??.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Tumor cell states 1 (tS1)}
-            \begin{enumerate}
-                \item tS1 have lower proportion in Normal samples.
-                \item Represent a de-regulation of normal differentiation programs \cite{singlecell1}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plot in LUAD}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE131907.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUAD}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Ciliated.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Club.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/MAST.pdf}
-                \\
-                \mbox{(a) Ciliated cells} & \mbox{(b) Club Cell} & \mbox{(c) Mast cell} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/NK.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Smoothmusclecells.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Tip-likeECs.pdf}
-                \\
-                \mbox{(d) NK cells} & \mbox{(e) Smooth muscle cells} & \mbox{(f) Tip-like ECs} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
-
-        \begin{block}{Cilited cells}
-            \begin{enumerate}
-                \item Cilited cells have higher proportion in Normal than Primary samples.
-                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
-                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Club cells}
-            \begin{enumerate}
-                \item Club cells have higher proportion in Normal than Primary samples.
-                \item Club cells form LUAD in adult mice \cite{club-1}.
-                \item Club cells in smoking-associated LUAD \cite{club-2}.
-                \item Increasing club cells $\Rightarrow$ Good indicator of advanced bronchopulmonary dysplasia \cite{club-3}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Mast cells}
-            \begin{enumerate}
-                \item Mast cells have higher proportion in Normal than Primary samples.
-                \item Mast cells activated by lung cancer-derived extracellular vesicles \cite{mast-1}.
-                \item Mast cell promote $\Uparrow$ tumor metastasis \cite{mast-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Natural Killer cells (NK cells)}
-            \begin{enumerate}
-                \item NK cells have higher proportion in Primary than Normal samples.
-                \item NK cells play a major role in innate immune system \cite{NK-2}.
-                \item NK cells can induce immune response against tumor cells \cite{NK-3}.
-                \item NK cells may induce tumor regression in lung cancer \cite{NK-1} ??.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Smooth muscle cells}
-            \begin{enumerate}
-                \item Smooth muscle cells have higher proportion in Primary than Normal samples.
-                \item Hypoxia is a characteristic feature of solid tumors \cite{hypoxia-1, hypoxia-2}.
-                \item $\therefore$ Smooth muscle cells pathway is up-regulated in cancer \cite{smooth-1, smooth-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Tip-like endothelial cells (ECs)}
-            \begin{enumerate}
-                \item Tip-like ECs have lower proportion in Primary than Normal samples.
-                \item Tip-like ECs were determined into migratory \& basement-membrane remodeling phenotypes \cite{tip-2}.
-                \item Tip-like ECs replaced with immature ones in NSCLC \cite{tip-1}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \subsubsection{Reference by \protect\citeA{singlecell2}}
-    \begin{frame}
-        \frametitle{Reference Single-cell Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_2.png}
-            \caption{Characterization of CD3$^+$ TILs in NSCLC \protect\cite{singlecell2}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plots in LUSC}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.GSE162498.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUSC}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-MCM5.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-TOP2A.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-CCR8.pdf}
-                \\
-                \mbox{(a) CD4/8-MCM5} & \mbox{(b) CD4/8-TOP2A} & \mbox{(c) CD4-CCR8} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-MAL.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-SELL.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD8-SLC4A10.pdf}
-                \\
-                \mbox{(d) CD4-MAL} & \mbox{(e) CD4-SELL} & \mbox{(f) CD8-SLC4A10} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
-
-        \begin{block}{CD4/8-MCM5}
-            \begin{enumerate}
-                \item CD4/8-MCM5 have lower proportion in Normal.
-                \item MCM5, mini-chromosome maintenance protein 5, acts as component of MCM complex \cite{MCM5-1}.
-                \item MCM5, thus, play a major role in replication and cell cycle progression \cite{MCM5-2}.
-                \item MCM5 could be adverse prognostic marker for NSCLC \cite{MCM5-3} and lung cancer \cite{MCM5-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4/8-TOP2A}
-            \begin{enumerate}
-                \item CD4/8-TOP2A have higher proportion in Normal.
-                \item TOP2A, topoisomerase IIA, have an essential role for modulating DNA topology \& cell division \cite{TOP2A-1}.
-                \item TOP2A over-expressed $\Uparrow$ in bladder cancer \cite{TOP2A-2}, LUAD \cite{TOP2A-3} and NSCLC \cite{TOP2A-4} ??
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-CCR8}
-            \begin{enumerate}
-                 \item CD4-CCR8 is gradually increased along tumor progression.
-                 \item CCR8, C-C chemokine receptor type 8, might modulate monocyte chemotaxis and tymic cell line apoptosis \cite{CCR8-1}.
-                 \item CCR8 up-regulated along tumor progression in bladder \cite{CCR8-2}, colon \cite{CCR8-3}, and breast cancer \cite{CCR8-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-MAL}
-            \begin{enumerate}
-                \item CD4-MAL have lower proportion in Primary.
-                \item MAL, myelin and lymphocyte protein, play a role in indirect route for egress of transcytosing cargo \cite{MAL-1}.
-                \item Over-expression of MAL was correlated with worse prognostic factors in uterine carcinoma \cite{MAL-2}.
-                \item MAL was highly methylated in gastric cancer \cite{MAL-3}.
-                \item MAL acts as a tumor suppressor or a tumor progression factor among cancer types \cite{MAL-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-SELL}
-            \begin{enumerate}
-                \item CD4-SELL have higher proportion in Primary.
-                \item SELL, a calcium-dependent lectin, controls cell adhesion with neighboring cells \cite{SELL-1, SELL-2}.
-                \item SELL over-expressed in breast cancer \cite{SELL-3}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD8-SLC4A10}
-            \begin{enumerate}
-                \item CD8-SLC4A10 have lower proportion in Primary.
-                \item SLC4A10, sodium-driven chloride bicarbonate exchanger, have an essential role in regulating intracellular pH \cite{SLC4A10-1}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plots in LUAD}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE162498.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Violin Plots in LUAD}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-GZMA.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-SESN1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-TNFRSF18.pdf}
-                \\
-                \mbox{(a) CD4-GZMA} & \mbox{(b) CD4-SESN1} & \mbox{(c) CD4-TNFRSF18} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
-
-        \begin{block}{CD4-GZM}
-            \begin{enumerate}
-                \item CD4-GZM have higher proportion in AIS than Normal.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-SESN1}
-           \begin{enumerate}
-               \item CD4-SESN1 have higher proportion in AIS than Normal.
-           \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-TNFRSF18}
-            \begin{enumerate}
-                \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Bulk Cell Deconvolution}
-    \end{frame}
-
     \subsection{Discovery of Gene Fusion}
     \begin{frame}
         \frametitle{Arriba?}
@@ -2247,908 +3162,6 @@
 
     \begin{frame}
         \frametitle{Findings in Gene Fusion Discovery}
-    \end{frame}
-
-    \subsection{Discovery of Mutational Signature}
-    \begin{frame}
-        \frametitle{Mutational Signature?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/LungCancer/signatures.jpg}
-            \caption{Mutation Burdens across PCAWG tumor types \protect\cite{signature1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{SigProfiler?}
-
-        \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/Workflow/SigProfiler.jpg}
-            \caption{Classification of mutation signatures by SigProfiler \protect\cite{SigProfiler1, SigProfiler2, SigProfiler3}}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Single Base Substitutions (SBS)}
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS Signatures}
-
-        \begin{block}{SBS1}
-            \begin{itemize}
-                \item An endogenous mutational process \cite{signature2}
-                \item generates G$>$T mismatches in double-stranded DNA
-                \item Failure $\Downarrow$ to detect \& remove these mismatches
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS2}
-            \begin{itemize}
-                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
-                \begin{enumerate}
-                    \item APOBEC3A is probably responsible in human cancer
-                    \item APOBEC3B may also contribute
-                \end{enumerate}
-                \item may be generated directly by DNA replication
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS4}
-            \begin{itemize}
-                \item Tobacco smoking \cite{signature3}
-                \item Exposed to tabacco carcinogens \textit{e.g.} benzopyrene
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS5}
-            \begin{itemize}
-                \item Unknown \cite{signature3}
-                \item SBS5 $\Uparrow$ in bladder cancer
-                \item SBS5 $\Uparrow$ in many cancer types $\because$ Tobacco smoking
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS10b}
-            \begin{itemize}
-                \item Polymerase $\epsilon$ exonuclease domain mutations \cite{signature1}
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS13}
-            \begin{itemize}
-                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature4}
-                \item SBS13 is usually found with SBS2
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{SBS87}
-            \begin{itemize}
-                \item Thiopurine chemotherapy treatment \cite{signature5}
-            \end{itemize}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUSC with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Smoking in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS5.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS5.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS5 Signature in LUSC with Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS10b.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS10b.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS10b Signature in LUSC with Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS87.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS87.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS87 Signature in LUSC with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUSC with Recurrence}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Recurrence in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS1.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS1.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS1 Signature in LUSC with Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUAD}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUAD with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Smoking in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS1.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS1.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS1 Signature in LUAD with Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS5.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS5.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS5 Signature in LUAD with Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS10b.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS10b.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS10b Signature in LUAD with Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Absolute/SBS87.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Smoking.Relative/SBS87.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS87 Signature in LUAD with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS in LUAD with Recurrence}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.ADC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Recurrence in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.Absolute/SBS1.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.ADC.Recurrence.Relative/SBS1.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS1 Signature in LUAD with Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Double Base Substitutions (DBS)}
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS Signatures}
-
-        \begin{block}{DBS2}
-            \begin{itemize}
-                \item Tobacco smoking \cite{signature6}
-                \item Other endogenous/exogenous mutagens \textit{e.g.} acetaldehyde
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{DBS7}
-            \begin{itemize}
-                \item Defective $\Downarrow$ DNA mismatch repair \cite{signature1}
-            \end{itemize}
-        \end{block}
-
-        \begin{block}{DBS78A}
-            content...
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS2.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS2.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS2 Signature in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS78A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS78A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS78A Signature in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS in LUSC with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype \& Smoking in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Absolute/DBS78A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Relative/DBS78A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS78A Signature in LUSC with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DBS in LUSC with Recurrence}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype \& Recurrence in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS in LUAD}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS2.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS2.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS2 Signature in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS7.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS7.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS7 Signature in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute/DBS78A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative/DBS78A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS78A Signature in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS in LUAD with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype \& Smoking in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Absolute/DBS78A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-DoubleBase.SQC.Smoking.Relative/DBS78A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS78A Signature in LUSC in Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{DBS in LUAD with Recurrence}
-
-         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.ADC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{DBS Bar Plot by Cancer Subtype \& Recurrence in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Short insertions \& Deletions (Indels)}
-    \begin{frame}[allowframebreaks]
-        \frametitle{Indel signatures}
-
-        \begin{block}{ID83A}
-            content...
-        \end{block}
-
-         \begin{block}{ID83B}
-            content...
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Indels in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Absolute/ID83A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Relative/ID83A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel83A Signature in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Absolute/ID83B.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Subtype.Relative/ID83B.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel83B Signature in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Indel in LUSC with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype \& Smoking in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Smoking.Absolute/ID83A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.SQC.Smoking.Relative/ID83A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel83A Signature in LUSC with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Indel in LUSC with Recurrence}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype \& Recurrence in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Indels in LUAD}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Absolute/ID83A.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Relative/ID83A.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel83A Signature in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Absolute/ID83B.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-Indel.ADC.Subtype.Relative/ID83B.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel83B Signature in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Indel in LUAD with Smoking}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Smoking.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype \& Smoking in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Indel in LUAD with Recurrence}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Recurrence.Absolute.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.ADC.Recurrence.Relative.pdf}
-                \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{Indel Bar Plot by Cancer Subtype \& Recurrence in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Mutation Signature}
-    \end{frame}
-
-    \subsection{Clinical Data with Point Mutation}
-    \begin{frame}
-        \frametitle{Mutect2?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
-            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{For Smoking}
-    \begin{frame}
-        \frametitle{LUSC with Smoking}
-
-        \begin{table}
-            \caption{LUSC WES Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Clinical Data about LUSC for Smoking}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/GeneClinical/BWA-SQC.Smoking.pdf}
-            \caption{Clinical Data about LUSC for Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Precancer.Smoking.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Primary.Smoking.pdf}
-                \\
-                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
-            \end{array}$
-            \caption{Clinical Data about LUSC for Smoking with Precancer/Primary}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Notable genes in LUSC for Smoking}
-
-        \begin{block}{INSYN2B}
-            \begin{enumerate}
-                \item INSYN2B is the best indicator for Smoking.
-                \item INSYN2B is the best indicator for Smoking in Precancer.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{COMT}
-            \begin{enumerate}
-                \item COMT is the best indicator for Smoking in Primary.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{LUAD with Smoking}
-
-        \begin{table}
-            \caption{LUAD WES Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_ADC_smoking.tex}}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Clinical Data about LUAD for Smoking}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Smoking.pdf}
-            \caption{Clinical Data about LUAD for Smoking}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Precancer.Smoking.pdf}
-                &
-                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Primary.Smoking.pdf}
-                \\
-                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
-            \end{array}$
-            \caption{Clinical Data about LUAD for Smoking with Precancer/Primary}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Notable genes in LUAD for Smoking}
-
-        \begin{block}{CREBRF}
-            \begin{enumerate}
-                \item CREBRF is the best indicator for Smoking.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{ACTR10}
-            \begin{enumerate}
-                \item ACTR10 is the best indicator for Smoking in Precancer.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{AADACL3}
-            \begin{enumerate}
-                \item AADACL3 is the best indicator for Smoking in Primary.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \subsubsection{For Recurrence}
-    \begin{frame}
-        \frametitle{LUSC with Recurrence}
-
-        \begin{table}
-            \caption{LUSC WES Data with Recurrence}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_SQC_recurrence.tex}}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Clinical Data about LUSC for Recurrence}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/GeneClinical/BWA-SQC.Recur.pdf}
-            \caption{Clinical Data about LUSC for Recurrence}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Precancer.Recur.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/GeneClinical/BWA-SQC.Primary.Recur.pdf}
-                \\
-                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
-            \end{array}$
-            \caption{Clinical Data about LUSC for Recurrence with Precancer/Primary}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Notable genes in LUSC with Recurrence}
-
-        \begin{block}{TRAT1}
-            \begin{enumerate}
-                \item TRAT1 is the best indicator for Recurrence.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{HMG20A}
-            \begin{enumerate}
-                \item HMG20A is the best indicator for Recurrence in Precancer.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{ZNF711}
-            \begin{enumerate}
-                \item ZNF711 is the best indicator for Recurrence in Primary.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{LUAD with Recurrence}
-
-        \begin{table}
-            \caption{LUAD WES Data with Recurrence}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_ADC_recurrence.tex}}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Clinical Data about LUAD for Recurrence}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Recur.pdf}
-            \caption{Clinical Data about LUAD for Recurrence}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Precancer.Recur.pdf}
-                &
-                \includegraphics[height=0.6 \textheight]{figures/GeneClinical/BWA-ADC.Primary.Recur.pdf}
-                \\
-                \mbox{(a) Precancer} & \mbox{(b) Primary Cancer} \\
-            \end{array}$
-            \caption{Clinical Data about LUAD for Recurrence with Precancer/Primary}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Notable genes in LUSC with Recurrence}
-
-        \begin{block}{EP400}
-            \begin{enumerate}
-                \item EP400 is the best indicator for Recurrence.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CENPE}
-            \begin{enumerate}
-                \item CENPE is the best indicator for Recurrence in Precancer.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{INPP5A}
-            \begin{enumerate}
-                \item INPP5A is the best indicator for Recurrence in Primary.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Clinical Data with Point Mutations}
     \end{frame}
 
     \section{Discussion}
