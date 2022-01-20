@@ -64,7 +64,7 @@ if __name__ == "__main__":
         input_data = input_data.loc[~((input_data["chromosome"] == chrom) & (start <= input_data["start"]) & (input_data["end"] <= end)), :]
 
     input_data = input_data.loc[:, ["ID", "chromosome", "start", "end", "probes", "log2"]]
-    input_data.columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num markers", "Seg.CN"]
+    input_data.columns = step00.Gistic_columns
     print(input_data)
 
     input_data.to_csv(args.output, sep="\t", index=False)

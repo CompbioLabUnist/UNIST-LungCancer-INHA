@@ -33,6 +33,7 @@ nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame
 
 derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 venn_format = "{size:d} ({percentage:.1f}%)"
+Gistic_columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num markers", "Seg.CN"]
 
 
 def file_list(path: str) -> typing.List[str]:

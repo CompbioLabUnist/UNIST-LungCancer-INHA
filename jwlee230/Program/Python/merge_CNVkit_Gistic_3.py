@@ -1,5 +1,5 @@
 """
-merge_CNVkit_Gistic_2.py: merge CNVkit CNS files for Gistic with cancer stage
+merge_CNVkit_Gistic_3.py: merge CNVkit CNS files for Gistic with cancer stage & clinical information
 """
 import argparse
 import multiprocessing
@@ -21,7 +21,8 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("blacklist", help="USCS blacklist file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
-    parser.add_argument("--stage", help="Stage choices", choices=step00.long_sample_type_list, nargs="+", required=True)
+    parser.add_argument("--stage", help="Stage choices", choices=step00.long_sample_type_list + ["All"], nargs="+", default="All")
+    parser.add_argument("--exact", help="Select only exact match (type, value)", type=str, nargs=2, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -50,10 +51,19 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     print(patients)
+
+    patients &= set(clinical_data.loc[(clinical_data[args.exact[0]] == args.exact[1])].index)
+    assert patients, "Too less patients!!"
+    print(patients)
+
     args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
 
     print(args.stage)
-    args.input = list(filter(lambda x: step00.get_long_sample_type(x) in args.stage, args.input))
+    if "All" not in args.stage:
+        args.input = list(filter(lambda x: step00.get_long_sample_type(x) in args.stage, args.input))
+
+    sample_list = list(map(step00.get_id, args.input))
+    print(len(sample_list), sample_list)
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)

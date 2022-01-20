@@ -16,8 +16,8 @@ import tqdm
 import step00
 
 input_data = pandas.DataFrame()
-stage_order = list()
-state_palette = list()
+stage_order: typing.List[str] = list()
+state_palette: typing.List[str] = list()
 
 
 def run(gene: str) -> typing.Tuple[str, float]:
@@ -34,7 +34,7 @@ def run(gene: str) -> typing.Tuple[str, float]:
     matplotlib.pyplot.ylabel("Segment Mean")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = "{1}_{0}.pdf".format(gene_name, cytoband)
+    fig_name = "{1}_{0}.pdf".format(gene_name.replace("/", "-"), cytoband)
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Gistic result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.001)
 
     args = parser.parse_args()
 
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     stage_palette = list(map(lambda x: step00.stage_color_code[x], stage_order))
 
     with multiprocessing.Pool(args.cpus) as pool:
-        files = list(filter(lambda x: x[1] < args.p, pool.map(run, gene_list)))
+        files = list(map(lambda x: x[0], list(filter(lambda x: x[1] < args.p, pool.map(run, gene_list)))))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(files):
