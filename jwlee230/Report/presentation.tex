@@ -854,6 +854,28 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{Gistic by Histology}
+    \begin{frame}
+        \frametitle{Gistic by Histology}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/del_qplot.png}
+                \\
+
+                \mbox{(a) LUSC} & \mbox{(b) LUAD} \\
+            \end{array}$
+            \caption{Gistic results by Histology}
+        \end{figure}
+    \end{frame}
+
     \subsubsection{Gistic by Stage}
     \begin{frame}
         \frametitle{Gistic in LUSC}
@@ -943,26 +965,253 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{Gistic by Recurrence}
+    \subsubsection{Gistic by Recurrence \& LUSC}
     \begin{frame}
-        \frametitle{Gistic in NR vs. R}
+        \frametitle{Gistic by NR vs. R in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/del_qplot.png}
+                \\
+
+                \mbox{(a) Non-recurrence} & \mbox{(b) Recurrence} \\
+            \end{array}$
+            \caption{Gistic results by NR vs. R in LUSC}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Gistic in Non-recurrence}
+        \frametitle{Gistic in Non-recurrence \& LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Nonrecur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Nonrecur/del_qplot.png}
+                \\
+
+                \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+            \end{array}$
+            \caption{Gistic result in Non-recurrence \& LUSC}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Gistic in Recurrence}
+        \frametitle{Venn Diagram in Non-recurrence \& LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Nonrecur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Nonrecur.Deletion.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in NR \& LUSC}
+        \end{figure}
     \end{frame}
 
-    \subsubsection{Gistic by Smoking}
     \begin{frame}
-        \frametitle{Gistic in Smoking history}
+        \frametitle{Gistic in Recurrence \& LUSC}
+
+        \begin{figure}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Recur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Recur/del_qplot.png}
+                \\
+
+                \mbox{(a) All} & \mbox{(b) Dysplasia} & \mbox{(c) CIS} & \mbox{(d) Primary} \\
+            \end{array}$
+            \caption{Gistic result in Recurrence \& LUSC}
+        \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Gistic in Never smoker}
+        \frametitle{Venn Diagram in Recurrence \& LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Recur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Recur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in R \& LUSC}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Gistic by Recurrence \& LUAD}
+    \begin{frame}
+        \frametitle{Gistic by NR vs. R in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/del_qplot.png}
+                \\
+
+                \mbox{(a) Non-recurrence} & \mbox{(b) Recurrence} \\
+            \end{array}$
+            \caption{Gistic result by NR vs. R in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic by Non-recurrence in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cccc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Nonrecur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Nonrecur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Nonrecur/del_qplot.png}
+                \\
+
+                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) AIS} & \mbox{(d) Primary} \\
+            \end{array}$
+            \caption{Gistic result in Non-recurrence \& LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Venn Diagram in Non-recurrence \& LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.Nonrecur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.Nonrecur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in NR \& LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic by Recurrence in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Recur/amp_qplot.png}
+                \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Recur/del_qplot.png}
+                \\
+
+                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) Primary} \\
+            \end{array}$
+            \caption{Gistic result in Recurrence \& LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Venn Diagram in Recurrence \& LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.Recur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.Recur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in R \& LUAD}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Gistic by Smoking history \& LUSC}
+    \begin{frame}
+        \frametitle{Gistic by Smoking history in LUSC}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Never smoker in LUSC}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Ex-smoker in LUSC}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Current smoker in LUSC}
+    \end{frame}
+
+    \subsubsection{Gistic by Smoking history \& LUAD}
+    \begin{frame}
+        \frametitle{Gistic by Smoking history in LUAD}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Never smoker in LUAD}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Ex-smoker in LUAD}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Gistic in Current smoker in LUAD}
     \end{frame}
 
     \begin{frame}
