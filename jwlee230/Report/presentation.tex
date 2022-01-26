@@ -876,6 +876,21 @@
         \end{figure}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{Venn Diagram by Histology}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.Histology.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.Histology.Deletion.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks by Histology}
+        \end{figure}
+    \end{frame}
+
     \subsubsection{Gistic by Stage}
     \begin{frame}
         \frametitle{Gistic in LUSC}
@@ -988,6 +1003,22 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{Venn Diagram by NR vs. R in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.NR-R.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.NR-R.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion}
+            \end{array}$
+            \caption{Venn Diagram among Peaks by NR vs. R in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Gistic in Non-recurrence \& LUSC}
 
         \begin{figure}
@@ -1091,6 +1122,22 @@
                 \mbox{(a) Non-recurrence} & \mbox{(b) Recurrence} \\
             \end{array}$
             \caption{Gistic result by NR vs. R in LUAD}
+        \end{figure}
+    \end{frame}
+
+     \begin{frame}
+        \frametitle{Venn Diagram by NR vs. R in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.NR-R.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC.NR-R.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks by NR vs. R in LUAD}
         \end{figure}
     \end{frame}
 
@@ -1748,6 +1795,7 @@
             \begin{enumerate}
                 \item CD8-SLC4A10 have lower proportion in Primary.
                 \item SLC4A10, sodium-driven chloride bicarbonate exchanger, have an essential role in regulating intracellular pH \cite{SLC4A10-1}.
+                \item SLC4A10 distruption leads to an extreme change in the cellular phenotype \cite{SLC4A10-2}.
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -1781,21 +1829,35 @@
     \begin{frame}[allowframebreaks]
         \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
 
-        \begin{block}{CD4-GZM}
+        \begin{block}{CD4-GZMA}
             \begin{enumerate}
-                \item CD4-GZM have higher proportion in AIS than Normal.
+                \item CD4-GZMA have higher proportion in AIS than Normal.
+                \item GZMA, granzyme A, activates caspase-independent pyroptosis through the immunological synapse \cite{GZMA-1, GZMA-2, GZMA-3}.
+                \item GZMA promotes many cancers.
+                \begin{itemize}
+                    \item colorectal cancer \cite{GZMA-4, GZMA-5}
+                    \item breast cancer \cite{GZMA-6}
+                    \item NSCLC \cite{GZMA-7}
+                \end{itemize}
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-SESN1}
             \begin{enumerate}
                 \item CD4-SESN1 have higher proportion in AIS than Normal.
+                \item SESN1, sestrin-1, acts as an intracellular \textit{leucine} sensor that controls the TORC1 signaling pathway \cite{SESN1-1, SESN1-2}.
+                \item SESN1 is controlled by p53 tumor suppressor, and thus affects in cell growth regulation \cite{SESN1-3}.
+                \item Inhibitor of SESN1 implicates to the pro-oxidant and oncogenic effects of mutant p53 \cite{SESN1-4}?
+                \item SESN1 plays opposite role in \textit{early} and \textit{late} stage of lung carcinogenesis \cite{SESN1-5}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-TNFRSF18}
             \begin{enumerate}
                 \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
+                \item TNFRSF18, tumor necrosis factor receptor super-family member 18, is a receptor for TNFSF18.
+                \item TNFSF18 regulates T-cell responses, and promotes $\Uparrow$ leukocyte adhesion to endothelial cells \cite{TNFRSF18-1}.
+                \item TNFRSF18 was negatively correlated with survival in endometrial cancer \cite{TNFRSF18-2}?
             \end{enumerate}
         \end{block}
     \end{frame}
