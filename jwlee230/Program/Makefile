@@ -2557,7 +2557,10 @@ Output/Gene_Location:
 Output/Gene_Location/gene.tar: Python/get_gene_location.py $(GENE_CENCUS_ONE_CSV) $(GENE_CENCUS_BOTH_CSV) $(REFERENCE_BAND) | build.log Output/Gene_Location
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step40: Output/Gene_Location/gene.tar
+Output/Gene_Location/cytoband.tar: Python/get_gene_location_2.py $(GENE_CENCUS_ONE_CSV) $(GENE_CENCUS_BOTH_CSV) $(REFERENCE_BAND) | build.log Output/Gene_Location
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step40: Output/Gene_Location/gene.tar Output/Gene_Location/cytoband.tar
 .PHONY: step40
 
 # Step 41 (Mobster)

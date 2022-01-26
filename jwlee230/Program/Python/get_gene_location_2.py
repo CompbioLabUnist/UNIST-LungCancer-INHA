@@ -1,8 +1,7 @@
 """
-get_gene_location.py: get Genome Location by chromosome with chromosome arm
+get_gene_location.py: get Genome Location by chromosome with detail cytoband
 """
 import argparse
-import itertools
 import multiprocessing
 import tarfile
 import typing
@@ -55,12 +54,12 @@ if __name__ == "__main__":
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    chromosome_list = list(map(lambda x: "-".join(x), itertools.product(step00.chromosome_list, ["p", "q"])))
     file_list = list()
     length_limit = 5
 
     band_data = step00.get_band_data(args.band)
-    band_data["chrom-arm"] = list(map(lambda x: "-".join(x), band_data[["chrom", "arm"]].itertuples(index=False, name=None)))
+    band_data["chrom-arm"] = list(map(lambda x: "-".join(x), band_data[["chrom", "name"]].itertuples(index=False, name=None)))
+    chromosome_list = sorted(set(band_data["chrom-arm"]))
     print(band_data)
 
     cgc_one_data = pandas.read_csv(args.one)
