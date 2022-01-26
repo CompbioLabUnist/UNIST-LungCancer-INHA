@@ -3487,11 +3487,6 @@ step43-ADC-Smoking-Bowtie2: Output/Gistic/Bowtie2-CNVkit.ADC.Smoking_Never.tsv O
 step43: step43-SQC-BWA step43-SQC-Bowtie2 step43-ADC-BWA step43-ADC-Bowtie2 step43-Histology-BWA step43-Histology-Bowtie2 step43-SQC-stage-BWA step43-SQC-stage-Bowtie2 step43-ADC-stage-BWA step43-ADC-stage-Bowtie2 step43-SQC-Recur-BWA step43-SQC-Recur-Bowtie2 step43-ADC-Recur-BWA step43-ADC-Recur-Bowtie2 step43-SQC-Smoking-BWA step43-SQC-Smoking-Bowtie2 step43-ADC-Smoking-BWA step43-ADC-Smoking-Bowtie2
 .PHONY: step43-SQC-BWA step43-SQC-Bowtie2 step43-ADC-BWA step43-ADC-Bowtie2 step43-Histology-BWA step43-Histology-Bowtie2 step43-SQC-stage-BWA step43-SQC-stage-Bowtie2 step43-ADC-stage-BWA step43-ADC-stage-Bowtie2 step43-SQC-Recur-BWA step43-SQC-Recur-Bowtie2 step43-ADC-Recur-BWA step43-ADC-Recur-Bowtie2 step43-SQC-Smoking-BWA step43-SQC-Smoking-Bowtie2 step43-ADC-Smoking-BWA step43-ADC-Smoking-Bowtie2 step43
 
-
-
-Output/Gistic/BWA-CNVkit.Amplification.pdf: Python/draw_venn_plot_gistic.py  | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "Dysplasia" "CIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
-
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
