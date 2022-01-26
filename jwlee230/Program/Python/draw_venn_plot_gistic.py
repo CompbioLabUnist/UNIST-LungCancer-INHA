@@ -2,12 +2,19 @@
 draw_venn_plot_gistic.py: draw venn diagram plot with gistic peak
 """
 import argparse
+import pprint
 import matplotlib
 import matplotlib.pyplot
 import pandas
 import venn
 import tqdm
 import step00
+
+
+def generate_logics(n_sets):
+    for i in range(1, 2 ** n_sets):
+        yield bin(i)[2:].zfill(n_sets)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -52,3 +59,16 @@ if __name__ == "__main__":
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
+
+    datasets = list(input_data.values())
+    n_sets = len(datasets)
+    dataset_union = set.union(*datasets)
+    petal_labels = dict()
+
+    for logic in generate_logics(n_sets):
+        included_sets = [datasets[i] for i in range(n_sets) if logic[i] == "1"]
+        excluded_sets = [datasets[i] for i in range(n_sets) if logic[i] == "0"]
+        petal_labels[logic] = sorted((dataset_union & set.intersection(*included_sets)) - set.union(set(), *excluded_sets))
+
+    print(list(input_data.keys()))
+    pprint.pprint(petal_labels)
