@@ -257,7 +257,7 @@
 
         \begin{itemize}
             \item Exome (WES) (sample n=289) + Transcriptome (WTS) (sample n=166)
-            \item Normal + \{AAH, CIS + AIS, Dysplasia, MIA\} + Primary
+            \item Normal + \{Dysplasia, AAH, CIS + AIS, MIA\} + Primary
             \begin{itemize}
                 \item Adenocarcinoma in situ
                 \item Atypical adenomatous hyperplasia
@@ -265,7 +265,7 @@
                 \item Dysplasia
                 \item Minimally invasive adenocarcinoma
             \end{itemize}
-            \item Adenocarcinoma (LUAD) \& Squamouse cell carcinoma (LUSC)
+            \item Adenocarcinoma (LUAD) \& Squamous cell carcinoma (LUSC)
             \begin{enumerate}
                 \item Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ LUAD (patient n=28)
                 \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (patient n=80)
@@ -854,51 +854,12 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{Gistic by Histology}
-    \begin{frame}
-        \frametitle{Gistic by Histology}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/amp_qplot.png}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/amp_qplot.png}
-                \\
-
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/del_qplot.png}
-                &
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/del_qplot.png}
-                \\
-
-                \mbox{(a) LUSC} & \mbox{(b) LUAD} \\
-            \end{array}$
-            \caption{Gistic results by Histology}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Venn Diagram by Histology}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.Histology.Amplification.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.Histology.Deletion.pdf}
-                \\
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-            \end{array}$
-            \caption{Venn Diagram among Peaks by Histology}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Gistic by Stage}
+    \subsubsection{Gistic in LUSC}
     \begin{frame}
         \frametitle{Gistic in LUSC}
 
         \begin{figure}
-            $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/amp_qplot.png}
-                &
+            $\begin{array}{ccc}
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS/amp_qplot.png}
@@ -906,8 +867,6 @@
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS/del_qplot.png}
@@ -915,7 +874,7 @@
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) Dysplasia} & \mbox{(c) CIS} & \mbox{(d) Primary} \\
+                \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic results in LUSC}
         \end{figure}
@@ -936,13 +895,79 @@
         \end{figure}
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in LUSC}
+
+        \begin{table}
+            \caption{Peaks in LUSC}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Amplification.tex}}
+                &
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+
+        \begin{alertblock}{Amplification in CIS+Primary}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 5p15.33}
+                \input{tables/GeneLocation_cytoband/chr5-p15.33.CGC-1.tex}
+            \end{table}
+        \end{alertblock}
+
+        \begin{alertblock}{Amplification in CIS}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 3q27.1}
+                \input{tables/GeneLocation_cytoband/chr3-q27.1.CGC-1.tex}
+            \end{table}
+        \end{alertblock}
+
+        \begin{alertblock}{Amplification in Primary}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 1q21.3}
+                \input{tables/GeneLocation_cytoband/chr1-q21.3.CGC-1.tex}
+            \end{table}
+        \end{alertblock}
+
+        \begin{block}{Deletion in Dysplasia+CIS+Primary}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 7q34}
+                \input{tables/GeneLocation_cytoband/chr7-q34.CGC-1.tex}
+            \end{table}
+        \end{block}
+
+        \begin{block}{Deletion in CIS+Primary}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 1q21.3}
+                \input{tables/GeneLocation_cytoband/chr1-q21.3.CGC-1.tex}
+            \end{table}
+        \end{block}
+
+        \begin{block}{Deletion in CIS}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 1p36.11}
+                \input{tables/GeneLocation_cytoband/chr1-p36.11.CGC-1.tex}
+            \end{table}
+        \end{block}
+
+        \begin{block}{Deletion in Primary}
+            \begin{table}
+                \caption{CGC tier-1 genes in cytoband 1q25.3}
+                \input{tables/GeneLocation_cytoband/chr1-q25.3.CGC-1.tex}
+            \end{table}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{Gistic in LUAD}
     \begin{frame}
         \frametitle{Gistic in LUAD}
 
         \begin{figure}
-            $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/amp_qplot.png}
-                &
+            $\begin{array}{ccc}
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS/amp_qplot.png}
@@ -950,8 +975,6 @@
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS/del_qplot.png}
@@ -959,7 +982,7 @@
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) AIS} & \mbox{(d) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) AIS} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic results in LUAD}
         \end{figure}
@@ -1937,7 +1960,7 @@
             \begin{enumerate}
                 \item NK cells have higher proportion in Primary than Normal samples.
                 \item NK cells play a major role in innate immune system \cite{NK-2}.
-                \item NK cells can induce immune response against tumor cells \cite{NK-3}.
+                \item NK cells can induce immune response against tumor cells \cite{NK-2}.
                 \item NK cells may induce tumor regression in lung cancer \cite{NK-1} ??.
             \end{enumerate}
         \end{block}
