@@ -46,15 +46,18 @@ if __name__ == "__main__":
             input_data[annotation] = set(data.loc[(data["Unique Name"].str.contains("Deletion Peak")) & ~(data["Unique Name"].str.contains("CN")), "Descriptor"])
         else:
             raise Exception("Something went wrong!!")
-        print(data)
-    print(input_data)
+        input_data[annotation] = set(filter(lambda x: (not x.startswith("X")) and (not x.startswith("Y")), input_data[annotation]))
+    pprint.pprint(input_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+    try:
+        venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+    except ZeroDivisionError:
+        pass
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
