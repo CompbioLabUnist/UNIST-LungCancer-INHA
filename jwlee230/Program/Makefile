@@ -2712,7 +2712,7 @@ Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.tex Output/Gistic/BWA-CNVkit.S
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "CIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.ADC-AAH.tsv: Python/merge_CNVkit_Gistic_2.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --stage "AAH" 1> $@.stdout 2> $@.stderr
@@ -2829,10 +2829,10 @@ Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC.D
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.SQC.Recur.tsv: Python/merge_CNVkit_Gistic_3.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(filter-out 33P1,$(WES_TUMOR_ID)))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --exact "Recurrence" "YES" 1> $@.stdout 2> $@.stderr
