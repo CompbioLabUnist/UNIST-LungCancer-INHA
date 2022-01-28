@@ -48,7 +48,7 @@ if __name__ == "__main__":
     if not args.DEG.endswith(".tsv"):
         raise ValueError("DEG must end with .TSV!!")
     elif not (0 < args.padj < 1):
-        raise ValueError("Padj must be [0, 1]!!")
+        raise ValueError("Padj must be (0, 1)!!")
 
     DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
@@ -74,6 +74,7 @@ if __name__ == "__main__":
         enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
     else:
         enrichment_data = pandas.DataFrame(columns=wanted_columns)
+    print(enrichment_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -84,7 +85,9 @@ if __name__ == "__main__":
     if enrichment_data.empty:
         enrichment_data = pandas.DataFrame(columns=wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(wanted_columns))])
 
-        matplotlib.pyplot.text(32, 9, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.xticks([])
+        matplotlib.pyplot.yticks([])
     else:
         enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
