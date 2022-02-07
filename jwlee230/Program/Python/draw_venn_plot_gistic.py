@@ -82,7 +82,9 @@ if __name__ == "__main__":
     try:
         venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
     except ZeroDivisionError:
-        pass
+        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.xticks([])
+        matplotlib.pyplot.yticks([])
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output + ".pdf")
