@@ -1005,6 +1005,16 @@
 
     \subsubsection{Gistic by Recurrence \& LUSC}
     \begin{frame}
+        \frametitle{LUSC Recurrence Data Composition}
+
+        \begin{table}
+            \caption{LUSC WES Data with Recurrence}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_recurrence.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Gistic by NR vs. R in LUSC}
 
         \begin{figure}
@@ -1046,27 +1056,27 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Nonrecur/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Nonrecur/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Nonrecur/del_qplot.png}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/amp_qplot.png}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/del_qplot.png}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Nonrecur/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Nonrecur/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                \mbox{(a) CIS} & \mbox{(b) Precancer} & \mbox{(b) Primary} \\
             \end{array}$
             \caption{Gistic result in Non-recurrence \& LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Non-recurrence \& LUSC}
 
         \begin{figure}
@@ -1077,7 +1087,18 @@
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in NR \& LUSC}
+            \caption{Venn Diagram among Peaks in NR \& LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Nonrecur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Nonrecur.Deletion.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in NR \& LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1086,31 +1107,31 @@
 
         \begin{figure}
             $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Recur/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Recur/amp_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Recur/amp_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Recur/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Recur/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Recur/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Recur/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Recur/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Recur/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) Dysplasia} & \mbox{(c) CIS} & \mbox{(d) Primary} \\
+                \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
             \end{array}$
             \caption{Gistic result in Recurrence \& LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Recurrence \& LUSC}
 
         \begin{figure}
@@ -1122,11 +1143,33 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in R \& LUSC}
+            \caption{Venn Diagram among Peaks in R \& LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Recur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Recur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in R \& LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
     \subsubsection{Gistic by Recurrence \& LUAD}
+    \begin{frame}
+        \frametitle{LUAD Recurrence Data Composition}
+
+        \begin{table}
+            \caption{LUAD WES Data with Recurrence}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_ADC_recurrence.tex}}
+        \end{table}
+    \end{frame}
+
     \begin{frame}
         \frametitle{Gistic by NR vs. R in LUAD}
 
@@ -1169,31 +1212,31 @@
 
         \begin{figure}
             $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Nonrecur/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Nonrecur/amp_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Nonrecur/amp_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Nonrecur/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Nonrecur/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Nonrecur/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Nonrecur/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Nonrecur/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Nonrecur/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) AIS} & \mbox{(d) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) AIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
             \end{array}$
             \caption{Gistic result in Non-recurrence \& LUAD}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Non-recurrence \& LUAD}
 
         \begin{figure}
@@ -1205,7 +1248,19 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in NR \& LUAD}
+            \caption{Venn Diagram among Peaks in NR \& LUAD -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Nonrecur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Nonrecur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in NR \& LUAD -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1214,27 +1269,27 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Recur/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Recur/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Recur/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Recur/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Recur/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Recur/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Recur/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) Precancer} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic result in Recurrence \& LUAD}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Recurrence \& LUAD}
 
         \begin{figure}
@@ -1246,11 +1301,33 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in R \& LUAD}
+            \caption{Venn Diagram among Peaks in R \& LUAD -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Recur.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Recur.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in R \& LUAD -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
     \subsubsection{Gistic by Smoking history \& LUSC}
+    \begin{frame}
+        \frametitle{LUSC Smoking Data Composition}
+
+        \begin{table}
+            \caption{LUSC WES Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
+        \end{table}
+    \end{frame}
+
     \begin{frame}
         \frametitle{Gistic by Smoking history in LUSC}
 
@@ -1297,39 +1374,51 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Never/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Never/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Never/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Never/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Never/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Never/del_qplot.png}
                 &
+                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Never/del_qplot.png}
+                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Never/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                \mbox{(a) CIS} & \mbox{(b) Precancer} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic result in Never smoker \& LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Never smoker \& LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Ex.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Never.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Ex.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Never.Deletion.pdf}
                 \\
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in Never smoker \& LUSC}
+            \caption{Venn Diagram among Peaks in Never smoker \& LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Never.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Never.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in Never smoker \& LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1338,27 +1427,27 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Ex/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Ex/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Ex/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Ex/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Ex/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Ex/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Ex/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Ex/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                \mbox{(a) CIS} & \mbox{(b) Precancer} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic result in Ex-smoker \& LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Ex-smoker \& LUSC}
 
         \begin{figure}
@@ -1370,7 +1459,19 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram in Ex-smoker \& LUSC}
+            \caption{Venn Diagram in Ex-smoker \& LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Ex.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Ex.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram in Ex-smoker \& LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1379,43 +1480,55 @@
 
         \begin{figure}
             $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Current/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Smoking_Current/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Current/amp_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Current/amp_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Current/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC.Smoking_Current/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia.Smoking_Current/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Smoking_Current/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Smoking_Current/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Smoking_Current/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) Dysplasia} & \mbox{(c) CIS} & \mbox{(d) Primary}
+                \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Precancer} & \mbox{(d) Primary}
             \end{array}$
             \caption{Gistic result in Current smoker \& LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Current smoker \& LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Current.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Current.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC.Smoking_Current.Deletion.pdf}
                 \\
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram in Current smoker \& LUSC}
+            \caption{Venn Diagram in Current smoker \& LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Current.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Smoking_Current.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram in Current smoker \& LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1466,31 +1579,31 @@
 
         \begin{figure}
             $\begin{array}{cccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Smoking_Ex/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Smoking_Ex/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Smoking_Ex/amp_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Smoking_Ex/amp_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Smoking_Ex/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Smoking_Ex/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Smoking_Ex/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS.Smoking_Ex/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Smoking_Ex/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Smoking_Ex/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) AIS} & \mbox{(d) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) AIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
             \end{array}$
             \caption{Gistic result in Ex-smoker \& LUAD}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Ex-smoker \& LUAD}
 
         \begin{figure}
@@ -1502,7 +1615,19 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram in Ex-smoker \& LUAD}
+            \caption{Venn Diagram in Ex-smoker \& LUAD -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Smoking_Ex.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Smoking_Ex.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram in Ex-smoker \& LUAD -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -1511,27 +1636,27 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Smoking_Current/amp_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Smoking_Current/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Smoking_Current/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Smoking_Current/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC.Smoking_Current/del_qplot.png}
-                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH.Smoking_Current/del_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer.Smoking_Current/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary.Smoking_Current/del_qplot.png}
                 \\
 
-                \mbox{(a) All} & \mbox{(b) AAH} & \mbox{(c) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) Precancer} & \mbox{(c) Primary} \\
             \end{array}$
             \caption{Gistic result in Current smoker \& LUAD}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in Current smoker \& LUAD}
 
         \begin{figure}
@@ -1543,7 +1668,7 @@
 
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram in Current smoker \& LUAD}
+            \caption{Venn Diagram in Current smoker \& LUAD -- stage}
         \end{figure}
     \end{frame}
 
