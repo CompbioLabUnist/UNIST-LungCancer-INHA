@@ -859,10 +859,12 @@
         \frametitle{Gistic in LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
+            $\begin{array}{cccc}
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Dysplasia/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary/amp_qplot.png}
                 \\
@@ -871,16 +873,18 @@
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary/del_qplot.png}
                 \\
 
-                \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
             \end{array}$
             \caption{Gistic results in LUSC}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in LUSC}
 
         \begin{figure}
@@ -891,7 +895,18 @@
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in LUSC}
+            \caption{Venn Diagram among Peaks in LUSC -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.SQC-simple.Deletion.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in LUSC -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
@@ -899,7 +914,7 @@
         \frametitle{Peaks in LUSC}
 
         \begin{table}
-            \caption{Peaks in LUSC}
+            \caption{Peaks in LUSC -- stage}
             $\begin{array}{cc}
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
 
@@ -912,54 +927,19 @@
             \end{array}$
         \end{table}
 
-        \begin{alertblock}{Amplification in CIS+Primary}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 5p15.33}
-                \input{tables/GeneLocation_cytoband/chr5-p15.33.CGC-1.tex}
-            \end{table}
-        \end{alertblock}
+        \begin{table}
+            \caption{Peaks in LUSC -- PRE vs. PRI}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
 
-        \begin{alertblock}{Amplification in CIS}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 3q27.1}
-                \input{tables/GeneLocation_cytoband/chr3-q27.1.CGC-1.tex}
-            \end{table}
-        \end{alertblock}
-
-        \begin{alertblock}{Amplification in Primary}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 1q21.3}
-                \input{tables/GeneLocation_cytoband/chr1-q21.3.CGC-1.tex}
-            \end{table}
-        \end{alertblock}
-
-        \begin{block}{Deletion in Dysplasia+CIS+Primary}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 7q34}
-                \input{tables/GeneLocation_cytoband/chr7-q34.CGC-1.tex}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Deletion in CIS+Primary}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 1q21.3}
-                \input{tables/GeneLocation_cytoband/chr1-q21.3.CGC-1.tex}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Deletion in CIS}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 1p36.11}
-                \input{tables/GeneLocation_cytoband/chr1-p36.11.CGC-1.tex}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Deletion in Primary}
-            \begin{table}
-                \caption{CGC tier-1 genes in cytoband 1q25.3}
-                \input{tables/GeneLocation_cytoband/chr1-q25.3.CGC-1.tex}
-            \end{table}
-        \end{block}
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Amplification.tex}}
+                &
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
     \end{frame}
 
     \subsubsection{Gistic in LUAD}
@@ -967,10 +947,12 @@
         \frametitle{Gistic in LUAD}
 
         \begin{figure}
-            $\begin{array}{ccc}
+            $\begin{array}{cccc}
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AAH/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS/amp_qplot.png}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer/amp_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary/amp_qplot.png}
                 \\
@@ -979,16 +961,18 @@
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-AIS/del_qplot.png}
                 &
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Precancer/del_qplot.png}
+                &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/ADC-Primary/del_qplot.png}
                 \\
 
-                \mbox{(a) AAH} & \mbox{(b) AIS} & \mbox{(c) Primary} \\
+                \mbox{(a) AAH} & \mbox{(b) AIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
             \end{array}$
             \caption{Gistic results in LUAD}
         \end{figure}
     \end{frame}
 
-    \begin{frame}
+    \begin{frame}[allowframebreaks]
         \frametitle{Venn Diagram in LUAD}
 
         \begin{figure}
@@ -999,8 +983,51 @@
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Peaks in LUAD}
+            \caption{Venn Diagram among Peaks in LUAD -- stage}
         \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-Simple.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-Simple.Deletion.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in LUAD -- PRE vs. PRI}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in LUAD}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.Amplification.tex}}
+                &
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- PRE vs. PRI}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC-simple.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC-simple.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
     \end{frame}
 
     \subsubsection{Gistic by Recurrence \& LUSC}
@@ -1052,6 +1079,24 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{Peaks in NR vs. R \& LUSC}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.NR-R.Amplification.tex}}
+                &
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.NR-R.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Gistic in Non-recurrence \& LUSC}
 
         \begin{figure}
@@ -1063,7 +1108,7 @@
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Primary.Nonrecur/amp_qplot.png}
                 \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/amp_qplot.png}
+                \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-CIS.Nonrecur/del_qplot.png}
                 &
                 \includegraphics[width=0.2 \linewidth]{figures/Gistic/BWA/SQC-Precancer.Nonrecur/del_qplot.png}
                 &
@@ -1100,6 +1145,38 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in NR \& LUSC -- PRE vs. PRI}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Non-recurrence \& LUSC}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Nonrecur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Nonrecur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- PRE vs. PRI}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Nonrecur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Nonrecur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
     \end{frame}
 
     \begin{frame}
@@ -1159,6 +1236,38 @@
         \end{figure}
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUSC}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Recur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC.Recur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+
+        \begin{table}
+            \caption{Peaks in LUAD -- PRE vs. PRI}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Recur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.SQC-simple.Recur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+    \end{frame}
+
     \subsubsection{Gistic by Recurrence \& LUAD}
     \begin{frame}
         \frametitle{LUAD Recurrence Data Composition}
@@ -1205,6 +1314,24 @@
             \end{array}$
             \caption{Venn Diagram among Peaks by NR vs. R in LUAD}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Peaks in NR vs. R \& LUAD}
+
+        \begin{table}
+            \caption{Peaks in NR vs. R \& LUAD -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.NR-R.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.NR-R.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
     \end{frame}
 
     \begin{frame}
@@ -1262,6 +1389,38 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in NR \& LUAD -- PRE vs. PRI}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Non-recurrence \& LUSC}
+
+        \begin{table}
+            \caption{Peaks in Non-recurrence \& LUSC -- stage}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.Nonrecur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC.Nonrecur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
+
+        \begin{table}
+            \caption{Peaks in Non-recurrence \& LUSC -- PRE vs. PRI}
+            $\begin{array}{cc}
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC-simple.Nonrecur.Amplification.tex}}
+                &
+                \resizebox{0.4 \linewidth}{0.3 \textheight}
+                {\input{tables/Gistic/BWA/BWA-CNVkit.ADC-simple.Nonrecur.Deletion.tex}}
+                \\
+            \end{array}$
+        \end{table}
     \end{frame}
 
     \begin{frame}
@@ -1669,6 +1828,18 @@
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram in Current smoker \& LUAD -- stage}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Smoking_Current.Amplification.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA/BWA-CNVkit.ADC-simple.Smoking_Current.Deletion.pdf}
+                \\
+
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram in Current smoker \& LUAD -- PRE vs. PRI}
         \end{figure}
     \end{frame}
 
