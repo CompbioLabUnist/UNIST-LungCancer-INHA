@@ -106,11 +106,14 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
+    fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
+
     if enrichment_data.empty:
         enrichment_data = pandas.DataFrame(columns=wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(wanted_columns))])
-        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
-        fig.savefig(args.output + ".pdf")
-        matplotlib.pyplot.close(fig)
+
+        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.xticks([])
+        matplotlib.pyplot.yticks([])
     else:
         enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
@@ -118,7 +121,6 @@ if __name__ == "__main__":
 
         rows = enrichment_data.shape[0]
         drawing_data = enrichment_data.iloc[:10, :]
-        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
         if args.up:
             ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:pink")
@@ -131,11 +133,13 @@ if __name__ == "__main__":
         matplotlib.pyplot.yticks([])
         matplotlib.pyplot.xlabel("-log10(Padj)")
         matplotlib.pyplot.ylabel("{0} pathways".format(rows))
+        matplotlib.pyplot.ylim(-1, 10)
+        matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black", alpha=0.5)
         ax.invert_yaxis()
         matplotlib.pyplot.tight_layout()
 
-        fig.savefig(args.output + ".pdf")
-        matplotlib.pyplot.close(fig)
+    fig.savefig(args.output + ".pdf")
+    matplotlib.pyplot.close(fig)
 
     enrichment_data.loc[:, wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
     rows = enrichment_data.shape[0]

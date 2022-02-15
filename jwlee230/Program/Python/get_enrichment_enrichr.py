@@ -108,7 +108,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.xlabel("-log10(Padj)")
         matplotlib.pyplot.ylabel("{0} pathways".format(rows))
         matplotlib.pyplot.ylim(-1, 10)
-        matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black")
+        matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black", alpha=0.5)
         ax.invert_yaxis()
         matplotlib.pyplot.tight_layout()
 
