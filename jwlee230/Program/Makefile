@@ -1240,7 +1240,7 @@ Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.MSigDB.tsv Output/RSEM/Enrichment
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --DB "MSigDB_Oncogenic_Signatures" --down --intersect 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/SQC.%.pair.pdf: Python/draw_pair_plot.py Output/RSEM/DEG/SQC.%.tsv Output/RSEM/DEG/SQC.%.DEG.tsv | Output/RSEM/Plots build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^  $@) --SQC
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC
 
 step19-cluster: Output/RSEM/Plots/Cluster/Bowtie2.SQC.pdf Output/RSEM/Plots/Cluster/STAR.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.pdf Output/RSEM/Plots/Cluster/STAR.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC-SQC.pdf Output/RSEM/Plots/Cluster/STAR.ADC-SQC.pdf
 step19-venn-ADC: Output/RSEM/Plots/Venn/Bowtie2.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Up.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.Down.venn.pdf Output/RSEM/Plots/Venn/Bowtie2.ADC.venn.pdf Output/RSEM/Plots/Venn/STAR.ADC.venn.pdf
@@ -2767,7 +2767,7 @@ Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Ex.tsv: Python/merge_CNVkit_Gisti
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA" --exact "Smoking-Detail" "Ex" 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Current.tsv: Python/merge_CNVkit_Gistic_3.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA"  --exact "Smoking-Detail" "Current" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA" --exact "Smoking-Detail" "Current" 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Never.tsv: Python/merge_CNVkit_Gistic_3.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cns,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Primary" --exact "Smoking-Detail" "Never" 1> $@.stdout 2> $@.stderr
@@ -2794,7 +2794,7 @@ Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Ex.tsv: Python/merge_CNVkit_G
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA" --exact "Smoking-Detail" "Ex" 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Current.tsv: Python/merge_CNVkit_Gistic_3.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA"  --exact "Smoking-Detail" "Current" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Dysplasia" "AAH" "CIS+AIS" "MIA" --exact "Smoking-Detail" "Current" 1> $@.stdout 2> $@.stderr
 
 Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Never.tsv: Python/merge_CNVkit_Gistic_3.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cns,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BLACKLIST) | Output/Gistic build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --stage "Primary" --exact "Smoking-Detail" "Never" 1> $@.stdout 2> $@.stderr
@@ -2845,196 +2845,196 @@ Output/Gistic/%/all_data_by_genes.txt Output/Gistic/%/all_thresholded.by_genes.t
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
 	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Gistic/BWA-CNVkit.SQC.Amplification.tex Output/Gistic/BWA-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC.Amplification.tex Output/Gistic/BWA-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Dysplasia" "CIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC.Deletion.tex Output/Gistic/BWA-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC.Deletion.tex Output/Gistic/BWA-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Dysplasia" "CIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC.Amplification.tex Output/Gistic/BWA-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC.Amplification.tex Output/Gistic/BWA-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC.Deletion.tex Output/Gistic/BWA-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC.Deletion.tex Output/Gistic/BWA-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-simple.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-simple.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC.Deletion-simple.tex Output/Gistic/BWA-CNVkit.ADC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC.Deletion-simple.tex Output/Gistic/BWA-CNVkit.ADC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Dysplasia" "CIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Dysplasia" "CIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-simple.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-simple.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-simple.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-simple.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "AAH" "AIS" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-simple.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Precancer" "Primary" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-CIS.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-AAH.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-AAH.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AAH.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.NR-R.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Nonrecur/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Recur/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Non-recurrence" "Recurrence" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-CIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Never/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.SQC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Never" "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Amplification.tex Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Deletion.tex Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-AIS.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Precancer.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt  | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Amplification.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Amplification.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --amplification 1> $@.stdout 2> $@.stderr
 
-Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt | build.log
+Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Deletion.tex Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking.Deletion.pdf: Python/draw_venn_plot_gistic.py Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Ex/all_lesions.conf_99.txt Output/Gistic/Bowtie2-CNVkit.ADC-Primary.Smoking_Current/all_lesions.conf_99.txt $(GENE_CENCUS_ONE_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --annotation "Ex" "Current" --deletion 1> $@.stdout 2> $@.stderr
 
 step43-SQC-stage-BWA: Output/Gistic/BWA-CNVkit.SQC.tsv Output/Gistic/BWA-CNVkit.SQC/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Dysplasia.tsv Output/Gistic/BWA-CNVkit.SQC-Dysplasia/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-AAH.tsv Output/Gistic/BWA-CNVkit.SQC-AAH/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-CIS.tsv Output/Gistic/BWA-CNVkit.SQC-CIS/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-Primary.tsv Output/Gistic/BWA-CNVkit.SQC-Primary/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC.Amplification.pdf Output/Gistic/BWA-CNVkit.SQC.Deletion.pdf Output/Gistic/BWA-CNVkit.SQC-Precancer.tsv Output/Gistic/BWA-CNVkit.SQC-Precancer/all_lesions.conf_99.txt Output/Gistic/BWA-CNVkit.SQC-simple.Amplification.pdf Output/Gistic/BWA-CNVkit.SQC-simple.Deletion.pdf
