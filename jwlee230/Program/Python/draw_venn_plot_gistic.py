@@ -134,7 +134,7 @@ if __name__ == "__main__":
         output_data["Gene"] = pool.map(query_gene, list(output_data.index))
 
     print(output_data)
-    output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation))
+    output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation) + "r")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
