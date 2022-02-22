@@ -7,7 +7,6 @@ import tarfile
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import scipy.stats
 import seaborn
 import pandas
@@ -99,9 +98,7 @@ if __name__ == "__main__":
 
     for stage, signature in tqdm.tqdm(list(itertools.product(step00.long_sample_type_list, signature_list))):
         tmp_data = output_data.loc[(output_data["Stage"] == stage), ["Proportion", signature]]
-        if tmp_data.empty:
-            continue
-        elif (numpy.var(tmp_data["Proportion"]) == 0) or (numpy.var(tmp_data[signature]) == 0):
+        if tmp_data.shape[0] < 2:
             continue
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Proportion"])
@@ -109,18 +106,16 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-        g.fig.text(0.5, 0.5, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center")
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
-        figures.append("{1}+{0}.pdf".format(signature, stage))
+        figures.append("{1}-{0}.pdf".format(signature, stage))
         g.savefig(figures[-1])
         matplotlib.pyplot.close()
 
     for signature in tqdm.tqdm(signature_list):
         tmp_data = output_data.loc[:, ["Proportion", signature]]
 
-        if tmp_data.empty:
-            continue
-        elif (numpy.var(tmp_data["Proportion"]) == 0) or (numpy.var(tmp_data[signature]) == 0):
+        if tmp_data.shape[0] < 2:
             continue
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Proportion"])
@@ -128,9 +123,9 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-        g.fig.text(0.5, 0.5, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center")
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
-        figures.append("Precancer+{0}.pdf".format(signature))
+        figures.append("Precancer-{0}.pdf".format(signature))
         g.savefig(figures[-1])
         matplotlib.pyplot.close()
 
