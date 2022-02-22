@@ -83,8 +83,7 @@ if __name__ == "__main__":
         precancer_set = set(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample), ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None))
         primary_set = set(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == step00.get_paired_primary(sample)), ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None))
 
-        if primary_set:
-            output_data.loc[sample, "Proportion"] = len(precancer_set & primary_set) / len(primary_set)
+        output_data.loc[sample, "Proportion"] = len(precancer_set & primary_set) / len(precancer_set | primary_set)
     print(output_data)
 
     for signature in tqdm.tqdm(list(signature_data.columns)):
@@ -106,7 +105,8 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g.set_axis_labels("{0} in {1}".format(signature.split("_")[0], signature.split("_")[1]), "Shared Proportion of non-SYN mutations")
 
         figures.append("{1}-{0}.pdf".format(signature, stage))
         g.savefig(figures[-1])
@@ -123,7 +123,8 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1), ylim=(-0.1, 1.1))
-        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g.set_axis_labels("{0} in {1}".format(signature.split("_")[0], signature.split("_")[1]), "Shared Proportion of non-SYN mutations")
 
         figures.append("Precancer-{0}.pdf".format(signature))
         g.savefig(figures[-1])
