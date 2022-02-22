@@ -70,7 +70,9 @@ def get_paired_normal(ID: str) -> str:
 
 def get_paired_primary(ID: str) -> str:
     ID = get_id(ID)
-    if ID[-1].isalpha():
+    if ID in ["cn107A1"]:
+        return ID[:-2] + "P"
+    elif ID[-1].isalpha():
         return ID[:-1] + "P"
     else:
         return ID[:-2] + "P1"
