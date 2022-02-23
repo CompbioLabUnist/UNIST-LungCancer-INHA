@@ -47,14 +47,13 @@ if __name__ == "__main__":
                 continue
 
             input_data[annotation] |= set(filter(None, list(map(lambda x: x.strip("[]"), data.loc[3:, column]))))
-        input_data[annotation] &= cgc_genes
     print(input_data)
 
-    every_genes = sorted(set.union(*list(input_data.values())))
+    every_genes = sorted(set.union(*list(input_data.values())) & cgc_genes)
     if every_genes:
         output_data = pandas.DataFrame(data=[["" for x in args.annotation] for y in every_genes], index=every_genes, columns=args.annotation, dtype=str)
         for annotation in tqdm.tqdm(args.annotation):
-            output_data.loc[input_data[annotation], annotation] = "*"
+            output_data.loc[input_data[annotation] & cgc_genes, annotation] = "*"
     else:
         output_data = pandas.DataFrame(data=[["" for x in args.annotation]], index=[""], columns=args.annotation, dtype=str)
 
