@@ -15,6 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input Gistic [amp_genes.conf_99.txt|del_genes.conf_99.txt] file(s)", type=str, nargs="+")
+    parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
     parser.add_argument("--annotation", help="Annotation for venn diagram", type=str, nargs="+", required=True)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
@@ -25,8 +26,14 @@ if __name__ == "__main__":
         raise ValueError("Input is not valid!!")
     elif len(args.input) != len(args.annotation):
         raise ValueError("Annotation must be one-to-one upon DEG!!")
+    elif not args.cgc.endswith(".csv"):
+        raise ValueError("One must end with .CSV!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-value must be between 0 and 1!!")
+
+    cgc_data = pandas.read_csv(args.cgc)
+    cgc_genes = set(cgc_data["Gene Symbol"])
+    print(cgc_data)
 
     input_data: typing.Dict[str, typing.Set[str]] = dict()
     for annotation, input_file in tqdm.tqdm(list(zip(args.annotation, args.input))):
@@ -40,6 +47,7 @@ if __name__ == "__main__":
                 continue
 
             input_data[annotation] |= set(filter(None, list(map(lambda x: x.strip("[]"), data.loc[3:, column]))))
+        input_data[annotation] &= cgc_genes
     print(input_data)
 
     every_genes = sorted(set.union(*list(input_data.values())))

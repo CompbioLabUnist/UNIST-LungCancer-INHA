@@ -135,7 +135,7 @@ if __name__ == "__main__":
         output_data = pandas.DataFrame(data=[["" for x in args.annotation]], index=[""], columns=args.annotation, dtype=str)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data["Gene"] = pool.map(query_gene, list(output_data.index))
+        output_data["CGC Genes"] = pool.map(query_gene, list(output_data.index))
 
     print(output_data)
     output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation) + "r")
