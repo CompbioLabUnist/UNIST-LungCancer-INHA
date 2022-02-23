@@ -59,7 +59,7 @@ if __name__ == "__main__":
         output_data = pandas.DataFrame(data=[["" for x in args.annotation]], index=[""], columns=args.annotation, dtype=str)
 
     print(output_data)
-    output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation), longtable=True)
+    output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
