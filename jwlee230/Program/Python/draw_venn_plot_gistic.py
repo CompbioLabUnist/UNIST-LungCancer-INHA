@@ -59,7 +59,7 @@ def query_band(chromosome: str, start: int, end: int) -> typing.List[str]:
 def query_gene(cytoband: str) -> str:
     d = list(cgc_data.loc[(cgc_data["Chromosome-Arm"] == cytoband), "Gene Symbol"])
     if d:
-        if len(d) < 3:
+        if len(d) < 10:
             return ",".join(d)
         else:
             return "{0},...({1})".format(d[0], len(d))
@@ -71,11 +71,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input Gistic all_lesions.conf_99.txt file(s)", type=str, nargs="+")
-    parser.add_argument("cgc", help="CGC Tier 1 CSV files", type=str)
+    parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("band", help="Chromosome band txt file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
     parser.add_argument("--annotation", help="Annotation for venn diagram", type=str, nargs="+", required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--amplification", help="Draw Amplification pathway", action="store_true", default=False)
@@ -91,6 +92,8 @@ if __name__ == "__main__":
         raise ValueError("One must end with .CSV!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-value must be between 0 and 1!!")
 
     band_data = step00.get_band_data(args.band)
     band_data["chrom-arm"] = list(map(lambda x: "{0}{1}".format(x[0][3:], x[1]), band_data[["chrom", "name"]].itertuples(index=False, name=None)))
@@ -110,6 +113,7 @@ if __name__ == "__main__":
     input_data = dict()
     for annotation, input_file in tqdm.tqdm(list(zip(args.annotation, args.input))):
         data = pandas.read_csv(input_file, sep="\t")
+        data = data.loc[(data["q values"] < args.p) & (data["Residual q values after removing segments shared with higher peaks"] < args.p), :]
         data["Descriptor"] = list(map(lambda x: x.strip(), data["Descriptor"]))
         if args.amplification:
             input_data[annotation] = set(data.loc[(data["Unique Name"].str.contains("Amplification Peak")) & ~(data["Unique Name"].str.contains("CN")), "Descriptor"])
