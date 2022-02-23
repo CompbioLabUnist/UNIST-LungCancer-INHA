@@ -895,7 +895,7 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Venn Diagram in LUSC}
+        \frametitle{Peaks in LUSC}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -908,6 +908,18 @@
             \caption{Venn Diagram among Peaks in LUSC -- stage}
         \end{figure}
 
+        \begin{table}
+            \caption{Amplification Peaks in LUSC -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Peaks in LUSC -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.tex}}
+        \end{table}
+
         \begin{figure}
             $\begin{array}{cc}
                 \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Amplification.pdf}
@@ -918,38 +930,72 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in LUSC -- PRE vs. PRI}
         \end{figure}
+
+        \begin{table}
+            \caption{Amplification Peaks in LUSC -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Amplification.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Peaks in LUSC -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Deletion.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Peaks in LUSC}
+        \frametitle{Genes in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in LUSC -- stage}
+        \end{figure}
 
         \begin{table}
-            \caption{Peaks in LUSC -- stage}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{!}{0.3 \textheight}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.tex}}
-                &
-                \resizebox{!}{0.3 \textheight}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.tex}}
-                \\
-            \end{array}$
+            \caption{Amplification Genes in LUSC -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.genes.tex}}
         \end{table}
 
         \begin{table}
-            \caption{Peaks in LUSC -- PRE vs. PRI}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Deletion.tex}}
-                \\
-            \end{array}$
+            \caption{Deletion Genes in LUSC -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.genes.tex}}
         \end{table}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in LUSC -- PRE vs. PRI}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in LUSC -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in LUSC -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-simple.Deletion.genes.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in LUSC Gistic Results}
     \end{frame}
 
     \subsubsection{Gistic in LUAD}
@@ -993,7 +1039,7 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Venn Diagram in LUAD}
+        \frametitle{Peaks in LUAD}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1006,48 +1052,97 @@
             \caption{Venn Diagram among Peaks in LUAD -- stage}
         \end{figure}
 
+        \begin{table}
+            \caption{Amplification Peaks in LUAD -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Amplification.tex}}
+        \end{table}
+        \framebreak
+
+        \begin{table}
+            \caption{Deletion Peaks in LUAD -- stage}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Deletion.tex}}
+        \end{table}
+
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Simple.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Simple.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.pdf}
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram among Peaks in LUAD -- PRE vs. PRI}
         \end{figure}
+
+        \begin{table}
+            \caption{Amplification Peaks in LUAD -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Amplification.tex}}
+        \end{table}
+        \framebreak
+
+        \begin{table}
+            \caption{Deletion Peaks in LUAD -- PRE vs. PRI}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Peaks in LUAD}
+        \frametitle{Genes in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in LUAD -- stage}
+        \end{figure}
 
         \begin{table}
-            \caption{Peaks in LUAD -- stage}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-               \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Deletion.tex}}
-                \\
-            \end{array}$
+            \caption{Amplification Genes in LUAD -- stage}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Amplification.genes.tex}}
         \end{table}
 
         \begin{table}
-            \caption{Peaks in LUAD -- PRE vs. PRI}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.tex}}
-                \\
-            \end{array}$
+            \caption{Deletion Genes in LUAD -- stage}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Deletion.genes.tex}}
         \end{table}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in LUAD -- PRE vs. PRI}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in LUAD -- PRE vs. PRI}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Amplification.genes.tex}}
+        \end{table}
+        \framebreak
+
+        \begin{table}
+            \caption{Deletion Genes in LUAD -- PRE vs. PRI}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.genes.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in LUAD Gistic Results}
     \end{frame}
 
     \subsubsection{Gistic in Recurrence \& LUSC}
@@ -1082,8 +1177,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Recurrence \& LUSC -- CIS}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUSC -- CIS}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1095,23 +1190,44 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Recurrence \& LUSC -- CIS}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Recurrence \& LUSC -- CIS}
 
         \begin{table}
-            \caption{Peaks in Recurrence \& LUSC -- CIS}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Recurrence \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Amplification.tex}}
+        \end{table}
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUSC -- CIS}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUSC -- CIS}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUSC -- Precancer}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.NR-R.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1136,36 +1252,57 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Recurrence \& LUSC -- Precancer}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUSC -- Precancer}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.genes.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.genes.pdf}
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram among Peaks in Recurrence \& LUSC -- Precancer}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Recurrence \& LUSC -- Precancer}
 
         \begin{table}
-            \caption{Peaks in Recurrence \& LUSC -- Precancer}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Recurrence \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.tex}}
+        \end{table}
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUSC -- Precancer}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUSC -- Precancer}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.NR-R.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1190,38 +1327,63 @@
        \end{figure}
    \end{frame}
 
-   \begin{frame}
-       \frametitle{Venn Diagram in Recurrence \& LUSC -- Primary}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUSC -- Primary}
 
-       \begin{figure}
-           $\begin{array}{cc}
-               \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.pdf}
-               &
-               \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.pdf}
-               \\
-               \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-           \end{array}$
-           \caption{Venn Diagram among Peaks in Recurrence \& LUSC -- Primary}
-       \end{figure}
-   \end{frame}
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Peaks in Recurrence \& LUSC -- Primary}
+        \end{figure}
 
-   \begin{frame}
-       \frametitle{Peaks in Recurrence \& LUSC -- Primary}
+        \begin{table}
+            \caption{Amplification Peaks in Recurrence \& LUSC -- Primary}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.tex}}
+        \end{table}
 
-       \begin{table}
-           \caption{Peaks in Recurrence \& LUSC -- Primary}
-           $\begin{array}{cc}
-               \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUSC -- Primary}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
 
-               \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-               {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.tex}}
-               &
-               \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-               {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.tex}}
-               \\
-           \end{array}$
-       \end{table}
-   \end{frame}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUSC -- Primary}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUSC -- Primary}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUSC -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUSC -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.NR-R.Deletion.genes.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Recurrence \& LUSC Gistic Results}
+    \end{frame}
 
     \subsubsection{Gistic in Recurrence \& LUAD}
     \begin{frame}
@@ -1255,8 +1417,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Recurrence \& LUAD -- AAH}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUAD -- AAH}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1268,23 +1430,44 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Recurrence \& LUAD -- AAH}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Recurrence \& LUAD -- AAH}
 
         \begin{table}
-            \caption{Peaks in Recurrence \& LUAD -- AAH}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Recurrence \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Amplification.tex}}
+        \end{table}
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUAD -- AAH}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUAD -- AAH}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUAD -- AAH}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.NR-R.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1309,8 +1492,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Recurrence \& LUAD -- Precancer}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUAD -- Precancer}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1322,23 +1505,45 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Recurrence \& LUAD -- Precancer}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Recurrence \& LUAD -- Precancer}
 
         \begin{table}
-            \caption{Peaks in Recurrence \& LUAD -- Precancer}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Recurrence \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.tex}}
+        \end{table}
+        \framebreak
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUAD -- Precancer}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUAD -- Precancer}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUAD -- Precancer}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.NR-R.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1363,8 +1568,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Recurrence \& LUAD -- Primary}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Recurrence \& LUAD -- Primary}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1376,24 +1581,49 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Recurrence \& LUAD -- Primary}
         \end{figure}
+
+        \begin{table}
+            \caption{Amplification Peaks in Recurrence \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Peaks in Recurrence \& LUAD -- Primary}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Recurrence \& LUAD -- Primary}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Recurrence \& LUAD -- Primary}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Recurrence \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Recurrence \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Deletion.genes.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Peaks in Recurrence \& LUAD -- Primary}
-
-        \begin{table}
-            \caption{Peaks in Recurrence \& LUAD -- Primary}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Deletion.tex}}
-                \\
-            \end{array}$
-        \end{table}
+        \frametitle{Findings in Recurrence \& LUAD Gistic Results}
     \end{frame}
 
     \subsubsection{Gistic in Smoking \& LUSC}
@@ -1432,8 +1662,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUSC -- CIS}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUSC -- CIS}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1445,23 +1675,44 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUSC -- CIS}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Smoking \& LUSC -- CIS}
 
         \begin{table}
-            \caption{Peaks in Smoking \& LUSC -- CIS}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Smoking \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Amplification.tex}}
+        \end{table}
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUSC -- CIS}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUSC -- CIS}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUSC -- CIS}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUSC -- CIS}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-CIS.Smoking.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1490,8 +1741,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUSC -- Precancer}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUSC -- Precancer}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1503,27 +1754,48 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUSC -- Precancer}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Smoking \& LUSC -- Precancer}
 
         \begin{table}
-            \caption{Peaks in Smoking \& LUSC -- Precancer}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Smoking \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.tex}}
+        \end{table}
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.tex}}
-                \\
-            \end{array}$
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUSC -- Precancer}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.tex}}
         \end{table}
     \end{frame}
 
-        \begin{frame}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUSC -- Precancer}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUSC -- Precancer}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUSC -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Precancer.Smoking.Deletion.genes.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Gistic in Smoking \& LUSC -- Primary}
 
         \begin{figure}
@@ -1548,8 +1820,8 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUSC -- Primary}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUSC -- Primary}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -1561,24 +1833,49 @@
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUSC -- Primary}
         \end{figure}
+
+        \begin{table}
+            \caption{Amplification Peaks in Smoking \& LUSC -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Amplification.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUSC -- Primary}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUSC -- Primary}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUSC -- Primary}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUSC -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUSC -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Deletion.genes.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Peaks in Smoking \& LUSC -- Primary}
-
-        \begin{table}
-            \caption{Peaks in Smoking \& LUSC -- Primary}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC-Primary.Smoking.Deletion.tex}}
-                \\
-            \end{array}$
-        \end{table}
+        \frametitle{Findings in Smoking \& LUSC Gistic Results}
     \end{frame}
 
     \subsubsection{Gistic in Smoking \& LUAD}
@@ -1613,36 +1910,58 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUAD -- AAH}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUAD -- AAH}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.pdf}
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUAD -- AAH}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Smoking \& LUAD -- AAH}
 
         \begin{table}
-            \caption{Peaks in Smoking \& LUAD -- AAH}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Smoking \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.tex}}
+        \end{table}
+        \framebreak
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.tex}}
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUAD -- AAH}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUAD -- AAH}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.genes.pdf}
                 &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.tex}}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.genes.pdf}
                 \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUAD -- AAH}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUAD -- AAH}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-AAH.Smoking.Deletion.genes.tex}}
         \end{table}
     \end{frame}
 
@@ -1667,40 +1986,62 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUAD -- Precancer}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUAD -- Precancer}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.pdf}
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUAD -- Precancer}
         \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Peaks in Smoking \& LUAD -- Precancer}
 
         \begin{table}
-            \caption{Peaks in Smoking \& LUAD -- Precancer}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \caption{Amplification Peaks in Smoking \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.tex}}
+        \end{table}
+        \framebreak
 
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.tex}}
-                \\
-            \end{array}$
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUAD -- Precancer}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.tex}}
         \end{table}
     \end{frame}
 
-        \begin{frame}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUAD -- Precancer}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUAD -- Precancer}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUAD -- Precancer}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Precancer.Smoking.Deletion.genes.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{Gistic in Smoking \& LUAD -- Primary}
 
         \begin{figure}
@@ -1721,37 +2062,63 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Venn Diagram in Smoking \& LUAD -- Primary}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Peaks in Smoking \& LUAD -- Primary}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{/Users/fumire/UNIST-LungCancer-INHA/jwlee230/Report/figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.pdf}
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
             \caption{Venn Diagram among Peaks in Smoking \& LUAD -- Primary}
         \end{figure}
+
+        \begin{table}
+            \caption{Amplification Peaks in Smoking \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.tex}}
+        \end{table}
+        \framebreak
+
+        \begin{table}
+            \caption{Deletion Peaks in Smoking \& LUAD -- Primary}
+            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.tex}}
+        \end{table}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Genes in Smoking \& LUAD -- Primary}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.genes.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.genes.pdf}
+                \\
+                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+            \end{array}$
+            \caption{Venn Diagram among Genes in Smoking \& LUAD -- Primary}
+        \end{figure}
+
+        \begin{table}
+            \caption{Amplification Genes in Smoking \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.genes.tex}}
+        \end{table}
+
+        \begin{table}
+            \caption{Deletion Genes in Smoking \& LUAD -- Primary}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.genes.tex}}
+        \end{table}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Peaks in Smoking \& LUAD -- Primary}
-
-        \begin{table}
-            \caption{Peaks in Smoking \& LUAD -- Primary}
-            $\begin{array}{cc}
-                \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
-
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.tex}}
-                &
-                \resizebox{\ifdimcomp{\width}{<}{0.4 \linewidth}{\width}{0.4 \linewidth}}{\ifdimcomp{\height}{<}{0.3 \textheight}{\height}{0.3 \textheight}}
-                {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Deletion.tex}}
-                \\
-            \end{array}$
-        \end{table}
+        \frametitle{Findings in Smoking \& LUAD Gistic Results}
     \end{frame}
 
     \begin{frame}
