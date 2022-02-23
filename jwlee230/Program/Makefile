@@ -3293,6 +3293,124 @@ step44-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar
 step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC
 .PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44
 
+# Step 45 (Volume Doubling Time & Signature score)
+Output/Clinical_vs_Signature:
+	mkdir -p $@
+
+Output/Clinical_vs_Signature/BWA-SQC-VDT_SBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-VDT_SBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-VDT_DBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-VDT_DBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-VDT_Indel.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-VDT_Indel.tar: Python/compare_VDT_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_SBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_SBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_DBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_DBS.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_Indel.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_Indel.tar: Python/compare_VDT_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-RFS_SBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-RFS_SBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-RFS_DBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-RFS_DBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-RFS_Indel.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-RFS_Indel.tar: Python/compare_RFS_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_SBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_SBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_DBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_DBS.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_Indel.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_Indel.tar: Python/compare_RFS_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-OS_SBS.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-OS_SBS.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-OS_DBS.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-OS_DBS.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-OS_Indel.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-OS_Indel.tar: Python/compare_OS_signature.py Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-OS_SBS.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-OS_SBS.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-OS_DBS.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-OS_DBS.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-OS_Indel.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar: Python/compare_OS_signature.py Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+step45-VDT: Output/Clinical_vs_Signature/BWA-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_Indel.tar
+step45-RFS: Output/Clinical_vs_Signature/BWA-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_Indel.tar
+step45-OS: Output/Clinical_vs_Signature/BWA-SQC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar
+step45: step45-VDT step45-RFS step45-OS
+.PHONY: step45-VDT step45-RFS step45-OS step45
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
