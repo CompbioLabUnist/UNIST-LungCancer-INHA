@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     output_data = pandas.DataFrame(data=[["" for x in args.annotation] for y in every_genes], index=every_genes, columns=args.annotation, dtype=str)
     for annotation in tqdm.tqdm(args.annotation):
-        output_data.loc[input_data[annotation] & cgc_genes, annotation] = "*"
+        output_data.loc[input_data[annotation] & set(every_genes), annotation] = "*"
     output_data.index.name = index_name
 
     print(output_data)
