@@ -49,13 +49,16 @@ if __name__ == "__main__":
             input_data[annotation] |= set(filter(None, list(map(lambda x: x.strip("[]"), data.loc[3:, column]))))
     print(input_data)
 
-    every_genes = sorted(set.union(*list(input_data.values())) & cgc_genes)
-    if every_genes:
-        output_data = pandas.DataFrame(data=[["" for x in args.annotation] for y in every_genes], index=every_genes, columns=args.annotation, dtype=str)
-        for annotation in tqdm.tqdm(args.annotation):
-            output_data.loc[input_data[annotation] & cgc_genes, annotation] = "*"
-    else:
-        output_data = pandas.DataFrame(data=[["" for x in args.annotation]], index=[""], columns=args.annotation, dtype=str)
+    every_genes = sorted(set.union(*list(input_data.values())))
+    index_name = "Genes"
+    if set(every_genes) & cgc_genes:
+        index_name = "CGC Genes"
+        every_genes = sorted(set(every_genes) & cgc_genes)
+
+    output_data = pandas.DataFrame(data=[["" for x in args.annotation] for y in every_genes], index=every_genes, columns=args.annotation, dtype=str)
+    for annotation in tqdm.tqdm(args.annotation):
+        output_data.loc[input_data[annotation] & cgc_genes, annotation] = "*"
+    output_data.index.name = index_name
 
     print(output_data)
     output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation))

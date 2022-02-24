@@ -57,14 +57,7 @@ def query_band(chromosome: str, start: int, end: int) -> typing.List[str]:
 
 
 def query_gene(cytoband: str) -> str:
-    d = list(cgc_data.loc[(cgc_data["Chromosome-Arm"] == cytoband), "Gene Symbol"])
-    if d:
-        if len(d) < 10:
-            return ",".join(d)
-        else:
-            return "{0},...({1})".format(d[0], len(d))
-    else:
-        return ""
+    return ",".join(list(cgc_data.loc[(cgc_data["Chromosome-Arm"] == cytoband), "Gene Symbol"]))
 
 
 if __name__ == "__main__":
@@ -137,6 +130,7 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         output_data["CGC Genes"] = pool.map(query_gene, list(output_data.index))
 
+    output_data.index.name = "Peaks"
     print(output_data)
     output_data.to_latex(args.output + ".tex", column_format="l" + "c" * len(args.annotation) + "r")
 
