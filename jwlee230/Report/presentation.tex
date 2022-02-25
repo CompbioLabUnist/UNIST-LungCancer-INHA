@@ -483,7 +483,7 @@
         \frametitle{Findings in Picard}
     \end{frame}
 
-    \subsection{Copy Number Variations}
+    \subsection{Copy Number Variation Analysis with PureCN}
      \begin{frame}
         \frametitle{PureCN?}
 
@@ -845,6 +845,7 @@
         \frametitle{Findings in PureCN}
     \end{frame}
 
+    \subsection{Copy Number Variation Analysis with Gistic}
     \begin{frame}
         \frametitle{Gistic?}
 
@@ -1112,7 +1113,7 @@
 
         \begin{table}
             \caption{Deletion Genes in LUAD -- stage}
-            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
             {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC.Deletion.genes.tex}}
         \end{table}
 
@@ -1136,7 +1137,7 @@
 
         \begin{table}
             \caption{Deletion Genes in LUAD -- PRE vs. PRI}
-            \resizebox{\ifdimcomp{\width}{<}{\linewidth}{\width}{\linewidth}}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+            \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
             {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-simple.Deletion.genes.tex}}
         \end{table}
     \end{frame}
@@ -1215,7 +1216,7 @@
                 \\
                 \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
             \end{array}$
-            \caption{Venn Diagram among Genes in Recurrence \& LUSC -- Precancer}
+            \caption{Venn Diagram among Genes in Recurrence \& LUSC -- CIS}
         \end{figure}
 
         \begin{table}
@@ -1587,6 +1588,7 @@
             \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
             {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.tex}}
         \end{table}
+        \framebreak
 
         \begin{table}
             \caption{Deletion Peaks in Recurrence \& LUAD -- Primary}
@@ -1614,6 +1616,7 @@
             \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
             {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.NR-R.Amplification.genes.tex}}
         \end{table}
+        \framebreak
 
         \begin{table}
             \caption{Deletion Genes in Recurrence \& LUAD -- Primary}
@@ -2109,6 +2112,7 @@
             \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
             {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.ADC-Primary.Smoking.Amplification.genes.tex}}
         \end{table}
+        \framebreak
 
         \begin{table}
             \caption{Deletion Genes in Smoking \& LUAD -- Primary}
@@ -3014,7 +3018,7 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{SBS with Shared mutation Proportion in LUSC}
+    \subsubsection{SBS with Shared Mutation Proportion in LUSC}
     \begin{frame}[allowframebreaks]
         \frametitle{SBS1 with Shared Mutation Proportion in LUSC}
 
@@ -3211,6 +3215,178 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{SBS with Clinical Values in LUSC}
+    \begin{frame}
+        \frametitle{SBS5 with Volume Doubling Time in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                 \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-VDT_SBS/CIS+AIS-SBS5.pdf}
+                 &
+                 \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-VDT_SBS/Primary-SBS5.pdf}
+                 &
+                 \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-VDT_SBS/All-SBS5.pdf}
+                 \\
+                 \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS5 with VDT in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS1 with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/CIS+AIS-SBS1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/Primary-SBS1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/All-SBS1.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS1 with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS5 with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/CIS+AIS-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/Primary-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/All-SBS5.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS5 with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS10b with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/CIS+AIS-SBS10b.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/Primary-SBS10b.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/All-SBS10b.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS10b with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS87 with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/CIS+AIS-SBS87.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/Primary-SBS87.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_SBS/All-SBS87.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS87 with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS1 with Overall Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/CIS+AIS-SBS1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/Primary-SBS1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/All-SBS1.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS1 with OS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS5 with Overall Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/CIS+AIS-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/Primary-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/All-SBS5.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS5 with OS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS10b with Overall Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/CIS+AIS-SBS10b.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/Primary-SBS10b.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/All-SBS10b.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS10b with CIS samples}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS87 with Overall Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/CIS+AIS-SBS87.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/Primary-SBS87.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_SBS/All-SBS87.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary}  & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS87 with OS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{SBS with Clinical Values in LUAD}
+    \begin{frame}
+        \frametitle{SBS5 with Overall Survival in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-ADC-OS_SBS/CIS+AIS-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-ADC-OS_SBS/Primary-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-ADC-OS_SBS/All-SBS5.pdf}
+                \\
+                \mbox{(a) AIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{SBS5 with OS in LUAD}
+        \end{figure}
+    \end{frame}
+
     \subsubsection{Double Base Substitutions (DBS)}
     \begin{frame}[allowframebreaks]
         \frametitle{DBS Signatures}
@@ -3229,7 +3405,9 @@
         \end{block}
 
         \begin{block}{DBS78A}
-            content...
+            \begin{itemize}
+                \item Unknown
+            \end{itemize}
         \end{block}
     \end{frame}
 
@@ -3507,16 +3685,99 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{DBS with Shared Mutation Proportion in LUAD}
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS2 with Shared Mutation Proportion in LUAD}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/CIS+AIS-DBS2_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/CIS+AIS-DBS2_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary score}
+            \end{array}$
+            \caption{DBS2 with AIS samples}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/Precancer-DBS2_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/Precancer-DBS2_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary score}
+            \end{array}$
+            \caption{DBS2 with Precancer samples}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{DBS with Clinical Values in LUSC}
+    \begin{frame}
+        \frametitle{DBS2 with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/CIS+AIS-DBS2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/Primary-DBS2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/All-DBS2.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{DBS2 with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DBS78A with Recurrence-Free Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/CIS+AIS-DBS78A.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/Primary-DBS78A.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-RFS_DBS/All-DBS78A.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{DBS78A with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DBS2 with Overall Survival in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_DBS/CIS+AIS-DBS2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_DBS/Primary-DBS2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler/BWA-SQC-OS_DBS/All-DBS2.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{DBS2 with RFS in LUSC}
+        \end{figure}
+    \end{frame}
+
     \subsubsection{Short insertions \& Deletions (Indels)}
     \begin{frame}[allowframebreaks]
         \frametitle{Indel signatures}
 
         \begin{block}{ID83A}
-            content...
+            \begin{itemize}
+                \item Unknown
+            \end{itemize}
         \end{block}
 
         \begin{block}{ID83B}
-            content...
+            \begin{itemize}
+                \item Unknown
+            \end{itemize}
         \end{block}
     \end{frame}
 
@@ -3744,6 +4005,59 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{Indel with Shared Mutation Proportion in LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{ID83A with Shared Mutation Proportion in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
+            \end{array}$
+            \caption{ID83A with CIS samples}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
+            \end{array}$
+            \caption{ID83A with Precacner samples}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{ID83B with Shared Mutation Proportion in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
+            \end{array}$
+            \caption{ID83B with CIS samples}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Precancer.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Primary.pdf}
+                \\
+                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
+            \end{array}$
+            \caption{ID83B with Precacner samples}
+        \end{figure}
+    \end{frame}
+
     \begin{frame}
         \frametitle{Findings in Mutation Signature}
     \end{frame}
@@ -3803,7 +4117,6 @@
             \begin{enumerate}
                 \item COMT is the best indicator for Smoking in Primary.
                 \item COMT catalyzes the O-methylation, and inactivates of neurotransmitters and hormones \cite{COMT-1, COMT-2}.
-                \item
             \end{enumerate}
         \end{block}
     \end{frame}
