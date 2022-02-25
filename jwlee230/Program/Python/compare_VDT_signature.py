@@ -48,24 +48,22 @@ if __name__ == "__main__":
     print(signature_data)
 
     sample_list = list(filter(lambda x: step00.get_patient(x) in patients, list(signature_data.index)))
-    precancer_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) != "Primary", sample_list))
     print(sample_list)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    output_data = pandas.DataFrame(index=precancer_sample_list)
+    output_data = pandas.DataFrame(index=sample_list)
     output_data["Stage"] = list(map(step00.get_long_sample_type, list(output_data.index)))
     output_data["Volume_Doubling_Time"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), "Volume_Doubling_Time"], list(output_data.index)))
     print(output_data)
 
-    for signature in tqdm.tqdm(list(signature_data.columns)):
-        output_data[signature + "_Precancer"] = signature_data.loc[precancer_sample_list, signature]
-        output_data[signature + "_Primary"] = list(map(lambda x: signature_data.loc[step00.get_paired_primary(x), signature], precancer_sample_list))
-    print(output_data)
+    signature_list = list(signature_data.columns)
 
-    signature_list = list(output_data.columns)[2:]
+    for signature in tqdm.tqdm(signature_data):
+        output_data[signature] = signature_data.loc[sample_list, signature]
+    print(output_data)
 
     figures = list()
 
@@ -80,7 +78,7 @@ if __name__ == "__main__":
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Volume_Doubling_Time", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-        g.set_axis_labels("{0} proportion in {1}".format(signature.split("_")[0], signature.split("_")[1]), "Volume Doubling Time (days)")
+        g.set_axis_labels("{0} proportion in {1}".format(signature, stage), "Volume Doubling Time (days)")
 
         figures.append("{1}-{0}.pdf".format(signature, stage))
         g.savefig(figures[-1])
@@ -98,9 +96,9 @@ if __name__ == "__main__":
 
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Volume_Doubling_Time", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-        g.set_axis_labels("{0} proportion in {1}".format(signature.split("_")[0], signature.split("_")[1]), "Volume Doubling Time (days)")
+        g.set_axis_labels("{0} proportion".format(signature), "Volume Doubling Time (days)")
 
-        figures.append("Precancer-{0}.pdf".format(signature))
+        figures.append("All-{0}.pdf".format(signature))
         g.savefig(figures[-1])
         matplotlib.pyplot.close()
 

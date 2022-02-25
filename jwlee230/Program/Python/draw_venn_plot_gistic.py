@@ -106,7 +106,7 @@ if __name__ == "__main__":
     input_data = dict()
     for annotation, input_file in tqdm.tqdm(list(zip(args.annotation, args.input))):
         data = pandas.read_csv(input_file, sep="\t")
-        data = data.loc[(data["q values"] < args.p) & (data["Residual q values after removing segments shared with higher peaks"] < args.p), :]
+        # data = data.loc[(data["q values"] < args.p) & (data["Residual q values after removing segments shared with higher peaks"] < args.p), :]
         data["Descriptor"] = list(map(lambda x: x.strip(), data["Descriptor"]))
         if args.amplification:
             input_data[annotation] = set(data.loc[(data["Unique Name"].str.contains("Amplification Peak")) & ~(data["Unique Name"].str.contains("CN")), "Descriptor"])
