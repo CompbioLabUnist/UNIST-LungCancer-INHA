@@ -867,6 +867,18 @@ Output/Mutect2/Bowtie2-SQC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix O
 Output/Mutect2/Bowtie2-ADC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Mutect2/BWA-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/BWA-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/Bowtie2-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/Bowtie2-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
 step16-preprocess: Output/MutEnricher/gene_covariates.txt $(addprefix Output/MutEnricher/BWA/,$(addsuffix .hg38_multianno.vcf,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC.tsv Output/MutEnricher/BWA/ADC.tsv $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .hg38_multianno.vcf,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC.tsv Output/MutEnricher/Bowtie2/ADC.tsv
 step16-MutEnricher: Output/MutEnricher/BWA/SQC/MutEnricher.log Output/MutEnricher/BWA/ADC/MutEnricher.log Output/MutEnricher/Bowtie2/ADC/MutEnricher.log Output/MutEnricher/Bowtie2/SQC/MutEnricher.log
 step16-tier1: Output/Mutect2/BWA-SQC.pdf Output/Mutect2/BWA-ADC.pdf Output/Mutect2/Bowtie2-SQC.pdf Output/Mutect2/Bowtie2-ADC.pdf
@@ -875,8 +887,9 @@ step16-non: Output/Mutect2/BWA-SQC.non-CGC.pdf Output/Mutect2/BWA-ADC.non-CGC.pd
 step16-stage: Output/Mutect2/BWA-SQC.stage.pdf Output/Mutect2/Bowtie2-SQC.stage.pdf Output/Mutect2/BWA-ADC.stage.pdf Output/Mutect2/Bowtie2-ADC.stage.pdf
 step16-gene: Output/Mutect2/BWA-SQC.gene.pdf Output/Mutect2/Bowtie2-SQC.gene.pdf Output/Mutect2/BWA-ADC.stage.pdf Output/Mutect2/Bowtie2-ADC.gene.pdf
 step16-recur: Output/Mutect2/BWA-SQC.Recur.pdf Output/Mutect2/BWA-ADC.Recur.pdf Output/Mutect2/Bowtie2-SQC.Recur.pdf Output/Mutect2/Bowtie2-ADC.Recur.pdf
-step16: step16-preprocess step16-MutEnricher step16-tier1 step16-both step16-non step16-stage step16-gene step16-recur
-.PHONY: step16-preprocess step16-MutEnricher step16-tier1 step16-both step16-non step16-stage step16-gene step16-recur step16
+step16-smoking: Output/Mutect2/BWA-SQC.Smoking.pdf Output/Mutect2/BWA-ADC.Smoking.pdf Output/Mutect2/Bowtie2-SQC.Smoking.pdf Output/Mutect2/Bowtie2-ADC.Smoking.pdf
+step16: step16-preprocess step16-MutEnricher step16-tier1 step16-both step16-non step16-stage step16-gene step16-recur step16-smoking
+.PHONY: step16-preprocess step16-MutEnricher step16-tier1 step16-both step16-non step16-stage step16-gene step16-recur step16-smoking step16
 
 # Step 17 (RSEM: Prepare reference genome)
 Output/RSEM/Reference:

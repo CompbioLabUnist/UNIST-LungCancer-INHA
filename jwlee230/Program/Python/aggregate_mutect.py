@@ -2,12 +2,14 @@
 aggregate_mutect.py: aggregate mutect MAF files
 """
 import argparse
+import itertools
 import collections
 import multiprocessing
 from comut import comut
 import matplotlib
 import numpy
 import pandas
+import tqdm
 import step00
 
 
@@ -68,7 +70,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(sorted(patients))
 
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
+    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
 
     if args.stage:
         args.input.sort(key=step00.sorting_by_type)
@@ -80,9 +82,8 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-
-    mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
-    mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
+        mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
+        mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
     mutect_data["Variant_Classification"] = list(map(lambda x: step00.nonsynonymous_notations[x], mutect_data["Variant_Classification"]))
     print(mutect_data)
 
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
 
-    for column in step00.MutEnricher_pval_columns:
+    for column in tqdm.tqdm(step00.MutEnricher_pval_columns):
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
 
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
@@ -111,10 +112,9 @@ if __name__ == "__main__":
     if args.gene:
         sorting_data = pandas.DataFrame(data=numpy.zeros((len(args.input), driver_data.shape[0])), index=args.input, columns=reversed(driver_data["Gene"]), dtype=bool)
 
-        for patient in list(sorting_data.index):
-            for gene in list(sorting_data.columns):
-                if not mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == patient.split("/")[-1].split(".")[0]) & (mutect_data["Hugo_Symbol"] == gene)].empty:
-                    sorting_data.loc[patient, gene] = True
+        for patient, gene in tqdm.tqdm(list(itertools.product(list(sorting_data.index), list(sorting_data.columns)))):
+            if not mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == step00.get_id(patient)) & (mutect_data["Hugo_Symbol"] == gene)].empty:
+                sorting_data.loc[patient, gene] = True
 
         sorting_data.sort_values(by=list(sorting_data.columns), axis="index", ascending=False, kind="mergesort", inplace=True)
         args.input = list(sorting_data.index)
@@ -133,11 +133,11 @@ if __name__ == "__main__":
     if args.patient:
         my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=["sample", "group"], axis="columns"), name="Same patient")
 
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Type")
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage" ,mapping=step00.stage_color_code)
     my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
-    my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "non-synonymous"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="Mutations", mapping={"Counts": "purple"})
-    my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
-    my_comut.add_side_bar_data(driver_data[["Gene", "Rate"]].set_axis(labels=["category", "value"], axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="right", mapping={"value": "teal"})
+    my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "non-synonymous"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="TMB", mapping={"Counts": "purple"})
+    # my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
+    my_comut.add_side_bar_data(driver_data[["Gene", "Rate"]].set_axis(labels=["category", "value"], axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="left", mapping={"value": "teal"})
 
     my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) + 10, driver_data.shape[0] * 2))
     my_comut.add_unified_legend()

@@ -20,9 +20,9 @@ def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
 
-def draw_venn(patient: str) -> str:
-    figure_name = "{0}.pdf".format(patient)
-    sample_list = sorted(patient_samples[patient], key=step00.sorting_by_type)
+def draw_venn(sample: str) -> str:
+    figure_name = "{0}.pdf".format(sample)
+    sample_list = sorted(patient_samples[sample], key=step00.sorting_by_type)
     venn_data = dict()
 
     for sample in sample_list:
@@ -77,10 +77,10 @@ if __name__ == "__main__":
     sample_list = list(map(step00.get_id, args.input))
 
     for sample in tqdm.tqdm(sample_list):
-        if step00.get_patient(sample) not in patient_samples:
-            patient_samples[step00.get_patient(sample)] = set()
+        patient_samples[step00.get_patient(sample)] = set()
 
-        patient_samples[step00.get_patient(sample)].add(sample)
+    for sample in tqdm.tqdm(sample_list):
+        patient_samples[step00.get_patient(sample)] |= sample
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -88,8 +88,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-
-    mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
+        mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
     print(mutect_data)
 
     for sample in tqdm.tqdm(sample_list):

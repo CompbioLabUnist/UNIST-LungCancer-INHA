@@ -65,8 +65,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-
-    mutect_data["Tumor_Sample_Barcode"] = list(map(lambda x: x.split(".")[0], mutect_data["Tumor_Sample_Barcode"]))
+        mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"]))
     print(mutect_data)
 
     for sample in tqdm.tqdm(sample_list):
