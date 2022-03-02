@@ -2458,6 +2458,18 @@ Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.pa
 Output/CNVkit/Bowtie2-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.png: Python/aggregate_CNVkit_genome.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
+Output/CNVkit/BWA-simple-SQC.pdf Output/CNVkit/BWA-simple-SQC.png: Python/aggregate_CNVkit_simple.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/BWA-simple-ADC.pdf Output/CNVkit/BWA-simple-ADC.png: Python/aggregate_CNVkit_simple.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-simple-SQC.pdf Output/CNVkit/Bowtie2-simple-SQC.png: Python/aggregate_CNVkit_simple.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CNVkit/Bowtie2-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-ADC.png: Python/aggregate_CNVkit_simple.py $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
 Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.png: Python/aggregate_CNVkit_genome_clinical.py $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
@@ -2558,11 +2570,12 @@ step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Referenc
 step39-CNVkit: $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID)))
 step39-genome: Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-ADC.pdf Output/CNVkit/BWA-genome-SQC.patient.pdf Output/CNVkit/BWA-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.pdf
 step39-genome-clinical: Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-SQC.Smoking.pdf Output/CNVkit/BWA-genome-ADC.Smoking.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.pdf Output/CNVkit/BWA-genome-SQC.Smoking.patient.pdf Output/CNVkit/BWA-genome-ADC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.pdf
+step39-simple: Output/CNVkit/BWA-simple-SQC.pdf Output/CNVkit/BWA-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-SQC.pdf Output/CNVkit/Bowtie2-simple-ADC.pdf
 step39-violin: Output/CNVkit/BWA-violin-SQC.pdf Output/CNVkit/BWA-violin-ADC.pdf Output/CNVkit/Bowtie2-violin-SQC.pdf Output/CNVkit/Bowtie2-violin-ADC.pdf
 step39-violin-clinical: Output/CNVkit/BWA-violin-SQC.Recurrence.pdf Output/CNVkit/BWA-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/BWA-violin-SQC.Smoking.pdf Output/CNVkit/BWA-violin-ADC.Smoking.pdf Output/CNVkit/Bowtie2-violin-SQC.Smoking.pdf Output/CNVkit/Bowtie2-violin-ADC.Smoking.pdf
 step39-chromosome: Output/CNVkit/BWA-chromosome-SQC.tar Output/CNVkit/BWA-chromosome-ADC.tar Output/CNVkit/Bowtie2-chromosome-SQC.tar Output/CNVkit/Bowtie2-chromosome-ADC.tar
-step39: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-chromosome
-.PHONY: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-chromosome step39
+step39: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-simple step39-violin step39-violin-clinical step39-chromosome
+.PHONY: step39-Reference step39-CNVkit step39-genome step39-genome-clinical step39-simple step39-violin step39-violin-clinical step39-chromosome step39
 
 # Step 40 (Gene Location)
 Output/Gene_Location:
