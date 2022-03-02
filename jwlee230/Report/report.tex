@@ -12,8 +12,7 @@
 \usepackage{mathtools}
 \usepackage{enumerate}
 \usepackage{bbm}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{algorithm, algorithmic}
 \usepackage{epsfig}
 \usepackage{color}
 \usepackage{caption}
@@ -110,7 +109,7 @@
         \LARGE <\the\year{}>
     \end{center}
     \thispagestyle{empty}
-    \newpage
+    \pagebreak
 
     \begin{center}
         \hbox{}
@@ -129,29 +128,29 @@
     \end{center}
     \makeatother
     \thispagestyle{empty}
-    \newpage
+    \pagebreak
 
     \begin{abstract}
         \vfill
     \end{abstract}
-    \newpage
+    \pagebreak
 
     \hbox{}
     \thispagestyle{empty}
-    \newpage
+    \pagebreak
 
     \tableofcontents
     \thispagestyle{empty}
     \vfill
-    \newpage
+    \pagebreak
 
     \listoffigures
     \thispagestyle{empty}
-    \newpage
+    \pagebreak
 
     \listoftables
     \thispagestyle{empty}
-    \newpage
+    \pagebreak
 
     \setcounter{page}{1}
 
@@ -166,16 +165,25 @@
                 \label{fig:cancer-survival}
             \end{figure}
 
-        \subsection{Non-small cell lung cancer}
+        \subsection{Non-small Cell lung cancer}
 
-            \subsubsection{Lung adenocarcinoma (LUAD)}
+            \begin{figure}[p]
+                \centering
+                \includegraphics[width=0.4 \linewidth]{figures/LungCancer/classification.png}
+                \caption{Lung cancer classification \protect\cite{NSCLC-3}}
+                \label{fig:lungcancer-classification}
+            \end{figure}
 
-            \subsubsection{Lung squamous cell carcinoma (LUSC)}
+            \subsubsection{Lung Adenocarcinoma (LUAD)}
+
+            \subsubsection{Lung Squamous Cell Carcinoma (LUSC)}
+
+            \subsubsection{LUSC vs. LUAD}
 
         \subsection{Lung Precancer}
 
         \subsection{Study Objectives}
-    \newpage
+    \pagebreak
 
     \section{Materials}
         \subsection{List of IPNs}
@@ -207,7 +215,7 @@
                 \caption{WTS Data Composition}
                 \input{tables/WTS_samples/WTS_samples.tex}
             \end{table}
-    \newpage
+    \pagebreak
 
     \section{Methods}
         \subsection{Workflows}
@@ -239,7 +247,7 @@
                 \caption{RNA-seq short variant discovery workflow \protect\cite{gatk1, gatk2}}
                 \label{fig:workflow-RNA}
             \end{figure}
-    \newpage
+    \pagebreak
 
     \section{Results}
         \subsection{Quality Checks}
@@ -258,18 +266,164 @@
                     \label{fig:fastqc-WTS}
                 \end{figure}
 
+            \subsubsection{Quality Checks with Depths}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/FastQC/BWA.pdf} \\
+                        \mbox{(a) BWA} \\
+
+                        \includegraphics[width=\linewidth]{figures/FastQC/Bowtie2.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{Depths plot with WES data}
+                    \label{fig:WES-depth}
+                \end{figure}
+
             \subsubsection{Quality Checks with Picard}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/CollectMultipleMetrics/BWA.pdf} \\
+                        \mbox{(a) BWA} \\
+
+                        \includegraphics[width=\linewidth]{figures/CollectMultipleMetrics/Bowtie2.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{Quality Distribution by Samples}
+                    \label{fig:WES-quality}
+                \end{figure}
 
             \subsubsection{Findings in Quality Checks}
 
         \subsection{Copy Number Variation Analyses}
             \subsubsection{Purity and Ploidy}
 
-            \subsubsection{Copy Number Variation Plot}
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-sequenza-SQC.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-sequenza-ADC.pdf}
+                        \\
+                        \mbox{(a) Sequenza-BWA-LUSC} & \mbox{(b) Sequenza-BWA-LUAD} \\
+
+                        \includegraphics[width=0.4 \linewidth]{figures/Sequenza/Bowtie2-sequenza-SQC.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Sequenza/Bowtie2-sequenza-ADC.pdf}
+                        \\
+                        \mbox{(c) Sequenza-Bowtie2-LUSC} & \mbox{(d) Sequenza-Bowtie2-LUAD} \\
+                    \end{array}$
+                    \caption{Sequenza Cellularity and Ploidy Plots}
+                    \label{fig:sequenza-cellularity-ploidy}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/PureCN/BWA-PureCN-SQC.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/PureCN/BWA-PureCN-ADC.pdf}
+                        \\
+                        \mbox{(a) PureCN-BWA-LUSC} & \mbox{(b) PureCN-BWA-LUAD} \\
+
+                        \includegraphics[width=0.4 \linewidth]{figures/PureCN/Bowtie2-PureCN-SQC.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/PureCN/Bowtie2-PureCN-ADC.pdf}
+                        \\
+                        \mbox{(c) PureCN-Bowtie2-LUSC} & \mbox{(d) PureCN-Bowtie2-LUAD} \\
+                    \end{array}$
+                    \caption{PureCN Purity and Ploidy Plots}
+                    \label{fig:PureCN-purity-ploidy}
+                \end{figure}
+
+            \subsubsection{Copy Number Variation Analyses}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[height=0.95 \textheight]{figures/Sequenza/BWA-genome-SQC.pdf}
+                    \caption{Sequenza LUSC Genome View Plot}
+                    \label{fig:sequenza-SQC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[height=0.95 \textheight]{figures/PureCN/BWA-genome-SQC.pdf}
+                    \caption{PureCN LUSC Genome View Plot}
+                    \label{fig:purecn-SQC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[height=0.95 \textheight]{figures/CNVkit/BWA-genome-SQC.pdf}
+                    \caption{CNVkit LUSC Genome View Plot}
+                    \label{fig:PureCN-SQC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/Sequenza/BWA-genome-ADC.pdf}
+                    \caption{Sequenza LUAD Genome View Plot}
+                    \label{fig:sequenza-ADC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/PureCN/BWA-genome-ADC.pdf}
+                    \caption{PureCN LUAD Genome View Plot}
+                    \label{fig:PureCN-ADC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/CNVkit/BWA-genome-ADC.pdf}
+                    \caption{CNVkit LUAD Genome View Plot}
+                    \label{fig:cnvkit-ADC-genome}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/Sequenza/BWA-violin-SQC.pdf}
+                    \caption{Sequenza LUSC Violin Plots}
+                    \label{fig:sequenza-SQC-violin}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/PureCN/BWA-violin-SQC.pdf}
+                    \caption{PureCN LUSC Violin Plots}
+                    \label{fig:PureCN-SQC-violin}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/Sequenza/BWA-violin-ADC.pdf}
+                    \caption{Sequenza LUAD Violin Plots}
+                    \label{fig:sequenza-ADC-violin}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    \includegraphics[width=\linewidth]{figures/PureCN/BWA-violin-ADC.pdf}
+                    \caption{PureCN LUAD Violin Plots}
+                    \label{fig:PureCN-ADC-violin}
+                \end{figure}
+
+            \subsubsection{Copy Number Variation Analyses with Recurrence}
+
+            \subsubsection{Copy Number Variation Analyses with Smoking History}
+
+            \subsubsection{Gistic Analyses}
+
+            \subsubsection{Gistic Analyses with Recurrence}
+
+            \subsubsection{Gistic Analyses with Smoking History}
 
             \subsubsection{Findings in Copy Number Variation Analyses}
 
-        \subsection{Somatic Short Variation Analyses}
+        \subsection{Single Nucleotide Variation Analyses}
             \subsubsection{Somatic Short Variation Analyses with Mutect2}
                 \begin{figure}[p]
                     \centering
@@ -308,17 +462,168 @@
         \subsection{Variant Allele Frequency Analyses}
             \subsubsection{Findings in Variant Allele Frequency Analyses}
 
-        \subsection{Gene Fusion Analyses}
-            \subsubsection{Findings in Gene Fusion Analyses}
-
-        \subsection{Differences in Gene Expression levels}
-
         \subsection{Bulk Cell Deconvolution Analyses}
             \subsubsection{Single-cell Reference Data}
 
             \subsubsection{GSE131907 as Reference}
 
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/Bowtie2.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{BisqueRNA clustermap plot with LUSC samples upon GSE131907}
+                    \label{fig:SQC-GSE131907-BisqueRNA}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/STAR.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/Bowtie2.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{MuSiC clustermap plot with LUSC samples upon GSE131907}
+                    \label{fig:SQC-GSE131907-MuSiC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/SCDC/clustermap/STAR.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/SCDC/clustermap/Bowtie2.SQC.GSE131907.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{SCDC clustermap plot with LUSC samples upon GSE131907}
+                    \label{fig:SQC-GSE131907-SCDC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/BisqueRNA/clustermap/STAR.ADC.GSE131907.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/BisqueRNA/clustermap/Bowtie2.ADC.GSE131907.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{BisqueRNA clustermap plot with LUAD samples upon GSE131907}
+                    \label{fig:ADC-GSE131907-BisqueRNA}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/MuSiC/clustermap/STAR.ADC.GSE131907.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/MuSiC/clustermap/Bowtie2.ADC.GSE131907.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{MuSiC clustermap plot with LUAD samples upon GSE131907}
+                    \label{fig:ADC-GSE131907-MuSiC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/SCDC/clustermap/STAR.ADC.GSE131907.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/SCDC/clustermap/Bowtie2.ADC.GSE131907.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{SCDCSiC clustermap plot with LUAD samples upon GSE131907}
+                    \label{fig:ADC-GSE131907-SCDC}
+                \end{figure}
+
             \subsubsection{GSE162498 as Reference}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/Bowtie2.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{BisqueRNA clustermap plot with LUSC samples upon GSE162498}
+                    \label{fig:SQC-GSE162498-BisqueRNA}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/STAR.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/MuSiC/clustermap/Bowtie2.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{MuSiC clustermap plot with LUSC samples upon GSE162498}
+                    \label{fig:SQC-GSE162498-MuSiC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{c}
+                        \includegraphics[width=\linewidth]{figures/SCDC/clustermap/STAR.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(a) STAR} \\
+
+                        \includegraphics[width=\linewidth]{figures/SCDC/clustermap/Bowtie2.SQC.GSE162498.cluster.pdf} \\
+                        \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{SCDC clustermap plot with LUSC samples upon GSE162498}
+                    \label{fig:SQC-GSE162498-SCDC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/BisqueRNA/clustermap/STAR.ADC.GSE162498.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/BisqueRNA/clustermap/Bowtie2.ADC.GSE162498.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{BisqueRNA clustermap plot with LUAD samples upon GSE162498}
+                    \label{fig:ADC-GSE162498-BisqueRNA}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/MuSiC/clustermap/STAR.ADC.GSE162498.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/MuSiC/clustermap/Bowtie2.ADC.GSE162498.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{MuSiC clustermap plot with LUAD samples upon GSE162498}
+                    \label{fig:ADC-GSE162498-MuSiC}
+                \end{figure}
+
+                \begin{figure}[p]
+                    \centering
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/SCDC/clustermap/STAR.ADC.GSE162498.cluster.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/SCDC/clustermap/Bowtie2.ADC.GSE162498.cluster.pdf}
+                        \\
+                        \mbox{(a) STAR} & \mbox{(b) Bowtie2} \\
+                    \end{array}$
+                    \caption{SCDC clustermap plot with LUAD samples upon GSE162498}
+                    \label{fig:ADC-GSE162498-SCDC}
+                \end{figure}
 
             \subsubsection{GSE179994 as Reference}
 
@@ -333,7 +638,13 @@
 
             \subsubsection{Findings in Mutational Signature Analyses}
 
-    \newpage
+        \subsection{Point Mutation Analyses with Clinical Data}
+
+        \subsection{Deferentially Expressed Genes Analyses}
+
+        \subsection{Gene Fusion Analyses}
+
+    \pagebreak
 
     \section{Discussion}
         \subsection{General Conclusions}
@@ -342,19 +653,19 @@
 
         \subsection{Future Perspective}
 
-    \newpage
+    \pagebreak
 
     \addcontentsline{toc}{section}{References}
     \bibliographystyle{apacite}
     \bibliography{reference}
-    \newpage
+    \pagebreak
 
     \addcontentsline{toc}{section}{Acknowledgements}
     \section*{\hfill \Large Acknowledgements \hfill}
         Thank you very much.
-    \newpage
+    \pagebreak
 
     \hbox{}
     \thispagestyle{empty}
-    \clearpage
+    \pagebreak
 \end{document}
