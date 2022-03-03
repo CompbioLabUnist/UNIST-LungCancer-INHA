@@ -80,7 +80,7 @@ if __name__ == "__main__":
         patient_samples[step00.get_patient(sample)] = set()
 
     for sample in tqdm.tqdm(sample_list):
-        patient_samples[step00.get_patient(sample)] |= sample
+        patient_samples[step00.get_patient(sample)].add(sample)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
