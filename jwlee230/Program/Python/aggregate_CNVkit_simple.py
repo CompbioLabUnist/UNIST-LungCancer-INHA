@@ -84,14 +84,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
-
-    if args.patient:
-        args.input.sort(key=step00.sorting)
-    elif args.type:
-        args.input.sort(key=step00.sorting_by_type)
-    else:
-        raise Exception("Something went wrong!!")
+    args.input = sorted(filter(lambda x: step00.get_patient(x) in patients, args.input), key=step00.sorting)
 
     sample_list = list(map(step00.get_id, args.input))
     print(len(sample_list), sample_list)
