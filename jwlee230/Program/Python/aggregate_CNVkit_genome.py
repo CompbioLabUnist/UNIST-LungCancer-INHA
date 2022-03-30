@@ -107,7 +107,7 @@ if __name__ == "__main__":
     print(input_data)
 
     chromosome_set = set(input_data["chromosome"])
-    chromosome_list = list(filter(lambda x: x in chromosome_set, step00.chromosome_full_list))
+    chromosome_list = list(filter(lambda x: x in chromosome_set, step00.chromosome_list))
     print(chromosome_list)
 
     size_data = pandas.read_csv(args.size, sep="\t", header=None, names=["chromosome", "length"]).set_index(keys="chromosome", verify_integrity=True)
