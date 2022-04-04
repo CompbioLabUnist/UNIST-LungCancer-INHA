@@ -22,9 +22,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t")
-    input_data = input_data.set_index(list(input_data.columns)[0]).T
-    print(input_data)
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
     input_data = input_data.reindex(index=sorted(list(input_data.index), key=step00.sorting_by_type)).T
     input_data = input_data.reindex(index=sorted(list(input_data.index), key=lambda x: sum(input_data.loc[x, :]), reverse=True))
     print(input_data)
