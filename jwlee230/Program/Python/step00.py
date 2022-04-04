@@ -13,13 +13,11 @@ chromosome_full_list = chromosome_list + ["chrX"]
 big = 10 ** 6
 small = 10 ** 3
 
-matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "serif", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Arial", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
 
 long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
 long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primary"]
 sample_order_dict = {"Normal": 0, "Dysplasia": 1, "CIS+AIS": 2, "AAH": 1, "MIA": 3, "Primary": 4}
-# SQC_stage_list = ("Normal", "Dysplasia", "CIS+AIS", "Primary")
-# ADC_stage_list = ("Normal", "AAH", "CIS+AIS", "MIA", "Primary")
 simple_stage_list = ("Normal", "Precancer", "Primary")
 
 stage_color_code = {"Normal": "cyan", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "silver"}
@@ -34,6 +32,8 @@ nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame
 derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 venn_format = "{size:d} ({percentage:.1f}%)"
 Gistic_columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num markers", "Seg.CN"]
+
+Tcell_list = ["CD4+ Th", "CD8 low T", "CD8+/CD4+ Mixed Th", "Cytotoxic CD8+ T", "Exhausted CD8+ T", "Exhausted Tfh", "Naive CD4+ T", "Naive CD8+ T", "Treg"]
 
 
 def file_list(path: str) -> typing.List[str]:
