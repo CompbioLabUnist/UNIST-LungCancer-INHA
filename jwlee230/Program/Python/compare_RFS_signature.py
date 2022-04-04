@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     output_data = pandas.DataFrame(index=sample_list)
     output_data["Stage"] = list(map(step00.get_long_sample_type, list(output_data.index)))
-    output_data["Recurrence-Free Survival"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), "Recurrence-Free Survial"], list(output_data.index)))
+    output_data["Recurrence-Free Survival"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), "Recurrence-Free Survival"], list(output_data.index)))
     print(output_data)
 
     signature_list = list(signature_data.columns)
