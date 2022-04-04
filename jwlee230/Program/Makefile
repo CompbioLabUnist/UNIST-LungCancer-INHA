@@ -179,6 +179,10 @@ Docker/Tools/Gistic.tar.gz: | Docker/Tools
 	wget "ftp://ftp.broadinstitute.org/distribution/GISTIC2.0/GISTIC_2_0_23.tar.gz" -O $@
 TOOLS += Docker/Tools/Gistic.tar.gz
 
+Docker/Tools/MiXCR.zip: | Docker/Tools
+	wget "https://github.com/milaboratory/mixcr/releases/download/v3.0.13/mixcr-3.0.13.zip" -O $@
+TOOLS += Docker/Tools/MiXCR.zip
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@

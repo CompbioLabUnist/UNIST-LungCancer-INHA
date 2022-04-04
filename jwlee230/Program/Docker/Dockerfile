@@ -126,6 +126,11 @@ ADD Tools/Gistic.tar.gz /Tools/
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig
 
+# MiXCR
+ADD Tools/MiXCR.zip /Tools/
+RUN cd /Tools && unzip MiXCR.zip
+ENV PATH=/Tools/mixcr-3.0.13:$PATH
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
