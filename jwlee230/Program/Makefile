@@ -1554,17 +1554,12 @@ Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv |
 Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/MuSiC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
 step28-prepare: Output/Deconvolution/Bowtie2.SQC.RSEM.tsv Output/Deconvolution/Bowtie2.ADC.RSEM.tsv Output/Deconvolution/STAR.SQC.RSEM.tsv Output/Deconvolution/STAR.ADC.RSEM.tsv
 step28-MuSiC: Output/MuSiC/Bowtie2.SQC.GSE131907.tsv Output/MuSiC/Bowtie2.ADC.GSE131907.tsv Output/MuSiC/STAR.SQC.GSE131907.tsv Output/MuSiC/STAR.ADC.GSE131907.tsv Output/MuSiC/Bowtie2.SQC.GSE162498.tsv Output/MuSiC/Bowtie2.ADC.GSE162498.tsv Output/MuSiC/STAR.SQC.GSE162498.tsv Output/MuSiC/STAR.ADC.GSE162498.tsv
 step28-heatmap: Output/MuSiC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/MuSiC/STAR.SQC.GSE131907.heatmap.pdf Output/MuSiC/STAR.ADC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/MuSiC/STAR.SQC.GSE162498.heatmap.pdf Output/MuSiC/STAR.ADC.GSE162498.heatmap.pdf
 step28-violin: Output/MuSiC/Bowtie2.SQC.GSE131907.violin.tar Output/MuSiC/Bowtie2.ADC.GSE131907.violin.tar Output/MuSiC/STAR.SQC.GSE131907.violin.tar Output/MuSiC/STAR.ADC.GSE131907.violin.tar Output/MuSiC/Bowtie2.SQC.GSE162498.violin.tar Output/MuSiC/Bowtie2.ADC.GSE162498.violin.tar Output/MuSiC/STAR.SQC.GSE162498.violin.tar Output/MuSiC/STAR.ADC.GSE162498.violin.tar
-step28-cluster: Output/MuSiC/Bowtie2.SQC.GSE131907.cluster.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.cluster.pdf Output/MuSiC/STAR.SQC.GSE131907.cluster.pdf Output/MuSiC/STAR.ADC.GSE131907.cluster.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.cluster.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.cluster.pdf Output/MuSiC/STAR.SQC.GSE162498.cluster.pdf Output/MuSiC/STAR.ADC.GSE162498.cluster.pdf
-step28-Tcell: Output/MuSiC/Bowtie2.ADC.GSE131907.Tcell_density.pdf Output/MuSiC/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/MuSiC/STAR.ADC.GSE131907.Tcell_density.pdf Output/MuSiC/STAR.SQC.GSE131907.Tcell_density.pdf
-step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell
-.PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell step28
+step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster
+.PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28
 
 # Step 29 (BisqueRNA)
 Output/BisqueRNA:
@@ -1585,16 +1580,12 @@ Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/Bisqu
 Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
 step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.GSE131907.tsv Output/BisqueRNA/Bowtie2.ADC.GSE131907.tsv Output/BisqueRNA/STAR.SQC.GSE131907.tsv Output/BisqueRNA/STAR.ADC.GSE131907.tsv Output/BisqueRNA/Bowtie2.SQC.GSE162498.tsv Output/BisqueRNA/Bowtie2.ADC.GSE162498.tsv Output/BisqueRNA/STAR.SQC.GSE162498.tsv Output/BisqueRNA/STAR.ADC.GSE162498.tsv
 step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE162498.heatmap.pdf
 step29-violin: Output/BisqueRNA/Bowtie2.SQC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE131907.violin.tar Output/BisqueRNA/STAR.SQC.GSE131907.violin.tar Output/BisqueRNA/STAR.ADC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.SQC.GSE162498.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE162498.violin.tar Output/BisqueRNA/STAR.SQC.GSE162498.violin.tar Output/BisqueRNA/STAR.ADC.GSE162498.violin.tar
 step29-cluster: Output/BisqueRNA/Bowtie2.SQC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE162498.cluster.pdf
-step29-Tcell: Output/BisqueRNA/Bowtie2.ADC.GSE131907.Tcell_density.pdf Output/BisqueRNA/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/BisqueRNA/STAR.ADC.GSE131907.Tcell_density.pdf Output/BisqueRNA/STAR.SQC.GSE131907.Tcell_density.pdf
-step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell
-.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell step29
+step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster
+.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29
 
 # Step 30 (SCDC)
 Output/SCDC:
@@ -1615,16 +1606,12 @@ Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | b
 Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/SCDC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/SCDC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
-
 step30-SCDC: Output/SCDC/Bowtie2.SQC.GSE131907.tsv Output/SCDC/Bowtie2.ADC.GSE131907.tsv Output/SCDC/STAR.SQC.GSE131907.tsv Output/SCDC/STAR.ADC.GSE131907.tsv Output/SCDC/Bowtie2.SQC.GSE162498.tsv Output/SCDC/Bowtie2.ADC.GSE162498.tsv Output/SCDC/STAR.SQC.GSE162498.tsv Output/SCDC/STAR.ADC.GSE162498.tsv
 step30-heatmap: Output/SCDC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/SCDC/STAR.SQC.GSE131907.heatmap.pdf Output/SCDC/STAR.ADC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/SCDC/STAR.SQC.GSE162498.heatmap.pdf Output/SCDC/STAR.ADC.GSE162498.heatmap.pdf
 step30-violin: Output/SCDC/Bowtie2.SQC.GSE131907.violin.tar Output/SCDC/Bowtie2.ADC.GSE131907.violin.tar Output/SCDC/STAR.SQC.GSE131907.violin.tar Output/SCDC/STAR.ADC.GSE131907.violin.tar Output/SCDC/Bowtie2.SQC.GSE162498.violin.tar Output/SCDC/Bowtie2.ADC.GSE162498.violin.tar Output/SCDC/STAR.SQC.GSE162498.violin.tar Output/SCDC/STAR.ADC.GSE162498.violin.tar
 step30-cluster: Output/SCDC/Bowtie2.SQC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE131907.cluster.pdf Output/SCDC/STAR.SQC.GSE131907.cluster.pdf Output/SCDC/STAR.ADC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.SQC.GSE162498.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE162498.cluster.pdf Output/SCDC/STAR.SQC.GSE162498.cluster.pdf Output/SCDC/STAR.ADC.GSE162498.cluster.pdf
-step30-Tcell: Output/SCDC/Bowtie2.ADC.GSE131907.Tcell_density.pdf Output/SCDC/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/SCDC/STAR.ADC.GSE131907.Tcell_density.pdf Output/SCDC/STAR.SQC.GSE131907.Tcell_density.pdf
-step30: step30-SCDC step30-heatmap step30-violin step30-cluster step30-Tcell
-.PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30-Tcell step30
+step30: step30-SCDC step30-heatmap step30-violin step30-cluster
+.PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
 
 # Step 31 (TIDE)
 Output/TIDE:
@@ -3560,8 +3547,22 @@ step47: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar
 Output/TIMER:
 	mkdir -p $@
 
-Output/RSEM/DEG/%.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/TIMER/%.SQC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/TIMER
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/%.ADC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/TIMER
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/%.estimation_matrix.csv: Output/TIMER/%.csv
+	@echo "You have to manually execute TIMER on http://timer.cistrome.org with $^ CSV file in order to make $@ CSV file!!"
+
+Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER/STAR.FPKM.SQC.csv Output/TIMER/STAR.ADC.csv Output/TIMER/STAR.TPM.ADC.csv Output/TIMER/STAR.FPKM.ADC.csv Output/TIMER/Bowtie2.SQC.csv Output/TIMER/Bowtie2.TPM.SQC.csv Output/TIMER/Bowtie2.FPKM.SQC.csv Output/TIMER/Bowtie2.ADC.csv Output/TIMER/Bowtie2.TPM.ADC.csv Output/TIMER/Bowtie2.FPKM.ADC.csv
+step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
+step48: step48-CSV
+.PHONY: step48-CSV step48
 
 # Step ## (CoMut plot with Copy Number Variations)
 
