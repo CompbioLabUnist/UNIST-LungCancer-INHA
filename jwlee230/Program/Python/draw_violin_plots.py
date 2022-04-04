@@ -24,7 +24,7 @@ def run(gene: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(ylabel)
     matplotlib.pyplot.title(gene)

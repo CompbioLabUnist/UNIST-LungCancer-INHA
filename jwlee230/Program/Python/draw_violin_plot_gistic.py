@@ -28,7 +28,7 @@ def run(gene: str) -> typing.Tuple[str, float]:
     gene_name, cytoband = gene.split(";")
 
     seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, palette=stage_palette)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title("{0} in {1}".format(gene_name, cytoband))
     matplotlib.pyplot.ylabel("Segment Mean")

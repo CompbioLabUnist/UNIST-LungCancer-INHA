@@ -10,6 +10,7 @@ import matplotlib.pyplot
 import pandas
 import seaborn
 import statannotations.Annotator
+import tqdm
 import step00
 
 input_data = pandas.DataFrame()
@@ -25,7 +26,7 @@ def run(cell: str) -> str:
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(cell)
     matplotlib.pyplot.ylabel("Proportion")
@@ -58,8 +59,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    input_data = pandas.read_csv(args.input, sep="\t")
-    input_data = input_data.set_index(list(input_data.columns)[0]).T
+    input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     for stage in set(input_data["Stage"]):
         if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
@@ -67,8 +67,8 @@ if __name__ == "__main__":
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = sorted(pool.map(run, list(input_data.columns)[:-1]))
+        tar_files = pool.map(run, list(input_data.columns)[:-1])
 
     with tarfile.open(args.output, "w") as tar:
-        for f in tar_files:
+        for f in tqdm.tqdm(tar_files):
             tar.add(f, arcname=f)

@@ -82,7 +82,7 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax, hue=args.compare[0], hue_order=args.compare[1:])
-        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in stage_order], data=input_data, x="Stage", y=gene, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in stage_order], data=input_data, x="Stage", y=gene, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.ylabel(ylabel)
         matplotlib.pyplot.title(gene)

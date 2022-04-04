@@ -25,7 +25,7 @@ def run(cell: str) -> str:
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
     seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order, palette=palette)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=cibersort_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=cibersort_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(cell)
     matplotlib.pyplot.ylabel("Proportion")
