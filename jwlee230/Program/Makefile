@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 4
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -3567,6 +3567,20 @@ step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER
 step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
 step48: step48-CSV
 .PHONY: step48-CSV step48
+
+# Step 49 (MiXCR)
+Output/MiXCR/WES Output/MiXCR/WTS:
+	mkdir -p $@
+
+Output/MiXCR/WES/%.clns Output/MiXCR/WES/%.clonotypes.ALL.txt Output/MiXCR/WES/%.vdjca Output/MiXCR/WES/%.report: Data/RawData/%_*.fastq.gz | Output/MiXCR/WES build.log
+	$(DOCKER) mixcr analyze shotgun --verbose --force-overwrite --species "HomoSapiens" --only-productive --starting-material "dna" --threads $(CPUS) $(addprefix /,$(sort $^) $(@D)/$*) 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+
+Output/MiXCR/WTS/%.clns Output/MiXCR/WTS/%.clonotypes.ALL.txt Output/MiXCR/WTS/%.vdjca Output/MiXCR/WTS/%.report: Data/WTS/%_*.fastq.gz | Output/MiXCR/WTS build.log
+	$(DOCKER) mixcr analyze shotgun --verbose --force-overwrite --species "HomoSapiens" --only-productive --starting-material "rna" --threads $(CPUS) $(addprefix /,$(sort $^) $(@D)/$*) 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+
+step49-MiXCR: $(addprefix Output/MiXCR/WES/,$(addsuffix .clns,$(WES_ID))) $(addprefix Output/MiXCR/WTS/,$(addsuffix .clns,$(WTS_ID)))
+step49: step49-MiXCR
+.PHONY: step49-MiXCR step49
 
 # Step ## (CoMut plot with Copy Number Variations)
 
