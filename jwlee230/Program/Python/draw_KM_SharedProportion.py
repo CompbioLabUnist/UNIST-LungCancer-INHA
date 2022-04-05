@@ -15,6 +15,8 @@ import tqdm
 import step00
 
 wanted_columns = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
+survival_columns = ["Recurrence-Free Survival", "Overall Survival"]
+threshold = 365 * 5
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
@@ -28,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--cutting", help="Cutting follow-up up to 5 year", action="store_true", default=False)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -80,15 +83,20 @@ if __name__ == "__main__":
                 continue
 
             precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
-            proportion = len(primary_set & precancer_set) / len(primary_set | precancer_set)
+            proportion = len(primary_set & precancer_set) / len(primary_set)
 
             clinical_data.loc[patient, "Shared Proportion"] = max(clinical_data.loc[patient, "Shared Proportion"], proportion)
 
+    if args.cutting:
+        for column in tqdm.tqdm(survival_columns):
+            clinical_data[column] = list(map(lambda x: threshold if (x > threshold) else x, clinical_data[column]))
     print(clinical_data)
 
     median = numpy.median(clinical_data["Shared Proportion"])
     lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < median]
     higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= median]
+    print(lower_data)
+    print(higher_data)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -96,7 +104,7 @@ if __name__ == "__main__":
 
     figures = list()
 
-    for column in tqdm.tqdm(["Recurrence-Free Survial", "Overall Survival"]):
+    for column in tqdm.tqdm(survival_columns):
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
         kmf = lifelines.KaplanMeierFitter()
@@ -108,7 +116,7 @@ if __name__ == "__main__":
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
         p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column]).p_value
-        matplotlib.pyplot.text(numpy.median(clinical_data[column]), 0.75, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        matplotlib.pyplot.text(max(clinical_data[column]) / 2, 0.75, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
         matplotlib.pyplot.ylabel("Survival Rate")
