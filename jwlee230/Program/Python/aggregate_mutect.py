@@ -82,9 +82,8 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-        mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
         mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
-    mutect_data["Variant_Classification"] = list(map(lambda x: step00.nonsynonymous_notations[x], mutect_data["Variant_Classification"]))
+    mutect_data["Variant_Classification"] = list(map(lambda x: step00.nonsynonymous_notations[x] if (x in step00.nonsynonymous_notations) else "Synonymous", mutect_data["Variant_Classification"]))
     mutect_data["Cancer_Stage"] = list(map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"]))
     print(mutect_data)
 
@@ -108,7 +107,7 @@ if __name__ == "__main__":
     stage_list = list(filter(lambda x: x in list(mutect_data["Cancer_Stage"]), reversed(step00.long_sample_type_list)))
     print(stage_list)
     for stage in tqdm.tqdm(stage_list):
-        counter: collections.Counter = collections.Counter(mutect_data.loc[mutect_data["Cancer_Stage"] == stage].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
+        counter: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Cancer_Stage"] == stage)].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
         driver_data[stage] = list(map(lambda x: counter[x] / len(args.input), driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
     print(driver_data)
@@ -131,18 +130,18 @@ if __name__ == "__main__":
     patient_data["Patient"] = list(map(lambda x: hash(step00.get_patient(x)), my_comut.samples))
     patient_data["Collection_Type_category"] = "Type"
     patient_data["Collection_Type_value"] = list(map(step00.get_long_sample_type, my_comut.samples))
-    patient_data["non-synonymous"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0], my_comut.samples))
+    patient_data["TMB"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0] / step00.WES_length * 10 ** 6, my_comut.samples))
     print(patient_data)
 
     if args.patient:
         my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=["sample", "group"], axis="columns"), name="Same patient")
 
     my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage", mapping=step00.stage_color_code)
-    my_comut.add_categorical_data(mutect_data[["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
-    my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "non-synonymous"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="TMB", mapping={"Counts": "purple"})
+    my_comut.add_categorical_data(mutect_data.loc[(mutect_data["Variant_Classification"].isin(set(step00.nonsynonymous_notations.values()))), ["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
+    my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "TMB"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="TMB", mapping={"Counts": "purple"})
     # my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
     my_comut.add_side_bar_data(driver_data[["Gene"] + stage_list].set_axis(labels=["category"] + stage_list, axis="columns"), name="Mutation rate", xlabel="Present Rate", paired_name="Mutation type", position="left", stacked=True, mapping=step00.stage_color_code)
 
-    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input) + 5, driver_data.shape[0] * 2))
+    my_comut.plot_comut(x_padding=0.04, y_padding=0.04, tri_padding=0.03, figsize=(len(args.input), driver_data.shape[0] * 2))
     my_comut.add_unified_legend()
     my_comut.figure.savefig(args.output, bbox_inches="tight")
