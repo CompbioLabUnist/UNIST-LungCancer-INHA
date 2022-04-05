@@ -12,6 +12,7 @@ chromosome_list = "chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr1
 chromosome_full_list = chromosome_list + ["chrX"]
 big = 10 ** 6
 small = 10 ** 3
+WES_length = 36995809
 
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Sans", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
 
