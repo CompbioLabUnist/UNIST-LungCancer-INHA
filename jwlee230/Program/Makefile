@@ -394,199 +394,199 @@ Output/Sequenza/Bowtie2/%/sample_alternative_solutions.txt Output/Sequenza/Bowti
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --sampleid "sample" --input $(addprefix /,$(filter %.seqz.gz,$^)) --outdir $(addprefix /,$(@D)) --parallel $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Sequenza/BWA-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/BWA-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-sequenza-SQC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Sequenza/Bowtie2-sequenza-ADC.pdf: Python/aggregate_sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-SQC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-SQC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/BWA-genome-ADC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/BWA-genome-ADC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-SQC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-SQC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-ADC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-ADC.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-SQC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-SQC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.png: Python/aggregate_sequenza_genome.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-SQC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-ADC.pdf: Python/aggregate_sequenza_simple.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequnza/BWA-correlation-SQC.pdf: Python/aggregate_sequenza_correlation.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequnza/BWA-correlation-SQC.pdf: Python/aggregate_sequenza_correlation.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC
 
-Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.Smoking.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.Smoking.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.Smoking.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.Smoking.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --type 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.png: Python/aggregate_sequenza_genome_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC --patient 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-SQC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-SQC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-simple-ADC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/BWA-simple-ADC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf: Python/aggregate_sequenza_simple_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.pdf: Python/aggregate_sequenza_violin.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/BWA-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
+Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf: Python/aggregate_sequenza_violin_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(REFERENCE_BAND) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --compare "Smoking" "Never" "Ever" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-SQC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-ADC.tar: Python/aggregate_sequenza_violin_gene.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-SQC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-ADC.Recurrence.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/BWA-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/BWA-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-SQC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
-Output/Sequenza/Bowtie2-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
+Output/Sequenza/Bowtie2-gene-ADC.Smoking.tar: Python/aggregate_sequenza_violin_gene_clinical.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
@@ -799,88 +799,88 @@ Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --anno-type "annovar-refGene" --exome-only --by-contig --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.Both.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --exclude 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --exclude 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --exclude 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.non-CGC.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_BOTH_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --exclude 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include --stage 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include --stage 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include --stage 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.stage.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include --stage 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include --gene 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --include --gene 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include --gene 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.gene.pdf: Python/aggregate_mutect.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --include --gene 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.Recur.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/BWA-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/BWA-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-SQC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/Mutect2/Bowtie2-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
+Output/Mutect2/Bowtie2-ADC.Smoking.pdf: Python/aggregate_mutect_2.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
 step16-preprocess: Output/MutEnricher/gene_covariates.txt $(addprefix Output/MutEnricher/BWA/,$(addsuffix .hg38_multianno.vcf,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) Output/MutEnricher/BWA/SQC.tsv Output/MutEnricher/BWA/ADC.tsv $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .hg38_multianno.vcf,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC.tsv Output/MutEnricher/Bowtie2/ADC.tsv
@@ -3435,13 +3435,47 @@ Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar: Python/compare_OS_signatu
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_SBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_SBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_SBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_SBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC > $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_DBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_DBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_DBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_DBS.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC > $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_Indel.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_Indel.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_Indel.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_Indel.tar: Python/compare_SharedProportion_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC > $@.stdout 2> $@.stderr
 
 step45-VDT: Output/Clinical_vs_Signature/BWA-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_Indel.tar
 step45-RFS: Output/Clinical_vs_Signature/BWA-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_Indel.tar
 step45-OS: Output/Clinical_vs_Signature/BWA-SQC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar
-step45: step45-VDT step45-RFS step45-OS
-.PHONY: step45-VDT step45-RFS step45-OS step45
+step45-Proportion: Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-SharedProportion_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-SharedProportion_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-SharedProportion_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-SharedProportion_Indel.tar
+step45: step45-VDT step45-RFS step45-OS step45-Proportion
+.PHONY: step45-VDT step45-RFS step45-OS step45-Proportion step45
 
 # Step 46 (Deconvolution & Copy Number Variations)
 Output/Deconvolution_vs_CNV:
@@ -3544,7 +3578,28 @@ Output/Clinical_vs_KM-Plot:
 Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-step47: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting 1> $@.stdout 2> $@.stderr
+
+step47: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar
 .PHONY: step47
 
 # Step 48 (TIMER 2.0)
@@ -3582,7 +3637,14 @@ step49-MiXCR: $(addprefix Output/MiXCR/WES/,$(addsuffix .clns,$(WES_ID))) $(addp
 step49: step49-MiXCR
 .PHONY: step49-MiXCR step49
 
-# Step ## (CoMut plot with Copy Number Variations)
+# Step 50 (CoMut plot with Copy Number Variations)
+Output/Mutect-Sequenza:
+	mkdir -p $@
+
+Output/Mutect-Sequenza/BWA-SQC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC
+
+step50-Sequenza: Output/Mutect-Sequenza/BWA-SQC.pdf
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
