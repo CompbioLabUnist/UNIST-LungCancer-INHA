@@ -91,7 +91,7 @@ if __name__ == "__main__":
             primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
             precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
-            proportion = len(primary_set & precancer_set) / len(primary_set | precancer_set)
+            proportion = len(primary_set & precancer_set) / len(primary_set)
             signature_data.loc[index, "Shared Proportion"] = proportion
 
     print(signature_data)
@@ -109,8 +109,6 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
         g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
@@ -118,7 +116,7 @@ if __name__ == "__main__":
 
         figures.append("{1}-{0}.pdf".format(signature, stage))
         g.savefig(figures[-1])
-        matplotlib.pyplot.close()
+        matplotlib.pyplot.close(g.fig)
 
     for signature in tqdm.tqdm(signature_list):
         tmp_data = signature_data.loc[:, ["Shared Proportion", signature]]
@@ -128,8 +126,6 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
         g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
         g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
@@ -137,7 +133,7 @@ if __name__ == "__main__":
 
         figures.append("All-{0}.pdf".format(signature))
         g.savefig(figures[-1])
-        matplotlib.pyplot.close()
+        matplotlib.pyplot.close(g.fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
