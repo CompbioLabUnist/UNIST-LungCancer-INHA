@@ -36,6 +36,8 @@ def run(cell: str) -> str:
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels("CNV burden", f"Score by {tool}")
+    g.fig.suptitle(title)
+    g.fig.tight_layout()
 
     fig_name = cell.replace(" ", "").replace("(", "").replace(")", "").replace("/", "_") + ".pdf"
     g.savefig(fig_name)

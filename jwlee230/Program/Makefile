@@ -3619,7 +3619,7 @@ Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER/STAR.FPKM.SQC.csv Output/TIMER/STAR.ADC.csv Output/TIMER/STAR.TPM.ADC.csv Output/TIMER/STAR.FPKM.ADC.csv Output/TIMER/Bowtie2.SQC.csv Output/TIMER/Bowtie2.TPM.SQC.csv Output/TIMER/Bowtie2.FPKM.SQC.csv Output/TIMER/Bowtie2.ADC.csv Output/TIMER/Bowtie2.TPM.ADC.csv Output/TIMER/Bowtie2.FPKM.ADC.csv
 step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
