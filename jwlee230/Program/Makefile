@@ -3603,7 +3603,7 @@ step47: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_
 .PHONY: step47
 
 # Step 48 (TIMER 2.0)
-Output/TIMER:
+Output/TIMER Output/TIMER-CNV:
 	mkdir -p $@
 
 Output/TIMER/%.SQC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/TIMER
@@ -3618,10 +3618,14 @@ Output/TIMER/%.estimation_matrix.csv: Output/TIMER/%.csv
 Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
+
 step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER/STAR.FPKM.SQC.csv Output/TIMER/STAR.ADC.csv Output/TIMER/STAR.TPM.ADC.csv Output/TIMER/STAR.FPKM.ADC.csv Output/TIMER/Bowtie2.SQC.csv Output/TIMER/Bowtie2.TPM.SQC.csv Output/TIMER/Bowtie2.FPKM.SQC.csv Output/TIMER/Bowtie2.ADC.csv Output/TIMER/Bowtie2.TPM.ADC.csv Output/TIMER/Bowtie2.FPKM.ADC.csv
 step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
-step48: step48-CSV
-.PHONY: step48-CSV step48
+step48-CNV: Output/TIMER-CNV/STAR.SQC.Sequenza-BWA.tar
+step48: step48-CSV step48-violin
+.PHONY: step48-CSV step48-violin step48
 
 # Step 49 (MiXCR)
 Output/MiXCR/WES Output/MiXCR/WTS:
