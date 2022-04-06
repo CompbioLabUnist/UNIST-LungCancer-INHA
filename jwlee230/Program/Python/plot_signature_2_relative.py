@@ -23,10 +23,10 @@ hue_order: typing.List[str] = list()
 
 
 def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
-    fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(10 * len(order), 24))
 
     seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(signature)
