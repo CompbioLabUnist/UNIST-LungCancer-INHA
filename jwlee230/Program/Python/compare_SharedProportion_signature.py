@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
 
-        g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
+        g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6)
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
         g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
         g.set_axis_labels("{0} proportion in {1}".format(signature, stage), "Shared Proportion")
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
 
-        g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, xlim=(-0.1, 1.1))
+        g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6)
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
         g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
         g.set_axis_labels("{0} proportion".format(signature), "Shared Proportion")
