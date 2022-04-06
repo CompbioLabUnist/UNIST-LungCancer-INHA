@@ -30,6 +30,9 @@ nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del",
 nonsynonymous_notations = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel", "Translation_Start_Site": "TSS", "Nonstop_Mutation": "Nonstop"}
 nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame indel": "navy", "Frameshift indel": "gold", "Splice site": "darkviolet", "LOH": "orange", "TSS": "chocolate", "Nonstop": "crimson", "Absent": "lightgray", "Multiple": "black"}
 
+cnv_mutations = nonsynonymous_mutations | {"CNV loss", "CNV gain"}
+cnv_coloring = nonsynonymous_coloring | {"CNV loss": {"facecolor": "none", "edgecolor": "tab:cyan", "linewidth": 9}, "CNV gain": {"facecolor": "none", "edgecolor": "tab:red", "linewidth": 9}}
+
 derivations = ("Accuracy", "Balanced Accuracy", "Sensitivity", "Specificity", "Precision")
 venn_format = "{size:d} ({percentage:.1f}%)"
 Gistic_columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num markers", "Seg.CN"]

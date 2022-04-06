@@ -3638,13 +3638,48 @@ step49: step49-MiXCR
 .PHONY: step49-MiXCR step49
 
 # Step 50 (CoMut plot with Copy Number Variations)
-Output/Mutect-Sequenza:
+Output/SNV_CNV/Mutect-Sequenza:
 	mkdir -p $@
 
-Output/Mutect-Sequenza/BWA-SQC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/Mutect-Sequenza
-	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC
+Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
 
-step50-Sequenza: Output/Mutect-Sequenza/BWA-SQC.pdf
+Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.stage.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include --stage 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.stage.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include --stage 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.stage.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include --stage 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.stage.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include --stage 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.gene.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include --gene 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.gene.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include --gene 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.gene.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --SQC --include --gene 1> $@.stdout 2> $@.stderr
+
+Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.gene.pdf: Python/aggregate_mutect_sequenza.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/Bowtie2/ADC/MutEnricher_gene_hotspot_Fisher_enrichments.txt $(GENE_CENCUS_ONE_CSV) $(CLINICAL_DATA_CSV) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/SNV_CNV/Mutect-Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter-out %/sample_segments.txt,$^) $@) --cnv $(addprefix /,$(filter %/sample_segments.txt,$^)) --cpus $(CPUS) --ADC --include --gene 1> $@.stdout 2> $@.stderr
+
+step50-Sequenza: Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.gene.pdf
+step50: step50-Sequenza
+.PHONY: step50-Sequenza step50
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
