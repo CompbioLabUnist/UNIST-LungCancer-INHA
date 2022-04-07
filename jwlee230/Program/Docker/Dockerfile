@@ -100,7 +100,7 @@ ENV PATH=/Tools/annovar:$PATH
 
 # Arriba
 ADD Tools/arriba.tar.gz /Tools/
-RUN cd /Tools/arriba_v2.1.0 && make -j
+RUN cd /Tools/arriba_v2.1.0 && sed -i "30s/zlib.net/zlib.net\/fossils/" Makefile && make -j
 ENV PATH=/Tools/arriba_v2.1.0:$PATH
 
 # FusionCatcher
