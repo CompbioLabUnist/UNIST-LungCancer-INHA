@@ -90,7 +90,7 @@ if __name__ == "__main__":
     input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
 
-    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    order = list(filter(lambda x: (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[1]), "Subtype"])) and (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[2]), "Subtype"])), step00.long_sample_type_list))
     hue_order = args.compare[1:]
     compare_order = list(filter(lambda x: not input_data.loc[(input_data["Subtype"] == x[0][0]) & (input_data[args.compare[0]] == x[0][1])].empty and not input_data.loc[(input_data["Subtype"] == x[1][0]) & (input_data[args.compare[0]] == x[1][1])].empty, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in order]))
     print(order)
