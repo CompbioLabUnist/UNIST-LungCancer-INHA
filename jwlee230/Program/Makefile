@@ -183,6 +183,10 @@ Docker/Tools/MiXCR.zip: | Docker/Tools
 	wget "https://github.com/milaboratory/mixcr/releases/download/v3.0.13/mixcr-3.0.13.zip" -O $@
 TOOLS += Docker/Tools/MiXCR.zip
 
+Docker/Tools/RTCR.zip: | Docker/Tools
+	wget "https://github.com/uubram/RTCR/zipball/master" -O $@
+TOOLS += Docker/Tools/RTCR.zip
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
@@ -3322,7 +3326,7 @@ step44-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar
 step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC
 .PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44
 
-# Step 45 (Volume Doubling Time & Signature score)
+# Step 45 (Clinical Values & Mutational Signature score)
 Output/Clinical_vs_Signature:
 	mkdir -p $@
 
@@ -3647,6 +3651,20 @@ Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.gene.pdf: Python/aggregate_mutect_seq
 step50-Sequenza: Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.stage.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-SQC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/BWA-ADC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-SQC.gene.pdf Output/SNV_CNV/Mutect-Sequenza/Bowtie2-ADC.gene.pdf
 step50: step50-Sequenza
 .PHONY: step50-Sequenza step50
+
+# Step 51 (Clinical Values & Gene Expression Values)
+Output/Clinical_vs_DEG:
+	mkdir -p $@
+
+Output/Clinical_vs_DEG/%.SQC.Recurrence.tar: Python/compare_clinical_DEG_discrete.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/Clinical_vs_DEG
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --column "Recurrence" --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_DEG/%.ADC.Recurrence.tar: Python/compare_clinical_DEG_discrete.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/Clinical_vs_DEG
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --column "Recurrence" --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step51-Recur: Output/Clinical_vs_DEG/STAR.SQC.Recurrence.tar Output/Clinical_vs_DEG/STAR.TPM.SQC.Recurrence.tar Output/Clinical_vs_DEG/STAR.FPKM.SQC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.SQC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.TPM.SQC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.FPKM.SQC.Recurrence.tar Output/Clinical_vs_DEG/STAR.ADC.Recurrence.tar Output/Clinical_vs_DEG/STAR.TPM.ADC.Recurrence.tar Output/Clinical_vs_DEG/STAR.FPKM.ADC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.ADC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.TPM.ADC.Recurrence.tar Output/Clinical_vs_DEG/Bowtie2.FPKM.ADC.Recurrence.tar
+step51: step51-Recur
+.PHONY: step51-Recur step51
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

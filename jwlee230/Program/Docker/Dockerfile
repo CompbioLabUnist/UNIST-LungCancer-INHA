@@ -57,11 +57,14 @@ ADD Tools/Bowtie2.zip /Tools/
 RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
+# Waiting for restore github action
+RUN date && sleep 1h
+
 # R packages
 RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'BisqueRNA', 'remotes', 'R.utils'))" && Rscript -e "remotes::install_github('renozao/xbioc')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC', 'meichendong/SCDC'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber')" && Rscript -e "remotes::install_github('Subhayan18/CRUST')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN', 'TxDb.Hsapiens.UCSC.hg38.knownGene'))" && Rscript -e "install.packages(c('BisqueRNA', 'Seurat'))"
 
 # Waiting for restore github action
-RUN sleep 1h
+RUN date && sleep 1h
 
 # VEP
 ADD Tools/VEP.zip /Tools/
@@ -130,6 +133,10 @@ RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstall
 ADD Tools/MiXCR.zip /Tools/
 RUN cd /Tools && unzip MiXCR.zip
 ENV PATH=/Tools/mixcr-3.0.13:$PATH
+
+# RTCR
+ADD Tools/RTCR.zip /Tools/
+RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python3 setup.py install
 
 VOLUME /Output
 VOLUME /Data
