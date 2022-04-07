@@ -136,7 +136,7 @@ ENV PATH=/Tools/mixcr-3.0.13:$PATH
 
 # RTCR
 ADD Tools/RTCR.zip /Tools/
-RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python3 setup.py install
+RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python2 setup.py install
 
 VOLUME /Output
 VOLUME /Data
