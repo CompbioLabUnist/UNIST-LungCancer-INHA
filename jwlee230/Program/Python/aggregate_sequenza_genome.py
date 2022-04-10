@@ -96,7 +96,7 @@ if __name__ == "__main__":
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
         for index, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
-            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
+            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = 1.0 if (0.8 < row[watching] < 1.2) else row[watching]
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
