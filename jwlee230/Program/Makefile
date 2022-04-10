@@ -3666,6 +3666,31 @@ step51-Recur: Output/Clinical_vs_DEG/STAR.SQC.Recurrence.tar Output/Clinical_vs_
 step51: step51-Recur
 .PHONY: step51-Recur step51
 
+# Step 52 (RTCR)
+Output/RTCR:
+	mkdir -p $@
+
+step52:
+.PHONY: step52
+
+# Step 53 (deconstructSigs)
+Output/deconstructSigs:
+	mkdir -p $@
+
+Output/deconstructSigs/BWA.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) | Output/deconstructSigs build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Bowtie2.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) | Output/deconstructSigs build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/%.signature.tsv: R/run_deconstructSigs.R Output/deconstructSigs/%.tsv | build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+step53-Preparation: Output/deconstructSigs/BWA.tsv Output/deconstructSigs/Bowtie2.tsv
+step53-deconstructSigs: Output/deconstructSigs/BWA.signature.tsv Output/deconstructSigs/Bowtie2.signature.tsv
+step53: step53-Preparation step53-deconstructSigs
+.PHONY: step53-Preparation step53-deconstructSigs step53
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
