@@ -3598,15 +3598,36 @@ step48: step48-CSV step48-violin
 Output/MiXCR/WES Output/MiXCR/WTS:
 	mkdir -p $@
 
-Output/MiXCR/WES/%.clns Output/MiXCR/WES/%.clonotypes.ALL.txt Output/MiXCR/WES/%.vdjca Output/MiXCR/WES/%.report: Data/RawData/%_*.fastq.gz | Output/MiXCR/WES build.log
+Output/MiXCR/WES/%.clns Output/MiXCR/WES/%.clonotypes.ALL.txt Output/MiXCR/WES/%.clonotypes.TRB.txt Output/MiXCR/WES/%.vdjca Output/MiXCR/WES/%.report: Data/RawData/%_*.fastq.gz | Output/MiXCR/WES build.log
 	$(DOCKER) mixcr analyze shotgun --verbose --force-overwrite --species "HomoSapiens" --only-productive --starting-material "dna" --threads $(CPUS) $(addprefix /,$(sort $^) $(@D)/$*) 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
-Output/MiXCR/WTS/%.clns Output/MiXCR/WTS/%.clonotypes.ALL.txt Output/MiXCR/WTS/%.vdjca Output/MiXCR/WTS/%.report: Data/WTS/%_*.fastq.gz | Output/MiXCR/WTS build.log
+Output/MiXCR/WTS/%.clns Output/MiXCR/WTS/%.clonotypes.ALL.txt Output/MiXCR/WTS/%.clonotypes.TRB.txt Output/MiXCR/WTS/%.vdjca Output/MiXCR/WTS/%.report: Data/WTS/%_*.fastq.gz | Output/MiXCR/WTS build.log
 	$(DOCKER) mixcr analyze shotgun --verbose --force-overwrite --species "HomoSapiens" --only-productive --starting-material "rna" --threads $(CPUS) $(addprefix /,$(sort $^) $(@D)/$*) 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
-step49-MiXCR: $(addprefix Output/MiXCR/WES/,$(addsuffix .clns,$(WES_ID))) $(addprefix Output/MiXCR/WTS/,$(addsuffix .clns,$(WTS_ID)))
-step49: step49-MiXCR
-.PHONY: step49-MiXCR step49
+Output/MiXCR/WTS.SQC.Density.pdf: Python/draw_MiXCR_density.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MiXCR/WTS.ADC.Density.pdf: Python/draw_MiXCR_density.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MiXCR/WTS.SQC.Diversity.tar: Python/draw_MiXCR_diversity.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MiXCR/WTS.ADC.Diversity.tar: Python/draw_MiXCR_diversity.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MiXCR/WTS.SQC.Clonality.pdf: Python/draw_MiXCR_clonality.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MiXCR/WTS.ADC.Clonality.pdf: Python/draw_MiXCR_clonality.py $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step49-MiXCR: $(addprefix Output/MiXCR/WES/,$(addsuffix .clonotypes.ALL.txt,$(WES_ID))) $(addprefix Output/MiXCR/WTS/,$(addsuffix .clonotypes.ALL.txt,$(WTS_ID)))
+step49-Density: Output/MiXCR/WTS.SQC.Density.pdf Output/MiXCR/WTS.ADC.Density.pdf
+step49-Diversity: Output/MiXCR/WTS.SQC.Diversity.tar Output/MiXCR/WTS.ADC.Diversity.tar
+step49-Clonality: Output/MiXCR/WTS.SQC.Clonality.pdf Output/MiXCR/WTS.ADC.Clonality.pdf
+step49: step49-MiXCR step49-Density step49-Diversity step49-Clonality
+.PHONY: step49-MiXCR step49-Density step49-Diversity step49-Clonality step49
 
 # Step 50 (CoMut plot with Copy Number Variations)
 Output/SNV_CNV/Mutect-Sequenza:
