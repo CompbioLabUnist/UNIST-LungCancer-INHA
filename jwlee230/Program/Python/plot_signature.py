@@ -1,5 +1,5 @@
 """
-plot_signature.py: violin plot cancer signature by stage
+plot_signature.py: violin plot cancer signature from SigProfiler by stage
 """
 import argparse
 import itertools
@@ -23,8 +23,8 @@ order: typing.List[str] = list()
 def draw_violin(signature: str) -> pandas.DataFrame:
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
-    seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Subtype", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", ax=ax)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(signature)
@@ -35,7 +35,7 @@ def draw_violin(signature: str) -> pandas.DataFrame:
 
     outputs = [signature]
     for control, case in list(itertools.combinations(order, 2)):
-        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == control), signature]), list(input_data.loc[(input_data["Subtype"] == case), signature]))[1])
+        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Stage"] == control), signature]), list(input_data.loc[(input_data["Stage"] == case), signature]))[1])
 
     return pandas.DataFrame(data=outputs, index=["Signature"] + list(map(lambda x: x[0] + "-" + x[1], list(itertools.combinations(order, 2))))).T
 
@@ -81,8 +81,11 @@ if __name__ == "__main__":
     print(sorted(patients))
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
-    input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    for stage in tqdm.tqdm(set(input_data["Stage"])):
+        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
+            input_data = input_data.loc[~(input_data["Stage"] == stage)]
+    order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
     print(input_data)
     print(order)
 

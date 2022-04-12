@@ -1,5 +1,5 @@
 """
-plot_signature_2.py: violin plot cancer signature by stage with clinical data
+plot_signature_2.py: violin plot cancer signature from SigProfiler by stage with clinical data
 """
 import argparse
 import itertools
@@ -25,8 +25,8 @@ hue_order: typing.List[str] = list()
 def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
-    seaborn.violinplot(data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
-    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Subtype", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
+    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(signature)
@@ -37,7 +37,7 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
 
     outputs = [signature]
     for (s1, c1), (s2, c2) in compare_order:
-        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Subtype"] == s1) & (input_data[clinical] == c1), signature]), list(input_data.loc[(input_data["Subtype"] == s2) & (input_data[clinical] == c2), signature]))[1])
+        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Stage"] == s1) & (input_data[clinical] == c1), signature]), list(input_data.loc[(input_data["Stage"] == s2) & (input_data[clinical] == c2), signature]))[1])
 
     return pandas.DataFrame(data=outputs, index=["Signature"] + ["{0}: {1}-{2}".format(s1, c1, c2) for (s1, c1), (s2, c2) in compare_order]).T
 
@@ -83,13 +83,22 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
-    input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
 
-    order = list(filter(lambda x: (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[1]), "Subtype"])) and (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[2]), "Subtype"])), step00.long_sample_type_list))
+    for stage in tqdm.tqdm(set(input_data["Stage"])):
+        flag = False
+        for clinical in args.compare[1:]:
+            if input_data.loc[(input_data["Stage"] == stage) & (input_data[args.compare[0]] == clinical)].empty:
+                flag = True
+                break
+
+        if flag:
+            input_data = input_data.loc[~(input_data["Stage"] == stage)]
+    order = list(filter(lambda x: (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[1]), "Stage"])) and (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[2]), "Stage"])), step00.long_sample_type_list))
     hue_order = args.compare[1:]
-    compare_order = list(filter(lambda x: not input_data.loc[(input_data["Subtype"] == x[0][0]) & (input_data[args.compare[0]] == x[0][1])].empty and not input_data.loc[(input_data["Subtype"] == x[1][0]) & (input_data[args.compare[0]] == x[1][1])].empty, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in order]))
+    compare_order = list(filter(lambda x: not input_data.loc[(input_data["Stage"] == x[0][0]) & (input_data[args.compare[0]] == x[0][1])].empty and not input_data.loc[(input_data["Stage"] == x[1][0]) & (input_data[args.compare[0]] == x[1][1])].empty, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in order]))
     print(order)
     print(hue_order)
     print(compare_order)
