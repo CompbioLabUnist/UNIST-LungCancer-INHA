@@ -216,7 +216,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51 
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -3338,12 +3338,25 @@ Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar: Python/compare_m
 Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/BWA.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/BWA.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/Bowtie2.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/Bowtie2.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 step44-BWA-SQC: Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar
 step44-BWA-ADC: Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar
 step44-Bowtie2-SQC: Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar
 step44-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar
-step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC
-.PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44
+step44-deconstructSigs: Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar
+step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44-deconstructSigs
+.PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44-deconstructSigs step44
 
 # Step 45 (Clinical Values & Mutational Signature score)
 Output/Clinical_vs_Signature:
@@ -3824,8 +3837,8 @@ step53-Bar-Recurrence: Output/deconstructSigs/Bar/BWA.SQC.Recurrence.Absolute.pd
 step53-Bar-Smoking: Output/deconstructSigs/Bar/BWA.SQC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/BWA.SQC.Smoking.Relative.pdf Output/deconstructSigs/Bar/BWA.ADC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/BWA.ADC.Smoking.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Smoking.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Smoking.Relative.pdf
 step53-Violin: step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking
 step53-Bar: step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking
-step53: step53-Preparation step53-deconstructSigs step53-Violin
-.PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar step53-Bar-Recurrence step53-Bar-Smoking step53
+step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar
+.PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking step53-Bar step53
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

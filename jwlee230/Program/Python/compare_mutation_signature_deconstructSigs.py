@@ -1,5 +1,5 @@
 """
-compare_mutation_signature.py: compare mutation shared proportion vs. mutational signature from SigProfiler
+compare_mutation_signature_deconstructSigs.py: compare mutation shared proportion vs. mutational signature from deconstructSigs
 """
 import argparse
 import itertools
@@ -14,7 +14,6 @@ import tqdm
 import step00
 
 wanted_columns = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
-signature_data = pandas.DataFrame()
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
@@ -105,8 +104,9 @@ if __name__ == "__main__":
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
     print(mutect_data)
 
-    signature_data = pandas.read_csv(args.signature, sep="\t", index_col="Samples")
-    signature_list = list(signature_data.columns)
+    signature_data = pandas.read_csv(args.signature, sep="\t", index_col=0)
+    signature_data.columns = list(map(lambda x: x.replace("Signature.", "SBS"), list(signature_data.columns)))
+    signature_list = list(filter(lambda x: len(set(signature_data[x])) > 1, list(signature_data.columns)))
     for index in tqdm.tqdm(list(signature_data.index)):
         signature_data.loc[index, :] = signature_data.loc[index, :] / sum(signature_data.loc[index, :])
     signature_data["Patient"] = list(map(step00.get_patient, list(signature_data.index)))
