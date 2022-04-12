@@ -78,6 +78,7 @@ if __name__ == "__main__":
     seaborn.violinplot(data=output_data, x="Stage", y="Clonality", order=order, palette=step00.stage_color_code, ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=output_data, x="Stage", y="Clonality", order=order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
+    matplotlib.pyplot.ylabel("Number of clones")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
