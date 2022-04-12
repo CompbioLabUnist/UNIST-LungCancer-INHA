@@ -12,7 +12,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)

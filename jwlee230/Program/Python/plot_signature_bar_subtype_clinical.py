@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs="+", default=["Smoking-Detail", "Never", "Ex", "Current"])
 
