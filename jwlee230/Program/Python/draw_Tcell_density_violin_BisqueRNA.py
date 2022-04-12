@@ -6,6 +6,7 @@ import itertools
 import matplotlib
 import matplotlib.pyplot
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -42,10 +43,14 @@ if __name__ == "__main__":
     order = list(filter(lambda x: x in stage_list, step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    seaborn.violinplot(data=input_data, x="Stage", y="T cell density", order=order, palette=palette)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y="T cell density", order=order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), "T cell density"] for stage in order])
 
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+    seaborn.violinplot(data=input_data, x="Stage", y="T cell density", order=order, palette=palette)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y="T cell density", order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+    matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
