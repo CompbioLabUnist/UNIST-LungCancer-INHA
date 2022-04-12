@@ -99,8 +99,8 @@ if __name__ == "__main__":
 
         if flag:
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
-    order = list(filter(lambda x: (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[1]), "Subtype"])) and (x in set(input_data.loc[(input_data[args.compare[0]] == args.compare[2]), "Subtype"])), step00.long_sample_type_list))
     hue_order = args.compare[1:]
+    order = list(filter(lambda x: x in list(input_data["Stage"]), step00.long_sample_type_list))
     compare_order = list(filter(lambda x: not input_data.loc[(input_data["Subtype"] == x[0][0]) & (input_data[args.compare[0]] == x[0][1])].empty and not input_data.loc[(input_data["Subtype"] == x[1][0]) & (input_data[args.compare[0]] == x[1][1])].empty, [((s, c1), (s, c2)) for c1, c2 in itertools.combinations(hue_order, 2) for s in order]))
     print(order)
     print(hue_order)
