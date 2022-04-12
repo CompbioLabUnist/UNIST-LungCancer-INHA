@@ -1,5 +1,5 @@
 """
-plot_signature_deconstructSigs_bar.py: Plot signature from deconstructSigs in bar graph
+plot_signature_deconstructSigs_bar_subtype.py: Plot signature from deconstructSigs in bar graph with subtype separation
 """
 import argparse
 import itertools
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     input_data.columns = list(map(lambda x: x.replace("Signature.", "SBS"), list(input_data.columns)))
-    signatures = list(input_data.columns)
+    signatures = list(filter(lambda x: len(set(input_data[x])) > 1, list(input_data.columns)))
     print(input_data)
 
     clinical_data = step00.get_clinical_data(args.clinical)
@@ -52,43 +52,52 @@ if __name__ == "__main__":
     print(sorted(patients))
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
-    signatures = list(filter(lambda x: len(set(input_data[x])) > 1, list(input_data.columns)))
     input_data["Total"] = input_data.sum(axis="columns")
     print(input_data)
     print(signatures)
 
-    if args.absolute:
-        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
-        input_data.sort_values(by="Total", kind="stable", ascending=False, inplace=True)
-        input_data = input_data.loc[:, signatures]
-    elif args.relative:
-        for index in list(input_data.index):
-            input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
-        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
-        input_data = input_data.loc[:, signatures]
-    else:
-        raise Exception("Something went wrong!!")
+    input_data = input_data.loc[:, signatures + ["Total"]]
     input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
+
+    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    print(order)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+    fig, axs = matplotlib.pyplot.subplots(nrows=len(order), figsize=(32, 9 * len(order)), sharey=True)
 
-    for j, (column, color) in tqdm.tqdm(list(enumerate(zip(signatures, itertools.cycle(matplotlib.colors.XKCD_COLORS))))):
-        matplotlib.pyplot.bar(range(input_data.shape[0]), list(input_data.loc[:, column]), bottom=input_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
+    for i, subtype in tqdm.tqdm(list(enumerate(order))):
+        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), signatures + ["Total"]].copy()
 
-    matplotlib.pyplot.xlabel("{0} Samples".format(input_data.shape[0]))
-    if args.absolute:
-        matplotlib.pyplot.ylabel("Counts")
-    elif args.relative:
-        matplotlib.pyplot.ylabel("Proportion")
-    else:
-        raise Exception("Something went wrong!!")
-    matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.grid(True)
-    matplotlib.pyplot.legend(ncol=3)
+        if args.absolute:
+            drawing_data.sort_values(by=sorted(signatures, key=lambda x: sum(drawing_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
+            drawing_data.sort_values(by="Total", kind="stable", ascending=False, inplace=True)
+        elif args.relative:
+            for index in list(drawing_data.index):
+                drawing_data.loc[index, :] = drawing_data.loc[index, :] / drawing_data.loc[index, "Total"]
+            drawing_data.sort_values(by=sorted(signatures, key=lambda x: sum(drawing_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
+        else:
+            raise Exception("Something went wrong!!")
+
+        for j, (column, color) in enumerate(zip(signatures, itertools.cycle(matplotlib.colors.XKCD_COLORS))):
+            axs[i].bar(range(drawing_data.shape[0]), list(drawing_data.loc[:, column]), bottom=drawing_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
+
+        axs[i].set_xlabel("{0} Samples".format(drawing_data.shape[0]))
+        if args.absolute:
+            axs[i].set_ylabel("Counts")
+        elif args.relative:
+            axs[i].set_ylabel("Proportion")
+        else:
+            raise Exception("Something went wrong!!")
+        axs[i].set_xticks([])
+        axs[i].grid(True)
+        if i == 0:
+            axs[i].legend(ncol=3)
+        axs[i].set_title(subtype)
+
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
