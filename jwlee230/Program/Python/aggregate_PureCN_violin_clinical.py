@@ -124,7 +124,7 @@ if __name__ == "__main__":
         drawing_stage_list = list(filter(lambda x: (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[1]), "Stage"])) and (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[2]), "Stage"])), stage_list))
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:], inner="box", ax=axs[i // ncols][i % ncols])
-        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.tight_layout()
         axs[i // ncols][i % ncols].set_title(chromosome)

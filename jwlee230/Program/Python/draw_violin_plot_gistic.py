@@ -21,8 +21,6 @@ state_palette: typing.List[str] = list()
 
 
 def run(gene: str) -> typing.Tuple[str, float]:
-    print("Running:", gene)
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     gene_name, cytoband = gene.split(";")

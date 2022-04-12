@@ -8,6 +8,7 @@ import tarfile
 import matplotlib
 import matplotlib.pyplot
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import step00
@@ -16,18 +17,18 @@ cibersort_data = pandas.DataFrame()
 
 
 def run(cell: str) -> str:
-    print("Running:", cell)
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     tmp = set(cibersort_data["Stage"])
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
+    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
+
     seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order, palette=palette)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=cibersort_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.title(cell)
+    matplotlib.pyplot.title(f"{cell}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.tight_layout()
 

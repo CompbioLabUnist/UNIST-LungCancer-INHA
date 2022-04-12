@@ -216,7 +216,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51 step52 step53
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1562,12 +1562,16 @@ Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv |
 Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/MuSiC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/MuSiC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2 $@.stderr
+
 step28-prepare: Output/Deconvolution/Bowtie2.SQC.RSEM.tsv Output/Deconvolution/Bowtie2.ADC.RSEM.tsv Output/Deconvolution/STAR.SQC.RSEM.tsv Output/Deconvolution/STAR.ADC.RSEM.tsv
 step28-MuSiC: Output/MuSiC/Bowtie2.SQC.GSE131907.tsv Output/MuSiC/Bowtie2.ADC.GSE131907.tsv Output/MuSiC/STAR.SQC.GSE131907.tsv Output/MuSiC/STAR.ADC.GSE131907.tsv Output/MuSiC/Bowtie2.SQC.GSE162498.tsv Output/MuSiC/Bowtie2.ADC.GSE162498.tsv Output/MuSiC/STAR.SQC.GSE162498.tsv Output/MuSiC/STAR.ADC.GSE162498.tsv
 step28-heatmap: Output/MuSiC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/MuSiC/STAR.SQC.GSE131907.heatmap.pdf Output/MuSiC/STAR.ADC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/MuSiC/STAR.SQC.GSE162498.heatmap.pdf Output/MuSiC/STAR.ADC.GSE162498.heatmap.pdf
 step28-violin: Output/MuSiC/Bowtie2.SQC.GSE131907.violin.tar Output/MuSiC/Bowtie2.ADC.GSE131907.violin.tar Output/MuSiC/STAR.SQC.GSE131907.violin.tar Output/MuSiC/STAR.ADC.GSE131907.violin.tar Output/MuSiC/Bowtie2.SQC.GSE162498.violin.tar Output/MuSiC/Bowtie2.ADC.GSE162498.violin.tar Output/MuSiC/STAR.SQC.GSE162498.violin.tar Output/MuSiC/STAR.ADC.GSE162498.violin.tar
-step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster
-.PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28
+step28-Tcell: Output/MuSiC/STAR.SQC.GSE131907.Tcell_density.pdf Output/MuSiC/STAR.ADC.GSE131907.Tcell_density.pdf Output/MuSiC/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.Tcell_density.pdf
+step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell
+.PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell step28
 
 # Step 29 (BisqueRNA)
 Output/BisqueRNA:
@@ -1588,12 +1592,16 @@ Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/Bisqu
 Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/BisqueRNA/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.GSE131907.tsv Output/BisqueRNA/Bowtie2.ADC.GSE131907.tsv Output/BisqueRNA/STAR.SQC.GSE131907.tsv Output/BisqueRNA/STAR.ADC.GSE131907.tsv Output/BisqueRNA/Bowtie2.SQC.GSE162498.tsv Output/BisqueRNA/Bowtie2.ADC.GSE162498.tsv Output/BisqueRNA/STAR.SQC.GSE162498.tsv Output/BisqueRNA/STAR.ADC.GSE162498.tsv
 step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE162498.heatmap.pdf
 step29-violin: Output/BisqueRNA/Bowtie2.SQC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE131907.violin.tar Output/BisqueRNA/STAR.SQC.GSE131907.violin.tar Output/BisqueRNA/STAR.ADC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.SQC.GSE162498.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE162498.violin.tar Output/BisqueRNA/STAR.SQC.GSE162498.violin.tar Output/BisqueRNA/STAR.ADC.GSE162498.violin.tar
 step29-cluster: Output/BisqueRNA/Bowtie2.SQC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE162498.cluster.pdf
-step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster
-.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29
+step29-Tcell: Output/BisqueRNA/STAR.SQC.GSE131907.Tcell_density.pdf Output/BisqueRNA/STAR.ADC.GSE131907.Tcell_density.pdf Output/BisqueRNA/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.Tcell_density.pdf
+step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell
+.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell step29
 
 # Step 30 (SCDC)
 Output/SCDC:
@@ -1614,12 +1622,16 @@ Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | b
 Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/SCDC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/SCDC/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2 $@.stderr
+
 step30-SCDC: Output/SCDC/Bowtie2.SQC.GSE131907.tsv Output/SCDC/Bowtie2.ADC.GSE131907.tsv Output/SCDC/STAR.SQC.GSE131907.tsv Output/SCDC/STAR.ADC.GSE131907.tsv Output/SCDC/Bowtie2.SQC.GSE162498.tsv Output/SCDC/Bowtie2.ADC.GSE162498.tsv Output/SCDC/STAR.SQC.GSE162498.tsv Output/SCDC/STAR.ADC.GSE162498.tsv
 step30-heatmap: Output/SCDC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/SCDC/STAR.SQC.GSE131907.heatmap.pdf Output/SCDC/STAR.ADC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/SCDC/STAR.SQC.GSE162498.heatmap.pdf Output/SCDC/STAR.ADC.GSE162498.heatmap.pdf
 step30-violin: Output/SCDC/Bowtie2.SQC.GSE131907.violin.tar Output/SCDC/Bowtie2.ADC.GSE131907.violin.tar Output/SCDC/STAR.SQC.GSE131907.violin.tar Output/SCDC/STAR.ADC.GSE131907.violin.tar Output/SCDC/Bowtie2.SQC.GSE162498.violin.tar Output/SCDC/Bowtie2.ADC.GSE162498.violin.tar Output/SCDC/STAR.SQC.GSE162498.violin.tar Output/SCDC/STAR.ADC.GSE162498.violin.tar
 step30-cluster: Output/SCDC/Bowtie2.SQC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE131907.cluster.pdf Output/SCDC/STAR.SQC.GSE131907.cluster.pdf Output/SCDC/STAR.ADC.GSE131907.cluster.pdf Output/SCDC/Bowtie2.SQC.GSE162498.cluster.pdf Output/SCDC/Bowtie2.ADC.GSE162498.cluster.pdf Output/SCDC/STAR.SQC.GSE162498.cluster.pdf Output/SCDC/STAR.ADC.GSE162498.cluster.pdf
-step30: step30-SCDC step30-heatmap step30-violin step30-cluster
-.PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30
+step30-Tcell: Output/SCDC/STAR.SQC.GSE131907.Tcell_density.pdf Output/SCDC/STAR.ADC.GSE131907.Tcell_density.pdf Output/SCDC/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/SCDC/Bowtie2.ADC.GSE131907.Tcell_density.pdf
+step30: step30-SCDC step30-heatmap step30-violin step30-cluster step30-Tcell
+.PHONY: step30-SCDC step30-heatmap step30-violin step30-cluster step30-Tcell step30
 
 # Step 31 (TIDE)
 Output/TIDE:
@@ -3839,6 +3851,8 @@ step53-Violin: step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smokin
 step53-Bar: step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking
 step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar
 .PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking step53-Bar step53
+
+# Step 54 (Mutational Shared Porportion distribution)
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

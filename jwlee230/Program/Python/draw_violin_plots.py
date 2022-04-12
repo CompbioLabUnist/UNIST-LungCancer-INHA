@@ -7,6 +7,7 @@ import tarfile
 import matplotlib
 import matplotlib.pyplot
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -17,9 +18,9 @@ ylabel = ""
 
 
 def run(gene: str) -> str:
-    print(gene)
-
     stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
+
+    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in stage_order])
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
@@ -27,7 +28,7 @@ def run(gene: str) -> str:
     statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(ylabel)
-    matplotlib.pyplot.title(gene)
+    matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig_name = gene + ".pdf"

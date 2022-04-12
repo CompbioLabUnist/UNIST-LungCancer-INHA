@@ -8,6 +8,7 @@ import tarfile
 import matplotlib
 import matplotlib.pyplot
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -25,10 +26,12 @@ def run(cell: str) -> str:
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
+    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
+
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.title(title)
+    matplotlib.pyplot.title(f"{title}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel(f"Score by {tool}")
     matplotlib.pyplot.tight_layout()
 

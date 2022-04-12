@@ -117,7 +117,7 @@ if __name__ == "__main__":
         drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, ax=axs[i // ncols][i % ncols])
-        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         axs[i // ncols][i % ncols].set_title(chromosome)
         axs[i // ncols][i % ncols].set_xlabel("")
