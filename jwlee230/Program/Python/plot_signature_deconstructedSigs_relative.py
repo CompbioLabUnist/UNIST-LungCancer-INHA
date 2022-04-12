@@ -43,7 +43,7 @@ def draw_violin(signature: str) -> pandas.DataFrame:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
+    parser.add_argument("input", help="Signature TSV file", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
@@ -54,7 +54,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.clinical.endswith(".csv"):
+    if not args.input.endswith(".tsv"):
+        raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical data must end with .csv!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")

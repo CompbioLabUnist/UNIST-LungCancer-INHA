@@ -28,7 +28,7 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", ax=ax)
     statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel("Count")
+    matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(signature)
 
     fig_name = "{0}.pdf".format(signature)
@@ -45,7 +45,7 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
+    parser.add_argument("input", help="Signature TSV file", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs="+", default=["Recurrence", "NO", "YES"])
@@ -57,7 +57,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.clinical.endswith(".csv"):
+    if not args.input.endswith(".tsv"):
+        raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical data must end with .csv!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
