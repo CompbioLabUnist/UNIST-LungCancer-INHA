@@ -1,5 +1,5 @@
 """
-plot_signature_deconstructedSigs_relative.py: violin plot relative cancer signature from deconstructedSigs by stage
+plot_signature_deconstructSigs_relative.py: violin plot relative cancer signature from deconstructSigs by stage
 """
 import argparse
 import itertools

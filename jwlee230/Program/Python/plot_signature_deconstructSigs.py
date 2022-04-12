@@ -1,5 +1,5 @@
 """
-plot_signature_deconstructedSigs.py: violin plot cancer signature from deconstructedSigs by stage
+plot_signature_deconstructSigs.py: violin plot cancer signature from deconstructSigs by stage
 """
 import argparse
 import itertools

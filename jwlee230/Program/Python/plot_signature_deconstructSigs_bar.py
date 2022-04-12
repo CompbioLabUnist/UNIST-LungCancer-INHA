@@ -1,5 +1,5 @@
 """
-plot_signature_bar.py: Plot signature from deconstructSigs in bar graph
+plot_signature_deconstructSigs_bar.py: Plot signature from deconstructSigs in bar graph
 """
 import argparse
 import itertools
