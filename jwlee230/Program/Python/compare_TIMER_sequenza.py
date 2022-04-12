@@ -3,6 +3,7 @@ compare_TIMER_sequenza.py: Compare TIMER & Sequenza results
 """
 import argparse
 import collections
+import itertools
 import multiprocessing
 import tarfile
 import matplotlib
@@ -24,22 +25,22 @@ def get_data(file_name: str) -> pandas.DataFrame:
     return data
 
 
-def run(cell: str) -> str:
+def run(cell: str, stage: str) -> str:
     title, tool = cell.split("_")
 
-    r, p = scipy.stats.pearsonr(input_data["CNV burden"], input_data[cell])
+    r, p = scipy.stats.pearsonr(input_data.loc[(input_data["Stage"] == stage), "CNV burden"], input_data.loc[(input_data["Stage"] == stage), cell])
 
     try:
-        g = seaborn.jointplot(data=input_data, x="CNV burden", y=cell, kind="reg", height=24, ratio=6)
+        g = seaborn.jointplot(data=input_data.loc[(input_data["Stage"] == stage)], x="CNV burden", y=cell, kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
     except numpy.core._exceptions._ArrayMemoryError:
         return ""
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels("CNV burden", f"Score by {tool}")
-    g.fig.suptitle(title)
+    g.fig.suptitle(f"{title} in {stage} samples")
     g.fig.tight_layout()
 
-    fig_name = cell.replace(" ", "").replace("(", "").replace(")", "").replace("/", "_") + ".pdf"
+    fig_name = cell.replace(" ", "").replace("(", "").replace(")", "").replace("/", "_") + "-" + stage + ".pdf"
     g.savefig(fig_name)
     matplotlib.pyplot.close(g.fig)
 
@@ -78,6 +79,7 @@ if __name__ == "__main__":
     for stage in set(input_data["Stage"]):
         if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
+    stages = sorted(set(input_data["Stage"]))
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
@@ -91,7 +93,7 @@ if __name__ == "__main__":
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = list(filter(None, pool.map(run, cell_types)))
+        tar_files = list(filter(None, pool.starmap(run, itertools.product(cell_types, stages))))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(tar_files):
