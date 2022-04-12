@@ -216,7 +216,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51 
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -3599,7 +3599,7 @@ Output/TIMER/%.ADC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/TIMER/%.estimation_matrix.csv: Output/TIMER/%.csv
-	@echo "You have to manually execute TIMER on http://timer.cistrome.org with $^ CSV file in order to make $@ CSV file!!"
+	@echo "You have to manually execute TIMER on < http://timer.cistrome.org > with $^ CSV file in order to make $@ CSV file!!"
 
 Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -3607,9 +3607,12 @@ Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix
 Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/TIMER-CNV/%.Sequenza-Bowtie2.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER/STAR.FPKM.SQC.csv Output/TIMER/STAR.ADC.csv Output/TIMER/STAR.TPM.ADC.csv Output/TIMER/STAR.FPKM.ADC.csv Output/TIMER/Bowtie2.SQC.csv Output/TIMER/Bowtie2.TPM.SQC.csv Output/TIMER/Bowtie2.FPKM.SQC.csv Output/TIMER/Bowtie2.ADC.csv Output/TIMER/Bowtie2.TPM.ADC.csv Output/TIMER/Bowtie2.FPKM.ADC.csv
 step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
-step48-CNV: Output/TIMER-CNV/STAR.SQC.Sequenza-BWA.tar
+step48-CNV: Output/TIMER-CNV/STAR.SQC.Sequenza-BWA.tar Output/TIMER-CNV/STAR.ADC.Sequenza-BWA.tar Output/TIMER-CNV/Bowtie2.SQC.Sequenza-BWA.tar Output/TIMER-CNV/Bowtie2.ADC.Sequenza-BWA.tar Output/TIMER-CNV/STAR.SQC.Sequenza-Bowtie2.tar Output/TIMER-CNV/STAR.ADC.Sequenza-Bowtie2.tar Output/TIMER-CNV/Bowtie2.SQC.Sequenza-Bowtie2.tar Output/TIMER-CNV/Bowtie2.ADC.Sequenza-Bowtie2.tar
 step48: step48-CSV step48-violin
 .PHONY: step48-CSV step48-violin step48
 
@@ -3714,22 +3717,62 @@ step52:
 .PHONY: step52
 
 # Step 53 (deconstructSigs)
-Output/deconstructSigs:
+Output/deconstructSigs Output/deconstructSigs/Violin Output/deconstructSigs/Bar Output/deconstructSigs/Distribution:
 	mkdir -p $@
 
-Output/deconstructSigs/BWA.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) | Output/deconstructSigs build.log
+Output/deconstructSigs/BWA.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) | Output/deconstructSigs build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Bowtie2.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) | Output/deconstructSigs build.log
+Output/deconstructSigs/Bowtie2.tsv: Python/aggregate_mutect_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) | Output/deconstructSigs build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/deconstructSigs/%.signature.tsv: R/run_deconstructSigs.R Output/deconstructSigs/%.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/deconstructSigs/Violin/%.SQC.Stage.Absolute.tar: Python/plot_signature_deconstructedSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.SQC.Stage.Relative.tar: Python/plot_signature_deconstructedSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Stage.Absolute.tar: Python/plot_signature_deconstructedSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Stage.Relative.tar: Python/plot_signature_deconstructedSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.SQC.Recurrence.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.SQC.Recurrence.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.SQC.Smoking.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.SQC.Smoking.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Recurrence.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Recurrence.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Smoking.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Violin/%.ADC.Smoking.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
 step53-Preparation: Output/deconstructSigs/BWA.tsv Output/deconstructSigs/Bowtie2.tsv
 step53-deconstructSigs: Output/deconstructSigs/BWA.signature.tsv Output/deconstructSigs/Bowtie2.signature.tsv
-step53: step53-Preparation step53-deconstructSigs
-.PHONY: step53-Preparation step53-deconstructSigs step53
+step53-Violin-Stage: Output/deconstructSigs/Violin/BWA.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
+step53-Violin-Recurrence: Output/deconstructSigs/Violin/BWA.SQC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
+step53-Violin-Smoking: Output/deconstructSigs/Violin/BWA.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Relative.tar
+step53-Violin: step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking
+step53: step53-Preparation step53-deconstructSigs step53-Violin
+.PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
