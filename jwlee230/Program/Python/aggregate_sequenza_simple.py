@@ -86,11 +86,11 @@ if __name__ == "__main__":
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
         for index, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
-            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = row[watching]
+            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = 1.0 if (0.8 < row[watching] < 1.2) else row[watching]
 
         for j, stage in enumerate(stage_list):
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
-            proportion = [1 for _ in range(chromosome_data.shape[1])]
+            proportion = [1.0 for _ in range(chromosome_data.shape[1])]
             if stage_sample_list:
                 for k in tqdm.tqdm(range(chromosome_data.shape[1])):
                     proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] >= (1 + args.threshold), stage_sample_list))) / len(stage_sample_list)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
         for j, stage in enumerate(stage_list):
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
-            proportion = [1 for _ in range(chromosome_data.shape[1])]
+            proportion = [1.0 for _ in range(chromosome_data.shape[1])]
             if stage_sample_list:
                 for k in tqdm.tqdm(range(chromosome_data.shape[1])):
                     proportion[k] = len(list(filter(lambda x: chromosome_data.loc[x, k] <= (1 - args.threshold), stage_sample_list))) / len(stage_sample_list)

@@ -43,7 +43,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     weights += list(get_data["weight"] * (get_data["end"] - get_data["start"] + 1))
 
     if a and weights:
-        return numpy.average(a=a, weights=weights)
+        return 1.0 if (0.8 < numpy.average(a=a, weights=weights) < 1.2) else numpy.average(a=a, weights=weights)
     else:
         return 1
 
