@@ -1,5 +1,5 @@
 """
-plot_signature_deconstructedSigs_relative.py: violin plot relative cancer signature from deconstructedSigs by stage
+plot_signature_deconstructedSigs.py: violin plot cancer signature from deconstructedSigs by stage
 """
 import argparse
 import itertools
@@ -26,7 +26,7 @@ def draw_violin(signature: str) -> pandas.DataFrame:
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel("Proportion")
+    matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(signature)
 
     fig_name = "{0}.pdf".format(signature)
@@ -69,9 +69,7 @@ if __name__ == "__main__":
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     input_data.columns = list(map(lambda x: x.replace("Signature.", "SBS"), list(input_data.columns)))
-    signatures = list(input_data.columns)
-    for index in tqdm.tqdm(list(input_data.index)):
-        input_data.loc[index, :] = input_data.loc[index, :] / sum(input_data.loc[index, :])
+    signatures = list(filter(lambda x: len(set(input_data[x])) > 1, list(input_data.columns)))
     print(input_data)
 
     clinical_data = step00.get_clinical_data(args.clinical)

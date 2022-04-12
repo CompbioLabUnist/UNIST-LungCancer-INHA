@@ -3729,48 +3729,62 @@ Output/deconstructSigs/Bowtie2.tsv: Python/aggregate_mutect_deconstructSigs.py $
 Output/deconstructSigs/%.signature.tsv: R/run_deconstructSigs.R Output/deconstructSigs/%.tsv | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Stage.Absolute.tar: Python/plot_signature_deconstructedSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Stage.Absolute.tar: Python/plot_signature_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Stage.Relative.tar: Python/plot_signature_deconstructedSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Stage.Relative.tar: Python/plot_signature_deconstructSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Stage.Absolute.tar: Python/plot_signature_deconstructedSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Stage.Absolute.tar: Python/plot_signature_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Stage.Relative.tar: Python/plot_signature_deconstructedSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Stage.Relative.tar: Python/plot_signature_deconstructSigs_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Recurrence.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Recurrence.Absolute.tar: Python/plot_signature_deconstructSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Recurrence.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Recurrence.Relative.tar: Python/plot_signature_deconstructSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Smoking.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Smoking.Absolute.tar: Python/plot_signature_deconstructSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.SQC.Smoking.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.SQC.Smoking.Relative.tar: Python/plot_signature_deconstructSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Recurrence.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Recurrence.Absolute.tar: Python/plot_signature_deconstructSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Recurrence.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Recurrence.Relative.tar: Python/plot_signature_deconstructSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Smoking.Absolute.tar: Python/plot_signature_deconstructedSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Smoking.Absolute.tar: Python/plot_signature_deconstructSigs_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/deconstructSigs/Violin/%.ADC.Smoking.Relative.tar: Python/plot_signature_deconstructedSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
+Output/deconstructSigs/Violin/%.ADC.Smoking.Relative.tar: Python/plot_signature_deconstructSigs_clinical_relative.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Bar/%.SQC.Absolute.pdf: Python/plot_signature_deconstructSigs_bar.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Bar/%.SQC.Relative.pdf: Python/plot_signature_deconstructSigs_bar.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Bar/%.ADC.Absolute.pdf: Python/plot_signature_deconstructSigs_bar.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Bar/%.ADC.Relative.pdf: Python/plot_signature_deconstructSigs_bar.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
 
 step53-Preparation: Output/deconstructSigs/BWA.tsv Output/deconstructSigs/Bowtie2.tsv
 step53-deconstructSigs: Output/deconstructSigs/BWA.signature.tsv Output/deconstructSigs/Bowtie2.signature.tsv
 step53-Violin-Stage: Output/deconstructSigs/Violin/BWA.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
 step53-Violin-Recurrence: Output/deconstructSigs/Violin/BWA.SQC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
 step53-Violin-Smoking: Output/deconstructSigs/Violin/BWA.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Relative.tar
+step53-Bar: Output/deconstructSigs/Bar/BWA.SQC.Absolute.pdf Output/deconstructSigs/Bar/BWA.SQC.Relative.pdf Output/deconstructSigs/Bar/BWA.ADC.Absolute.pdf Output/deconstructSigs/Bar/BWA.ADC.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Relative.pdf
 step53-Violin: step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking
+step53-Bar
 step53: step53-Preparation step53-deconstructSigs step53-Violin
 .PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53
 
