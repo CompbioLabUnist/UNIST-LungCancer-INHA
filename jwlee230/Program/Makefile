@@ -216,7 +216,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 steep48 step49 step50 step51 step52 step53
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -3485,7 +3485,7 @@ Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar: Python/compare_OS_signatu
 step45-VDT: Output/Clinical_vs_Signature/BWA-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-VDT_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-VDT_Indel.tar
 step45-RFS: Output/Clinical_vs_Signature/BWA-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-RFS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-RFS_Indel.tar
 step45-OS: Output/Clinical_vs_Signature/BWA-SQC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_SBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-ADC-OS_DBS.tar Output/Clinical_vs_Signature/BWA-SQC-OS_Indel.tar Output/Clinical_vs_Signature/BWA-ADC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_SBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_DBS.tar Output/Clinical_vs_Signature/Bowtie2-SQC-OS_Indel.tar Output/Clinical_vs_Signature/Bowtie2-ADC-OS_Indel.tar
-step45: step45-VDT step45-RFS step45-OS step45
+step45: step45-VDT step45-RFS step45-OS
 .PHONY: step45-VDT step45-RFS step45-OS step45
 
 # Step 46 (Deconvolution & Copy Number Variations)
