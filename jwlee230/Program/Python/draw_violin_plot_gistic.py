@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
-import scipy
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -25,10 +25,15 @@ def run(gene: str) -> typing.Tuple[str, float]:
 
     gene_name, cytoband = gene.split(";")
 
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
+    except ValueError:
+        _, p = 0.0, 1.0
+
     seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, palette=stage_palette)
     statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-    matplotlib.pyplot.title("{0} in {1}".format(gene_name, cytoband))
+    matplotlib.pyplot.title(f"{gene_name} in {cytoband}: K.W. p={p:.3f}")
     matplotlib.pyplot.ylabel("Segment Mean")
     matplotlib.pyplot.tight_layout()
 
@@ -36,12 +41,7 @@ def run(gene: str) -> typing.Tuple[str, float]:
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
-    final_p = 1.0
-    for stage_a, stage_b in zip(stage_order, stage_order[1:]):
-        stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage_a), gene], input_data.loc[(input_data["Stage"] == stage_b), gene])
-        final_p = min(final_p, p)
-
-    return (fig_name, final_p)
+    return (fig_name, p)
 
 
 if __name__ == "__main__":

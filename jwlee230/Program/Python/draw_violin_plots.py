@@ -20,7 +20,10 @@ ylabel = ""
 def run(gene: str) -> str:
     stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
 
-    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in stage_order])
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
+    except ValueError:
+        stat, p = 0., 1.0
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 

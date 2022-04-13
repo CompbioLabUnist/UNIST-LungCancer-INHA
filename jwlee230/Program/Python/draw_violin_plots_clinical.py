@@ -6,7 +6,7 @@ import tarfile
 import matplotlib
 import matplotlib.pyplot
 import pandas
-import scipy.stat
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -80,7 +80,10 @@ if __name__ == "__main__":
     figures = list()
 
     for gene in tqdm.tqdm(gene_set):
-        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene])
+        try:
+            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
+        except ValueError:
+            stat, p = 0.0, 1.0
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 

@@ -13,20 +13,23 @@ import seaborn
 import statannotations.Annotator
 import step00
 
-cibersort_data = pandas.DataFrame()
+input_data = pandas.DataFrame()
 
 
 def run(cell: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    tmp = set(cibersort_data["Stage"])
+    tmp = set(input_data["Stage"])
     order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
-    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
+    except ValueError:
+        _, p = 0.0, 1.0
 
-    seaborn.violinplot(data=cibersort_data, x="Stage", y=cell, order=order, palette=palette)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=cibersort_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette)
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"{cell}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel("Proportion")
@@ -57,15 +60,15 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    cibersort_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
-    cibersort_data["Stage"] = list(map(step00.get_long_sample_type, list(cibersort_data.index)))
-    for stage in set(cibersort_data["Stage"]):
-        if len(cibersort_data.loc[(cibersort_data["Stage"] == stage)]) < 3:
-            cibersort_data = cibersort_data.loc[~(cibersort_data["Stage"] == stage)]
-    print(cibersort_data)
+    input_data = pandas.read_csv(args.cibersort, sep="\t", index_col="Mixture")
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    for stage in set(input_data["Stage"]):
+        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
+            input_data = input_data.loc[~(input_data["Stage"] == stage)]
+    print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        tar_files = sorted(pool.map(run, list(cibersort_data.columns)[:-1]))
+        tar_files = sorted(pool.map(run, list(input_data.columns)[:-1]))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tar_files:

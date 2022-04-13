@@ -43,7 +43,10 @@ if __name__ == "__main__":
     order = list(filter(lambda x: x in stage_list, step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
-    stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), "T cell density"] for stage in order])
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), "T cell density"] for stage in order])
+    except ValueError:
+        stat, p = 0.0, 1.0
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 

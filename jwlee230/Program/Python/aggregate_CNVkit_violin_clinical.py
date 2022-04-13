@@ -9,12 +9,13 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
 import step00
 
-watching = "log2"
+watching = "exp"
 band_data = pandas.DataFrame()
 
 
@@ -124,11 +125,17 @@ if __name__ == "__main__":
         drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
         drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
+        try:
+            stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data["Stage"] == stage) & (drawing_data[args.compare[0]] == clinical), watching] for stage, clinical in itertools.product(drawing_stage_list, args.compare[1:])])
+        except ValueError:
+            stat, p = 0.0, 1.0
+
         seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, hue=args.compare[0], hue_order=args.compare[1:], ax=axs[i // ncols][i % ncols])
         statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        axs[i // ncols][i % ncols].set_title(chromosome)
+        axs[i // ncols][i % ncols].set_title(f"{chromosome}: K.W. p={p:.3f}")
         axs[i // ncols][i % ncols].set_xlabel("")
+        axs[i // ncols][i % ncols].set_ylabel("Ratio")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)

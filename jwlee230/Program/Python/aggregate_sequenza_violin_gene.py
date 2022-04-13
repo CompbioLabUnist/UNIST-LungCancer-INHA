@@ -9,6 +9,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -148,11 +149,17 @@ if __name__ == "__main__":
         drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
         drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
+        try:
+            stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data["Stage"] == stage), watching] for stage in drawing_stage_list])
+        except ValueError:
+            stat, p = 0.0, 1.0
+
         seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, ax=ax)
         statannotations.Annotator.Annotator(ax, list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.title(gene)
+        matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.xlabel("")
+        matplotlib.pyplot.ylabel("Ratio")
 
         matplotlib.pyplot.tight_layout()
         figures.append("{0}.pdf".format(gene))
