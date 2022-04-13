@@ -10,6 +10,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import skbio
 import statannotations.Annotator
@@ -38,9 +39,15 @@ def get_alpha(alpha: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
+    try:
+        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Stage"] == stage), alpha] for stage in order])
+    except ValueError:
+        _, p = 0.0, 1.0
+
     seaborn.violinplot(data=output_data, x="Stage", y=alpha, order=order, palette=step00.stage_color_code, ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=output_data, x="Stage", y=alpha, order=order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
+    matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     figname = f"{alpha}.pdf"
