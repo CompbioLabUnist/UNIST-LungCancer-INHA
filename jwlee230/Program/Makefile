@@ -3838,10 +3838,22 @@ Output/deconstructSigs/Bar/%.ADC.Smoking.Absolute.pdf: Python/plot_signature_dec
 Output/deconstructSigs/Bar/%.ADC.Smoking.Relative.pdf: Python/plot_signature_deconstructSigs_bar_subtype_clinical.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Bar build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --compare "Smoking-Detail" "Never" "Ex" "Current"  1> $@.stdout 2> $@.stderr
 
+Output/deconstructSigs/Distribution/%.SQC.Absolute.pdf: Python/plot_signature_distribution_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Distribution/%.SQC.Relative.pdf: Python/plot_signature_distribution_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdour 2> $@.stderr
+
+Output/deconstructSigs/Distribution/%.ADC.Absolute.pdf: Python/plot_signature_distribution_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/deconstructSigs/Distribution/%.ADC.Relative.pdf: Python/plot_signature_distribution_deconstructSigs.py Output/deconstructSigs/%.signature.tsv $(CLINICAL_DATA_CSV) | Output/deconstructSigs/Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdour 2> $@.stderr
+
 step53-Preparation: Output/deconstructSigs/BWA.tsv Output/deconstructSigs/Bowtie2.tsv
 step53-deconstructSigs: Output/deconstructSigs/BWA.signature.tsv Output/deconstructSigs/Bowtie2.signature.tsv
 step53-Violin-Stage: Output/deconstructSigs/Violin/BWA.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
-step53-Violin-Recurrence: Output/deconstructSigs/Violin/BWA.SQC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Stage.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Stage.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Stage.Relative.tar
+step53-Violin-Recurrence: Output/deconstructSigs/Violin/BWA.SQC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Recurrence.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Recurrence.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Recurrence.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Recurrence.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Recurrence.Relative.tar
 step53-Violin-Smoking: Output/deconstructSigs/Violin/BWA.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.SQC.Smoking.Relative.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Absolute.tar Output/deconstructSigs/Violin/BWA.ADC.Smoking.Relative.tar Output/deconstructSigs/Violin/Bowtie2.ADC.Smoking.Relative.tar
 step53-Bar-All: Output/deconstructSigs/Bar/BWA.SQC.Absolute.pdf Output/deconstructSigs/Bar/BWA.SQC.Relative.pdf Output/deconstructSigs/Bar/BWA.ADC.Absolute.pdf Output/deconstructSigs/Bar/BWA.ADC.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Relative.pdf
 step53-Bar-Subtype: Output/deconstructSigs/Bar/BWA.SQC.Subtype.Absolute.pdf Output/deconstructSigs/Bar/BWA.SQC.Subtype.Relative.pdf Output/deconstructSigs/Bar/BWA.ADC.Subtype.Absolute.pdf Output/deconstructSigs/Bar/BWA.ADC.Subtype.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Subtype.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Subtype.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Subtype.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Subtype.Relative.pdf
@@ -3849,8 +3861,9 @@ step53-Bar-Recurrence: Output/deconstructSigs/Bar/BWA.SQC.Recurrence.Absolute.pd
 step53-Bar-Smoking: Output/deconstructSigs/Bar/BWA.SQC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/BWA.SQC.Smoking.Relative.pdf Output/deconstructSigs/Bar/BWA.ADC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/BWA.ADC.Smoking.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.SQC.Smoking.Relative.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Smoking.Absolute.pdf Output/deconstructSigs/Bar/Bowtie2.ADC.Smoking.Relative.pdf
 step53-Violin: step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking
 step53-Bar: step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking
-step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar
-.PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking step53-Bar step53
+step53-Distribution: Output/deconstructSigs/Distribution/BWA.SQC.Absolute.pdf Output/deconstructSigs/Distribution/BWA.SQC.Relative.pdf Output/deconstructSigs/Distribution/BWA.ADC.Absolute.pdf Output/deconstructSigs/Distribution/BWA.ADC.Relative.pdf Output/deconstructSigs/Distribution/Bowtie2.SQC.Absolute.pdf Output/deconstructSigs/Distribution/Bowtie2.SQC.Relative.pdf Output/deconstructSigs/Distribution/Bowtie2.ADC.Absolute.pdf Output/deconstructSigs/Distribution/Bowtie2.ADC.Relative.pdf
+step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar step53-Distribution
+.PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking step53-Bar step53-Distribution step53
 
 # Step 54 (Mutational Shared Porportion distribution)
 
