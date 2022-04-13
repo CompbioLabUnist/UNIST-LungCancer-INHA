@@ -3586,52 +3586,52 @@ step46: step46-MuSiC-Sequenza step46-BisqueRNA-Sequenza step46-SCDC-Sequenza
 Output/Clinical_vs_KM-Plot:
 	mkdir -p $@
 
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --cutting --mean 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting --median 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
+Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --cutting --mean 1> $@.stdout 2> $@.stderr
 
 step47-SQC: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.cutting.tar
@@ -3895,7 +3895,34 @@ step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar step5
 Output/Clinical_Distribution:
 	mkdir -p $@
 
-step54: 
+Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.SQC-Stage.SharedProportion.pdf: Python/draw_distribution_SharedProportion_stage.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.ADC-Stage.SharedProportion.pdf: Python/draw_distribution_SharedProportion_stage.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.SQC-Stage.SharedProportion.pdf: Python/draw_distribution_SharedProportion_stage.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.ADC-Stage.SharedProportion.pdf: Python/draw_distribution_SharedProportion_stage.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step54-SQC: Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.pdf Output/Clinical_Distribution/BWA.SQC-Stage.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.SQC-Stage.SharedProportion.pdf
+step54-ADC: Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.pdf Output/Clinical_Distribution/BWA.ADC-Stage.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.ADC-Stage.SharedProportion.pdf
+step54: step54-SQC step54-ADC
+.PHONY: step54-SQC step54-ADC step43
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
