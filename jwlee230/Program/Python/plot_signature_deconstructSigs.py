@@ -21,13 +21,18 @@ order: typing.List[str] = list()
 
 
 def draw_violin(signature: str) -> pandas.DataFrame:
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), signature] for stage in order])
+    except ValueError:
+        _, p = 0.0, 1.0
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
-    matplotlib.pyplot.title(signature)
+    matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
 
     fig_name = "{0}.pdf".format(signature)
     fig.savefig(os.path.join(step00.tmpfs, fig_name))

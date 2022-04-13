@@ -1,5 +1,5 @@
 """
-plot_signature_distribution.py: plot signature distribution
+plot_signature_distribution.py: plot signature distribution from SigProfiler
 """
 import argparse
 import matplotlib
