@@ -36,6 +36,10 @@ if __name__ == "__main__":
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group_subtype.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
+    group_divide = parser.add_mutually_exclusive_group(required=True)
+    group_divide.add_argument("--median", help="Divide as median", action="store_true", default=False)
+    group_divide.add_argument("--mean", help="Divide as mean", action="store_true", default=False)
+
     args = parser.parse_args()
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
@@ -92,9 +96,16 @@ if __name__ == "__main__":
             clinical_data[column] = list(map(lambda x: threshold if (x > threshold) else x, clinical_data[column]))
     print(clinical_data)
 
-    median = numpy.median(clinical_data["Shared Proportion"])
-    lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < median]
-    higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= median]
+    if args.median:
+        median = numpy.median(clinical_data["Shared Proportion"])
+        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < median]
+        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= median]
+    elif args.mean:
+        mean = numpy.mean(clinical_data["Shared Proportion"])
+        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < mean]
+        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= mean]
+    else:
+        raise Exception("Something went wrong!!")
     print(lower_data)
     print(higher_data)
 
@@ -109,10 +120,10 @@ if __name__ == "__main__":
 
         kmf = lifelines.KaplanMeierFitter()
 
-        kmf.fit(lower_data[column], label="Lower Shared Proportion")
+        kmf.fit(lower_data[column], label=f"Lower Shared Proportion ({len(lower_data)} samples)")
         kmf.plot(ax=ax, ci_show=False, c="tab:blue")
 
-        kmf.fit(higher_data[column], label="Higher Shared Proportion")
+        kmf.fit(higher_data[column], label=f"Higher Shared Proportion ({len(higher_data)} samples)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
         p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column]).p_value
