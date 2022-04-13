@@ -14,6 +14,7 @@ import tqdm
 import step00
 
 wanted_columns = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
+signature_data = pandas.DataFrame()
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
