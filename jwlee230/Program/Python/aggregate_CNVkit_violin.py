@@ -85,7 +85,7 @@ if __name__ == "__main__":
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
         input_data["arm"] = pool.starmap(query_band, input_data[["chromosome", "start", "end"]].itertuples(index=False, name=None))
     input_data["length"] = input_data["end"] - input_data["start"] + 1
-    input_data["exp"] = numpy.power(2, input_data[watching])
+    input_data[watching] = numpy.power(2, input_data["log2"])
     input_data = input_data.explode(column="arm", ignore_index=True).dropna(axis="index", subset=["arm"])
     input_data["chrom-arm"] = list(map(lambda x: "-".join(x), input_data[["chromosome", "arm"]].itertuples(index=False, name=None)))
     print(input_data)

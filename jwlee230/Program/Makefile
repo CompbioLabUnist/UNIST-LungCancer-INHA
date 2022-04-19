@@ -1623,7 +1623,7 @@ Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | b
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/SCDC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/SCDC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2 $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step30-SCDC: Output/SCDC/Bowtie2.SQC.GSE131907.tsv Output/SCDC/Bowtie2.ADC.GSE131907.tsv Output/SCDC/STAR.SQC.GSE131907.tsv Output/SCDC/STAR.ADC.GSE131907.tsv Output/SCDC/Bowtie2.SQC.GSE162498.tsv Output/SCDC/Bowtie2.ADC.GSE162498.tsv Output/SCDC/STAR.SQC.GSE162498.tsv Output/SCDC/STAR.ADC.GSE162498.tsv
 step30-heatmap: Output/SCDC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/SCDC/STAR.SQC.GSE131907.heatmap.pdf Output/SCDC/STAR.ADC.GSE131907.heatmap.pdf Output/SCDC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/SCDC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/SCDC/STAR.SQC.GSE162498.heatmap.pdf Output/SCDC/STAR.ADC.GSE162498.heatmap.pdf
@@ -3925,6 +3925,14 @@ Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar: Python
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step55: Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar
+.PHONY: step55
+
+# Step 56 (Mutation intersection & Gene)
+Output/MutationIntersection:
+	mkdir -p $@
+
+Output/MutationIntersection/BWA.SQC.Median.pdf: Python/compare_mutation_shared_proportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS)
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
