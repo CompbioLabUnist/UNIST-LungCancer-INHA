@@ -120,10 +120,10 @@ if __name__ == "__main__":
 
         kmf = lifelines.KaplanMeierFitter()
 
-        kmf.fit(lower_data[column], label=f"Lower Shared Proportion ({len(lower_data)} samples)")
+        kmf.fit(lower_data[column], label=f"Lower Shared Proportion ({len(lower_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:blue")
 
-        kmf.fit(higher_data[column], label=f"Higher Shared Proportion ({len(higher_data)} samples)")
+        kmf.fit(higher_data[column], label=f"Higher Shared Proportion ({len(higher_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
         p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column]).p_value
