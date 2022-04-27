@@ -90,7 +90,7 @@ if __name__ == "__main__":
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
         input_data["arm"] = pool.starmap(query_band, input_data[["chromosome", "start", "end"]].itertuples(index=False, name=None))
     input_data["length"] = input_data["end"] - input_data["start"] + 1
-    input_data["exp"] = numpy.power(2, input_data[watching])
+    input_data[watching] = numpy.power(2, input_data["log2"])
     input_data = input_data.explode(column="arm", ignore_index=True).dropna(axis="index", subset=["arm"])
     input_data["chrom-arm"] = list(map(lambda x: "-".join(x), input_data[["chromosome", "arm"]].itertuples(index=False, name=None)))
     print(input_data)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     for i, chromosome in tqdm.tqdm(list(enumerate(chromosome_list))):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
-        drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
+        drawing_stage_list = list(filter(lambda x: (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[1]), "Stage"])) and (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[2]), "Stage"])), stage_list))
         drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
         try:
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             stat, p = 0.0, 1.0
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, hue=args.compare[0], hue_order=args.compare[1:], ax=axs[i // ncols][i % ncols])
-        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], list(((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         axs[i // ncols][i % ncols].set_title(f"{chromosome}: K.W. p={p:.3f}")
         axs[i // ncols][i % ncols].set_xlabel("")
