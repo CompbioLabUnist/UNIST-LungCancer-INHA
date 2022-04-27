@@ -14,7 +14,7 @@ big = 10 ** 6
 small = 10 ** 3
 WES_length = 36995809
 
-matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Sans", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200}
+matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Arial", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200, "pdf.fonttype": 42, "ps.fonttype": 42}
 
 long_sample_type_dict = {"N": "Normal", "C": "CIS+AIS", "A": "AAH", "P": "Primary", "D": "Dysplasia", "M": "MIA"}
 long_sample_type_list = ["Normal", "Dysplasia", "AAH", "CIS+AIS", "MIA", "Primary"]
