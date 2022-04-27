@@ -62,7 +62,7 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     patients = set(clinical_data.index)
-    print(patients)
+    print(len(patients))
 
     args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
     with multiprocessing.Pool(args.cpus) as pool:
@@ -73,6 +73,7 @@ if __name__ == "__main__":
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
+    print(len(patients))
 
     clinical_data["Shared Proportion"] = 0.0
     for patient in tqdm.tqdm(patients):

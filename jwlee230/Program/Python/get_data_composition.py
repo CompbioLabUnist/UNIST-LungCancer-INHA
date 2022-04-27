@@ -25,6 +25,10 @@ if __name__ == "__main__":
     print(sorted(clinical_data.columns))
     print(clinical_data)
 
+    patients = list(map(step00.get_patient, args.input))
+    print(clinical_data.loc[(clinical_data.index.isin(patients)) & (clinical_data["Histology"] == "SQC")])
+    print(clinical_data.loc[(clinical_data.index.isin(patients)) & (clinical_data["Histology"] == "ADC")])
+
     output_data = pandas.DataFrame(columns=["Cancer Subtype", "Stage", "Number of Samples"], data=itertools.product(["LUSC", "LUAD"], step00.long_sample_type_list + ["Total"], [None])).set_index(keys=["Cancer Subtype", "Stage"], verify_integrity=True)
     print(output_data)
 
