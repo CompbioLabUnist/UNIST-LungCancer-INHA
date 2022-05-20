@@ -52,7 +52,6 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
 
     clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
-    clinical_data = clinical_data.loc[~(clinical_data["Volume_Doubling_Time"].isna())]
     print(clinical_data)
 
     if args.SQC:
@@ -80,7 +79,8 @@ if __name__ == "__main__":
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
         stage_set = set(patient_data["Stage"])
-        assert "Primary" in stage_set
+        if "Primary" not in stage_set:
+            continue
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
         for stage in stage_set:
