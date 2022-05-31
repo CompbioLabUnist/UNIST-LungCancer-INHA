@@ -14,7 +14,6 @@ import step00
 
 wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 watching = "Hugo_Symbol"
-threshold = 20
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
@@ -28,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--threshold", help="Threshold to use", type=int, default=20)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -47,9 +47,10 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif args.threshold <= 5:
+        raise ValueError("Threshold must be greater than 5!!")
 
     clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
-    clinical_data = clinical_data.loc[~(clinical_data["Volume_Doubling_Time"].isna())]
     print(clinical_data)
 
     if args.SQC:
@@ -99,8 +100,8 @@ if __name__ == "__main__":
     lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] < cutting)]
     higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] >= cutting)]
 
-    lower_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(lower_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=wanted_columns + ["Tumor_Sample_Barcode"]).loc[:, wanted_columns].itertuples(index=False, name=None))
-    higher_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(higher_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=wanted_columns + ["Tumor_Sample_Barcode"]).loc[:, wanted_columns].itertuples(index=False, name=None))
+    lower_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(lower_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=wanted_columns + ["Tumor_Sample_Barcode"]).loc[:, "Hugo_Symbol"])
+    higher_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(higher_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=wanted_columns + ["Tumor_Sample_Barcode"]).loc[:, "Hugo_Symbol"])
     total_genes = lower_genes + higher_genes
 
     lower_gene_names = set(lower_genes.keys())
@@ -115,27 +116,27 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(figsize=(32, 48), nrows=3, sharey=True)
 
-    genes = sorted(set(lower_gene_names) & set(higher_gene_names), key=lambda x: numpy.mean(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:threshold]
-    tmp_data = output_data.loc[(output_data["Gene"].isin(genes))]
+    genes = sorted(set(lower_gene_names) & set(higher_gene_names), key=lambda x: numpy.mean(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
+    tmp_data = output_data.loc[(output_data["Gene"].isin(genes))].sort_values(by="Count", ascending=False)
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", order=genes, hue="Lower/Higher", ci=None, palette={"Lower": "tab:cyan", "Higher": "tab:red"}, ax=axs[0])
     axs[0].set_title(f"Both {len(clinical_data)} patients")
-    axs[0].set_xticklabels(list(map(lambda x: x[0], genes)), rotation="vertical")
+    axs[0].set_xticklabels(genes, rotation="vertical")
     axs[0].set_xlabel("")
 
     genes = sorted(set(lower_gene_names) - set(higher_gene_names))
     print(len(genes))
-    tmp_data = output_data.loc[(output_data["Gene"].isin(genes)) & (output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:threshold, :]
+    tmp_data = output_data.loc[(output_data["Gene"].isin(genes)) & (output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:cyan", ci=None, ax=axs[1])
     axs[1].set_title(f"Lower {len(lower_data)} patients")
-    axs[1].set_xticklabels(list(map(lambda x: x[0], tmp_data["Gene"])), rotation="vertical")
+    axs[1].set_xticklabels(tmp_data["Gene"], rotation="vertical")
     axs[1].set_xlabel("")
 
     genes = sorted(set(higher_gene_names) - set(lower_gene_names))
     print(len(genes))
-    tmp_data = output_data.loc[(output_data["Gene"].isin(genes)) & (output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:threshold, :]
+    tmp_data = output_data.loc[(output_data["Gene"].isin(genes)) & (output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:red", ci=None, ax=axs[2])
     axs[2].set_title(f"Higher {len(higher_data)} patients")
-    axs[2].set_xticklabels(list(map(lambda x: x[0], tmp_data["Gene"])), rotation="vertical")
+    axs[2].set_xticklabels(tmp_data["Gene"], rotation="vertical")
     axs[2].set_xlabel("")
 
     matplotlib.pyplot.tight_layout()
