@@ -3,6 +3,7 @@ aggregate_sequenza_genome.py: Aggregate sequenza results as genome view
 """
 import argparse
 import multiprocessing
+import typing
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -70,6 +71,23 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
 
     sample_list = list(map(lambda x: x.split("/")[-2], args.input))
+    input_list = list()
+
+    if args.patient:
+        patient_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in patients}
+        for sample in tqdm.tqdm(sample_list):
+            patient_dict[step00.get_patient(sample)].append(sample)
+        input_list = list(filter(None, list(patient_dict.values())))
+    elif args.type:
+        stage_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in step00.long_sample_type_list}
+        for sample in tqdm.tqdm(sample_list):
+            stage_dict[step00.get_long_sample_type(sample)].append(sample)
+        input_list = list(filter(None, list(stage_dict.values())))
+    else:
+        raise Exception("Something went wrong!!")
+
+    print(list(map(len, input_list)))
+    print(input_list)
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
@@ -90,19 +108,19 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list) + 16), gridspec_kw={"height_ratios": [8, len(sample_list), 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=2 + len(input_list), ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list) + 16), gridspec_kw={"height_ratios": [8, *list(map(len, input_list)), 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
 
         for index, row in tqdm.tqdm(input_data.loc[(input_data["chromosome"] == chromosome)].iterrows()):
-            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = 1.0 if (0.8 < row[watching] < 1.2) else row[watching]
+            chromosome_data.loc[row["sample"], row["start.pos"] // step00.big:row["end.pos"] // step00.big] = 1.0 if ((1 - args.threshold) < row[watching] < (1 + args.threshold)) else row[watching]
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
             proportion = [1.0 for _ in range(chromosome_data.shape[1])]
 
-            for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+            for j in tqdm.trange(chromosome_data.shape[1]):
                 proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] >= (1 + args.threshold), stage_sample_list))) / len(stage_sample_list)
 
             axs[0][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
@@ -115,26 +133,26 @@ if __name__ == "__main__":
             axs[0][i].set_ylabel("Proportion")
             axs[0][i].legend(loc="upper center")
 
-        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
-        axs[1][i].set_xlabel(chromosome[3:])
+        for j, samples in tqdm.tqdm(enumerate(input_list)):
+            seaborn.heatmap(data=chromosome_data.loc[samples, :], vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[j + 1][i])
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
             proportion = [1.0 for _ in range(chromosome_data.shape[1])]
 
-            for j in tqdm.tqdm(range(chromosome_data.shape[1])):
+            for j in tqdm.trange(chromosome_data.shape[1]):
                 proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), stage_sample_list))) / len(stage_sample_list)
 
-            axs[2][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
+            axs[-1][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
 
-        axs[2][i].set_ylim(bottom=0, top=1)
-        axs[2][i].invert_yaxis()
-        axs[2][i].set_xticks([])
-        axs[2][i].set_xlabel(chromosome[3:])
+        axs[-1][i].set_ylim(bottom=0, top=1)
+        axs[-1][i].invert_yaxis()
+        axs[-1][i].set_xticks([])
+        axs[-1][i].set_xlabel(chromosome[3:])
 
         if i == 0:
-            axs[2][i].set_ylabel("Proportion")
-            axs[2][i].legend(loc="lower center")
+            axs[-1][i].set_ylabel("Proportion")
+            axs[-1][i].legend(loc="lower center")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output + ".pdf")

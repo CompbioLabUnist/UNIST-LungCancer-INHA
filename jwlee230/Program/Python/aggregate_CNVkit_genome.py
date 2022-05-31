@@ -3,6 +3,7 @@ aggregate_CNVkit_genome.py: Aggregate CNVkit results as genome view
 """
 import argparse
 import multiprocessing
+import typing
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -13,6 +14,7 @@ import step00
 
 input_data = pandas.DataFrame()
 watching = "log2"
+threshold = 0.2
 
 
 def get_data(file_name: str) -> pandas.DataFrame:
@@ -44,7 +46,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     weights += list(get_data["weight"] * (get_data["end"] - get_data["start"] + 1))
 
     if a and weights:
-        return 1.0 if (0.8 < numpy.average(a=a, weights=weights) < 1.2) else numpy.average(a=a, weights=weights)
+        return 1.0 if ((1 - threshold) < numpy.average(a=a, weights=weights) < (1 + threshold)) else numpy.average(a=a, weights=weights)
     else:
         return 1
 
@@ -78,8 +80,28 @@ if __name__ == "__main__":
     elif not (0 < args.threshold < 1):
         raise ValueError("Threshold must be (0, 1)")
 
+    threshold = args.threshold
+
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
+
+    input_list = list()
+
+    if args.patient:
+        patient_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in patients}
+        for sample in tqdm.tqdm(sample_list):
+            patient_dict[step00.get_patient(sample)].append(sample)
+        input_list = list(filter(None, list(patient_dict.values())))
+    elif args.type:
+        stage_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in step00.long_sample_type_list}
+        for sample in tqdm.tqdm(sample_list):
+            stage_dict[step00.get_long_sample_type(sample)].append(sample)
+        input_list = list(filter(None, list(stage_dict.values())))
+    else:
+        raise Exception("Something went wrong!!")
+
+    print(list(map(len, input_list)))
+    print(input_list)
 
     if args.SQC:
         patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
@@ -120,7 +142,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=3, ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list) + 16), gridspec_kw={"height_ratios": [8, len(sample_list), 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=2 + len(input_list), ncols=len(chromosome_list), sharex="col", sharey="row", figsize=(len(chromosome_list) * 4, len(sample_list) + 16), gridspec_kw={"height_ratios": [8, *list(map(len, input_list)), 8], "width_ratios": list(map(lambda x: x / step00.big, size_data.loc[chromosome_list, "length"]))})
 
     for i, chromosome in enumerate(chromosome_list):
         chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(sample_list), size_data.loc[chromosome, "length"] // step00.big)), index=sample_list, dtype=float)
@@ -144,8 +166,8 @@ if __name__ == "__main__":
             axs[0][i].set_ylabel("Proportion")
             axs[0][i].legend(loc="upper center")
 
-        seaborn.heatmap(data=chromosome_data, vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[1][i])
-        axs[1][i].set_xlabel(chromosome[3:])
+        for j, samples in tqdm.tqdm(enumerate(input_list)):
+            seaborn.heatmap(data=chromosome_data.loc[samples, :], vmin=0, center=1, vmax=2, cmap="coolwarm", cbar=False, xticklabels=False, yticklabels=True, ax=axs[j + 1][i])
 
         for stage in stage_list:
             stage_sample_list = list(filter(lambda x: step00.get_long_sample_type(x) == stage, sample_list))
