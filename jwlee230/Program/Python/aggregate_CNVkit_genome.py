@@ -85,24 +85,6 @@ if __name__ == "__main__":
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
 
-    input_list = list()
-
-    if args.patient:
-        patient_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in patients}
-        for sample in tqdm.tqdm(sample_list):
-            patient_dict[step00.get_patient(sample)].append(sample)
-        input_list = list(filter(None, list(patient_dict.values())))
-    elif args.type:
-        stage_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in step00.long_sample_type_list}
-        for sample in tqdm.tqdm(sample_list):
-            stage_dict[step00.get_long_sample_type(sample)].append(sample)
-        input_list = list(filter(None, list(stage_dict.values())))
-    else:
-        raise Exception("Something went wrong!!")
-
-    print(list(map(len, input_list)))
-    print(input_list)
-
     if args.SQC:
         patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
     elif args.ADC:
@@ -122,6 +104,24 @@ if __name__ == "__main__":
 
     sample_list = list(map(step00.get_id, args.input))
     print(len(sample_list), sample_list)
+
+    input_list = list()
+
+    if args.patient:
+        patient_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in patients}
+        for sample in tqdm.tqdm(sample_list):
+            patient_dict[step00.get_patient(sample)].append(sample)
+        input_list = list(filter(None, list(patient_dict.values())))
+    elif args.type:
+        stage_dict: typing.Dict[str, typing.List[str]] = {x: [] for x in step00.long_sample_type_list}
+        for sample in tqdm.tqdm(sample_list):
+            stage_dict[step00.get_long_sample_type(sample)].append(sample)
+        input_list = list(filter(None, list(stage_dict.values())))
+    else:
+        raise Exception("Something went wrong!!")
+
+    print(list(map(len, input_list)))
+    print(input_list)
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
