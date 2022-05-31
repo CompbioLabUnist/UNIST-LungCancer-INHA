@@ -44,7 +44,7 @@ def get_alpha(alpha: str) -> str:
     except ValueError:
         _, p = 0.0, 1.0
 
-    seaborn.violinplot(data=output_data, x="Stage", y=alpha, order=order, palette=step00.stage_color_code, cut=1, ax=ax)
+    seaborn.violinplot(data=output_data, x="Stage", y=alpha, order=order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=output_data, x="Stage", y=alpha, order=order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
