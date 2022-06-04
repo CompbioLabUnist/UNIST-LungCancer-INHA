@@ -24,7 +24,7 @@ RUN conda create -n pyclone -c bioconda -c conda-forge pyclone
 
 # Samtools
 ADD Tools/samtools.tar.bz2 /Tools/
-RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install
+RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install && unlink /Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64/libcurl.so.4
 ENV PATH=/Tools/samtools-1.10:$PATH
 
 # GATK
