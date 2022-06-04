@@ -24,7 +24,7 @@ RUN conda create -n pyclone -c bioconda -c conda-forge pyclone
 
 # Samtools
 ADD Tools/samtools.tar.bz2 /Tools/
-RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install && unlink /Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64/libcurl.so.4
+RUN cd /Tools/samtools-1.11 && autoheader && autoconf -Wno-syntax && ./configure && make -j && make -j install
 ENV PATH=/Tools/samtools-1.10:$PATH
 
 # GATK
@@ -123,7 +123,7 @@ RUN conda install -c bioconda -c conda-forge mobster
 # Gistic
 ADD Tools/Gistic.tar.gz /Tools/
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
-RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig
+RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig && unlink /Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64/libcurl.so.4
 
 # MiXCR
 ADD Tools/MiXCR.zip /Tools/
