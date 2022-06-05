@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 10
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -216,7 +216,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56
+latest: step01 step02 step03 step04 step05 step06 step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -3959,6 +3959,55 @@ step56-BWA: Output/MutationIntersection/BWA.SQC.Median.pdf Output/MutationInters
 step56-Bowtie2: Output/MutationIntersection/Bowtie2.SQC.Median.pdf Output/MutationIntersection/Bowtie2.SQC.Mean.pdf Output/MutationIntersection/Bowtie2.ADC.Median.pdf Output/MutationIntersection/Bowtie2.ADC.Mean.pdf
 step56: step56-BWA step56-Bowtie2
 .PHONY: step56-BWA step56-Bowtie2 step56
+
+# Step 57 (Ready to Pathseq)
+Output/Pathseq/Reference Output/Pathseq/WES/BWA Output/Pathseq/WES/Bowtie2 Output/Pathseq/WTS/Bowtie2 Output/Pathseq/WTS/STAR:
+	mkdir -p $@
+
+Output/Pathseq/Reference/pathseq_catalog.gz: | Output/Pathseq/Reference
+	wget "https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/RefSeq-release212.catalog.gz" -O $@
+
+Output/Pathseq/Reference/pathseq_taxdump.tar.gz: | Output/Pathseq/Reference
+	wget "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz" -O $@
+
+Output/Pathseq/Reference/pathseq_host.tar.gz: | Output/Pathseq/Reference
+	wget "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/pathseq/pathseq_host.tar.gz" -O $@
+
+Output/Pathseq/Reference/pathseq_microbe.tar.gz: | Output/Pathseq/Reference
+	wget "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/pathseq/pathseq_microbe.tar.gz" -O $@
+
+Output/Pathseq/Reference/pathseq_host.fa Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img: Output/Pathseq/Reference/pathseq_host.tar.gz
+	cd $(dir $^) && tar -zxvf $(notdir $^ $@)
+	touch $@
+
+Output/Pathseq/Reference/pathseq_microbe.fa Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict: Output/Pathseq/Reference/pathseq_microbe.tar.gz
+	cd $(dir $^) && tar -zxvf $(notdir $^ $@)
+	touch $@
+
+Output/Pathseq/Reference/pathseq_taxonomy.db: Output/Pathseq/Reference/pathseq_taxonomy.tar.gz
+	cd $(dir $^) && tar -zxvf $(notdir $^ $@)
+	touch $@
+
+Output/Pathseq/WES/BWA/%.tsv Output/Pathseq/WES/BWA/%.bam: Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WES/BWA
+	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bowtie2/%.tsv Output/Pathseq/WES/Bowtie2/%.bam: Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WES/Bowtie2
+	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2/%.tsv Output/Pathseq/WTS/Bowtie2/%.bam: Output/RSEM/Bowtie2/%.genome.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/Bowtie2
+	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR/%.tsv Output/Pathseq/WTS/STAR/%.bam: Output/RSEM/STAR/%.genome.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/STAR
+	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
+
+step57-download: Output/Pathseq/Reference/pathseq_catalog.gz Output/Pathseq/Reference/pathseq_taxdump.tar.gz Output/Pathseq/Reference/pathseq_host.tar.gz Output/Pathseq/Reference/pathseq_microbe.tar.gz
+step57-reference: Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img
+step57-WES-BWA: $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_ID)))
+step57-WES-Bowtie2: $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_ID)))
+step57-WTS-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID)))
+step57-WTS-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID)))
+step57: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2 step57-WTS-Bowtie2 step57-WTS-STAR
+.PHONY: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2 step57-WTS-Bowtie2 step57-WTS-STAR step57
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
