@@ -39,6 +39,8 @@ Gistic_columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num
 
 Tcell_list = ["CD4+ Th", "CD8 low T", "CD8+/CD4+ Mixed Th", "Cytotoxic CD8+ T", "Exhausted CD8+ T", "Exhausted Tfh", "Naive CD4+ T", "Naive CD8+ T", "Treg"]
 
+PathSeq_type_list = ["class", "family", "genus", "kingdom", "no_rank", "order", "phylum", "root", "species", "species_group", "species_subgroup", "subclass", "subfamily", "subgenus", "subkingdom", "suborder", "subphylum", "subspecies", "superkingdom", "tribe", "varietas"]
+
 
 def file_list(path: str) -> typing.List[str]:
     """

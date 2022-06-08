@@ -1,0 +1,107 @@
+"""
+aggregate_PathSeq_clustermap.py: Aggregate PathSeq results as clustermap
+"""
+import argparse
+import multiprocessing
+import matplotlib
+import matplotlib.pyplot
+import pandas
+import seaborn
+import tqdm
+import step00
+
+input_data = pandas.DataFrame()
+
+
+def get_data(filename: str) -> pandas.DataFrame:
+    data = pandas.read_csv(filename, sep="\t")
+    data["ID"] = step00.get_id(filename)
+    return data
+
+
+def get_real_taxonomy(taxon: str) -> str:
+    return taxon.split("|")[-1].replace("_", " ")
+
+
+def query(sample: str, taxon: str) -> float:
+    data = input_data.loc[(input_data["real_taxonomy"] == taxon) & (input_data["ID"] == sample), "score_normalized"]
+    if data.empty:
+        return 0.0
+    else:
+        return data.to_numpy()[0]
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("input", help="PathSeq results TSV file(s)", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
+    parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
+    group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
+
+    group_sorting = parser.add_mutually_exclusive_group(required=True)
+    group_sorting.add_argument("--patient", help="Sorting by patient first", action="store_true", default=False)
+    group_sorting.add_argument("--type", help="Sorting by type first", action="store_true", default=False)
+
+    args = parser.parse_args()
+
+    if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
+        raise ValueError("INPUT must end with .TSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
+    elif not args.output.endswith(".pdf"):
+        raise ValueError("Output must end with .PDF!!")
+    elif args.cpus < 1:
+        raise ValueError("CPUs must be positive!!")
+
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
+    if args.SQC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+    elif args.ADC:
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+    else:
+        raise Exception("Something went wrong!!")
+    print(patients)
+
+    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
+    sample_list = list(map(step00.get_id, args.input))
+    print(len(sample_list), sample_list)
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
+        input_data["real_taxonomy"] = pool.map(get_real_taxonomy, input_data["taxonomy"])
+    input_data = input_data.loc[(input_data["kingdom"] == "Bacteria") & (input_data["type"] == args.level)]
+    print(input_data)
+
+    taxa_list = sorted(set(input_data["real_taxonomy"]))
+
+    output_data = pandas.DataFrame(index=sample_list, columns=taxa_list, dtype=float)
+    with multiprocessing.Pool(args.cpus) as pool:
+        for index in tqdm.tqdm(sample_list):
+            output_data.loc[index, :] = pool.starmap(query, [(index, taxon) for taxon in taxa_list])
+
+    for index in tqdm.tqdm(sample_list):
+        output_data.loc[index, :] = output_data.loc[index, :] / sum(output_data.loc[index, :]) * 100
+
+    print(output_data)
+
+    palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(output_data.index)))
+    stage_set = set(map(step00.get_long_sample_type, list(output_data.index)))
+    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+
+    g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=palette, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+
+    g.ax_heatmap.set_xlabel(f"{len(taxa_list)} {args.level}")
+    g.ax_heatmap.set_ylabel(f"{len(sample_list)} samples")
+
+    matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
+    # matplotlib.pyplot.tight_layout()
+
+    g.savefig(args.output)
