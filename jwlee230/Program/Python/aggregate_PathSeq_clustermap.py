@@ -2,8 +2,10 @@
 aggregate_PathSeq_clustermap.py: Aggregate PathSeq results as clustermap
 """
 import argparse
+import itertools
 import multiprocessing
 import matplotlib
+import matplotlib.colors
 import matplotlib.pyplot
 import pandas
 import seaborn
@@ -81,6 +83,7 @@ if __name__ == "__main__":
     print(input_data)
 
     taxa_list = sorted(set(input_data["real_taxonomy"]))
+    taxa_coloring = dict(zip(taxa_list, itertools.cycle(matplotlib.colors.XKCD_COLORS)))
 
     output_data = pandas.DataFrame(index=sample_list, columns=taxa_list, dtype=float)
     with multiprocessing.Pool(args.cpus) as pool:
@@ -92,16 +95,20 @@ if __name__ == "__main__":
 
     print(output_data)
 
-    palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(output_data.index)))
+    row_colors = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(output_data.index)))
     stage_set = set(map(step00.get_long_sample_type, list(output_data.index)))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
-    g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=palette, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+    col_colors = list(map(lambda x: taxa_coloring[x], list(output_data.columns)))
+
+    try:
+        g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+    except RecursionError:
+        g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
 
     g.ax_heatmap.set_xlabel(f"{len(taxa_list)} {args.level}")
     g.ax_heatmap.set_ylabel(f"{len(sample_list)} samples")
 
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
-    # matplotlib.pyplot.tight_layout()
 
     g.savefig(args.output)
