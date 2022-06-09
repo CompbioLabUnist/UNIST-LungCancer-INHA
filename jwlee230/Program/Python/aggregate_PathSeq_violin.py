@@ -39,7 +39,7 @@ def query(sample: str, taxon: str) -> float:
 
 
 def draw_violin(taxon: str) -> str:
-    stage_order = list(filter(lambda x: x in set(output_data["Stage"]), step00.long_sample_type_list))
+    stage_order = list(filter(lambda x: (x in set(output_data["Stage"])) and (len(output_data.loc[(output_data["Stage"] == x)]) < 3), step00.long_sample_type_list))
 
     try:
         stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Stage"] == stage), taxon] for stage in stage_order])
@@ -51,7 +51,7 @@ def draw_violin(taxon: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.violinplot(data=output_data, x="Stage", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, ax=ax)
+    seaborn.violinplot(data=output_data, x="Stage", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
     statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Stage", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{taxon} (%)")
