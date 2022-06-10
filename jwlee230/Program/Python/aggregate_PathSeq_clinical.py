@@ -136,8 +136,8 @@ if __name__ == "__main__":
             axs[i][j].set_title(f"{args.compare[0]}: {compare}")
 
             if i == 0:
-                axs[i].legend(loc="lower left", fontsize="xx-small")
-                axs[i].set_ylabel(f"Proportion in {args.level} (%)")
+                axs[i][j].legend(loc="lower left", fontsize="xx-small")
+                axs[i][j].set_ylabel(f"Proportion in {args.level} (%)")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
