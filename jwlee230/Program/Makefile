@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 100
-MEMS = 500
-PARALLEL = 5
+CPUS = 10
+MEMS = 50
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -27,7 +27,6 @@ GATK = gatk --java-options "$(JAVA_OPTS)"
 PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 MUTENRICHER = $(PYTHON) /Tools/MutEnricher-1.3.1/mutEnricher.py
-STAR = /Tools/STAR-2.7.8a/bin/Linux_x86_64/STAR
 TMPFS = /tmpfs
 CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
@@ -218,7 +217,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -4081,17 +4080,17 @@ Output/WTS/STAR/Reference:
 	mkdir -p $@
 
 Output/WTS/STAR/Reference/Genome: $(REFERENCE_FASTA) | Output/WTS/STAR/Reference build.log
-	$(DOCKER) $(STAR) --runMode genomeGenerate --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$^) --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) STAR --runMode genomeGenerate --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$^) --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%/Aligned.out.sam: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference/Genome | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
-	$(WORKDIR_DOCKER) $(STAR) --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) STAR --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%/Aligned.out.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
 
 Output/WTS/STAR/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m $(shell echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.bai: Output/WTS/STAR/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -4102,20 +4101,69 @@ Output/WTS/STAR/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.bam
 Output/WTS/STAR/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/STAR/%.Sort.dm-tmp.bam | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step58-bam: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/,$(addsuffix /Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID)))
+Output/WTS/STAR/%.Sort.MarkDuplicate.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step58: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/,$(addsuffix /Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.bai,$(WTS_ID)))
+.PHONY: step58
 
 # Step 59 (WTS Bowtie2 alignment with unmapped)
-Output/WTS/Bowtie2:
+Output/WTS/Bowtie2/Reference:
 	mkdir -p $@
+
+Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2: $(REFERENCE_FASTA) | Output/WTS/Bowtie2/Reference build.log
+	$(DOCKER) bowtie2-build --threads $(CPUS) --seed "12345" $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(basename $@)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.sam: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 Data/WTS/%_*.fastq.gz | build.log
+	$(DOCKER) bowtie2 -q --threads $(CPUS) --qc-filter --seed "12345" --rg-id $* --time --met-stderr -x $(addprefix /,$(basename $(basename $(filter %.bt2,$^)))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.sam | build.log
+	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
+
+Output/WTS/Bowtie2/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.bam | build.log
+	$(DOCKER) samtools sort -l 9 -m $(shell echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.bai: Output/WTS/Bowtie2/%.Sort.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.bam Output/WTS/Bowtie2/%.Sort.bai | build.log
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/Bowtie2/%.Sort.dm-tmp.bam | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step59: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.bai,$(WTS_ID)))
+.PHONY: step59
 
 # Step 60 (PathSeq - WTS)
 Output/Pathseq/WTS/Bowtie2 Output/Pathseq/WTS/STAR:
 	mkdir -p $@
 
-Output/Pathseq/WTS/Bowtie2/%.tsv Output/Pathseq/WTS/Bowtie2/%.bam: Output/RSEM/Bowtie2/%.genome.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/Bowtie2
+Output/Pathseq/WTS/Bowtie2/%.tsv Output/Pathseq/WTS/Bowtie2/%.bam: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/Bowtie2
 	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/STAR/%.tsv Output/Pathseq/WTS/STAR/%.bam: Output/RSEM/STAR/%.genome.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/STAR
+Output/Pathseq/WTS/STAR/%.tsv Output/Pathseq/WTS/STAR/%.bam: Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/STAR
 	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
 
 step60-WTS-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID)))
