@@ -101,6 +101,10 @@ if __name__ == "__main__":
 
     col_colors = list(map(lambda x: taxa_coloring[x], list(output_data.columns)))
 
+    matplotlib.use("Agg")
+    matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+
     try:
         g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
     except RecursionError:
@@ -112,3 +116,4 @@ if __name__ == "__main__":
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 
     g.savefig(args.output)
+    g.savefig(args.output.replace(".pdf", ".png"))
