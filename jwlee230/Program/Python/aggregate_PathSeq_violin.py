@@ -2,10 +2,8 @@
 aggregate_PathSeq_violin.py: Aggregate PathSeq results as violin plot
 """
 import argparse
-import itertools
 import multiprocessing
 import tarfile
-import typing
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -39,7 +37,7 @@ def query(sample: str, taxon: str) -> float:
 
 
 def draw_violin(taxon: str) -> str:
-    stage_order = list(filter(lambda x: (x in set(output_data["Stage"])) and (len(output_data.loc[(output_data["Stage"] == x)]) < 3), step00.long_sample_type_list))
+    stage_order = list(filter(lambda x: (x in set(output_data["Stage"])) and (len(output_data.loc[(output_data["Stage"] == x)]) > 3), step00.long_sample_type_list))
 
     try:
         stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Stage"] == stage), taxon] for stage in stage_order])
