@@ -129,7 +129,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=1, ncols=len(input_dict), sharey="row", figsize=(64, 18), gridspec_kw={"width_ratios": list(map(len, input_dict.values()))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=1, ncols=len(input_dict), sharey="row", figsize=(72, 18), gridspec_kw={"width_ratios": list(map(len, input_dict.values()))})
 
     for i, (key, samples) in enumerate(input_dict.items()):
         samples.sort(key=lambda x: tuple(output_data.loc[x, :].to_numpy()), reverse=True)
@@ -154,4 +154,5 @@ if __name__ == "__main__":
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)
+    fig.savefig(args.output.replace(".pdf", ".png"))
     matplotlib.pyplot.close(fig)
