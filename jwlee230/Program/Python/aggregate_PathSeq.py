@@ -129,27 +129,27 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=1, ncols=len(input_dict), sharey="row", figsize=(72, 18), gridspec_kw={"width_ratios": list(map(len, input_dict.values()))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=1, ncols=len(input_dict), sharey="row", figsize=(len(sample_list) / 3, 18), gridspec_kw={"width_ratios": list(map(len, input_dict.values()))})
 
     for i, (key, samples) in enumerate(input_dict.items()):
         samples.sort(key=lambda x: tuple(output_data.loc[x, :].to_numpy()), reverse=True)
         taxa_list.sort(key=lambda x: numpy.mean(output_data.loc[samples, x]), reverse=True)
+        drawing_data = output_data.loc[samples, taxa_list]
+        print(key, taxa_list[:10])
         for j, taxon in enumerate(tqdm.tqdm(taxa_list)):
             labeling = (i == 0) and (j < 5)
             if labeling:
-                axs[i].bar(range(len(samples)), height=output_data.loc[samples, :].iloc[:, j], bottom=numpy.sum(output_data.loc[samples, :].iloc[:, :j], axis=1), color=taxa_coloring[taxon], label=taxon)
+                axs[i].bar(range(len(samples)), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon], label=taxon)
             else:
-                axs[i].bar(range(len(samples)), height=output_data.loc[samples, :].iloc[:, j], bottom=numpy.sum(output_data.loc[samples, :].iloc[:, :j], axis=1), color=taxa_coloring[taxon])
+                axs[i].bar(range(len(samples)), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon])
 
         axs[i].set_ylim([0, 100])
         axs[i].set_xticks([])
         axs[i].grid(True)
-        axs[i].set_xlabel(f"{len(samples)} {key}")
+        axs[i].set_xlabel(f"{len(samples)} {key}", fontsize="xx-small")
 
         if i == 0:
             axs[i].legend(loc="lower left", fontsize="xx-small")
-
-        if i == 0:
             axs[i].set_ylabel(f"Proportion in {args.level} (%)")
 
     matplotlib.pyplot.tight_layout()
