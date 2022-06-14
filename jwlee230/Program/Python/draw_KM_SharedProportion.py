@@ -104,12 +104,12 @@ if __name__ == "__main__":
 
     if args.median:
         median = numpy.median(clinical_data["Shared Proportion"])
-        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < median]
-        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= median]
+        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] <= median]
+        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] > median]
     elif args.mean:
         mean = numpy.mean(clinical_data["Shared Proportion"])
-        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] < mean]
-        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] >= mean]
+        lower_data = clinical_data.loc[clinical_data["Shared Proportion"] <= mean]
+        higher_data = clinical_data.loc[clinical_data["Shared Proportion"] > mean]
     else:
         raise Exception("Something went wrong!!")
     print(lower_data)

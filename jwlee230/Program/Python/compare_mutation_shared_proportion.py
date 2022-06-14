@@ -106,8 +106,8 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
 
-    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] < cutting)]
-    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] >= cutting)]
+    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] <= cutting)]
+    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)]
     print(lower_data)
     print(higher_data)
 
