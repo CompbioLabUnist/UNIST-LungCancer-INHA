@@ -64,6 +64,7 @@ if __name__ == "__main__":
     print(len(patients))
 
     args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
+    args.input.sort(key=step00.sorting)
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
         mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
@@ -88,9 +89,7 @@ if __name__ == "__main__":
                 continue
 
             precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
-            proportion = len(primary_set & precancer_set) / len(primary_set)
-
-            clinical_data.loc[patient, "Shared Proportion"] = max(clinical_data.loc[patient, "Shared Proportion"], proportion)
+            clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
 
     if args.cutting:
         for column in tqdm.tqdm(survival_columns):
