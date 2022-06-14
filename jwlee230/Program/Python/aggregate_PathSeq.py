@@ -85,26 +85,6 @@ if __name__ == "__main__":
     sample_list = list(map(step00.get_id, args.input))
     print(len(sample_list), sample_list)
 
-    input_dict: typing.Dict[str, typing.List[str]] = dict()
-
-    if args.patient:
-        input_dict = {x: [] for x in patients}
-        for sample in tqdm.tqdm(sample_list):
-            input_dict[step00.get_patient(sample)].append(sample)
-    elif args.type:
-        input_dict = {x: [] for x in step00.long_sample_type_list}
-        for sample in tqdm.tqdm(sample_list):
-            input_dict[step00.get_long_sample_type(sample)].append(sample)
-    else:
-        raise Exception("Something went wrong!!")
-
-    for key in tqdm.tqdm(list(input_dict.keys())):
-        if not input_dict[key]:
-            del input_dict[key]
-
-    print(list(map(len, input_dict)))
-    print(input_dict)
-
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
         input_data["real_taxonomy"] = pool.map(get_real_taxonomy, input_data["taxonomy"])
@@ -122,22 +102,25 @@ if __name__ == "__main__":
     for index in tqdm.tqdm(sample_list):
         output_data.loc[index, :] = output_data.loc[index, :] / sum(output_data.loc[index, :]) * 100
 
-    taxa_list = sorted(taxa_list, key=lambda x: numpy.mean(output_data[x]), reverse=True)
-    output_data = output_data[taxa_list]
+    output_data["Subtype"] = list(map(step00.get_long_sample_type, list(output_data.index)))
     print(output_data)
+
+    order = list(filter(lambda x: x in set(output_data["Subtype"]), step00.long_sample_type_list))
+    print(order)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=1, ncols=len(input_dict), sharey="row", figsize=(len(sample_list) / 3, 18), gridspec_kw={"width_ratios": list(map(len, input_dict.values()))})
+    fig, axs = matplotlib.pyplot.subplots(nrows=len(order), figsize=(32, 9 * len(order)), sharey=True)
 
-    for i, (key, samples) in enumerate(input_dict.items()):
-        samples.sort(key=lambda x: tuple(output_data.loc[x, :].to_numpy()), reverse=True)
-        taxa_list.sort(key=lambda x: numpy.mean(output_data.loc[samples, x]), reverse=True)
-        drawing_data = output_data.loc[samples, taxa_list]
-        print(key, taxa_list[:10])
+    for i, subtype in enumerate(order):
+        drawing_data = output_data.loc[(output_data["Subtype"] == subtype), :]
+        taxa_list.sort(key=lambda x: numpy.mean(drawing_data.loc[:, x]), reverse=True)
+        samples = sorted(list(drawing_data.index), key=lambda x: tuple(drawing_data.loc[x, taxa_list].to_numpy()), reverse=True)
+        drawing_data = drawing_data.loc[samples, taxa_list]
+        print(subtype, taxa_list[:10])
         for j, taxon in enumerate(tqdm.tqdm(taxa_list)):
-            labeling = (i == 0) and (j < 5)
+            labeling = (j < 5)
             if labeling:
                 axs[i].bar(range(len(samples)), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon], label=taxon)
             else:
@@ -146,11 +129,9 @@ if __name__ == "__main__":
         axs[i].set_ylim([0, 100])
         axs[i].set_xticks([])
         axs[i].grid(True)
-        axs[i].set_xlabel(f"{len(samples)} {key}", fontsize="xx-small")
-
-        if i == 0:
-            axs[i].legend(loc="lower left", fontsize="xx-small")
-            axs[i].set_ylabel(f"Proportion in {args.level} (%)")
+        axs[i].set_xlabel(f"{drawing_data.shape[0]} {subtype} Samples")
+        axs[i].legend(loc="lower left", fontsize="xx-small")
+        axs[i].set_ylabel(f"Proportion in {args.level} (%)")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output)

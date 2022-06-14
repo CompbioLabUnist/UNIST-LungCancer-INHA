@@ -102,8 +102,6 @@ if __name__ == "__main__":
     for index in tqdm.tqdm(sample_list):
         output_data.loc[index, :] = output_data.loc[index, :] / sum(output_data.loc[index, :]) * 100
 
-    taxa_list = sorted(taxa_list, key=lambda x: numpy.mean(output_data[x]), reverse=True)
-    output_data = output_data[taxa_list]
     output_data["Subtype"] = list(map(step00.get_long_sample_type, list(output_data.index)))
     output_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(output_data.index)))
     print(output_data)
@@ -114,29 +112,31 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(nrows=len(args.compare) - 1, ncols=len(order), sharey="row", figsize=(len(sample_list) / 3, 9 * (len(args.compare) - 1)), gridspec_kw={"width_ratios": list(map(lambda x: len(output_data.loc[(output_data["Subtype"] == x)]), order))})
+    fig, axs = matplotlib.pyplot.subplots(ncols=len(args.compare) - 1, nrows=len(order), figsize=(16 * (len(args.compare) - 1), 9 * len(order)), sharey=True)
 
-    for i, compare in enumerate(args.compare[1:]):
-        for j, subtype in enumerate(order):
+    for j, compare in enumerate(args.compare[1:]):
+        for i, subtype in enumerate(order):
             drawing_data = output_data.loc[(output_data[args.compare[0]] == compare) & (output_data["Subtype"] == subtype)]
             taxa_list.sort(key=lambda x: numpy.mean(drawing_data.loc[:, x]), reverse=True)
-            drawing_data = drawing_data.loc[:, taxa_list]
+            samples = sorted(list(drawing_data.index), key=lambda x: tuple(drawing_data.loc[x, taxa_list].to_numpy()), reverse=True)
+            drawing_data = drawing_data.loc[samples, taxa_list]
             print(compare, subtype, taxa_list[:10])
             for k, taxon in enumerate(tqdm.tqdm(taxa_list)):
-                labeling = (i == 0) and (j == 0) and (k < 5)
+                labeling = (k < 5)
                 if labeling:
-                    axs[i][j].bar(range(drawing_data.shape[0]), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon], label=taxon)
+                    axs[i][j].bar(range(drawing_data.shape[0]), height=drawing_data.iloc[:, k], bottom=numpy.sum(drawing_data.iloc[:, :k], axis=1), color=taxa_coloring[taxon], label=taxon)
                 else:
-                    axs[i][j].bar(range(drawing_data.shape[0]), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon])
+                    axs[i][j].bar(range(drawing_data.shape[0]), height=drawing_data.iloc[:, k], bottom=numpy.sum(drawing_data.iloc[:, :k], axis=1), color=taxa_coloring[taxon])
 
             axs[i][j].set_ylim([0, 100])
             axs[i][j].set_xticks([])
             axs[i][j].grid(True)
-            axs[i][j].set_xlabel(f"{drawing_data.shape[0]} {subtype}", fontsize="xx-small")
+            axs[i][j].set_xlabel(f"{drawing_data.shape[0]} {subtype} Samples")
             axs[i][j].set_title(f"{args.compare[0]}: {compare}")
-
-            if i == 0:
+            if drawing_data.shape[0]:
                 axs[i][j].legend(loc="lower left", fontsize="xx-small")
+
+            if j == 0:
                 axs[i][j].set_ylabel(f"Proportion in {args.level} (%)")
 
     matplotlib.pyplot.tight_layout()
