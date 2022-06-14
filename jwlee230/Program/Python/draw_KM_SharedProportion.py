@@ -52,6 +52,7 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
 
     clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
+    clinical_data["Death"] = list(map(lambda x: x == "YES", clinical_data["Death"]))
     print(clinical_data)
 
     if args.SQC:
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     patients &= set(mutect_data["Patient"])
     print(len(patients))
 
-    clinical_data["Shared Proportion"] = 0.0
+    clinical_data["Shared Proportion"] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
@@ -90,8 +91,13 @@ if __name__ == "__main__":
 
             precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
             clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
+    clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
+    print(clinical_data)
 
     if args.cutting:
+        for index in tqdm.tqdm(list(clinical_data.index)):
+            if (clinical_data.loc[index, survival_columns[0]] > threshold) or (clinical_data.loc[index, survival_columns[1]] > threshold):
+                clinical_data.loc[index, "Death"] = False
         for column in tqdm.tqdm(survival_columns):
             clinical_data[column] = list(map(lambda x: threshold if (x > threshold) else x, clinical_data[column]))
     print(clinical_data)
@@ -120,14 +126,14 @@ if __name__ == "__main__":
 
         kmf = lifelines.KaplanMeierFitter()
 
-        kmf.fit(lower_data[column], label=f"Lower Shared Proportion ({len(lower_data)} patients)")
+        kmf.fit(lower_data[column], event_observed=lower_data["Death"], label=f"Lower Shared Proportion ({len(lower_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:blue")
 
-        kmf.fit(higher_data[column], label=f"Higher Shared Proportion ({len(higher_data)} patients)")
+        kmf.fit(higher_data[column], event_observed=higher_data["Death"], label=f"Higher Shared Proportion ({len(higher_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
         p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column]).p_value
-        matplotlib.pyplot.text(max(clinical_data[column]) / 2, 0.75, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        matplotlib.pyplot.text(max(clinical_data[column]) / 2, 1.0, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
         matplotlib.pyplot.ylabel("Survival Rate")
