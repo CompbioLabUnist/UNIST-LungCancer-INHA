@@ -8,7 +8,6 @@ import matplotlib.colors
 import matplotlib.pyplot
 import pandas
 import seaborn
-import tqdm
 import step00
 
 
@@ -36,8 +35,6 @@ if __name__ == "__main__":
         raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
-    elif args.cpus < 1:
-        raise ValueError("CPUs must be positive!!")
 
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
@@ -73,19 +70,19 @@ if __name__ == "__main__":
     stage_set = set(map(step00.get_long_sample_type, list(output_data.index)))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
-    col_colors = list(map(lambda x: taxa_coloring[x], list(output_data.columns)))
+    col_colors = list(map(lambda x: taxa_coloring[x], list(output_data.columns)[:-1]))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     try:
-        g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
     except RecursionError:
-        g = seaborn.clustermap(data=output_data, figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
 
     g.ax_heatmap.set_xlabel(f"{len(taxa_list)} {args.level}")
-    g.ax_heatmap.set_ylabel(f"{len(sample_list)} samples")
+    g.ax_heatmap.set_ylabel(f"{len(output_data)} samples")
 
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 

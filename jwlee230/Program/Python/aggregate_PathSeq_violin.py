@@ -17,10 +17,10 @@ output_data = pandas.DataFrame()
 
 
 def draw_violin(taxon: str) -> str:
-    stage_order = list(filter(lambda x: (x in set(output_data["Stage"])) and (len(output_data.loc[(output_data["Stage"] == x)]) > 3), step00.long_sample_type_list))
+    stage_order = list(filter(lambda x: (x in set(output_data["Subtype"])) and (len(output_data.loc[(output_data["Subtype"] == x)]) > 3), step00.long_sample_type_list))
 
     try:
-        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Stage"] == stage), taxon] for stage in stage_order])
+        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Subtype"] == stage), taxon] for stage in stage_order])
     except ValueError:
         return ""
 
@@ -29,8 +29,8 @@ def draw_violin(taxon: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.violinplot(data=output_data, x="Stage", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Stage", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{taxon} (%)")
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
@@ -46,7 +46,7 @@ def draw_violin(taxon: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="PathSeq results TSV file(s)", type=str, nargs="+")
+    parser.add_argument("input", help="PathSeq results TSV file", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
+    if not args.input.endswith(".tsv"):
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
