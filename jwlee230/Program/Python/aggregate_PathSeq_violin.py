@@ -6,7 +6,6 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
-import numpy
 import pandas
 import scipy.stats
 import seaborn
@@ -14,26 +13,7 @@ import statannotations.Annotator
 import tqdm
 import step00
 
-input_data = pandas.DataFrame()
 output_data = pandas.DataFrame()
-
-
-def get_data(filename: str) -> pandas.DataFrame:
-    data = pandas.read_csv(filename, sep="\t")
-    data["ID"] = step00.get_id(filename)
-    return data
-
-
-def get_real_taxonomy(taxon: str) -> str:
-    return taxon.split("|")[-1].replace("_", " ")
-
-
-def query(sample: str, taxon: str) -> float:
-    data = input_data.loc[(input_data["real_taxonomy"] == taxon) & (input_data["ID"] == sample), "score_normalized"]
-    if data.empty:
-        return 0.0
-    else:
-        return data.to_numpy()[0]
 
 
 def draw_violin(taxon: str) -> str:
@@ -44,7 +24,7 @@ def draw_violin(taxon: str) -> str:
     except ValueError:
         return ""
 
-    if p >= 0.05:
+    if p >= 0.01:
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
@@ -102,36 +82,30 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
-    sample_list = list(map(step00.get_id, args.input))
-    print(len(sample_list), sample_list)
+    output_data = pandas.read_csv(args.input, sep="\t", index_col=0)
+    index = list(filter(lambda x: step00.get_patient(x) in patients, list(output_data.index)))
 
-    with multiprocessing.Pool(args.cpus) as pool:
-        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
-        input_data["real_taxonomy"] = pool.map(get_real_taxonomy, input_data["taxonomy"])
-    input_data = input_data.loc[(input_data["kingdom"] == "Bacteria") & (input_data["type"] == args.level)]
-    print(input_data)
+    if args.patient:
+        index.sort(key=step00.sorting)
+    elif args.type:
+        index.sort(key=step00.sorting_by_type)
+    else:
+        raise Exception("Something went wrong!!")
 
-    taxa_list = sorted(set(input_data["real_taxonomy"]))
-
-    output_data = pandas.DataFrame(index=sample_list, columns=taxa_list, dtype=float)
-    with multiprocessing.Pool(args.cpus) as pool:
-        for index in tqdm.tqdm(sample_list):
-            output_data.loc[index, :] = pool.starmap(query, [(index, taxon) for taxon in taxa_list])
-
-    for index in tqdm.tqdm(sample_list):
-        output_data.loc[index, :] = output_data.loc[index, :] / sum(output_data.loc[index, :]) * 100
-
-    output_data["Stage"] = list(map(step00.get_long_sample_type, list(output_data.index)))
-    taxa_list = sorted(taxa_list, key=lambda x: numpy.mean(output_data[x]), reverse=True)
+    output_data = output_data.loc[index, :]
     print(output_data)
+
+    taxa_list = list(output_data.columns)[:-1]
+
+    order = list(filter(lambda x: x in set(output_data["Subtype"]), step00.long_sample_type_list))
+    print(order)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = list(filter(None, pool.map(draw_violin, taxa_list[:1000])))
+        figures = list(filter(None, pool.map(draw_violin, taxa_list)))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):

@@ -3,7 +3,6 @@ aggregate_PathSeq_clustermap.py: Aggregate PathSeq results as clustermap
 """
 import argparse
 import itertools
-import multiprocessing
 import matplotlib
 import matplotlib.colors
 import matplotlib.pyplot
@@ -12,35 +11,14 @@ import seaborn
 import tqdm
 import step00
 
-input_data = pandas.DataFrame()
-
-
-def get_data(filename: str) -> pandas.DataFrame:
-    data = pandas.read_csv(filename, sep="\t")
-    data["ID"] = step00.get_id(filename)
-    return data
-
-
-def get_real_taxonomy(taxon: str) -> str:
-    return taxon.split("|")[-1].replace("_", " ")
-
-
-def query(sample: str, taxon: str) -> float:
-    data = input_data.loc[(input_data["real_taxonomy"] == taxon) & (input_data["ID"] == sample), "score_normalized"]
-    if data.empty:
-        return 0.0
-    else:
-        return data.to_numpy()[0]
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="PathSeq results TSV file(s)", type=str, nargs="+")
+    parser.add_argument("input", help="PathSeq results TSV file", type=str)
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
-    parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -52,7 +30,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".tsv"), args.input)):
+    if not args.input.endswith(".tsv"):
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
@@ -72,28 +50,24 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
-    sample_list = list(map(step00.get_id, args.input))
-    print(len(sample_list), sample_list)
+    output_data = pandas.read_csv(args.input, sep="\t", index_col=0)
+    index = list(filter(lambda x: step00.get_patient(x) in patients, list(output_data.index)))
 
-    with multiprocessing.Pool(args.cpus) as pool:
-        input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True, verify_integrity=True)
-        input_data["real_taxonomy"] = pool.map(get_real_taxonomy, input_data["taxonomy"])
-    input_data = input_data.loc[(input_data["kingdom"] == "Bacteria") & (input_data["type"] == args.level)]
-    print(input_data)
+    if args.patient:
+        index.sort(key=step00.sorting)
+    elif args.type:
+        index.sort(key=step00.sorting_by_type)
+    else:
+        raise Exception("Something went wrong!!")
 
-    taxa_list = sorted(set(input_data["real_taxonomy"]))
+    output_data = output_data.loc[index, :]
+    print(output_data)
+
+    taxa_list = list(output_data.columns)[:-1]
     taxa_coloring = dict(zip(taxa_list, itertools.cycle(matplotlib.colors.XKCD_COLORS)))
 
-    output_data = pandas.DataFrame(index=sample_list, columns=taxa_list, dtype=float)
-    with multiprocessing.Pool(args.cpus) as pool:
-        for index in tqdm.tqdm(sample_list):
-            output_data.loc[index, :] = pool.starmap(query, [(index, taxon) for taxon in taxa_list])
-
-    for index in tqdm.tqdm(sample_list):
-        output_data.loc[index, :] = output_data.loc[index, :] / sum(output_data.loc[index, :]) * 100
-
-    print(output_data)
+    order = list(filter(lambda x: x in set(output_data["Subtype"]), step00.long_sample_type_list))
+    print(order)
 
     row_colors = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(output_data.index)))
     stage_set = set(map(step00.get_long_sample_type, list(output_data.index)))

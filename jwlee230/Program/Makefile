@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 4
-MEMS = 20
-PARALLEL = 30
+CPUS = 3
+MEMS = 15
+PARALLEL = 40
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -3996,70 +3996,76 @@ Output/Pathseq/WES/BWA/%.tsv Output/Pathseq/WES/BWA/%.bam: Output/WES/%.BWA.Sort
 Output/Pathseq/WES/Bowtie2/%.tsv Output/Pathseq/WES/Bowtie2/%.bam: Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WES/Bowtie2
 	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-BWA-SQC.%.pdf: Python/aggregate_PathSeq.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Pathseq/WES/BWA.%.tsv: Python/aggregate_PathSeq_tsv.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bowtie2.%.tsv: Python/aggregate_PathSeq_tsv.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bar-BWA-SQC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bar-BWA-ADC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bar-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bar-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Violin-BWA-SQC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-BWA-ADC.%.pdf: Python/aggregate_PathSeq.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Pathseq/WES/Violin-BWA-ADC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Pathseq/WES/Violin-Bowtie2-SQC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
+Output/Pathseq/WES/Violin-Bowtie2-ADC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Violin-BWA-SQC.%.tar: Python/aggregate_PathSeq_violin.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Cluster-BWA-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Violin-BWA-ADC.%.tar: Python/aggregate_PathSeq_violin.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Cluster-BWA-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Violin-Bowtie2-SQC.%.tar: Python/aggregate_PathSeq_violin.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Cluster-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Violin-Bowtie2-ADC.%.tar: Python/aggregate_PathSeq_violin.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Cluster-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Cluster-BWA-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-BWA-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Cluster-BWA-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-BWA-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Cluster-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Cluster-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-BWA-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-BWA-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/BWA.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) $(CLINICAL_DATA_CSV) | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
 step57-download: Output/Pathseq/Reference/pathseq_catalog.gz Output/Pathseq/Reference/pathseq_taxdump.tar.gz Output/Pathseq/Reference/pathseq_host.tar.gz Output/Pathseq/Reference/pathseq_microbe.tar.gz
 step57-reference: Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img
-step57-WES-BWA: $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
-step57-WES-Bowtie2: $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
+step57-WES-BWA: $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/BWA.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
+step57-WES-Bowtie2: $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/Bowtie2.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
 step57: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2
 .PHONY: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2 step57
 
