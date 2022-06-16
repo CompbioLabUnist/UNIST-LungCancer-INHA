@@ -218,7 +218,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60
+latest: step60 step61#step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -4395,25 +4395,25 @@ Output/Gene_Clinical_Sharing/BWA-SQC.Mean.tsv Output/Gene_Clinical_Sharing/BWA-S
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/BWA-SQC.Median.tsv Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $2.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/BWA-ADC.Mean.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/BWA-ADC.Median.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $2.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $2.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
 
 Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $2.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
 step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Median.pdf
 step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf
