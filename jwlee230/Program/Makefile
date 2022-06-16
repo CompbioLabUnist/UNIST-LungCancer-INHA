@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 12
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -218,7 +218,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step60 step61#step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -4384,7 +4384,7 @@ Output/Pathseq/WTS/Bowtie2-ADC-beta.%.Weighted.pdf: Python/draw_beta_PathSeq.py 
 
 step60-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID))) $(addprefix Output/Pathseq/WTS/STAR.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-STAR-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-STAR-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-STAR-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-STAR-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WTS/STAR.tree.nwk $(addprefix Output/Pathseq/WTS/STAR-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES)))
 step60-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID))) $(addprefix Output/Pathseq/WTS/Bowtie2.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WTS/Bowtie2.tree.nwk $(addprefix Output/Pathseq/WTS/Bowtie2-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES)))
-step60: step60-STAR
+step60: step60-Bowtie2 step60-STAR
 .PHONY: step60-Bowtie2 step60-STAR step60
 
 # Step 61 (Short variants analysis upon clinical data with Mutation Sharing)
@@ -4415,8 +4415,8 @@ Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.tsv Output/Gene_Clinical_Sharing/B
 Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
-step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Median.pdf
-step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf
+step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf
+step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf
 step61: step61-BWA step61-Bowtie2
 .PHONY: step61-BWA step61-Bowtie2 step61
 
@@ -4433,7 +4433,5 @@ step61: step61-BWA step61-Bowtie2
 # https://github.com/raphael-group/spruce/
 
 # Step ## (CRUST)
-
-# Step ## (WTS - samtools depth)
 
 # Step ## (Histogram of file size)
