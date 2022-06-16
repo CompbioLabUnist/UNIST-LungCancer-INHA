@@ -4243,6 +4243,39 @@ step60-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID)))
 step60: step60-STAR
 .PHONY: step60-Bowtie2 step60-STAR step60
 
+# Step 61 (Short variants analysis upon clinical data with Mutation Sharing)
+Output/Gene_Clinical_Sharing:
+	mkdir -p $@
+
+Output/Gene_Clinical_Sharing/BWA-SQC.Mean.tsv Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-SQC.Median.tsv Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $2.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-ADC.Mean.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-ADC.Median.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $2.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $2.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $2.stdout 2> $@.stderr
+
+step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-ADC.Median.pdf
+step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf
+step61: step61-BWA step61-Bowtie2
+.PHONY: step61-BWA step61-Bowtie2 step61
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
