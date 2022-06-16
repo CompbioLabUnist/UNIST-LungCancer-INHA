@@ -183,15 +183,18 @@ if __name__ == "__main__":
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(numpy.array(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)])))
     print(exact_test_data)
 
-    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
-    heatmap_data = heatmap_data.loc[exact_test_data.index, :]
-    mutation_data = mutation_data.loc[exact_test_data.index, :]
+    exact_test_data = exact_test_data.sort_values(by="Fisher", kind="stable", ascending=False)
     print(exact_test_data)
 
     mutation_data.columns = list(map(lambda x: f"{x}-Lower" if (x in lower_patients) else f"{x}-Higher", list(mutation_data.columns)))
     output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
     output_data.to_csv(args.tsv, sep="\t")
     print(output_data)
+
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
+    heatmap_data = heatmap_data.loc[exact_test_data.index, :]
+    mutation_data = mutation_data.loc[exact_test_data.index, :]
+    print(exact_test_data)
 
     exact_test_data = exact_test_data.iloc[:args.threshold, :]
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
