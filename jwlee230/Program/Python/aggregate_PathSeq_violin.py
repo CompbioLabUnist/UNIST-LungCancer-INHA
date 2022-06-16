@@ -36,7 +36,7 @@ def draw_violin(taxon: str) -> str:
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = taxon.replace(" ", "_") + ".pdf"
+    fig_name = taxon.replace(" ", "_").replace("/", "_") + ".pdf"
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
