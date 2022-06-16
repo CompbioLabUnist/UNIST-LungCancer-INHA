@@ -4238,8 +4238,152 @@ Output/Pathseq/WTS/Bowtie2/%.tsv Output/Pathseq/WTS/Bowtie2/%.bam: Output/WTS/Bo
 Output/Pathseq/WTS/STAR/%.tsv Output/Pathseq/WTS/STAR/%.bam: Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db $(REFERENCE_FASTA) Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img | Output/Pathseq/WTS/STAR
 	$(DOCKER) $(GATK) PathSeqPipelineSpark --input $(addprefix /,$(word 1,$^)) --microbe-bwa-image $(addprefix /,$(word 2,$^)) --microbe-dict $(addprefix /,$(word 3,$^)) --taxonomy-file $(addprefix /,$(word 4,$^)) --reference $(addprefix /,$(word 5,$^)) --kmer-file $(addprefix /,$(word 6,$^)) --filter-bwa-image $(addprefix /,$(word 7,$^)) --scores-output $(addprefix /,$(@D)/$*.tsv) --output $(addprefix /,$(@D)/$*.bam) --is-host-aligned true 1> $@.stdout 2> $@.stderr
 
-step60-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID)))
-step60-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID)))
+Output/Pathseq/WTS/STAR.%.tsv: Python/aggregate_PathSeq_tsv.py $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2.%.tsv: Python/aggregate_PathSeq_tsv.py $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-SQC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-ADC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Violin-STAR-SQC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Violin-STAR-ADC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Violin-Bowtie2-SQC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Violin-Bowtie2-ADC.%.tar: Python/aggregate_PathSeq_violin.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Cluster-STAR-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Cluster-STAR-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Cluster-Bowtie2-SQC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Cluster-Bowtie2-ADC.%.pdf: Python/aggregate_PathSeq_clustermap.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-SQC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-ADC.Smoking.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-STAR-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/STAR.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bar-Bowtie2-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-alpha.%.tsv: Python/calculate_alpha_PathSeq.py Output/Pathseq/WTS/STAR.%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-alpha.%.tsv: Python/calculate_alpha_PathSeq.py Output/Pathseq/WTS/Bowtie2.%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR.tree.nwk: Python/make_tree_PathSeq.py $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2.tree.nwk: Python/make_tree_PathSeq.py $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-beta.%.Unweighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WTS/STAR.%.tsv Output/Pathseq/WTS/STAR.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "unweighted_unifrac" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-beta.%.Weighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WTS/STAR.%.tsv Output/Pathseq/WTS/STAR.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "weighted_unifrac" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-beta.%.Unweighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2.%.tsv Output/Pathseq/WTS/Bowtie2.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "unweighted_unifrac" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-beta.%.Weighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2.%.tsv Output/Pathseq/WTS/Bowtie2.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "weighted_unifrac" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-SQC-alpha.%.tar: Python/draw_alpha_PathSeq.py Output/Pathseq/WTS/STAR-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-SQC-alpha.%.tar: Python/draw_alpha_PathSeq.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-SQC-alpha.Smoking.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/STAR-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-SQC-alpha.Recurrence.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/STAR-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-ADC-alpha.Smoking.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/STAR-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-ADC-alpha.Recurrence.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/STAR-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-SQC-alpha.Smoking.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-SQC-alpha.Recurrence.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-ADC-alpha.Smoking.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-ADC-alpha.Recurrence.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-SQC-beta.%.Unweighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/STAR-beta.%.Unweighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-SQC-beta.%.Weighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/STAR-beta.%.Weighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-ADC-beta.%.Unweighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/STAR-beta.%.Unweighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/STAR-ADC-beta.%.Weighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/STAR-beta.%.Weighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-SQC-beta.%.Unweighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2-beta.%.Unweighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-SQC-beta.%.Weighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2-beta.%.Weighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-ADC-beta.%.Unweighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2-beta.%.Unweighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WTS/Bowtie2-ADC-beta.%.Weighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/Bowtie2-beta.%.Weighted.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step60-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID))) $(addprefix Output/Pathseq/WTS/STAR.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-STAR-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-STAR-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-STAR-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-STAR-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-STAR-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WTS/STAR.tree.nwk $(addprefix Output/Pathseq/WTS/STAR-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-SQC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/STAR-ADC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES)))
+step60-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID))) $(addprefix Output/Pathseq/WTS/Bowtie2.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WTS/Bowtie2.tree.nwk $(addprefix Output/Pathseq/WTS/Bowtie2-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-alpha.Smoking.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-alpha.Recurrence.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-SQC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-beta.,$(addsuffix .Unweighted.pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WTS/Bowtie2-ADC-beta.,$(addsuffix .Weighted.pdf,$(TAXONOMY_TYPES)))
 step60: step60-STAR
 .PHONY: step60-Bowtie2 step60-STAR step60
 
