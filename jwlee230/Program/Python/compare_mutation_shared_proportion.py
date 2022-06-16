@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
-    parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold to use", type=int, default=30)
 
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
     print(mutect_data)
 
-    mutect_data = mutect_data[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
+    mutect_data = mutect_data.loc[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
@@ -86,16 +86,15 @@ if __name__ == "__main__":
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
-        stage_set = set(patient_data["Stage"])
+        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
         assert "Primary" in stage_set
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
-        for stage in stage_set:
-            if stage == "Primary":
-                continue
+        if stage_set[-1] != "Primary":
+            continue
 
-            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
-            clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
+        clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
     clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
     print(clinical_data)
 
