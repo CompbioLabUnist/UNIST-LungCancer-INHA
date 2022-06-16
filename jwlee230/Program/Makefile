@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 3
-MEMS = 15
-PARALLEL = 40
+CPUS = 10
+MEMS = 50
+PARALLEL = 12
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -4062,12 +4062,30 @@ Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.%.pdf: Python/aggregate_PathSeq_cl
 Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.%.pdf: Python/aggregate_PathSeq_clinical.py Output/Pathseq/WES/Bowtie2.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --type --level "$*" --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
+Output/Pathseq/WES/BWA-alpha.%.tsv: Python/calculate_alpha_PathSeq.py Output/Pathseq/WES/BWA.%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bowtie2-alpha.%.tsv: Python/calculate_alpha_PathSeq.py Output/Pathseq/WES/Bowtie2.%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/BWA.tree.nwk: Python/make_tree_PathSeq.py $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_REAL_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/Bowtie2.tree.nwk: Python/make_tree_PathSeq.py $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_REAL_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/BWA-beta.%.Unweighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WES/BWA.%.tsv Output/Pathseq/WES/BWA.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "unweighted_unifrac" 1> $@.stdout 2> $@.stderr
+
+Output/Pathseq/WES/BWA-beta.%.Weighted.tsv: Python/calculate_beta_PathSeq.py Output/Pathseq/WES/BWA.%.tsv Output/Pathseq/WES/BWA.tree.nwk | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --beta "weighted_unifrac" 1> $@.stdout 2> $@.stderr
+
 step57-download: Output/Pathseq/Reference/pathseq_catalog.gz Output/Pathseq/Reference/pathseq_taxdump.tar.gz Output/Pathseq/Reference/pathseq_host.tar.gz Output/Pathseq/Reference/pathseq_microbe.tar.gz
 step57-reference: Output/Pathseq/Reference/pathseq_microbe.fa.img Output/Pathseq/Reference/pathseq_microbe.dict Output/Pathseq/Reference/pathseq_taxonomy.db Output/Pathseq/Reference/pathseq_host.bfi Output/Pathseq/Reference/pathseq_host.fa.img
-step57-WES-BWA: $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/BWA.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
-step57-WES-Bowtie2: $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/Bowtie2.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
-step57: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2
-.PHONY: step57-download step57-reference step57-WES-BWA step57-WES-Bowtie2 step57
+step57-BWA: $(addprefix Output/Pathseq/WES/BWA/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/BWA.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-BWA-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-BWA-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-BWA-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/BWA-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WES/BWA.tree.nwk $(addprefix Output/Pathseq/WES/BWA-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/BWA-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES)))
+step57-Bowtie2: $(addprefix Output/Pathseq/WES/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/Pathseq/WES/Bowtie2.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-SQC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Violin-Bowtie2-ADC.,$(addsuffix .tar,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-SQC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Cluster-Bowtie2-ADC.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Smoking.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-SQC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bar-Bowtie2-ADC.Recurrence.,$(addsuffix .pdf,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bowtie-alpha.,$(addsuffix .tsv,$(TAXONOMY_TYPES))) Output/Pathseq/WES/Bowtie2.tree.nwk $(addprefix Output/Pathseq/WES/Bowtie2-beta.,$(addsuffix .Unweighted.tsv,$(TAXONOMY_TYPES))) $(addprefix Output/Pathseq/WES/Bowtie2-beta.,$(addsuffix .Weighted.tsv,$(TAXONOMY_TYPES)))
+step57: step57-download step57-reference step57-BWA step57-Bowtie2
+.PHONY: step57-download step57-reference step57-BWA step57-Bowtie2 step57
 
 # Step 58 (WTS STAR alignment with unmapped)
 Output/WTS/STAR/Reference:
@@ -4162,7 +4180,7 @@ Output/Pathseq/WTS/STAR/%.tsv Output/Pathseq/WTS/STAR/%.bam: Output/WTS/STAR/%.S
 
 step60-WTS-Bowtie2: $(addprefix Output/Pathseq/WTS/Bowtie2/,$(addsuffix .tsv,$(WTS_ID)))
 step60-WTS-STAR: $(addprefix Output/Pathseq/WTS/STAR/,$(addsuffix .tsv,$(WTS_ID)))
-step60: step60-WTS-Bowtie2 step60-WTS-STAR
+step60: step60-WTS-STAR
 .PHONY: step60-WTS-Bowtie2 step60-WTS-STAR step60
 
 # Step ## (QAPA)
