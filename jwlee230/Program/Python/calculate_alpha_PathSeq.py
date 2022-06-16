@@ -30,9 +30,7 @@ if __name__ == "__main__":
             continue
         try:
             output_data[alpha] = skbio.diversity.alpha_diversity(alpha, input_data.to_numpy(), list(input_data.index))
-        except TypeError:
-            continue
-        except ValueError:
+        except Exception:
             continue
 
     output_data["Subtype"] = list(map(step00.get_long_sample_type, list(output_data.index)))
