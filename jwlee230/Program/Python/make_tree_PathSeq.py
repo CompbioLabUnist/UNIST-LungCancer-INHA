@@ -21,16 +21,21 @@ if __name__ == "__main__":
         raise ValueError("Output file must end with .NWK!!")
 
     lineages: typing.Dict[str, typing.List[str]] = dict()
+    distances: typing.Dict[str, int] = dict()
     for input_file in tqdm.tqdm(args.input):
         data = pandas.read_csv(input_file, sep="\t", dtype=str)
         data["taxonomy"] = list(map(lambda x: x.replace("_", " ").split("|"), data["taxonomy"]))
         data["id"] = list(map(lambda x: x[-1].replace("_", " "), data["taxonomy"]))
         lineages |= dict(data[["id", "taxonomy"]].itertuples(index=False, name=None))
+        distances |= dict(list(map(lambda x: (x[0], len(x[1])), data[["id", "taxonomy"]].itertuples(index=False, name=None))))
 
     tree = skbio.tree.TreeNode.from_taxonomy(lineages.items())
     tree.assign_ids()
-    for node in tqdm.tqdm(tree.postorder(include_self=True)):
+    for node in tqdm.tqdm(tree.traverse(include_self=True)):
         if node.length is None:
-            node.length = 0.0
+            if node.name is None:
+                node.length = 0
+            else:
+                node.length = distances[node.name]
     tree.write(args.output)
-    print(tree.ascii_art())
+    # print(tree.ascii_art())
