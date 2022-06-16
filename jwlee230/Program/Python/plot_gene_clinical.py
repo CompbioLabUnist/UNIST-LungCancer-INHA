@@ -74,6 +74,7 @@ if __name__ == "__main__":
     parser.add_argument("figure", help="Output PDF file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
+    parser.add_argument("--threshold", help="Threshold to use", type=int, default=100)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -96,6 +97,8 @@ if __name__ == "__main__":
         raise ValueError("Figure must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+    elif args.threshold <= 50:
+        raise ValueError("Threshold must be greater than 50!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
 
@@ -147,7 +150,7 @@ if __name__ == "__main__":
     exact_test_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), 4)), index=gene_list, columns=["Fisher", "Chi2", "Barnard", "Boschloo"], dtype=float)
     with multiprocessing.Pool(args.cpus) as pool:
         for derivation in tqdm.tqdm(list(exact_test_data.columns)):
-            exact_test_data.loc[:, derivation] = -1 * numpy.log10(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)]))
+            exact_test_data.loc[:, derivation] = -1 * numpy.log10(numpy.array(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)])))
     print(exact_test_data)
 
     exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
@@ -160,7 +163,7 @@ if __name__ == "__main__":
     output_data.to_csv(args.table, sep="\t")
     print(output_data)
 
-    exact_test_data = exact_test_data.iloc[:100, :]
+    exact_test_data = exact_test_data.iloc[:args.threshold, :]
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]
     mutation_data = mutation_data.loc[exact_test_data.index, :]
 
