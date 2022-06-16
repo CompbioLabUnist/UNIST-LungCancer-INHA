@@ -26,7 +26,7 @@ if __name__ == "__main__":
     output_data = pandas.DataFrame(index=input_data.index)
 
     for alpha in tqdm.tqdm(skbio.diversity.get_alpha_diversity_metrics()):
-        if alpha.endswith("_ci"):
+        if alpha.endswith("_ci") or (alpha in {"osd"}):
             continue
         try:
             output_data[alpha] = skbio.diversity.alpha_diversity(alpha, input_data.to_numpy(), list(input_data.index))
