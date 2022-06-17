@@ -2,9 +2,7 @@
 aggregate_PathSeq_clustermap.py: Aggregate PathSeq results as clustermap
 """
 import argparse
-import itertools
 import matplotlib
-import matplotlib.colors
 import matplotlib.pyplot
 import pandas
 import seaborn
@@ -61,7 +59,6 @@ if __name__ == "__main__":
     print(output_data)
 
     taxa_list = list(output_data.columns)[:-1]
-    taxa_coloring = dict(zip(taxa_list, itertools.cycle(matplotlib.colors.XKCD_COLORS)))
 
     order = list(filter(lambda x: x in set(output_data["Subtype"]), step00.long_sample_type_list))
     print(order)
@@ -70,16 +67,14 @@ if __name__ == "__main__":
     stage_set = set(map(step00.get_long_sample_type, list(output_data.index)))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
-    col_colors = list(map(lambda x: taxa_coloring[x], list(output_data.columns)[:-1]))
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     try:
-        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
     except RecursionError:
-        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
 
     g.ax_heatmap.set_xlabel(f"{len(taxa_list)} {args.level}")
     g.ax_heatmap.set_ylabel(f"{len(output_data)} samples")
