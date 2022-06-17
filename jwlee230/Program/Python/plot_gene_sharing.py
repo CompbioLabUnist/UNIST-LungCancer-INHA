@@ -14,7 +14,6 @@ import seaborn
 import tqdm
 import step00
 
-wanted_columns = ["Hugo_Symbol", "Patient", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 mutect_data = pandas.DataFrame()
 mutation_set: collections.Counter = collections.Counter()
 heatmap_data = pandas.DataFrame()
@@ -62,8 +61,18 @@ def query_heatmap(gene: str, derivation: str) -> typing.Union[float, None]:
         raise Exception("Something went wrong!!")
 
 
-def query_mutation(gene: str, sample: str) -> str:
-    return ",".join(sorted(list(map(lambda x: step00.nonsynonymous_notations[x], mutect_data.loc[(mutect_data["Patient"] == sample) & (mutect_data["Hugo_Symbol"] == gene), "Variant_Classification"]))))
+def query_mutation(gene: str, patient: str) -> int:
+    wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
+
+    patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data["Hugo_Symbol"] == gene)]
+
+    stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+    if ("Primary" in stage_set) and (len(stage_set) > 1):
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
+        return len(precancer_set & primary_set)
+    else:
+        return 0
 
 
 if __name__ == "__main__":
@@ -132,6 +141,7 @@ if __name__ == "__main__":
 
     patients &= set(mutect_data["Patient"])
 
+    wanted_columns = ["Hugo_Symbol", "Patient", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
     clinical_data["Shared Proportion"] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
@@ -140,13 +150,11 @@ if __name__ == "__main__":
         assert "Primary" in stage_set
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
-        if stage_set[-1] != "Primary":
-            continue
-
         precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
         clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
-        mutation_set |= collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
+        mutation_set += collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
     clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
+    print(mutation_set.most_common(5))
     print(clinical_data)
 
     if args.median:
@@ -156,13 +164,13 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
 
-    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] <= cutting)]
+    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] <= cutting)].sort_values(by="Shared Proportion")
     lower_patients = list(lower_data.index)
-    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)]
+    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)].sort_values(by="Shared Proportion")
     higher_patients = list(higher_data.index)
     print(len(lower_patients), "vs", len(higher_patients))
 
-    gene_list = list(set(cgc_data.index) & set(map(lambda x: x[0], mutation_set.keys())))
+    gene_list = sorted(set(cgc_data.index) & set(map(lambda x: x[0], mutation_set.keys())))
     print(len(gene_list))
 
     heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(lower_patients) + len(higher_patients))), index=gene_list, columns=lower_patients + higher_patients, dtype=int)
@@ -171,7 +179,7 @@ if __name__ == "__main__":
             heatmap_data.loc[:, sample] = pool.starmap(query_mutect, [(gene, sample) for gene in gene_list])
     print(heatmap_data)
 
-    mutation_data = pandas.DataFrame(index=gene_list, columns=lower_patients + higher_patients, dtype=str)
+    mutation_data = pandas.DataFrame(index=gene_list, columns=lower_patients + higher_patients, dtype=int)
     with multiprocessing.Pool(args.cpus) as pool:
         for sample in tqdm.tqdm(list(mutation_data.columns)):
             mutation_data.loc[:, sample] = pool.starmap(query_mutation, [(gene, sample) for gene in gene_list])
@@ -183,18 +191,15 @@ if __name__ == "__main__":
             exact_test_data.loc[:, derivation] = -1 * numpy.log10(numpy.array(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)])))
     print(exact_test_data)
 
-    exact_test_data = exact_test_data.sort_values(by="Fisher", kind="stable", ascending=False)
+    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
+    heatmap_data = heatmap_data.loc[exact_test_data.index, :]
+    mutation_data = mutation_data.loc[exact_test_data.index, :]
     print(exact_test_data)
 
     mutation_data.columns = list(map(lambda x: f"{x}-Lower" if (x in lower_patients) else f"{x}-Higher", list(mutation_data.columns)))
     output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
     output_data.to_csv(args.tsv, sep="\t")
     print(output_data)
-
-    exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
-    heatmap_data = heatmap_data.loc[exact_test_data.index, :]
-    mutation_data = mutation_data.loc[exact_test_data.index, :]
-    print(exact_test_data)
 
     exact_test_data = exact_test_data.iloc[:args.threshold, :]
     heatmap_data = heatmap_data.loc[exact_test_data.index, :]

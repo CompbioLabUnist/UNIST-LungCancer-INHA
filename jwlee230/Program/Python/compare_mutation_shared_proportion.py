@@ -2,7 +2,6 @@
 compare_mutation_shared_proportion.py: Compare mutation shared proportion
 """
 import argparse
-import collections
 import multiprocessing
 import matplotlib
 import matplotlib.pyplot
@@ -12,12 +11,25 @@ import pandas
 import tqdm
 import step00
 
-wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
-watching = "Hugo_Symbol"
+mutect_data = pandas.DataFrame()
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
+
+
+def query_mutation(gene: str, patient: str) -> int:
+    wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
+
+    patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data["Hugo_Symbol"] == gene)]
+
+    stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+    if ("Primary" in stage_set) and (len(stage_set) > 1):
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
+        return len(precancer_set & primary_set)
+    else:
+        return 0
 
 
 if __name__ == "__main__":
@@ -82,6 +94,7 @@ if __name__ == "__main__":
 
     patients &= set(mutect_data["Patient"])
 
+    wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
     clinical_data["Shared Proportion"] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
@@ -89,9 +102,6 @@ if __name__ == "__main__":
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
         assert "Primary" in stage_set
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
-
-        if stage_set[-1] != "Primary":
-            continue
 
         precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
         clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
@@ -110,14 +120,12 @@ if __name__ == "__main__":
     print(lower_data)
     print(higher_data)
 
-    lower_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(lower_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=["Hugo_Symbol", "Patient"], keep="last").loc[:, "Hugo_Symbol"])
-    higher_genes: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Patient"].isin(set(higher_data.index))) & (mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))].drop_duplicates(subset=["Hugo_Symbol", "Patient"], keep="last").loc[:, "Hugo_Symbol"])
-    total_genes = lower_genes + higher_genes
-
-    lower_gene_names = set(lower_genes.keys()) & set(cgc_data.index)
-    higher_gene_names = set(higher_genes.keys()) & set(cgc_data.index)
-
-    output_data = pandas.DataFrame([(gene, count, "Lower") for gene, count in lower_genes.most_common()] + [(gene, count, "Higher") for gene, count in higher_genes.most_common()], columns=["Gene", "Count", "Lower/Higher"])
+    data = list()
+    with multiprocessing.Pool(args.cpus) as pool:
+        for gene in tqdm.tqdm(list(cgc_data.index)):
+            data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(lower_data.index)])), "Lower"))
+            data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(higher_data.index)])), "Higher"))
+    output_data = pandas.DataFrame(data=data, columns=["Gene", "Count", "Lower/Higher"])
     print(output_data)
 
     matplotlib.use("Agg")
@@ -126,7 +134,7 @@ if __name__ == "__main__":
 
     fig, axs = matplotlib.pyplot.subplots(figsize=(32, 48), nrows=3, sharey=True)
 
-    genes = sorted(set(lower_gene_names) & set(higher_gene_names), key=lambda x: numpy.mean(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
+    genes = sorted(list(cgc_data.index), key=lambda x: sum(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
     tmp_data = output_data.loc[(output_data["Gene"].isin(genes))].sort_values(by="Count", ascending=False)
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", order=genes, hue="Lower/Higher", ci=None, palette={"Lower": "tab:cyan", "Higher": "tab:red"}, ax=axs[0])
     axs[0].set_title(f"Total {len(clinical_data)} patients")
@@ -134,14 +142,14 @@ if __name__ == "__main__":
     axs[0].set_xlabel("")
     axs[0].set_ylabel("Patients")
 
-    tmp_data = output_data.loc[(output_data["Gene"].isin(lower_gene_names)) & (output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
+    tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:cyan", ci=None, ax=axs[1])
     axs[1].set_title(f"Lower {len(lower_data)} patients")
     axs[1].set_xticklabels(tmp_data["Gene"], rotation="vertical")
     axs[1].set_xlabel("")
     axs[1].set_ylabel("Patients")
 
-    tmp_data = output_data.loc[(output_data["Gene"].isin(higher_gene_names)) & (output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
+    tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
     seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:red", ci=None, ax=axs[2])
     axs[2].set_title(f"Higher {len(higher_data)} patients")
     axs[2].set_xticklabels(tmp_data["Gene"], rotation="vertical")
