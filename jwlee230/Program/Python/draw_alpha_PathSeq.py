@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, palette=step00.stage_color_code, cut=2, linewidth=5, ax=ax)
+        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
         try:
             statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=input_data, x="Subtype", y=alpha, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
         except ValueError:

@@ -17,7 +17,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PathSeq results TSV file", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case, ...)", type=str, nargs="+", default=["Smoking-Detail", "Never", "Ex", "Current"])
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:], cut=2, linewidth=5, ax=ax)
+        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:], cut=1, linewidth=5, ax=ax)
         try:
             statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(args.compare[1:], r=2)))), data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
         except Exception:

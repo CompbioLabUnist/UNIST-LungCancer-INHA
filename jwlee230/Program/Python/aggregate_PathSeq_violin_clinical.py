@@ -1,9 +1,11 @@
 """
-aggregate_PathSeq_violin.py: Aggregate PathSeq results as violin plot
+aggregate_PathSeq_violin_clinical.py: Aggregate PathSeq results as violin plot with clinical data
 """
 import argparse
+import itertools
 import multiprocessing
 import tarfile
+import typing
 import matplotlib
 import matplotlib.pyplot
 import pandas
@@ -17,10 +19,10 @@ output_data = pandas.DataFrame()
 
 
 def draw_violin(taxon: str) -> str:
-    stage_order = list(filter(lambda x: (x in set(output_data["Subtype"])) and (len(output_data.loc[(output_data["Subtype"] == x)]) > 3), step00.long_sample_type_list))
+    stage_order: typing.List[str] = list(filter(lambda x: all([not output_data.loc[(output_data["Subtype"] == x) & (output_data[args.compare[0]] == compare)].empty for compare in args.compare[1:]]), step00.long_sample_type_list))
 
     try:
-        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Subtype"] == stage), taxon] for stage in stage_order])
+        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Subtype"] == stage) & (output_data[args.compare[0]] == compare), taxon] for stage, compare in itertools.product(stage_order, args.compare[1:])])
     except ValueError:
         return ""
 
@@ -29,8 +31,11 @@ def draw_violin(taxon: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:], cut=1, linewidth=5, ax=ax)
+    try:
+        statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(args.compare[1:], r=2)))), data=output_data, x="Subtype", y=taxon, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    except Exception:
+        pass
 
     matplotlib.pyplot.ylabel(f"{taxon} (%)")
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
@@ -51,14 +56,11 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
+    parser.add_argument("--compare", help="Comparison grouping (type, control, case, ...)", type=str, nargs="+", default=["Smoking-Detail", "Never", "Ex", "Current"])
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
-
-    group_sorting = parser.add_mutually_exclusive_group(required=True)
-    group_sorting.add_argument("--patient", help="Sorting by patient first", action="store_true", default=False)
-    group_sorting.add_argument("--type", help="Sorting by type first", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -70,6 +72,8 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
+
+    comapre = args.compare
 
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
@@ -83,22 +87,11 @@ if __name__ == "__main__":
     print(patients)
 
     output_data = pandas.read_csv(args.input, sep="\t", index_col=0)
-    index = list(filter(lambda x: step00.get_patient(x) in patients, list(output_data.index)))
-
-    if args.patient:
-        index.sort(key=step00.sorting)
-    elif args.type:
-        index.sort(key=step00.sorting_by_type)
-    else:
-        raise Exception("Something went wrong!!")
-
-    output_data = output_data.loc[index, :]
+    output_data = output_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(output_data.index))), :]
+    output_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(output_data.index)))
     print(output_data)
 
-    taxa_list = list(output_data.columns)[:-1]
-
-    order = list(filter(lambda x: x in set(output_data["Subtype"]), step00.long_sample_type_list))
-    print(order)
+    taxa_list = list(output_data.columns)[:-2]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
