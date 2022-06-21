@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 5
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -4220,7 +4220,7 @@ Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2: $(REFERENCE_FASTA) | Output/WTS/Bowt
 	$(DOCKER) bowtie2-build --threads $(CPUS) --seed "12345" $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(basename $@)) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.sam: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 Data/WTS/%_*.fastq.gz | build.log
-	$(DOCKER) bowtie2 -q --threads $(CPUS) --qc-filter --seed "12345" --rg-id $* --time --met-stderr -x $(addprefix /,$(basename $(basename $(filter %.bt2,$^)))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) bowtie2 -q --threads $(CPUS) --qc-filter --seed "12345" --rg-id $* --rg "ID:$*\tPL:ILLUMINA\tLB:$*\tSM:$*\tCN:UNIST" --time --met-stderr -x $(addprefix /,$(basename $(basename $(filter %.bt2,$^)))) -1 $(addprefix /,$(word 1,$(sort $(filter %.fastq.gz,$^)))) -2 $(addprefix /,$(word 2,$(sort $(filter %.fastq.gz,$^)))) -S $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
