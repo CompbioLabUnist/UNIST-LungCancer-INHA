@@ -4226,7 +4226,7 @@ Output/WTS/Bowtie2/%.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.sam | build.lo
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
 
 Output/WTS/Bowtie2/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.bam | build.log
-	$(DOCKER) samtools sort -l 9 -m $(shell echo "$(MEMS) / $(CPUS)" | bc)G --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "SILENT" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.Sort.bai: Output/WTS/Bowtie2/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
