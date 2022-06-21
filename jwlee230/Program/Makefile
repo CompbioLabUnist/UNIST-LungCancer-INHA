@@ -4468,6 +4468,25 @@ step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Cl
 step61: step61-BWA step61-Bowtie2
 .PHONY: step61-BWA step61-Bowtie2 step61
 
+# Step 62 (Joint plot with Mutation Shared Proportion)
+Output/Clinical_vs_Joint-Plot:
+	mkdir -p $@
+
+Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step62: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
+.PHONY: step62
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
