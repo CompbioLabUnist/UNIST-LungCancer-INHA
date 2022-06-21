@@ -132,7 +132,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(figsize=(32, 48), nrows=3, sharey=True)
+    fig, axs = matplotlib.pyplot.subplots(figsize=(32 * 3, 18), ncols=3, sharey=True)
 
     genes = sorted(list(cgc_data.index), key=lambda x: sum(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
     tmp_data = output_data.loc[(output_data["Gene"].isin(genes))].sort_values(by="Count", ascending=False)
