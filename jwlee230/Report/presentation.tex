@@ -5111,8 +5111,22 @@
     \subsection{Mutation Shared Proportion}
     \begin{frame}
         \frametitle{Mutation Shared Proportion?}
+
+        \begin{block}{Mutation Shared Proportion}
+            $\textrm{Mutation Shared Proportion} = (\textrm{Precancer} \cap \textrm{Primary}) / \textrm{Primary}$
+        \end{block}
+
+        \begin{block}{Selection Strategy}
+            \begin{enumerate}
+                \item Non-synonymous: point mutation, frame-shift, splice site, etc.
+                \item Same site: chromosome, start position, \& end position
+                \item Exact reference allele
+                \item Exact tumor allele
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
+    \subsubsection{BWA}
     \begin{frame}
         \frametitle{Mutation Shared Proportion Distribution}
 
@@ -5144,12 +5158,42 @@
                 \\
                 \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
             \end{array}$
-            \caption{K-M Survivial Plot from LUSC with Median separation}
+            \caption{K-M Survivial Plot with Median separation from LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion.mean/Overall-Survival.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion.mean/Recurrence-Free-Survival.pdf}
+                \\
+                \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
+            \end{array}$
+            \caption{K-M Survivial Plot with Mean separation from LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Mutation Shared Genes}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Genes/BWA.SQC.Median.pdf}
+            \caption{Mutation Shared Genes with Median separation from LUSC}
+        \end{figure}
+
+         \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Genes/BWA.SQC.Mean.pdf}
+            \caption{Mutation Shared Genes with Mean separation from LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
         \frametitle{Findings in Mutation Sharing Proportion}
+    \end{frame}
+
+    \subsection{Mutation Shared Proportion vs. Mutation Signature}
+    \begin{frame}
+        \frametitle{title}
     \end{frame}
 
     \subsection{Identification of Microbial Sequences}
