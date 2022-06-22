@@ -62,14 +62,12 @@ def query_heatmap(gene: str, derivation: str) -> typing.Union[float, None]:
 
 
 def query_mutation(gene: str, patient: str) -> int:
-    wanted_columns = ["Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
-
     patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data["Hugo_Symbol"] == gene)]
 
     stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
     if ("Primary" in stage_set) and (len(stage_set) > 1):
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", ["Hugo_Symbol"] + step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], ["Hugo_Symbol"] + step00.sharing_strategy].itertuples(index=False, name=None))
         return len(precancer_set & primary_set)
     else:
         return 0
@@ -136,21 +134,22 @@ if __name__ == "__main__":
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
     print(mutect_data)
 
-    mutect_data = mutect_data[(mutect_data["Variant_Classification"].isin(step00.nonsynonymous_mutations))]
+    mutect_data = mutect_data[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
 
-    wanted_columns = ["Hugo_Symbol", "Patient", "Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
     clinical_data["Shared Proportion"] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
-        assert "Primary" in stage_set
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], wanted_columns].itertuples(index=False, name=None))
+        if ("Primary" not in stage_set) and (len(stage_set) < 2):
+            continue
+
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", ["Hugo_Symbol", "Patient",] + step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
         clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
         mutation_set += collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
     clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
