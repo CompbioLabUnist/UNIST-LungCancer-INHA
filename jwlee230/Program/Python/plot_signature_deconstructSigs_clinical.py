@@ -35,6 +35,7 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
 
     matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.tight_layout()
 
     fig_name = "{0}.pdf".format(signature)
     fig.savefig(os.path.join(step00.tmpfs, fig_name))
