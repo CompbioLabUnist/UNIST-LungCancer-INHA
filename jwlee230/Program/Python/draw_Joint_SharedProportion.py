@@ -6,6 +6,7 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
+import scipy.stats
 import seaborn
 import pandas
 import tqdm
@@ -60,7 +61,7 @@ if __name__ == "__main__":
         mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Patient"] = pool.map(step00.get_patient, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data = mutect_data[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
+        mutect_data = mutect_data.loc[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
@@ -71,8 +72,10 @@ if __name__ == "__main__":
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+
         if ("Primary" not in stage_set) and (len(stage_set) < 2):
             continue
+
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
         precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
         clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
@@ -88,7 +91,12 @@ if __name__ == "__main__":
 
     for column in tqdm.tqdm(survival_columns):
         clinical_data[column] = list(map(int, clinical_data[column]))
+
+        r, p = scipy.stats.pearsonr(clinical_data["Shared Proportion"], clinical_data[column])
+
         g = seaborn.jointplot(data=clinical_data, x="Shared Proportion", y=column, kind="reg", height=24, dropna=True)
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+
         figures.append(f"{column}.pdf")
         g.savefig(figures[-1])
 
