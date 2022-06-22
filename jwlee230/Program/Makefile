@@ -189,6 +189,10 @@ Docker/Tools/RTCR.zip: | Docker/Tools
 	wget "https://github.com/uubram/RTCR/zipball/master" -O $@
 TOOLS += Docker/Tools/RTCR.zip
 
+Docker/Tools/helmsman.tar.gz: | Docker/Tools
+	wget "https://github.com/carjed/helmsman/archive/refs/tags/1.5.3.tar.gz" -O $@
+TOOLS += Docker/Tools/helmsman.tar.gz
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@

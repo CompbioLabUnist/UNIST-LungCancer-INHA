@@ -134,6 +134,10 @@ ENV PATH=/Tools/mixcr-3.0.13:$PATH
 ADD Tools/RTCR.zip /Tools/
 RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python2 setup.py install
 
+# Helmsman
+ADD Tools/helmsman.tar.gz /Tools/
+RUN cd /Tools/helmsman-1.5.3 && conda env create -n helmsman -f env.yml
+
 VOLUME /Output
 VOLUME /Data
 VOLUME /Python
