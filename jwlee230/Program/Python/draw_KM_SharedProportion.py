@@ -14,7 +14,6 @@ import pandas
 import tqdm
 import step00
 
-wanted_columns = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 survival_columns = ["Recurrence-Free Survival", "Overall Survival"]
 threshold = 365 * 5
 
@@ -70,6 +69,7 @@ if __name__ == "__main__":
         mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Patient"] = pool.map(step00.get_patient, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
+        mutect_data = mutect_data.loc[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
@@ -79,17 +79,14 @@ if __name__ == "__main__":
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
 
-        stage_set = set(patient_data["Stage"])
-        if "Primary" not in stage_set:
+        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+
+        if ("Primary" not in stage_set) or (len(stage_set) < 2):
             continue
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
 
-        for stage in stage_set:
-            if stage == "Primary":
-                continue
-
-            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
-            clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
+        clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
     clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
     print(clinical_data)
 

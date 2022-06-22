@@ -26,6 +26,7 @@ stage_linestyle = {"Normal": "-", "Dysplasia": ":", "AAH": ":", "CIS+AIS": "-.",
 
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
 
+nonsynonymous_column = "Variant_Classification"
 nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Missense_Mutation", "Nonsense_Mutation", "Splice_Site", "Translation_Start_Site", "Nonstop_Mutation"}
 nonsynonymous_notations = {"Nonsense_Mutation": "Nonsense", "In_Frame_Del": "In frame indel", "In_Frame_Ins": "In frame indel", "Frame_Shift_Del": "Frameshift indel", "Missense_Mutation": "Missense", "Splice_Site": "Splice site", "Frame_Shift_Ins": "Frameshift indel", "Translation_Start_Site": "TSS", "Nonstop_Mutation": "Nonstop"}
 nonsynonymous_coloring = {"Missense": "darkgreen", "Nonsense": "cyan", "In frame indel": "navy", "Frameshift indel": "gold", "Splice site": "darkviolet", "LOH": "orange", "TSS": "chocolate", "Nonstop": "crimson", "Absent": "lightgray", "Multiple": "black"}
@@ -40,6 +41,8 @@ Gistic_columns = ["Sample", "Chromosome", "Start Position", "End Position", "Num
 Tcell_list = ["CD4+ Th", "CD8 low T", "CD8+/CD4+ Mixed Th", "Cytotoxic CD8+ T", "Exhausted CD8+ T", "Exhausted Tfh", "Naive CD4+ T", "Naive CD8+ T", "Treg"]
 
 PathSeq_type_list = ["class", "family", "genus", "kingdom", "no_rank", "order", "phylum", "root", "species", "species_group", "species_subgroup", "subclass", "subfamily", "subgenus", "subkingdom", "suborder", "subphylum", "subspecies", "superkingdom", "tribe", "varietas"]
+
+sharing_strategy = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 
 
 def file_list(path: str) -> typing.List[str]:

@@ -13,7 +13,6 @@ import pandas
 import tqdm
 import step00
 
-wanted_columns = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 signature_data = pandas.DataFrame()
 
 
@@ -103,6 +102,7 @@ if __name__ == "__main__":
         mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Patient"] = pool.map(step00.get_patient, mutect_data["Tumor_Sample_Barcode"])
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
+        mutect_data = mutect_data.loc[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(mutect_data)
 
     signature_data = pandas.read_csv(args.signature, sep="\t", index_col=0)
@@ -129,12 +129,11 @@ if __name__ == "__main__":
         else:
             patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
             assert "Primary" in set(patient_data["Stage"])
-            primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", wanted_columns].itertuples(index=False, name=None))
+            primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
 
-            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, wanted_columns].itertuples(index=False, name=None))
+            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, step00.sharing_strategy].itertuples(index=False, name=None))
             proportion = len(primary_set & precancer_set) / len(primary_set)
             signature_data.loc[index, "Shared Proportion"] = proportion
-
     print(signature_data)
 
     matplotlib.use("Agg")
