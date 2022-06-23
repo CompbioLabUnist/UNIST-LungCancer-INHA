@@ -31,6 +31,7 @@ MUTENRICHER = $(PYTHON) /Tools/MutEnricher-1.3.1/mutEnricher.py
 TMPFS = /tmpfs
 CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
+HELMSMAN = /root/anaconda2/envs/helmsman/bin/python3 /Tools/helmsman-1.5.3/helmsman.py
 PURECN_EXTDATA_DIR = /usr/local/lib/R/site-library/PureCN/extdata
 
 # Reference Files
@@ -4491,6 +4492,36 @@ Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_Join
 step62: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
 .PHONY: step62
 
+# Step 63 (Helmsman)
+Output/Helmsman/BWA Output/Helmsman/Bowtie2:
+	mkdir -p $@
+
+Output/Helmsman/BWA/%/subtype_count_matrix_spectra.txt Output/Helmsman/BWA/%/subtype_count_matrix.txt: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.PASS.maf | Output/Helmsman/BWA build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@)
+	$(DOCKER) $(HELMSMAN) --cpus $(CPUS) --mode "maf" --seed 12345 --verbose --input $(addprefix /,$(filter %.maf,$^)) --fastafile $(addprefix /,$(filter %.fasta,$^)) --impute --projectdir $(@D) 1> $(@D).stdout 2> $(@D).stderr
+
+Output/Helmsman/Bowtie2/%/subtype_count_matrix_spectra.txt Output/Helmsman/Bowtie2/%/subtype_count_matrix.txt: $(REFERENCE_FASTA) Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf | Output/Helmsman/Bowtie2 build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@)
+	$(DOCKER) $(HELMSMAN) --cpus $(CPUS) --mode "maf" --seed 12345 --verbose --input $(addprefix /,$(filter %.maf,$^)) --fastafile $(addprefix /,$(filter %.fasta,$^)) --impute --projectdir $(@D) 1> $(@D).stdout 2> $(@D).stderr
+
+step63-BWA: $(addprefix Output/Helmsman/BWA/,$(addsuffix /subtype_count_matrix_spectra.txt,$(WES_TUMOR_ID)))
+step63-Bowtie2: $(addprefix Output/Helmsman/Bowtie2/,$(addsuffix /subtype_count_matrix_spectra.txt,$(WES_TUMOR_ID)))
+step63: step63-BWA step63-Bowtie2
+.PHONY: step63-BWA step63-Bowtie2 step63
+
+# Step 64 (Histogram of file size)
+Output/Size:
+	mkdir -p $@
+
+Output/Size/WES.pdf: Python/analysis_filesize_distribution.py Data/RawData/*.fastq.gz | Output/Size build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Size/WTS.pdf: Python/analysis_filesize_distribution.py Data/WTS/*.fastq.gz | Output/Size build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step64: Output/Size/WES.pdf Output/Size/WTS.pdf
+.PHONY: step64
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
@@ -4504,5 +4535,3 @@ step62: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinic
 # https://github.com/raphael-group/spruce/
 
 # Step ## (CRUST)
-
-# Step ## (Histogram of file size)
