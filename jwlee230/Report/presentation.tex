@@ -395,6 +395,25 @@
     \end{frame}
 
     \section{Results}
+    \subsection{Quality Checks with Size}
+    \begin{frame}
+        \frametitle{File Size in WES Data}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Size/WES.pdf}
+            \caption{File Size Distribution in WES Data}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{File Size in WTS Data}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Size/WTS.pdf}
+            \caption{File Size Distribution in WTS Data}
+        \end{figure}
+    \end{frame}
+
     \subsection{Quality Checks with FastQC}
     \begin{frame}
         \frametitle{FastQC?}
@@ -2762,6 +2781,7 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{SigProfiler}
     \begin{frame}
         \frametitle{SigProfiler?}
 
@@ -3037,203 +3057,6 @@
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
             \caption{SBS1 Signature in LUAD with Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{SBS with Shared Mutation Proportion in LUSC}
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS1 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS1_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS1_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS1 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS1_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS1_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS1 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS2 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS2_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS2 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS2_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS2 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS4 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS4_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS4_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS4 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS4_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS4_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS4 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS5 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS5_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS5_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS5 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS5_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS5_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS5 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS10b with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS10b_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS10b_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS10b with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS10b_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS10b_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS10b with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS13 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS13_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS13_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS13 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS13_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS13_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS13 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{SBS87 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS87_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS87_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS87 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS87_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-SBS/Precancer-SBS87_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{SBS87 with Precancer samples}
         \end{figure}
     \end{frame}
 
@@ -3622,118 +3445,6 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{DBS with Shared mutation Proportion in LUSC}
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS2 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS2_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS2 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS2_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS2 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS7 with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS7_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS7_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS7 with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS7_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS7_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS7 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS78A with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS78A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS78A_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS78A with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS78A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-DBS/Precancer-DBS78A_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{DBS78A with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{DBS with Shared Mutation Proportion in LUAD}
-    \begin{frame}[allowframebreaks]
-        \frametitle{DBS2 with Shared Mutation Proportion in LUAD}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/CIS+AIS-DBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/CIS+AIS-DBS2_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score}
-            \end{array}$
-            \caption{DBS2 with AIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/Precancer-DBS2_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-ADC-DBS/Precancer-DBS2_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score}
-            \end{array}$
-            \caption{DBS2 with Precancer samples}
-        \end{figure}
-    \end{frame}
-
     \subsubsection{DBS with Clinical Values in LUSC}
     \begin{frame}
         \frametitle{DBS2 with Recurrence-Free Survival in LUSC}
@@ -3970,114 +3681,19 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{Indel with Shared mutation Proportion in LUSC}
-    \begin{frame}[allowframebreaks]
-        \frametitle{ID83A with Shared Mutation Proportion in LUSC}
+    \subsubsection{deconstructSigs}
+    \begin{frame}
+        \frametitle{deconstructSigs?}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{ID83A with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{ID83A with Precancer samples}
+            \includegraphics[width=0.4 \linewidth]{figures/Workflow/deconstructSigs.png}
+            \caption{deconstructSigs workflow \protect\cite{deconstructSigs-1}}
         \end{figure}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
-        \frametitle{ID83B with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{ID83B with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Primary.pdf}
-                \\
-
-                \mbox{(a) Precancer score} & \mbox{(b) Primary score} \\
-            \end{array}$
-            \caption{ID83B with Precancer samples}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Indel with Shared Mutation Proportion in LUSC}
-    \begin{frame}[allowframebreaks]
-        \frametitle{ID83A with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
-            \end{array}$
-            \caption{ID83A with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83A_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
-            \end{array}$
-            \caption{ID83A with Precacner samples}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{ID83B with Shared Mutation Proportion in LUSC}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83B_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
-            \end{array}$
-            \caption{ID83B with CIS samples}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Precancer.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-SQC-Indel/Precancer-ID83B_Primary.pdf}
-                \\
-                \mbox{(a) Precancer score} & \mbox{(b) Primary} \\
-            \end{array}$
-            \caption{ID83B with Precacner samples}
-        \end{figure}
+    \subsubsection{Helmsman}
+    \begin{frame}
+        \frametitle{Helmsman?}
     \end{frame}
 
     \begin{frame}
@@ -5401,9 +5017,136 @@
         \frametitle{Findings in Mutation Sharing Proportion}
     \end{frame}
 
-    \subsection{Mutation Shared Proportion vs. Mutation Signature}
+    \subsection{Mutation Shared Proportion vs. Mutational Signature}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Mutational Signatures}
+
+        \begin{block}{SBS1}
+            \begin{itemize}
+                \item An endogenous mutational process \cite{signature2}
+                \item generates G$>$T mismatches in double-stranded DNA
+                \item Failure $\Downarrow$ to detect \& remove these mismatches
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS2}
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
+                \begin{enumerate}
+                    \item APOBEC3A is probably responsible in human cancer
+                    \item APOBEC3B may also contribute
+                \end{enumerate}
+                \item may be generated directly by DNA replication
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS4}
+            \begin{itemize}
+                \item Tobacco smoking \cite{signature3}
+                \item Exposed to tabacco carcinogens \textit{e.g.} benzopyrene
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS5}
+            \begin{itemize}
+                \item Unknown \cite{signature3}
+                \item SBS5 $\Uparrow$ in bladder cancer
+                \item SBS5 $\Uparrow$ in many cancer types $\because$ Tobacco smoking
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS10b}
+            \begin{itemize}
+                \item Polymerase $\epsilon$ exonuclease domain mutations \cite{signature1}
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS13}
+            \begin{itemize}
+                \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
+                \item SBS13 is usually found with SBS2
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS87}
+            \begin{itemize}
+                \item Thiopurine chemotherapy treatment \cite{signature5}
+            \end{itemize}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{SigProfiler}
     \begin{frame}
-        \frametitle{title}
+        \frametitle{SBS4}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS4.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/Primary-SBS4.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/All-SBS4.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{Shared Proportion vs. SBS4 with BWA in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS5}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/Primary-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/All-SBS5.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{Shared Proportion vs. SBS5 with BWA in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{deconstructSigs}
+    \begin{frame}
+        \frametitle{SBS4}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/CIS+AIS-SBS4.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/Primary-SBS4.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/All-SBS4.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{Shared Proportion vs. SBS4 with BWA in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{SBS5}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/CIS+AIS-SBS4.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/Primary-SBS5.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/deconstructSigs/BWA-SQC-deconstructSigs/All-SBS5.pdf}
+                \\
+                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+            \end{array}$
+            \caption{Shared Proportion vs. SBS5 with BWA in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Mutation Shared Proportion vs. Mutational Signature}
     \end{frame}
 
     \subsection{Identification of Microbial Sequences}
@@ -5414,6 +5157,22 @@
             \includegraphics[width=0.8 \linewidth]{figures/Workflow/PathSeq.png}
             \caption{PathSeq Pipeline Diagram \protect\cite{pathseq1, pathseq2}}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Taxonomy Class}
+
+        \begin{block}{Taxonomy Class}
+            \begin{enumerate}
+                \item Kingdom
+                \item Phylum
+                \item Class
+                \item Order
+                \item Familty
+                \item Genus
+                \item Species
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \subsubsection{WES -- BWA}
