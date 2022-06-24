@@ -28,7 +28,7 @@ def draw_violin(signature: str) -> pandas.DataFrame:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
 
-    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", ax=ax)
+    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
