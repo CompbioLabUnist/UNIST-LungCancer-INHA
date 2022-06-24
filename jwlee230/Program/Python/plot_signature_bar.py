@@ -86,6 +86,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.legend()
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
