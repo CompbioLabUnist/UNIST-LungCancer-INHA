@@ -154,7 +154,7 @@ if __name__ == "__main__":
         except ValueError:
             stat, p = 0.0, 1.0
 
-        seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, ax=ax)
+        seaborn.violinplot(data=drawing_data, x="Stage", y=watching, order=drawing_stage_list, inner="box", palette=drawing_palette, cut=1, ax=ax)
         statannotations.Annotator.Annotator(ax, list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
