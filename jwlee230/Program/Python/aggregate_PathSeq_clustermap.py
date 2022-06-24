@@ -72,9 +72,9 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     try:
-        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.1, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100)
     except RecursionError:
-        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.2, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
+        g = seaborn.clustermap(data=output_data.loc[:, taxa_list], figsize=(32, 18), row_cluster=True, col_cluster=False, cbar_pos=(-0.04, 0.1, 0.02, 0.6), row_colors=row_colors, xticklabels=False, yticklabels=False, square=False, cmap="Reds", vmin=0, vmax=100, dendrogram_ratio=(0.2, 0.0))
 
     g.ax_heatmap.set_xlabel(f"{len(taxa_list)} {args.level}")
     g.ax_heatmap.set_ylabel(f"{len(output_data)} samples")
