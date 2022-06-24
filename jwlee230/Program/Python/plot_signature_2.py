@@ -28,13 +28,14 @@ def draw_violin(signature: str, clinical: str) -> pandas.DataFrame:
     except ValueError:
         _, p = 0.0, 1.0
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(7 * len(order), 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order, inner="box", cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x="Stage", y=signature, order=order, hue=clinical, hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.tight_layout()
 
     fig_name = "{0}.pdf".format(signature)
     fig.savefig(os.path.join(step00.tmpfs, fig_name))
