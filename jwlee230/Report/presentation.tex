@@ -5167,21 +5167,178 @@
                 \item Phylum
                 \item Class
                 \item Order
-                \item Familty
+                \item Family
                 \item Genus
                 \item Species
             \end{enumerate}
         \end{block}
     \end{frame}
 
-    \subsubsection{WES -- BWA}
-    \begin{frame}
-        \frametitle{Taxonomy Distribution}
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUSC Taxonomy Distribution}
+
+        \begin{table}
+            \caption{Number of WTS samples}
+            \input{tables/WTS_samples/WTS_samples.tex}
+        \end{table}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.35 \linewidth]{figures/PathSeq/WES/BWA/Bar/Bar-BWA-SQC.genus.pdf}
+                &
+                \includegraphics[width=0.35 \linewidth]{figures/PathSeq/WES/BWA/Bar/Bar-BWA-SQC.species.pdf}
+                \\
+                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
+            \end{array}$
+            \caption{Taxonomy Distribution of LUSC}
+        \end{figure}
+        \framebreak
     \end{frame}
 
-    \subsubsection{WTS -- STAR}
-    \begin{frame}
-        \frametitle{Taxonomy Distribution}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Differentially expressed taxa -- Genus level}
+
+        \begin{block}{Differentially expressed genera}
+            58 / 1770 (3.28 \%) genera passed K.W. test (p $<$ 0.01)
+        \end{block}
+
+        \begin{figure}
+            \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Thermomonospora.pdf}
+            \caption{Differentially expressed genus}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Achromobacter.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Ferrovum.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Reyranella.pdf}
+                \\
+
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Ancylobacter.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Candidatus_Schmidhempelia.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Labrys.pdf}
+                \\
+            \end{array}$
+            \caption{Differentially expressed genera -- Normal vs. CIS}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Anabaena.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Calothrix.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.genus/Formosa.pdf}
+                \\
+            \end{array}$
+            \caption{Differentially expressed genera -- CIS vs. Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Differentially expressed taxa -- Species level}
+
+        \begin{block}{Differentially expressed species}
+            286 / 11880 (2.41 \%) species passed K.W. test (p $<$ 0.01)
+        \end{block}
+
+        \begin{figure}
+            \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Thermomonospora_curvata.pdf}
+            \caption{Differentially expressed species}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Achromobacter_sp._HMSC057D05.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Ferrovum_sp._PN-J185.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Reyranella_massiliensis.pdf}
+                \\
+
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Ancylobacter_sp._FA202.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Candidatus_Schmidhempelia_bombi.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Labrys_sp._WJW.pdf}
+                \\
+            \end{array}$
+            \caption{Differentially expressed species -- Normal vs. CIS}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Anabaena_cylindrica.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Calothrix_sp._PCC_7507.pdf}
+                &
+                \includegraphics[width=0.25 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.species/Formosa_haliotis.pdf}
+                \\
+            \end{array}$
+            \caption{Differentially expressed species -- CIS vs. Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUSC Taxonomy Distribution -- Smoking}
+
+        \begin{table}
+            \caption{LUSC WTS Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WTS_samples/WTS_SQC_smoking.tex}}
+        \end{table}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Smoking.genus.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Smoking.species.pdf}
+                \\
+                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
+            \end{array}$
+            \caption{Taxonomy Distribution of LUSC by Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUSC Taxonomy Distribution -- Recurrence}
+
+        \begin{table}
+            \caption{LUSC WTS Data with Smoking}
+            \resizebox{!}{0.3 \textheight}
+            {\input{tables/WTS_samples/WTS_SQC_recurrence.tex}}
+        \end{table}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Recurrence.genus.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Recurrence.species.pdf}
+                \\
+                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
+            \end{array}$
+            \caption{Taxonomy Distribution of LUSC by Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUAD Taxonomy Distribution}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.35 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-ADC.genus.pdf}
+                &
+                \includegraphics[width=0.35 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-ADC.species.pdf}
+                \\
+                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
+            \end{array}$
+            \caption{Taxonomy Distribution of LUAD}
+        \end{figure}
+
     \end{frame}
 
     \begin{frame}
