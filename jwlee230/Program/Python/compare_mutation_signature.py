@@ -29,7 +29,6 @@ def run(stage: str, signature: str) -> str:
 
     g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-    g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels("{0} proportion in {1}".format(signature, stage), "Shared Proportion")
 
     fig_name = f"{stage}-{signature}.pdf"
@@ -118,7 +117,7 @@ if __name__ == "__main__":
 
     signature_data = signature_data.loc[signature_data["Patient"].isin(patients)]
 
-    signature_data["Shared Proportion"] = 0.0
+    signature_data["Shared Proportion"] = None
     for index in tqdm.tqdm(list(signature_data.index)):
         patient = step00.get_patient(index)
         stage = step00.get_long_sample_type(index)
@@ -133,7 +132,7 @@ if __name__ == "__main__":
             precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, step00.sharing_strategy].itertuples(index=False, name=None))
             proportion = len(primary_set & precancer_set) / len(primary_set)
             signature_data.loc[index, "Shared Proportion"] = proportion
-
+    signature_data.dropna(subset=["Shared Proportion"], inplace=True)
     print(signature_data)
 
     matplotlib.use("Agg")
