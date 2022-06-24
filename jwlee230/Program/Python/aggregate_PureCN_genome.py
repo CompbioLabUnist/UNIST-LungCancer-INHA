@@ -140,16 +140,16 @@ if __name__ == "__main__":
             proportion = [1.0 for _ in range(chromosome_data.shape[1])]
             for j in tqdm.tqdm(range(chromosome_data.shape[1])):
                 proportion[j] = len(list(filter(lambda x: chromosome_data.loc[x, j] <= (1 - args.threshold), stage_sample_list))) / len(stage_sample_list)
-            axs[2][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
+            axs[-1][i].plot(proportion, color=step00.stage_color_code[stage], linestyle=step00.stage_linestyle[stage], label=stage)
 
-        axs[2][i].set_ylim(bottom=0, top=1)
-        axs[2][i].invert_yaxis()
-        axs[2][i].set_xticks([])
-        axs[2][i].set_xlabel(chromosome[3:])
+        axs[-1][i].set_ylim(bottom=0, top=1)
+        axs[-1][i].invert_yaxis()
+        axs[-1][i].set_xticks([])
+        axs[-1][i].set_xlabel(chromosome[3:])
 
         if i == 0:
-            axs[2][i].set_ylabel("Proportion")
-            axs[2][i].legend(loc="lower center")
+            axs[-1][i].set_ylabel("Proportion")
+            axs[-1][i].legend(loc="lower center")
 
     matplotlib.pyplot.tight_layout()
     fig.savefig(args.output + ".pdf")
