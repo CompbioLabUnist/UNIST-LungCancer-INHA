@@ -23,25 +23,26 @@ def get_data(file_name: str) -> pandas.DataFrame:
 
 def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> float:
     tmp_data = input_data.loc[(input_data["ID"] == sample) & (input_data["chromosome"] == chromosome), :]
+    length = end - start + 1
 
     a = list()
     weights = list()
 
     get_data = tmp_data.loc[(tmp_data["start"] <= start) & (end <= tmp_data["end"]), :]
     a += list(get_data["exp"])
-    weights += list(get_data["weight"] * (end - start + 1))
+    weights += list(get_data["weight"] * (end - start + 1) / length)
 
     get_data = tmp_data.loc[(tmp_data["start"] <= start) & (start <= tmp_data["end"]), :]
     a += list(get_data["exp"])
-    weights += list(get_data["weight"] * (get_data["end"] - start + 1))
+    weights += list(get_data["weight"] * (get_data["end"] - start + 1) / length)
 
     get_data = tmp_data.loc[(tmp_data["start"] <= end) & (end <= tmp_data["end"]), :]
     a += list(get_data["exp"])
-    weights += list(get_data["weight"] * (end - get_data["start"] + 1))
+    weights += list(get_data["weight"] * (end - get_data["start"] + 1) / length)
 
     get_data = tmp_data.loc[(start <= tmp_data["start"]) & (tmp_data["end"] <= end), :]
     a += list(get_data["exp"])
-    weights += list(get_data["weight"] * (get_data["end"] - get_data["start"] + 1))
+    weights += list(get_data["weight"] * (get_data["end"] - get_data["start"] + 1) / length)
 
     if a and weights:
         return 1.0 if (0.8 < numpy.average(a=a, weights=weights) < 1.2) else numpy.average(a=a, weights=weights)
