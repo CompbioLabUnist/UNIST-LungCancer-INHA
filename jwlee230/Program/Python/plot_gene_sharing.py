@@ -77,7 +77,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinidata data TSV file", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("tsv", help="Output TSV file", type=str)
     parser.add_argument("pdf", help="Output PDF file", type=str)
@@ -97,8 +97,8 @@ if __name__ == "__main__":
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
         raise ValueError("INPUT must end with .MAF!!")
-    elif not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical must end with .CSV!!")
+    elif not args.clinical.endswith(".tsv"):
+        raise ValueError("Clinical must end with .TSV!!")
     elif not args.cgc.endswith(".csv"):
         raise ValueError("CGC must end with .CSV!!")
     elif not args.tsv.endswith(".tsv"):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
 
-    clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
+    clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
 
     if args.SQC:
@@ -139,23 +139,6 @@ if __name__ == "__main__":
 
     patients &= set(mutect_data["Patient"])
 
-    clinical_data["Shared Proportion"] = None
-    for patient in tqdm.tqdm(patients):
-        patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
-
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
-
-        if ("Primary" not in stage_set) and (len(stage_set) < 2):
-            continue
-
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", ["Hugo_Symbol", "Patient",] + step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
-        mutation_set += collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
-    clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
-    print(mutation_set.most_common(5))
-    print(clinical_data)
-
     if args.median:
         cutting = numpy.median(clinical_data["Shared Proportion"])
     elif args.mean:
@@ -168,6 +151,18 @@ if __name__ == "__main__":
     higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)].sort_values(by="Shared Proportion")
     higher_patients = list(higher_data.index)
     print(len(lower_patients), "vs", len(higher_patients))
+
+    for patient in tqdm.tqdm(patients):
+        patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
+
+        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+
+        if ("Primary" not in stage_set) and (len(stage_set) < 2):
+            continue
+
+        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
+        mutation_set += collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
 
     gene_list = sorted(set(cgc_data.index) & set(map(lambda x: x[0], mutation_set.keys())))
     print(len(gene_list))

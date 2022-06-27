@@ -34,7 +34,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
@@ -52,8 +52,8 @@ if __name__ == "__main__":
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
         raise ValueError("INPUT must end with .MAF!!")
-    elif not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical must end with .CSV!!")
+    elif not args.clinical.endswith(".tsv"):
+        raise ValueError("Clinical must end with .TSV!!")
     elif not args.cgc.endswith(".csv"):
         raise ValueError("CGC must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     elif args.threshold <= 5:
         raise ValueError("Threshold must be greater than 5!!")
 
-    clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
+    clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
 
     if args.SQC:
@@ -91,19 +91,6 @@ if __name__ == "__main__":
     print(mutect_data)
 
     patients &= set(mutect_data["Patient"])
-
-    clinical_data["Shared Proportion"] = None
-    for patient in tqdm.tqdm(patients):
-        patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
-
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
-        assert "Primary" in stage_set
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, "Shared Proportion"] = len(primary_set & precancer_set) / len(primary_set)
-    clinical_data.dropna(subset=["Shared Proportion"], inplace=True)
-    print(clinical_data)
 
     if args.median:
         cutting = numpy.median(clinical_data["Shared Proportion"])
