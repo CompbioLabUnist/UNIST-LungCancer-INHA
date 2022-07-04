@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 3
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -223,7 +223,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step22 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -4463,8 +4463,32 @@ Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean.tsv Output/Gene_Clinical_Sharing/B
 Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/Gene_Clinical_Sharing
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
 
-step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf
-step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf
+Output/Gene_Clinical_Sharing/BWA-SQC.Mean-Both.tsv Output/Gene_Clinical_Sharing/BWA-SQC.Mean-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-SQC.Median-Both.tsv Output/Gene_Clinical_Sharing/BWA-SQC.Median-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv  $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-ADC.Mean-Both.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Mean-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/BWA-ADC.Median-Both.tsv Output/Gene_Clinical_Sharing/BWA-ADC.Median-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean-Both.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median-Both.tsv Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean-Both.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Mean-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+
+Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median-Both.tsv Output/Gene_Clinical_Sharing/Bowtie2-ADC.Median-Both.pdf: Python/plot_gene_sharing.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_BOTH_CSV) | build.log Output/Gene_Clinical_Sharing
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@).tsv $(basename $@).pdf) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
+
+step61-BWA: Output/Gene_Clinical_Sharing/BWA-SQC.Mean.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Mean-Both.pdf Output/Gene_Clinical_Sharing/BWA-SQC.Median-Both.pdf
+step61-Bowtie2: Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Mean-Both.pdf Output/Gene_Clinical_Sharing/Bowtie2-SQC.Median-Both.pdf
 step61: step61-BWA step61-Bowtie2
 .PHONY: step61-BWA step61-Bowtie2 step61
 
@@ -4516,6 +4540,25 @@ Output/Size/WTS.pdf: Python/analysis_filesize_distribution.py Data/WTS/*.fastq.g
 
 step64: Output/Size/WES.pdf Output/Size/WTS.pdf
 .PHONY: step64
+
+# Step 65 (Mutation Shared Proportion vs. Sequenza)
+Output/MutationSharedProportion_vs_CNV/Sequenza:
+	mkdir -p $@
+
+Output/MutationSharedProportion_vs_CNV/Sequenza/BWA-SQC.tar: Python/compare_MutationSharedProportion_Sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_vs_CNV/Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_vs_CNV/Sequenza/BWA-ADC.tar: Python/compare_MutationSharedProportion_Sequenza.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_vs_CNV/Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_vs_CNV/Sequenza/Bowtie2-SQC.tar: Python/compare_MutationSharedProportion_Sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_vs_CNV/Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_vs_CNV/Sequenza/Bowtie2-ADC.tar: Python/compare_MutationSharedProportion_Sequenza.py $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_vs_CNV/Sequenza
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+step65: Output/MutationSharedProportion_vs_CNV/Sequenza/BWA-SQC.tar Output/MutationSharedProportion_vs_CNV/Sequenza/Bowtie2-SQC.tar
+.PHONY: step65
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

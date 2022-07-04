@@ -78,9 +78,9 @@ if __name__ == "__main__":
     for stage in tqdm.tqdm(stage_list):
         drawing_data = input_data.loc[(input_data["Stage"] == stage)]
 
-        r, p = scipy.stats.pearsonr(drawing_data["Mutation Shared Proportion"], drawing_data["ploidy"])
+        r, p = scipy.stats.pearsonr(drawing_data["Mutation Shared Proportion"], drawing_data["cellularity"])
 
-        g = seaborn.jointplot(data=drawing_data, x="Mutation Shared Proportion", y="ploidy", kind="reg", height=24, ratio=5, color=step00.stage_color_code[stage])
+        g = seaborn.jointplot(data=drawing_data, x="Mutation Shared Proportion", y="cellularity", kind="reg", height=24, ratio=5, color=step00.stage_color_code[stage])
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
 
         figures.append(f"{stage}.pdf")
