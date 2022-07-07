@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Sequenza output alternative_solutions.txt file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data with Mutaion Shared Proportion TSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data with Mutaion Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 

@@ -77,7 +77,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data TSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data TSV file", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("tsv", help="Output TSV file", type=str)
     parser.add_argument("pdf", help="Output PDF file", type=str)

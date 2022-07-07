@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("signature", help="Mutation signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 

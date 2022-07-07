@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("table", help="Output TSV file", type=str)
     parser.add_argument("figure", help="Output PDF file", type=str)
     parser.add_argument("--stage", help="Select cancer stage", choices=step00.long_sample_type_list + ["Precancer"], required=True)

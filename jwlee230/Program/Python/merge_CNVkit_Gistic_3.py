@@ -18,8 +18,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output CNS file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
-    parser.add_argument("blacklist", help="USCS blacklist file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
+    parser.add_argument("blacklist", help="UCSC blacklist file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--stage", help="Stage choices", choices=step00.long_sample_type_list + ["All"], nargs="+", default="All")
     parser.add_argument("--exact", help="Select only exact match (type, value)", type=str, nargs=2, required=True)

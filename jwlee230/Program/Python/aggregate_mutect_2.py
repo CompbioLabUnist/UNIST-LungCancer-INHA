@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("driver", help="MutEnricher Fisher enrichment output", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs="+", default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)

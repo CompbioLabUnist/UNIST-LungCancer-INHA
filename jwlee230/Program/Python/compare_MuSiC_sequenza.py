@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="MuSiC result TSV file ", type=str)
     parser.add_argument("CNV", help="Sequenza output alternative_solutions.txt file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 

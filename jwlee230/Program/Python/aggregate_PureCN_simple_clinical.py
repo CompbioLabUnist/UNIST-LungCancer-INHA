@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output segments.TSV file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])

@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output CNR file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("size", help="SIZE file", type=str)
     parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)

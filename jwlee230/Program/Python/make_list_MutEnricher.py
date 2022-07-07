@@ -9,7 +9,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input VCF(.GZ) files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
 
     group = parser.add_mutually_exclusive_group(required=True)

@@ -16,13 +16,14 @@ import tqdm
 import step00
 
 output_data = pandas.DataFrame()
+compare: typing.List[str] = list()
 
 
 def draw_violin(taxon: str) -> str:
-    stage_order: typing.List[str] = list(filter(lambda x: all([not output_data.loc[(output_data["Subtype"] == x) & (output_data[args.compare[0]] == compare)].empty for compare in args.compare[1:]]), step00.long_sample_type_list))
+    stage_order: typing.List[str] = list(filter(lambda x: all([not output_data.loc[(output_data["Subtype"] == x) & (output_data[compare[0]] == comparing)].empty for comparing in compare[1:]]), step00.long_sample_type_list))
 
     try:
-        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Subtype"] == stage) & (output_data[args.compare[0]] == compare), taxon] for stage, compare in itertools.product(stage_order, args.compare[1:])])
+        stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data["Subtype"] == stage) & (output_data[compare[0]] == comparing), taxon] for stage, comparing in itertools.product(stage_order, compare[1:])])
     except ValueError:
         return ""
 
@@ -31,9 +32,9 @@ def draw_violin(taxon: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:], cut=1, linewidth=5, ax=ax)
+    seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, hue=compare[0], hue_order=compare[1:], cut=1, linewidth=5, ax=ax)
     try:
-        statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(args.compare[1:], r=2)))), data=output_data, x="Subtype", y=taxon, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(compare[1:], r=2)))), data=output_data, x="Subtype", y=taxon, order=stage_order, hue=compare[0], hue_order=compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
     except Exception:
         pass
 

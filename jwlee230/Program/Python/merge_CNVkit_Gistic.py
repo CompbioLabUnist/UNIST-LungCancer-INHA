@@ -18,8 +18,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PureCN output CNS file(s)", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
-    parser.add_argument("blacklist", help="USCS blacklist file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
+    parser.add_argument("blacklist", help="UCSC blacklist file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 

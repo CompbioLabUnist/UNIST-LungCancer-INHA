@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Input genes.results (TSV) files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("gencode", help="Gencode annotation GTF file", type=str)
     parser.add_argument("trembl", help="Gencode TREMBL TSV.gz file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
