@@ -3328,40 +3328,40 @@ step43: step43-SQC-stage-BWA step43-SQC-stage-Bowtie2 step43-ADC-stage-BWA step4
 Output/MutationIntersection_vs_Signature:
 	mkdir -p $@
 
-Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar: Python/compare_mutation_signature.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step44-BWA-SQC: Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar
@@ -4559,6 +4559,17 @@ Output/MutationSharedProportion_vs_CNV/Sequenza/Bowtie2-ADC.tar: Python/compare_
 
 step65: Output/MutationSharedProportion_vs_CNV/Sequenza/BWA-SQC.tar Output/MutationSharedProportion_vs_CNV/Sequenza/Bowtie2-SQC.tar
 .PHONY: step65
+
+# Step 66 (Compare PathSeq WES vs. WTS)
+Output/Pathseq/WES_vs_WTS:
+	mkdir -p $@
+
+Output/Pathseq/WES_vs_WTS/venn.%.pdf: Python/compare_PathSeq_venn.py Output/Pathseq/WES/BWA.%.tsv Output/Pathseq/WES/Bowtie2.%.tsv Output/Pathseq/WTS/STAR.%.tsv Output/Pathseq/WTS/Bowtie2.%.tsv | Output/Pathseq/WES_vs_WTS build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --annotation "WES-BWA" "WES-Bowtie2" "WTS-STAR" "WTS-Bowtie2" --SQC 1> $@.stdout 2> $@.stderr
+
+step66-venn: $(addprefix Output/Pathseq/WES_vs_WTS/venn.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
+step66: step66-venn
+.PHONY: step66-venn step66
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
