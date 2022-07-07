@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="PathSeq results TSV file", type=str)
-    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
 
