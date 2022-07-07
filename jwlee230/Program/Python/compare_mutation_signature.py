@@ -61,9 +61,8 @@ def run_all(signature: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("signature", help="Mutation signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinidata data CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
@@ -73,17 +72,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".maf"), args.input)):
-        raise ValueError("INPUT must end with .MAF!!")
-    elif not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical must end with .CSV!!")
+    if not args.clinical.endswith(".tsv"):
+        raise ValueError("Clinical must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
-    clinical_data = clinical_data.loc[~(clinical_data["Volume_Doubling_Time"].isna())]
+    clinical_data: pandas.DataFrame = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
 
     if args.SQC:
@@ -95,15 +91,6 @@ if __name__ == "__main__":
     patients = set(clinical_data.index)
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
-    with multiprocessing.Pool(args.cpus) as pool:
-        mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-        mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data["Patient"] = pool.map(step00.get_patient, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data = mutect_data.loc[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
-    print(mutect_data)
-
     signature_data = pandas.read_csv(args.signature, sep="\t", index_col="Samples")
     signature_list = list(signature_data.columns)
     for index in tqdm.tqdm(list(signature_data.index)):
@@ -112,27 +99,10 @@ if __name__ == "__main__":
     signature_data["Stage"] = list(map(step00.get_long_sample_type, list(signature_data.index)))
     print(signature_data)
 
-    patients &= set(mutect_data["Patient"])
     patients &= set(signature_data["Patient"])
 
     signature_data = signature_data.loc[signature_data["Patient"].isin(patients)]
-
-    signature_data["Shared Proportion"] = None
-    for index in tqdm.tqdm(list(signature_data.index)):
-        patient = step00.get_patient(index)
-        stage = step00.get_long_sample_type(index)
-
-        if stage == "Primary":
-            signature_data.loc[index, "Shared Proportion"] = max(signature_data.loc[(signature_data["Patient"] == patient), "Shared Proportion"])
-        else:
-            patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
-            assert "Primary" in set(patient_data["Stage"])
-            primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-
-            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, step00.sharing_strategy].itertuples(index=False, name=None))
-            proportion = len(primary_set & precancer_set) / len(primary_set)
-            signature_data.loc[index, "Shared Proportion"] = proportion
-    signature_data.dropna(subset=["Shared Proportion"], inplace=True)
+    signature_data["Shared Proportion"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), "Shared Proportion"], list(signature_data.index)))
     print(signature_data)
 
     matplotlib.use("Agg")
