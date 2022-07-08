@@ -43,6 +43,7 @@ Tcell_list = ["CD4+ Th", "CD8 low T", "CD8+/CD4+ Mixed Th", "Cytotoxic CD8+ T", 
 PathSeq_type_list = ["class", "family", "genus", "kingdom", "no_rank", "order", "phylum", "root", "species", "species_group", "species_subgroup", "subclass", "subfamily", "subgenus", "subkingdom", "suborder", "subphylum", "subspecies", "superkingdom", "tribe", "varietas"]
 
 sharing_strategy = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
+sharing_columns = ["Mutation Shared Proportion", "Mutation Shared Proportion (SYN)", "Mutation Shared Proportion (Union & Non-SYN)", "Mutation Shared Proportion (Union & SYN)"]
 
 
 def file_list(path: str) -> typing.List[str]:
