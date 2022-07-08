@@ -60,7 +60,8 @@ LUNG_GSE131907_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_
 LUNG_GSE162498_11_TUMORS_RDS = Data/Lung_SingleCell/GSE162498/GSE162498_NSCLC_CD3_11tumors.Rds
 LUNG_GSE179994_ANNOTATION_TXT = Data/Lung_SingleCell/GSE179994/GSE179994_all.scTCR.tsv
 LUNG_GSE179994_MATRIX_RDS = Data/Lung_SingleCell/GSE179994/GSE179994_all.Tcell.rawCounts.rds
-KNOWN_GENE_GTF = Data/hg38.gtf.gz
+KNOWN_GENE_GTF_GZ = Data/hg38.gtf.gz
+KNOWN_GENE_GTF = Data/hg38.gtf
 ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
 ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
 ARRIBA_BLACKLIST_TSV = $(ARRIBA_DATABASE_DIR)/blacklist_hg38_GRCh38_v2.1.0.tsv.gz
@@ -806,14 +807,14 @@ Output/MutEnricher/Bowtie2/SQC.tsv: Python/make_list_MutEnricher.py $(addprefix 
 Output/MutEnricher/Bowtie2/ADC.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/Bowtie2/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/gene_covariates.txt: $(KNOWN_GENE_GTF) $(REFERENCE_FASTA) | build.log
+Output/MutEnricher/gene_covariates.txt: $(KNOWN_GENE_GTF_GZ) $(REFERENCE_FASTA) | build.log
 	$(DOCKER) $(PYTHON) /Tools/MutEnricher-1.3.1/utilities/get_gene_covariates.py --outname $(addprefix /,$@) --processors $(CPUS) $(addprefix /,$^) 1> $@.stdout 2> $@.stderr
 
-Output/MutEnricher/BWA/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_hotspot.txt Output/MutEnricher/BWA/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_gene_data.pkl Output/MutEnricher/BWA/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF) Output/MutEnricher/BWA/%.tsv | build.log
+Output/MutEnricher/BWA/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_hotspot.txt Output/MutEnricher/BWA/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/BWA/%/MutEnricher_gene_data.pkl Output/MutEnricher/BWA/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF_GZ) Output/MutEnricher/BWA/%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --anno-type "annovar-refGene" --exome-only --by-contig --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $(@D).stdout 2> $(@D).stderr
 
-Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_hotspot.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_data.pkl Output/MutEnricher/Bowtie2/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF) Output/MutEnricher/Bowtie2/%.tsv | build.log
+Output/MutEnricher/Bowtie2/%/MutEnricher_gene_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_hotspot.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutEnricher/Bowtie2/%/MutEnricher_gene_data.pkl Output/MutEnricher/Bowtie2/%/MutEnricher.log: Output/MutEnricher/gene_covariates.txt $(KNOWN_GENE_GTF_GZ) Output/MutEnricher/Bowtie2/%.tsv | build.log
 	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(MUTENRICHER) coding --outdir $(addprefix /,$(@D)) --prefix "MutEnricher" --anno-type "annovar-refGene" --exome-only --by-contig --processors $(CPUS) --covariates-file $(addprefix /,$(filter %.txt,$^)) $(addprefix /,$(filter %.gtf.gz,$^)) $(addprefix /,$(filter %.tsv,$^)) 1> $(@D).stdout 2> $(@D).stderr
 
@@ -1331,16 +1332,16 @@ Output/PyClone/BWA/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/
 Output/PyClone/Bowtie2/%/loci.tsv: Bash/run_pyclone.bash $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .Cellularity.txt,$(WES_ID))) | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$< Output/PyClone/Bowtie2/$*.tsv Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).tsv Output/PyClone/Bowtie2/$*.Cellularity.txt Output/PyClone/Bowtie2/$(PAIRED_PRIMARY).Cellularity.txt $(@D)) 1> $(@D).stdout 2> $(@D).stderr || true
 
-Output/PyClone/BWA-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF) | build.log Output/PyClone/BWA-Plots
+Output/PyClone/BWA-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF_GZ) | build.log Output/PyClone/BWA-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --CCF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/BWA-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF) | build.log Output/PyClone/BWA-Plots
+Output/PyClone/BWA-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/BWA/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF_GZ) | build.log Output/PyClone/BWA-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --VAF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF) | build.log Output/PyClone/Bowtie2-Plots
+Output/PyClone/Bowtie2-Plots/%.CCF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF_GZ) | build.log Output/PyClone/Bowtie2-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --CCF 1> $@.stdout 2> $@.stderr
 
-Output/PyClone/Bowtie2-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF) | build.log Output/PyClone/Bowtie2-Plots
+Output/PyClone/Bowtie2-Plots/%.VAF.pdf: Python/draw_output_pyclone.py Output/PyClone/Bowtie2/%/loci.tsv $(GENE_CENCUS_ONE_CSV) $(KNOWN_GENE_GTF_GZ) | build.log Output/PyClone/Bowtie2-Plots
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --VAF 1> $@.stdout 2> $@.stderr
 
 step21-preprocess: $(addprefix Output/PyClone/BWA/,$(addsuffix .tsv,$(WES_TUMOR_ID))) $(addprefix Output/PyClone/Bowtie2/,$(addsuffix .tsv,$(WES_TUMOR_ID)))
@@ -4254,17 +4255,25 @@ step57: step57-download step57-reference step57-BWA-Merge step57-BWA-Bar step57-
 .PHONY: step57-download step57-reference step57-BWA-Merge step57-BWA-Bar step57-BWA-Violin step57-BWA-Cluster step57-BWA-Diversity step57-BWA step57-Bowtie2-Merge step57-Bowtie2-Bar step57-Bowtie2-Violin step57-Bowtie2-Cluster step57-Bowtie2-Diversity step57-Bowtie2
 
 # Step 58 (WTS STAR alignment with unmapped)
-Output/WTS/STAR/Reference:
+Output/WTS/STAR/Reference Output/WTS/STAR/1pass Output/WTS/STAR/Reference_2pass Output/WTS/STAR/2pass Output/PanelOfNormal/WTS-STAR Output/Mutect2/WTS-STAR:
 	mkdir -p $@
 
-Output/WTS/STAR/Reference/Genome: $(REFERENCE_FASTA) | Output/WTS/STAR/Reference build.log
-	$(DOCKER) STAR --runMode genomeGenerate --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$^) --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/WTS/STAR/Reference/Genome: $(REFERENCE_FASTA) $(KNOWN_GENE_GTF) | Output/WTS/STAR/Reference build.log
+	$(DOCKER) STAR --runMode "genomeGenerate" --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$^) --sjdbGTFfile $(addprefix /,$(filter %.gtf,$^)) --sjdbOverhang 89 --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%/Aligned.out.sam: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference/Genome | build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
-	$(WORKDIR_DOCKER) STAR --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --runThreadN $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/WTS/STAR/1pass/%.SJ.out.tab: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference/Genome | build.log Output/WTS/STAR/1pass
+	$(WORKDIR_DOCKER) STAR --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --outFileNamePrefix "$*." --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%/Aligned.out.sam | build.log
+Output/WTS/STAR/1pass/SJ.filterted.tab: Bash/merge_STAR_SJ.bash $(addprefix Output/WTS/STAR/1pass/,$(addsuffix .SJ.out.tab,$(WTS_ID))) | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/Reference_2pass/Genome: $(REFERENCE_FASTA) $(KNOWN_GENE_GTF) Output/WTS/STAR/1pass/SJ.filterted.tab | build.log Output/WTS/STAR/Reference_2pass 
+	$(WORKDIR_DOCKER) STAR --runMode "genomeGenerate" --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$(filter %.fasta,$^)) --sjdbGTFfile $(addprefix /,$(filter %.gtf,$^)) --sjdbOverhang 89 --sjdbFileChrStartEnd $(addprefix /,$(filter %.SJ.out.tab,$^)) --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/2pass/%.Aligned.out.sam: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference_2pass/Genome | build.log Output/WTS/STAR/2pass
+	$(WORKDIR_DOCKER) STAR --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --outFileNamePrefix "$*." --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.bam: $(REFERENCE_FASTA) Output/WTS/STAR/2pass/%.Aligned.out.sam | build.log
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
 
 Output/WTS/STAR/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.bam | build.log
@@ -4282,17 +4291,48 @@ Output/WTS/STAR/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/STAR/%.
 Output/WTS/STAR/%.Sort.MarkDuplicate.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.bai | build.log
-	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) SplitNCigarReads --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.table | build.log
-	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
-
-Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.BQSR.bam | build.log
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam | build.log 
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step58: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/,$(addsuffix /Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.BQSR.bai,$(WTS_ID)))
-.PHONY: step58
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai| build.log Output/PanelOfNormal/WTS-STAR
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
+
+Output/PanelOfNormal/PON.WTS-STAR.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json | build.log
+	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.WTS-STAR.vcf.gz Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_NORMAL_ID))) | build.log Output/Mutect2/WTS-STAR
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-STAR/%.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/WTS-STAR/%.vcf | build.log
+	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-STAR/%.PASS.vcf: Bash/select_pass.bash Output/Mutect2/WTS-STAR/%.filter.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-STAR/%.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/WTS-STAR/%.PASS.vcf | build.log
+	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+step58-STAR: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/1pass/,$(addsuffix .SJ.out.tab,$(WTS_ID))) Output/WTS/STAR/1pass/SJ.filterted.tab Output/WTS/STAR/Reference_2pass/Genome $(addprefix Output/WTS/STAR/2pass/,$(addsuffix .Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
+step58-PON: $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-STAR.vcf.gz
+step58-Mutect2: $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID)))
+step58: step58-STAR step58-PON
+.PHONY: step58-STAR step58-PON step58
 
 # Step 59 (WTS Bowtie2 alignment with unmapped)
 Output/WTS/Bowtie2/Reference:
@@ -4322,16 +4362,22 @@ Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/Bowt
 Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bai | build.log
-	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) SplitNCigarReads --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.table | build.log
-	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
-
-Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.BQSR.bam | build.log
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-step59: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.BQSR.bai,$(WTS_ID)))
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicateSplitNCigarReads..bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step59: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
 .PHONY: step59
 
 # Step 60 (PathSeq - WTS)
