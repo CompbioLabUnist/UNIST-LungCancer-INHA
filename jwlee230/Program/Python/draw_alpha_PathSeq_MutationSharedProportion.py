@@ -14,7 +14,7 @@ import statannotations.Annotator
 import tqdm
 import step00
 
-compare = ["Mutation Shared Proportion", "Lower", "Higher"]
+compare = ["M.S.P. (Lower/Higher)", "Lower", "Higher"]
 
 
 if __name__ == "__main__":
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="PathSeq results TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -54,14 +55,14 @@ if __name__ == "__main__":
     print(patients)
 
     if args.median:
-        threshold = numpy.median(clinical_data["Shared Proportion"])
+        threshold = numpy.median(clinical_data[args.column])
     elif args.mean:
-        threshold = numpy.mean(clinical_data["Shared Proportion"])
+        threshold = numpy.mean(clinical_data[args.column])
     else:
         raise Exception("Something went wrong!!")
     print(f"{threshold:.3f}")
 
-    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data["Shared Proportion"]))
+    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data[args.column]))
     print(clinical_data)
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)

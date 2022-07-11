@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Mutation Sharing Proportion input TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--cutting", help="Cutting follow-up up to 5 year", action="store_true", default=False)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -57,15 +58,14 @@ if __name__ == "__main__":
     print(input_data)
 
     if args.median:
-        median = numpy.median(input_data["Shared Proportion"])
-        lower_data = input_data.loc[input_data["Shared Proportion"] <= median]
-        higher_data = input_data.loc[input_data["Shared Proportion"] > median]
+        threshold = numpy.median(input_data[args.column])
     elif args.mean:
-        mean = numpy.mean(input_data["Shared Proportion"])
-        lower_data = input_data.loc[input_data["Shared Proportion"] <= mean]
-        higher_data = input_data.loc[input_data["Shared Proportion"] > mean]
+        threshold = numpy.mean(input_data[args.column])
     else:
         raise Exception("Something went wrong!!")
+
+    lower_data = input_data.loc[(input_data[args.column] <= threshold)]
+    higher_data = input_data.loc[(input_data[args.column] > threshold)]
     print(lower_data)
     print(higher_data)
 
@@ -91,6 +91,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
         matplotlib.pyplot.ylabel("Survival Rate")
+        matplotlib.pyplot.title(f"Lower/Higher Threshold: {threshold:.3f}")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"{column.replace(' ', '-')}.pdf")

@@ -3332,43 +3332,79 @@ Output/MutationIntersection_vs_Signature:
 Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
 Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step44-BWA-SQC: Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar
-step44-BWA-ADC: Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar
-step44-Bowtie2-SQC: Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar
-step44-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt  | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.SYN.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step44-BWA-SQC: Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.tar Output/MutationIntersection_vs_Signature/BWA-SQC-SBS.SYN.tar Output/MutationIntersection_vs_Signature/BWA-SQC-DBS.SYN.tar Output/MutationIntersection_vs_Signature/BWA-SQC-Indel.SYN.tar
+step44-BWA-ADC: Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.tar Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.tar Output/MutationIntersection_vs_Signature/BWA-ADC-SBS.SYN.tar Output/MutationIntersection_vs_Signature/BWA-ADC-DBS.SYN.tar Output/MutationIntersection_vs_Signature/BWA-ADC-Indel.SYN.tar
+step44-Bowtie2-SQC: Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-SBS.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-DBS.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-Indel.SYN.tar
+step44-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-SBS.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-DBS.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-Indel.SYN.tar
 step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC
 .PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44
 
@@ -3900,35 +3936,113 @@ Output/Clinical_Distribution:
 Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Clinical_Distribution/BWA.SQC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.SQC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.SQC.SharedProportion.Union-SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
 Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.ADC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.ADC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/BWA.ADC.SharedProportion.Union-SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.Union-SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
 Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-step54-SQC: Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.pdf
-step54-ADC: Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.pdf
-step54: step54-SQC step54-ADC
-.PHONY: step54-SQC step54-ADC step43
+Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.Union-SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | Output/Clinical_Distribution build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
+step54-BWA-SQC: Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf Output/Clinical_Distribution/BWA.SQC.SharedProportion.SYN.pdf Output/Clinical_Distribution/BWA.SQC.SharedProportion.Union.pdf Output/Clinical_Distribution/BWA.SQC.SharedProportion.Union-SYN.pdf
+step54-BWA-ADC: Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf Output/Clinical_Distribution/BWA.ADC.SharedProportion.SYN.pdf Output/Clinical_Distribution/BWA.ADC.SharedProportion.Union.pdf Output/Clinical_Distribution/BWA.ADC.SharedProportion.Union-SYN.pdf
+step54-Bowtie2-SQC: Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.SYN.pdf Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.Union.pdf Output/Clinical_Distribution/Bowtie2.SQC.SharedProportion.Union-SYN.pdf
+step54-Bowtie2-ADC: Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.pdf Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.SYN.pdf Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.Union.pdf Output/Clinical_Distribution/Bowtie2.ADC.SharedProportion.Union-SYN.pdf
+step54: step54-BWA-SQC step54-BWA-ADC step54-Bowtie2-SQC step54-Bowtie2-ADC
+.PHONY: step54-BWA-SQC step54-BWA-ADC step54-Bowtie2-SQC step54-Bowtie2-ADC step54
 
 # Step 55 (Mutation intersection & deconstructSigs Signature score)
-Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/BWA.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/BWA.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.Union.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.Union-SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/Bowtie2.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.Union.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.Union-SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/BWA.signature.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/deconstructSigs/Bowtie2.signature.tsv $(CLINICAL_DATA_CSV) | build.log Output/MutationIntersection_vs_Signature
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.Union.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.Union-SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step55: Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar
-.PHONY: step55
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.Union.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.Union-SYN.tar: Python/compare_mutation_signature_deconstructSigs.py Output/deconstructSigs/Bowtie2.signature.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationIntersection_vs_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step55-BWA-SQC: Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.SYN.tar Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.Union.tar Output/MutationIntersection_vs_Signature/BWA-SQC-deconstructSigs.Union-SYN.tar
+step55-BWA-ADC: Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.SYN.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.Union.tar Output/MutationIntersection_vs_Signature/BWA-ADC-deconstructSigs.Union-SYN.tar
+step55-Bowtie2-SQC: Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.Union.tar Output/MutationIntersection_vs_Signature/Bowtie2-SQC-deconstructSigs.Union-SYN.tar
+step55-Bowtie2-ADC: Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.SYN.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.Union.tar Output/MutationIntersection_vs_Signature/Bowtie2-ADC-deconstructSigs.Union-SYN.tar
+step55: step55-BWA-SQC step55-BWA-ADC step55-Bowtie2-SQC step55-Bowtie2-ADC
+.PHONY: step55-BWA-SQC step55-BWA-ADC step55-Bowtie2-SQC step55-Bowtie2-ADC step55
 
 # Step 56 (Mutation intersection & Gene)
 Output/MutationIntersection:
@@ -4267,7 +4381,7 @@ Output/WTS/STAR/1pass/%.SJ.out.tab: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Refere
 Output/WTS/STAR/1pass/SJ.filterted.tab: Bash/merge_STAR_SJ.bash $(addprefix Output/WTS/STAR/1pass/,$(addsuffix .SJ.out.tab,$(WTS_ID))) | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/Reference_2pass/Genome: $(REFERENCE_FASTA) $(KNOWN_GENE_GTF) Output/WTS/STAR/1pass/SJ.filterted.tab | build.log Output/WTS/STAR/Reference_2pass 
+Output/WTS/STAR/Reference_2pass/Genome: $(REFERENCE_FASTA) $(KNOWN_GENE_GTF) Output/WTS/STAR/1pass/SJ.filterted.tab | build.log Output/WTS/STAR/Reference_2pass
 	$(WORKDIR_DOCKER) STAR --runMode "genomeGenerate" --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$(filter %.fasta,$^)) --sjdbGTFfile $(addprefix /,$(filter %.gtf,$^)) --sjdbOverhang 89 --sjdbFileChrStartEnd $(addprefix /,$(filter %.SJ.out.tab,$^)) --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/2pass/%.Aligned.out.sam: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference_2pass/Genome | build.log Output/WTS/STAR/2pass
@@ -4294,7 +4408,7 @@ Output/WTS/STAR/%.Sort.MarkDuplicate.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.b
 Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.bai | build.log
 	$(DOCKER) $(GATK) SplitNCigarReads --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam | build.log 
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai | build.log
@@ -4734,17 +4848,57 @@ Output/Clinical_vs_Joint-Plot:
 Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
 Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
 Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-step62: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
-.PHONY: step62
+Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
+
+Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+
+step62-BWA-SQC: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union-SYN.tar
+step62-BWA-ADC: Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union-SYN.tar
+step62-Bowtie2-SQC: Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union-SYN.tar
+step62-Bowtie2-ADC: Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union-SYN.tar
+step62: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC
+.PHONY: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC step62
 
 # Step 63 (Helmsman)
 Output/Helmsman/BWA Output/Helmsman/Bowtie2:

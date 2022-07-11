@@ -16,21 +16,17 @@ import step00
 signature_data = pandas.DataFrame()
 
 
-def read_maf(filename: str) -> pandas.DataFrame:
-    return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
-
-
 def run(stage: str, signature: str) -> str:
-    tmp_data = signature_data.loc[(signature_data["Stage"] == stage), ["Shared Proportion", signature]]
+    tmp_data = signature_data.loc[(signature_data["Stage"] == stage), [args.column, signature]]
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
+    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[args.column])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
+    g = seaborn.jointplot(data=tmp_data, x=signature, y=args.column, kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
-    g.set_axis_labels("{0} proportion in {1}".format(signature, stage), "Shared Proportion")
+    g.set_axis_labels("{0} proportion in {1}".format(signature, stage), args.column)
 
     fig_name = f"{stage}-{signature}.pdf"
     g.savefig(fig_name)
@@ -40,17 +36,17 @@ def run(stage: str, signature: str) -> str:
 
 
 def run_all(signature: str) -> str:
-    tmp_data = signature_data.loc[:, ["Shared Proportion", signature]]
+    tmp_data = signature_data.loc[:, [args.column, signature]]
 
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
+    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[args.column])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6)
+    g = seaborn.jointplot(data=tmp_data, x=signature, y=args.column, kind="reg", height=24, ratio=6)
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
-    g.set_axis_labels("{0} proportion".format(signature), "Shared Proportion")
+    g.set_axis_labels("{0} proportion".format(signature), args.column)
 
     fig_name = f"All-{signature}.pdf"
     g.savefig(fig_name)
@@ -62,10 +58,10 @@ def run_all(signature: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("signature", help="Mutation signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinical data CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -74,17 +70,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if list(filter(lambda x: not x.endswith(".maf"), args.input)):
-        raise ValueError("INPUT must end with .MAF!!")
-    elif not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical must end with .CSV!!")
+    if not args.clinical.endswith(".tsv"):
+        raise ValueError("Clinical must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
-    clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
-    clinical_data = clinical_data.loc[~(clinical_data["Volume_Doubling_Time"].isna())]
+    clinical_data: pandas.DataFrame = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
 
     if args.SQC:
@@ -96,15 +89,6 @@ if __name__ == "__main__":
     patients = set(clinical_data.index)
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
-    with multiprocessing.Pool(args.cpus) as pool:
-        mutect_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
-        mutect_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data["Patient"] = pool.map(step00.get_patient, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
-        mutect_data = mutect_data.loc[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
-    print(mutect_data)
-
     signature_data = pandas.read_csv(args.signature, sep="\t", index_col=0)
     signature_data.columns = list(map(lambda x: x.replace("Signature.", "SBS"), list(signature_data.columns)))
     signature_list = list(filter(lambda x: len(set(signature_data[x])) > 1, list(signature_data.columns)))
@@ -114,26 +98,11 @@ if __name__ == "__main__":
     signature_data["Stage"] = list(map(step00.get_long_sample_type, list(signature_data.index)))
     print(signature_data)
 
-    patients &= set(mutect_data["Patient"])
     patients &= set(signature_data["Patient"])
 
     signature_data = signature_data.loc[signature_data["Patient"].isin(patients)]
 
-    signature_data["Shared Proportion"] = 0.0
-    for index in tqdm.tqdm(list(signature_data.index)):
-        patient = step00.get_patient(index)
-        stage = step00.get_long_sample_type(index)
-
-        if stage == "Primary":
-            signature_data.loc[index, "Shared Proportion"] = max(signature_data.loc[(signature_data["Patient"] == patient), "Shared Proportion"])
-        else:
-            patient_data = mutect_data.loc[mutect_data["Patient"] == patient]
-            assert "Primary" in set(patient_data["Stage"])
-            primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-
-            precancer_set = set(patient_data.loc[patient_data["Stage"] == stage, step00.sharing_strategy].itertuples(index=False, name=None))
-            proportion = len(primary_set & precancer_set) / len(primary_set)
-            signature_data.loc[index, "Shared Proportion"] = proportion
+    signature_data[args.column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column], list(signature_data.index)))
     print(signature_data)
 
     matplotlib.use("Agg")
@@ -141,7 +110,6 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-
     with multiprocessing.Pool(args.cpus) as pool:
         figures += pool.starmap(run, itertools.product(step00.long_sample_type_list, signature_list))
         figures += pool.map(run_all, signature_list)

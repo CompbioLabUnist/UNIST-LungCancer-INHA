@@ -17,7 +17,7 @@ import tqdm
 import step00
 
 output_data = pandas.DataFrame()
-compare = ["Mutation Shared Proportion", "Lower", "Higher"]
+compare = ["Mutation Shared Proportion (Lower/Higher)", "Lower", "Higher"]
 
 
 def draw_violin(taxon: str) -> str:
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="PathSeq results TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
@@ -91,13 +92,14 @@ if __name__ == "__main__":
     print(patients)
 
     if args.median:
-        threshold = numpy.median(clinical_data["Shared Proportion"])
+        threshold = numpy.median(clinical_data[args.column])
     elif args.mean:
-        threshold = numpy.mean(clinical_data["Shared Proportion"])
+        threshold = numpy.mean(clinical_data[args.column])
     else:
         raise Exception("Something went wrong!!")
+    print(f"{threshold:.3f}")
 
-    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data["Shared Proportion"]))
+    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data[args.column]))
     print(clinical_data)
 
     output_data = pandas.read_csv(args.input, sep="\t", index_col=0)
@@ -113,7 +115,6 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.map(draw_violin, taxa_list)))
-
     print(len(figures))
 
     with tarfile.open(args.output, "w") as tar:

@@ -19,6 +19,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -52,9 +53,9 @@ if __name__ == "__main__":
     for column in tqdm.tqdm(survival_columns):
         clinical_data[column] = list(map(int, clinical_data[column]))
 
-        r, p = scipy.stats.pearsonr(clinical_data["Shared Proportion"], clinical_data[column])
+        r, p = scipy.stats.pearsonr(clinical_data[args.column], clinical_data[column])
 
-        g = seaborn.jointplot(data=clinical_data, x="Shared Proportion", y=column, kind="reg", height=24, dropna=True)
+        g = seaborn.jointplot(data=clinical_data, x=args.column, y=column, kind="reg", height=24, dropna=True)
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
 
         figures.append(f"{column}.pdf")

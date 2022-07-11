@@ -21,15 +21,15 @@ def read_maf(filename: str) -> pandas.DataFrame:
 
 
 def run(stage: str, signature: str) -> str:
-    tmp_data = signature_data.loc[(signature_data["Stage"] == stage), ["Shared Proportion", signature]]
+    tmp_data = signature_data.loc[(signature_data["Stage"] == stage), [args.column, signature]]
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
+    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[args.column])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
+    g = seaborn.jointplot(data=tmp_data, x=signature, y=args.column, kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-    g.set_axis_labels("{0} proportion in {1}".format(signature, stage), "Shared Proportion")
+    g.set_axis_labels("{0} proportion in {1}".format(signature, stage), args.column)
 
     fig_name = f"{stage}-{signature}.pdf"
     g.savefig(fig_name)
@@ -39,17 +39,17 @@ def run(stage: str, signature: str) -> str:
 
 
 def run_all(signature: str) -> str:
-    tmp_data = signature_data.loc[:, ["Shared Proportion", signature]]
+    tmp_data = signature_data.loc[:, [args.column, signature]]
 
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data["Shared Proportion"])
+    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[args.column])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y="Shared Proportion", kind="reg", height=24, ratio=6)
+    g = seaborn.jointplot(data=tmp_data, x=signature, y=args.column, kind="reg", height=24, ratio=6)
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
-    g.set_axis_labels("{0} proportion".format(signature), "Shared Proportion")
+    g.set_axis_labels("{0} proportion".format(signature), args.column)
 
     fig_name = f"All-{signature}.pdf"
     g.savefig(fig_name)
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("signature", help="Mutation signature TSV file (not necessarily TSV)", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     patients &= set(signature_data["Patient"])
 
     signature_data = signature_data.loc[signature_data["Patient"].isin(patients)]
-    signature_data["Shared Proportion"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), "Shared Proportion"], list(signature_data.index)))
+    signature_data[args.column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column], list(signature_data.index)))
     print(signature_data)
 
     matplotlib.use("Agg")

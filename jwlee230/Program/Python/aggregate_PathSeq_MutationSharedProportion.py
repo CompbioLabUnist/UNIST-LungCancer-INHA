@@ -11,7 +11,7 @@ import pandas
 import tqdm
 import step00
 
-compare = ["Mutation Shared Proportion", "Lower", "Higher"]
+compare = ["Mutation Shared Proportion (Lower/Higher)", "Lower", "Higher"]
 
 
 if __name__ == "__main__":
@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="PathSeq results TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--level", choices=step00.PathSeq_type_list, type=str, required=True)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -52,14 +53,14 @@ if __name__ == "__main__":
     print(patients)
 
     if args.median:
-        threshold = numpy.median(clinical_data["Shared Proportion"])
+        threshold = numpy.median(clinical_data[args.column])
     elif args.mean:
-        threshold = numpy.mean(clinical_data["Shared Proportion"])
+        threshold = numpy.mean(clinical_data[args.column])
     else:
         raise Exception("Something went wrong!!")
     print(f"{threshold:.3f}")
 
-    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data["Shared Proportion"]))
+    clinical_data[compare[0]] = list(map(lambda x: "Higher" if (x > threshold) else "Lower", clinical_data[args.column]))
     print(clinical_data)
 
     output_data = pandas.read_csv(args.input, sep="\t", index_col=0)
@@ -96,7 +97,7 @@ if __name__ == "__main__":
             axs[i][j].set_xticks([])
             axs[i][j].grid(True)
             axs[i][j].set_xlabel(f"{drawing_data.shape[0]} {subtype} Samples")
-            axs[i][j].set_title(f"{comparing}")
+            axs[i][j].set_title(f"M.S.P.: {comparing}")
             if drawing_data.shape[0]:
                 axs[i][j].legend(loc="lower left", fontsize="xx-small")
 

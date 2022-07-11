@@ -37,6 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold to use", type=int, default=30)
 
@@ -93,14 +94,14 @@ if __name__ == "__main__":
     patients &= set(mutect_data["Patient"])
 
     if args.median:
-        cutting = numpy.median(clinical_data["Shared Proportion"])
+        cutting = numpy.median(clinical_data[args.column])
     elif args.mean:
-        cutting = numpy.mean(clinical_data["Shared Proportion"])
+        cutting = numpy.mean(clinical_data[args.column])
     else:
         raise Exception("Something went wrong!!")
 
-    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] <= cutting)]
-    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)]
+    lower_data = clinical_data.loc[(clinical_data[args.column] <= cutting)]
+    higher_data = clinical_data.loc[(clinical_data[args.column] > cutting)]
     print(lower_data)
     print(higher_data)
 

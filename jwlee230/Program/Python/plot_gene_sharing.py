@@ -81,6 +81,7 @@ if __name__ == "__main__":
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("tsv", help="Output TSV file", type=str)
     parser.add_argument("pdf", help="Output PDF file", type=str)
+    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold to use", type=int, default=100)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
@@ -140,15 +141,16 @@ if __name__ == "__main__":
     patients &= set(mutect_data["Patient"])
 
     if args.median:
-        cutting = numpy.median(clinical_data["Shared Proportion"])
+        cutting = numpy.median(clinical_data[args.column])
     elif args.mean:
-        cutting = numpy.mean(clinical_data["Shared Proportion"])
+        cutting = numpy.mean(clinical_data[args.column])
     else:
         raise Exception("Something went wrong!!")
+    print(f"{cutting:.3f}")
 
-    lower_data = clinical_data.loc[(clinical_data["Shared Proportion"] <= cutting)].sort_values(by="Shared Proportion")
+    lower_data = clinical_data.loc[(clinical_data[args.column] <= cutting)].sort_values(by=args.column)
     lower_patients = list(lower_data.index)
-    higher_data = clinical_data.loc[(clinical_data["Shared Proportion"] > cutting)].sort_values(by="Shared Proportion")
+    higher_data = clinical_data.loc[(clinical_data[args.column] > cutting)].sort_values(by=args.column)
     higher_patients = list(higher_data.index)
     print(len(lower_patients), "vs", len(higher_patients))
 
@@ -160,8 +162,8 @@ if __name__ == "__main__":
         if ("Primary" not in stage_set) and (len(stage_set) < 2):
             continue
 
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
+        primary_set = set(patient_data.loc[(patient_data["Stage"] == "Primary"), ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_set = set(patient_data.loc[(patient_data["Stage"] == stage_set[-2]), ["Hugo_Symbol", "Patient"] + step00.sharing_strategy].itertuples(index=False, name=None))
         mutation_set += collections.Counter(list(map(lambda x: x[:2], primary_set & precancer_set)))
 
     gene_list = sorted(set(cgc_data.index) & set(map(lambda x: x[0], mutation_set.keys())))
