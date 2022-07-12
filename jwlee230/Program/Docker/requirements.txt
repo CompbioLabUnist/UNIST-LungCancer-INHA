@@ -26,3 +26,4 @@ CNVkit==0.9.9
 dash-bio==0.8.0
 dash-bio-utils==0.0.8
 scikit-bio==0.5.7
+pyupset==0.1.1.post7
