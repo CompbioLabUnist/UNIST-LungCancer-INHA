@@ -503,6 +503,255 @@
         \frametitle{Findings in Picard}
     \end{frame}
 
+    \subsection{Single Nucleotide Variations Analysis}
+    \begin{frame}
+        \frametitle{Mutect2?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
+            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{MutEnricher?}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Workflow/MutEnricher.jpg}
+            \caption{Schematic representation of MunEnricher's analysis procedures \protect\cite{MutEnricher1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{CoMut?}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Workflow/comut.png}
+            \caption{A comutation plot generated with CoMut \protect\cite{comut1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Driver Gene Selection Strategy}
+
+        \begin{block}{COSMIC Cancer Gene Census \cite{CGC1}}
+            Gene $\in$ CGC Tier 1 set
+        \end{block}
+
+        \begin{block}{Fisher FDR}
+            Fisher FDR $ < 0.05$
+        \end{block}
+
+        \begin{block}{Fisher P-value}
+            Fisher P-value $ < 0.05$
+        \end{block}
+
+        \begin{block}{Gene P-value}
+            Gene P-value $ < 0.05 $
+        \end{block}
+    \end{frame}
+
+    \subsubsection{Somatic Variant}
+    \begin{frame}
+        \frametitle{Somatic Variant in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.pdf}
+            \caption{CoMut Plot with LUSC Patients}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in LUAD}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.pdf}
+            \caption{CoMut Plot with LUAD Patients}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Somatic Variant with Recurrence}
+    \begin{frame}
+        \frametitle{Somatic Variant in LUSC with Recurrence}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Recur.pdf}
+            \caption{CoMut Plot in LUSC Patients with Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in LUAD with Recurrence}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Recur.pdf}
+            \caption{CoMut Plot in LUAD Patients with Recurrence}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Somatic Variant with Smoking}
+    \begin{frame}
+        \frametitle{Somatic Variant in LUSC with Smoking}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Smoking.pdf}
+            \caption{CoMut Plot in LUSC Patients with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Somatic Variant in LUAD with Smoking}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Smoking.pdf}
+            \caption{CoMut Plot in LUAD Patients with Smoking}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in SNVs Analysis}
+    \end{frame}
+
+    \subsection{Mutation Shared Proportion}
+    \begin{frame}
+        \frametitle{Mutation Shared Proportion?}
+
+        \begin{block}{Mutation Shared Proportion}
+            $\textrm{Mutation Shared Proportion} = (\textrm{Precancer} \cap \textrm{Primary}) / \textrm{Primary}$
+        \end{block}
+
+        \begin{block}{Selection Strategy}
+            \begin{enumerate}
+                \item Non-synonymous: point mutation, frame-shift, splice site, etc.
+                \item Same site: chromosome, start position, \& end position
+                \item Exact reference allele
+                \item Exact tumor allele
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Mutation Shared Proportion Distribution}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Mutation_Shared_Proportion/Histogram/BWA.SQC.SharedProportion.pdf}
+            \caption{Mutation Shared Proportion Distribution in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Mutation Shared Proportion with Clinical Data}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Overall Survival.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Recurrence-Free Survival.pdf}
+                \\
+                \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
+            \end{array}$
+            \caption{Mutation Shared Proportion with Clinical Data from LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Overall-Survival.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Recurrence-Free-Survival.pdf}
+                \\
+                \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
+            \end{array}$
+            \caption{K-M Survivial Plot with Median separation from LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Mutation Shared Genes}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Genes/BWA.SQC.Median.pdf}
+            \caption{Mutation Shared Genes with Median separation from LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Mutation Shared Genes -- Exact test}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Exact/BWA-SQC.Median.pdf}
+            \caption{Exact Test on Mutation Shared Genes with Median separation from LUSC}
+        \end{figure}
+
+        \begin{block}{Notable genes}
+            \begin{enumerate}
+                \item KMT2D
+                \item LRP1B
+                \item RB1
+                \item RUNX1T1
+                \item TP53
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{KMT2D}
+            \begin{enumerate}
+                \item Lysine Methyltransferase 2D
+                \item KMT2D have a role in chromatin remodeling \\
+                $\Rightarrow$ transcription \& DNA repair \cite{KMT2D-3, KMT2D-4}
+                \item KMT2D deficiency impairs super-enhancers \\
+                $\therefore$ To confer a glycolytic vulnerability \cite{KMT2D-1}
+                \item KMT2D mutation is associated with poor prognosis in NSCLC \cite{KMT2D-2}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{LRP1B}
+            \begin{enumerate}
+                \item LDL Receptor Related Protein 1B
+                \item LRP1B mutation is associated with favorable outcome to ICB \\
+                across multiple cancer types \cite{LRP1B-4}
+                \item LRP1B mutation is associated with tumor mutational burden \\
+                in Lung cancer \cite{LRP1B-1}, especially NSCLC \cite{LRP1B-2}
+                \item Higher prevalence of LRP1B mutation in LUAD with COPD \cite{LRP1B-3}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{RB1}
+            \begin{enumerate}
+                \item Retinoblastoma Transcriptional Co-repressor 1
+                \item Tumor suppressor $\Leftarrow$ G1/S transition of cell cycle \cite{RB1-1}
+                \item Common RB1 re-arrangements associated with histopathologic transformation \\
+                in non-smoking-related lung cancer \cite{RB1-2}
+                \item Nicotine \\
+                $\Rightarrow$ up-regulates FGFR3 \& RB1 expression \\
+                $\Rightarrow$ promote NSCLC cell proliferation \& EMT transition \cite{RB1-3}
+                \item RB1 mutation predicts poor outcomes in NSCLC \cite{RB1-4}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{RUNX1T1}
+            \begin{enumerate}
+                \item RUNX1 Partner Transcriptional Co-Repressor 1
+                \item RUNX1T1 facilitates transcriptional repression \\
+                $\Leftarrow$ via DNA-binding transcription factors \& histone-modifying enzymes \cite{RUNX1T1-1, RUNX1T1-2, RUNX1T1-3}
+                \item RUNX1T1 has a role in SCLC \cite{RUNX1T1-4}
+                \item RUNX1T1 is associated with the brain metastatic process in lung cancer \cite{RUNX1T1-5}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{TP53}
+            \begin{enumerate}
+                \item Tumor Protein P53
+                \item TP53 mutation is associated with response \& longer survival \\
+                under ICB in NSCLC \cite{TP53-1}
+                \item TP53 interacts with human lung cancer microbiome \cite{TP53-2}
+            \end{enumerate}
+        \end{block}
+        \framebreak
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Mutation Sharing Proportion}
+    \end{frame}
+
     \subsection{Copy Number Variation Analysis with PureCN}
      \begin{frame}
         \frametitle{PureCN?}
@@ -2147,255 +2396,6 @@
 
     \begin{frame}
         \frametitle{Findings in Gistic}
-    \end{frame}
-
-    \subsection{Single Nucleotide Variations Analysis}
-    \begin{frame}
-        \frametitle{Mutect2?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/somatic_short_variants.png}
-            \caption{Somatic short variant discovery workflow \protect\cite{gatk1, gatk2}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{MutEnricher?}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Workflow/MutEnricher.jpg}
-            \caption{Schematic representation of MunEnricher's analysis procedures \protect\cite{MutEnricher1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{CoMut?}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Workflow/comut.png}
-            \caption{A comutation plot generated with CoMut \protect\cite{comut1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Driver Gene Selection Strategy}
-
-        \begin{block}{COSMIC Cancer Gene Census \cite{CGC1}}
-            Gene $\in$ CGC Tier 1 set
-        \end{block}
-
-        \begin{block}{Fisher FDR}
-            Fisher FDR $ < 0.05$
-        \end{block}
-
-        \begin{block}{Fisher P-value}
-            Fisher P-value $ < 0.05$
-        \end{block}
-
-        \begin{block}{Gene P-value}
-            Gene P-value $ < 0.05 $
-        \end{block}
-    \end{frame}
-
-    \subsubsection{Somatic Variant}
-    \begin{frame}
-        \frametitle{Somatic Variant in LUSC}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.pdf}
-            \caption{CoMut Plot with LUSC Patients}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Somatic Variant in LUAD}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.pdf}
-            \caption{CoMut Plot with LUAD Patients}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Somatic Variant with Recurrence}
-    \begin{frame}
-        \frametitle{Somatic Variant in LUSC with Recurrence}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Recur.pdf}
-            \caption{CoMut Plot in LUSC Patients with Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Somatic Variant in LUAD with Recurrence}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Recur.pdf}
-            \caption{CoMut Plot in LUAD Patients with Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Somatic Variant with Smoking}
-    \begin{frame}
-        \frametitle{Somatic Variant in LUSC with Smoking}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Smoking.pdf}
-            \caption{CoMut Plot in LUSC Patients with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Somatic Variant in LUAD with Smoking}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Smoking.pdf}
-            \caption{CoMut Plot in LUAD Patients with Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in SNVs Analysis}
-    \end{frame}
-
-    \subsection{Mutation Shared Proportion}
-    \begin{frame}
-        \frametitle{Mutation Shared Proportion?}
-
-        \begin{block}{Mutation Shared Proportion}
-            $\textrm{Mutation Shared Proportion} = (\textrm{Precancer} \cap \textrm{Primary}) / \textrm{Primary}$
-        \end{block}
-
-        \begin{block}{Selection Strategy}
-            \begin{enumerate}
-                \item Non-synonymous: point mutation, frame-shift, splice site, etc.
-                \item Same site: chromosome, start position, \& end position
-                \item Exact reference allele
-                \item Exact tumor allele
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Mutation Shared Proportion Distribution}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/Mutation_Shared_Proportion/Histogram/BWA.SQC.SharedProportion.pdf}
-            \caption{Mutation Shared Proportion Distribution in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Mutation Shared Proportion with Clinical Data}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Overall Survival.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Recurrence-Free Survival.pdf}
-                \\
-                \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
-            \end{array}$
-            \caption{Mutation Shared Proportion with Clinical Data from LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Overall-Survival.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Recurrence-Free-Survival.pdf}
-                \\
-                \mbox{(a) Overall Survival} & \mbox{(b) Recurrence-Free Survival} \\
-            \end{array}$
-            \caption{K-M Survivial Plot with Median separation from LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Mutation Shared Genes}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Genes/BWA.SQC.Median.pdf}
-            \caption{Mutation Shared Genes with Median separation from LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Mutation Shared Genes -- Exact test}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/Mutation_Shared_Proportion/Exact/BWA-SQC.Median.pdf}
-            \caption{Exact Test on Mutation Shared Genes with Median separation from LUSC}
-        \end{figure}
-
-        \begin{block}{Notable genes}
-            \begin{enumerate}
-                \item KMT2D
-                \item LRP1B
-                \item RB1
-                \item RUNX1T1
-                \item TP53
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{KMT2D}
-            \begin{enumerate}
-                \item Lysine Methyltransferase 2D
-                \item KMT2D have a role in chromatin remodeling \\
-                $\Rightarrow$ transcription \& DNA repair \cite{KMT2D-3, KMT2D-4}
-                \item KMT2D deficiency impairs super-enhancers \\
-                $\therefore$ To confer a glycolytic vulnerability \cite{KMT2D-1}
-                \item KMT2D mutation is associated with poor prognosis in NSCLC \cite{KMT2D-2}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{LRP1B}
-            \begin{enumerate}
-                \item LDL Receptor Related Protein 1B
-                \item LRP1B mutation is associated with favorable outcome to ICB \\
-                across multiple cancer types \cite{LRP1B-4}
-                \item LRP1B mutation is associated with tumor mutational burden \\
-                in Lung cancer \cite{LRP1B-1}, especially NSCLC \cite{LRP1B-2}
-                \item Higher prevalence of LRP1B mutation in LUAD with COPD \cite{LRP1B-3}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{RB1}
-            \begin{enumerate}
-                \item Retinoblastoma Transcriptional Co-repressor 1
-                \item Tumor suppressor $\Leftarrow$ G1/S transition of cell cycle \cite{RB1-1}
-                \item Common RB1 re-arrangements associated with histopathologic transformation \\
-                in non-smoking-related lung cancer \cite{RB1-2}
-                \item Nicotine \\
-                $\Rightarrow$ up-regulates FGFR3 \& RB1 expression \\
-                $\Rightarrow$ promote NSCLC cell proliferation \& EMT transition \cite{RB1-3}
-                \item RB1 mutation predicts poor outcomes in NSCLC \cite{RB1-4}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{RUNX1T1}
-            \begin{enumerate}
-                \item RUNX1 Partner Transcriptional Co-Repressor 1
-                \item RUNX1T1 facilitates transcriptional repression \\
-                $\Leftarrow$ via DNA-binding transcription factors \& histone-modifying enzymes \cite{RUNX1T1-1, RUNX1T1-2, RUNX1T1-3}
-                \item RUNX1T1 has a role in SCLC \cite{RUNX1T1-4}
-                \item RUNX1T1 is associated with the brain metastatic process in lung cancer \cite{RUNX1T1-5}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{TP53}
-            \begin{enumerate}
-                \item Tumor Protein P53
-                \item TP53 mutation is associated with response \& longer survival \\
-                under ICB in NSCLC \cite{TP53-1}
-                \item TP53 interacts with human lung cancer microbiome \cite{TP53-2}
-            \end{enumerate}
-        \end{block}
-        \framebreak
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Mutation Sharing Proportion}
     \end{frame}
 
     \subsection{VAF Analysis}
