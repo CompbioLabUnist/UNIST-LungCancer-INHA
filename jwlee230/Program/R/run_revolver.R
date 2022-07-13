@@ -36,8 +36,8 @@ main <- function(input_file, cluster_file, driver_file, dendrogram_file, det_fil
     plot_drivers_graph(revolver_input_data)
     ggsave(filename=driver_file, device="pdf", width=9, height=9, units="in")
 
-    plot_dendrogram(revolver_input_data)
-    ggsave(filename=dendrogram_file, device="pdf")
+    # plot_dendrogram(revolver_input_data)
+    # ggsave(filename=dendrogram_file, device="pdf")
 
     plot_DET_index(revolver_input_data)
     ggsave(filename=det_file, device="pdf", width=9, height=16, units="in")
