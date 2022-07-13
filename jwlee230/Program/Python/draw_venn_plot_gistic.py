@@ -139,7 +139,7 @@ if __name__ == "__main__":
     fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
 
     try:
-        upsetplot.plot(upsetplot.from_contents(output_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+        upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
     except ZeroDivisionError:
         matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
         matplotlib.pyplot.xticks([])

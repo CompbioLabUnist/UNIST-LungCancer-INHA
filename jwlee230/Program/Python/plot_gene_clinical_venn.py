@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
-    fig.savefig(args.output, bbox_inches="tight")
+    fig.savefig(args.figure, bbox_inches="tight")
     matplotlib.pyplot.close(fig)
 
     gene_set = set()
