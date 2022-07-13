@@ -6,7 +6,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
-import venn
+import upsetplot
 import step00
 
 if __name__ == "__main__":
@@ -49,16 +49,10 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
 
-    if len(args.DEG) == 6:
-        venn.pseudovenn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    elif 0 < len(args.DEG) < 6:
-        venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    else:
-        raise Exception("Something went wrong!!")
+    upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
-    matplotlib.pyplot.tight_layout()
+    fig.savefig(args.output, bbox_inches="tight")
 
-    fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

@@ -4,16 +4,17 @@ aggregate_mutect_venn.py: aggregate mutect MAF files as venn diagram
 import argparse
 import multiprocessing
 import tarfile
+import typing
 import matplotlib
 import matplotlib.pyplot
 import seaborn
 import pandas
 import tqdm
-import venn
+import upsetplot
 import step00
 
-patient_samples = dict()
-query_data = dict()
+patient_samples: typing.Dict[str, typing.Set[str]] = dict()
+query_data: typing.Dict[str, typing.Set[str]] = dict()
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
@@ -21,19 +22,18 @@ def read_maf(filename: str) -> pandas.DataFrame:
 
 
 def draw_venn(sample: str) -> str:
-    figure_name = "{0}.pdf".format(sample)
+    figure_name = f"{sample}.pdf"
     sample_list = sorted(patient_samples[sample], key=step00.sorting_by_type)
     venn_data = dict()
 
     for sample in sample_list:
         venn_data[sample] = query_data[sample]
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig = matplotlib.pyplot.figure(figsize=(2 ** len(venn_data) + 40, 24))
 
-    venn.venn(venn_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    matplotlib.pyplot.tight_layout()
+    upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
-    fig.savefig(figure_name)
+    fig.savefig(figure_name, bbox_inches="tight")
     matplotlib.pyplot.close(fig)
 
     return figure_name
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     print(mutect_data)
 
     for sample in tqdm.tqdm(sample_list):
-        query_data[sample] = set(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample), ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]].itertuples(index=False, name=None))
+        query_data[sample] = set(mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == sample), step00.sharing_strategy].itertuples(index=False, name=None))
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = pool.map(draw_venn, list(patient_samples.keys()))

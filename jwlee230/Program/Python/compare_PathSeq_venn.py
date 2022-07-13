@@ -6,7 +6,7 @@ import matplotlib
 import matplotlib.pyplot
 import pandas
 import tqdm
-import venn
+import upsetplot
 import step00
 
 
@@ -38,16 +38,9 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig = matplotlib.pyplot.figure(figsize=(2 ** len(args.input) + 40, 24))
 
-    if len(args.input) == 6:
-        venn.pseudovenn(output_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    elif 0 < len(args.input) < 6:
-        venn.venn(output_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    else:
-        raise Exception("Something went wrong!!")
+    upsetplot.plot(upsetplot.from_contents(output_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
-    matplotlib.pyplot.tight_layout()
-
-    fig.savefig(args.output)
+    fig.savefig(args.output, bbox_inches="tight")
     matplotlib.pyplot.close(fig)

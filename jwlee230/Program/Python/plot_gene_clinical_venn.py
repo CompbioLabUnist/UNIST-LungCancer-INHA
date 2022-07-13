@@ -8,7 +8,7 @@ import matplotlib.pyplot
 import pandas
 import seaborn
 import tqdm
-import venn
+import upsetplot
 import step00
 
 mutect_data = pandas.DataFrame()
@@ -84,11 +84,11 @@ if __name__ == "__main__":
     for stage in tqdm.tqdm(selected_stage_list):
         input_data[stage] = set(mutect_data.loc[(mutect_data["Cancer_subtype"] == stage), "Hugo_Symbol"])
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-    venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
+    fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
 
-    matplotlib.pyplot.tight_layout()
-    fig.savefig(args.figure)
+    upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+
+    fig.savefig(args.output, bbox_inches="tight")
     matplotlib.pyplot.close(fig)
 
     gene_set = set()
