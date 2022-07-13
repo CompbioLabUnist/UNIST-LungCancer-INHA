@@ -4442,9 +4442,18 @@ Output/Mutect2/WTS-STAR/%.PASS.vcf: Bash/select_pass.bash Output/Mutect2/WTS-STA
 Output/Mutect2/WTS-STAR/%.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/WTS-STAR/%.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
+Output/Mutect2/WTS-STAR-SQC.venn.tar: Python/aggregate_mutect_venn.py $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-STAR-ADC.venn.tar: Python/aggregate_mutect_venn.py $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion/WTS-STAR.tsv: Python/calculate_MutationSharedProportion.py $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/MutationSharedProportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 step58-STAR: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/1pass/,$(addsuffix .SJ.out.tab,$(WTS_ID))) Output/WTS/STAR/1pass/SJ.filterted.tab Output/WTS/STAR/Reference_2pass/Genome $(addprefix Output/WTS/STAR/2pass/,$(addsuffix .Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
 step58-PON: $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-STAR.vcf.gz
-step58-Mutect2: $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID)))
+step58-Mutect2: $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-STAR-SQC.venn.tar Output/Mutect2/WTS-STAR-ADC.venn.tar Output/MutationSharedProportion/WTS-STAR.tsv
 step58: step58-STAR step58-PON step58-Mutect2
 .PHONY: step58-STAR step58-PON step58-Mutect2 step58
 
@@ -4485,13 +4494,13 @@ Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/Bowtie2
 Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicateSplitNCigarReads..bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
+Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/PanelOfNormal/WTS-Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai| build.log Output/PanelOfNormal/WTS-Bowtie2
+Output/PanelOfNormal/WTS-Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai | build.log Output/PanelOfNormal/WTS-Bowtie2
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
@@ -4513,9 +4522,18 @@ Output/Mutect2/WTS-Bowtie2/%.PASS.vcf: Bash/select_pass.bash Output/Mutect2/WTS-
 Output/Mutect2/WTS-Bowtie2/%.PASS.maf: $(REFERENCE_FASTA) Output/Mutect2/WTS-Bowtie2/%.PASS.vcf | build.log
 	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
 
+Output/Mutect2/WTS-Bowtie2-SQC.venn.tar: Python/aggregate_mutect_venn.py $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/WTS-Bowtie2-ADC.venn.tar: Python/aggregate_mutect_venn.py $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion/WTS-Bowtie2.tsv: Python/calculate_MutationSharedProportion.py $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/MutationSharedProportion
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 step59-Bowtie2: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
 step58-PON: $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz
-step58-Mutect2: $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID)))
+step58-Mutect2: $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-Bowtie2-SQC.venn.tar Output/Mutect2/WTS-Bowtie2-ADC.venn.tar Output/MutationSharedProportion/WTS-Bowtie2.tsv
 step59: step59-Bowtie2 step59-PON step59-Mutect2
 .PHONY: step59-Bowtie2 step59-PON step59-Mutect2 step59
 
@@ -4721,28 +4739,28 @@ Output/Pathseq/WTS/Bowtie2-ADC-alpha.Smoking.%.tar: Python/draw_alpha_PathSeq_cl
 Output/Pathseq/WTS/Bowtie2-ADC-alpha.Recurrence.%.tar: Python/draw_alpha_PathSeq_clinical.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --compare "Recurrence" "NO" "YES" 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/STAR-SQC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+Output/Pathseq/WTS/STAR-SQC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/WTS-STAR.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/STAR-SQC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+Output/Pathseq/WTS/STAR-SQC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/WTS-STAR.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/Bowtie2-SQC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log
+Output/Pathseq/WTS/Bowtie2-SQC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/WTS-Bowtie2.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/Bowtie2-SQC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log
+Output/Pathseq/WTS/Bowtie2-SQC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/WTS-Bowtie2.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/STAR-ADC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+Output/Pathseq/WTS/STAR-ADC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/WTS-STAR.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/STAR-ADC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+Output/Pathseq/WTS/STAR-ADC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/STAR-alpha.%.tsv Output/MutationSharedProportion/WTS-STAR.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/Bowtie2-ADC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log
+Output/Pathseq/WTS/Bowtie2-ADC-alpha.MutationSharedProportion-Median.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/WTS-Bowtie2.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median 1> $@.stdout 2> $@.stderr
 
-Output/Pathseq/WTS/Bowtie2-ADC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log
+Output/Pathseq/WTS/Bowtie2-ADC-alpha.MutationSharedProportion-Mean.%.tar: Python/draw_alpha_PathSeq_MutationSharedProportion.py Output/Pathseq/WTS/Bowtie2-alpha.%.tsv Output/MutationSharedProportion/WTS-Bowtie2.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean 1> $@.stdout 2> $@.stderr
 
 Output/Pathseq/WTS/STAR-SQC-beta.%.Unweighted.pdf: Python/draw_beta_PathSeq.py Output/Pathseq/WTS/STAR-beta.%.Unweighted.tsv $(CLINICAL_DATA_CSV) | build.log
