@@ -4382,7 +4382,7 @@ Output/WTS/STAR/1pass/SJ.filterted.tab: Bash/merge_STAR_SJ.bash $(addprefix Outp
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/Reference_2pass/Genome: $(REFERENCE_FASTA) $(KNOWN_GENE_GTF) Output/WTS/STAR/1pass/SJ.filterted.tab | build.log Output/WTS/STAR/Reference_2pass
-	$(WORKDIR_DOCKER) STAR --runMode "genomeGenerate" --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$(filter %.fasta,$^)) --sjdbGTFfile $(addprefix /,$(filter %.gtf,$^)) --sjdbOverhang 89 --sjdbFileChrStartEnd $(addprefix /,$(filter %.SJ.out.tab,$^)) --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
+	$(WORKDIR_DOCKER) STAR --runMode "genomeGenerate" --genomeDir $(addprefix /,$(@D)) --genomeFastaFiles $(addprefix /,$(filter %.fasta,$^)) --sjdbGTFfile $(addprefix /,$(filter %.gtf,$^)) --sjdbOverhang 89 --sjdbFileChrStartEnd $(addprefix /,$(filter %.tab,$^)) --limitSjdbInsertNsj 1272170 --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/2pass/%.Aligned.out.sam: Data/WTS/%_*.fastq.gz Output/WTS/STAR/Reference_2pass/Genome | build.log Output/WTS/STAR/2pass
 	$(WORKDIR_DOCKER) STAR --genomeDir $(addprefix /,$(dir $(filter %/Genome,$^))) --readFilesIn $(addprefix /,$(sort $(filter %.gz,$^))) --readFilesCommand zcat --outSAMunmapped "Within" "KeepPairs" --outFileNamePrefix "$*." --runThreadN $(CPUS) --runDirPerm "All_RWX" 1> $@.stdout 2> $@.stderr
