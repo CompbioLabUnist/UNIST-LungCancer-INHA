@@ -6,8 +6,8 @@ import typing
 import matplotlib
 import matplotlib.pyplot
 import pandas
-import venn
 import tqdm
+import upsetplot
 import step00
 
 
@@ -66,15 +66,14 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
 
     try:
-        venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["legend.fontsize"], legend_loc="upper left")
-    except ZeroDivisionError:
+        upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    except IndexError:
         matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center")
         matplotlib.pyplot.xticks([])
         matplotlib.pyplot.yticks([])
-    matplotlib.pyplot.tight_layout()
 
-    fig.savefig(args.output + ".pdf")
+    fig.savefig(args.output + ".pdf", bbox_inches="tight")
     matplotlib.pyplot.close(fig)
