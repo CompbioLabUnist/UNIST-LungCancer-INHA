@@ -60,7 +60,7 @@ LUNG_GSE131907_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_
 LUNG_GSE162498_11_TUMORS_RDS = Data/Lung_SingleCell/GSE162498/GSE162498_NSCLC_CD3_11tumors.Rds
 LUNG_GSE179994_ANNOTATION_TXT = Data/Lung_SingleCell/GSE179994/GSE179994_all.scTCR.tsv
 LUNG_GSE179994_MATRIX_RDS = Data/Lung_SingleCell/GSE179994/GSE179994_all.Tcell.rawCounts.rds
-KNOWN_GENE_GTF_GZ = Data/hg38.gtf.gz
+KNOWN_GENE_GTF_GZ = $(KNOWN_GENE_GTF).gz
 KNOWN_GENE_GTF = Data/hg38.gtf
 ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
 ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
@@ -286,7 +286,7 @@ step05: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.bam,$(WES_ID))) $(addprefi
 
 # Step 06 (WES: Sort.bam >> Sort.MarkDuplicate.bam)
 Output/WES/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WES/%.Sort.bam Output/WES/%.Sort.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY "LENIENT" --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WES/%.Sort.dm-tmp.bam | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -2150,10 +2150,10 @@ Output/CollectMultipleMetrics/BWA Output/CollectMultipleMetrics/Bowtie2:
 	mkdir -p $@
 
 Output/CollectMultipleMetrics/BWA/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/BWA/%.insert_size_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/BWA/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/BWA/%.quality_distribution.pdf Output/CollectMultipleMetrics/BWA/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/BWA
-	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY "LENIENT" 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
 Output/CollectMultipleMetrics/Bowtie2/%.alignment_summary_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.base_distribution_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_histogram.pdf Output/CollectMultipleMetrics/Bowtie2/%.insert_size_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_by_cycle.pdf Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution_metrics.txt Output/CollectMultipleMetrics/Bowtie2/%.quality_distribution.pdf Output/CollectMultipleMetrics/Bowtie2/%.read_length_histogram.pdf: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam | build.log Output/CollectMultipleMetrics/Bowtie2
-	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY SILENT 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
+	$(DOCKER) $(PICARD) CollectMultipleMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$(@D)/$*) --DB_SNP $(addprefix /,$(filter %.vcf,$^)) --FILE_EXTENSION ".txt" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --VALIDATION_STRINGENCY "LENIENT" 1> $(@D)/$*.stdout 2> $(@D)/$*.stderr
 
 Output/CollectMultipleMetrics/BWA.pdf: Python/analysis_quality_distribution.py $(addprefix Output/CollectMultipleMetrics/BWA/,$(addsuffix .quality_distribution_metrics.txt,$(WES_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -4391,13 +4391,13 @@ Output/WTS/STAR/%.bam: $(REFERENCE_FASTA) Output/WTS/STAR/2pass/%.Aligned.out.sa
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
 
 Output/WTS/STAR/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.bam | build.log
-	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "LENIENT" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.bai: Output/WTS/STAR/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.bam Output/WTS/STAR/%.Sort.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY "LENIENT" --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/STAR/%.Sort.dm-tmp.bam | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -4420,7 +4420,7 @@ Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FAST
 Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/PanelOfNormal/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai| build.log Output/PanelOfNormal/WTS-STAR
+Output/PanelOfNormal/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai | build.log Output/PanelOfNormal/WTS-STAR
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
@@ -4431,7 +4431,11 @@ Output/PanelOfNormal/PON.WTS-STAR.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNorma
 	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.WTS-STAR.vcf.gz Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_NORMAL_ID))) | build.log Output/Mutect2/WTS-STAR
+ifeq (,$(wildcard Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam))
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+else
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+endif
 
 Output/Mutect2/WTS-STAR/%.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/WTS-STAR/%.vcf | build.log
 	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -4471,13 +4475,13 @@ Output/WTS/Bowtie2/%.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.sam | build.lo
 	$(DOCKER) samtools view -b -h --threads $(CPUS) --reference $(addprefix /,$(filter %.fasta,$^)) $(addprefix /,$(filter %.sam,$^)) -o $(addprefix /,$@)
 
 Output/WTS/Bowtie2/%.Sort.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.bam | build.log
-	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "SILENT" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "LENIENT" 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.Sort.bai: Output/WTS/Bowtie2/%.Sort.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.bam Output/WTS/Bowtie2/%.Sort.bai | build.log
-	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY SILENT --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY "LENIENT" --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
 
 Output/WTS/Bowtie2/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/WTS/Bowtie2/%.Sort.dm-tmp.bam | build.log
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -4511,7 +4515,11 @@ Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNo
 	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/WTS-Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_NORMAL_ID))) | build.log Output/Mutect2/WTS-Bowtie2
+ifeq (,$(wildcard Output/WTS/Bowtie2/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam))
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+else
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/Bowtie2/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+endif
 
 Output/Mutect2/WTS-Bowtie2/%.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/WTS-Bowtie2/%.vcf | build.log
 	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
