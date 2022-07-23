@@ -319,10 +319,10 @@ Output/PanelOfNormal/BWA Output/PanelOfNormal/Bowtie2:
 	mkdir -p $@
 
 Output/PanelOfNormal/BWA/%.vcf: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal/BWA build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal/Bowtie2 build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID)))
 .PHONY: step08
@@ -620,11 +620,11 @@ Output/Mutect2/BWA Output/Mutect2/Bowtie2 Output/MutationSharedProportion:
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 Output/Mutect2/BWA/%.BWA.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.BWA.vcf.gz Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2/BWA build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.BWA.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).BWA.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).BWA.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 # I know that this recipe contains unnecessary dependencies; but I cannot see the solution.
 Output/Mutect2/Bowtie2/%.Bowtie2.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.Bowtie2.vcf.gz Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam $(addprefix Output/WES/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.bam,$(WES_NORMAL_ID))) | Output/Mutect2/Bowtie2 build.log
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.Bowtie2.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).Bowtie2.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).Bowtie2.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WES/$*.Bowtie2.Sort.MarkDuplicate.BQSR.bam" --input "/Output/WES/$(PAIRED_NORMAL).Bowtie2.Sort.MarkDuplicate.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL).Bowtie2.sam" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Mutect2/BWA/%.BWA.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.vcf | build.log
 	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
@@ -4414,14 +4414,14 @@ Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai: Output/WTS/STAR/%.Sor
 Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bai | build.log
 	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
+Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.table | build.log
 	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam | build.log
 	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai | build.log Output/PanelOfNormal/WTS-STAR
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
@@ -4432,9 +4432,9 @@ Output/PanelOfNormal/PON.WTS-STAR.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNorma
 
 Output/Mutect2/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.WTS-STAR.vcf.gz Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_NORMAL_ID))) | build.log Output/Mutect2/WTS-STAR
 ifeq (,$(wildcard Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam))
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 else
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/STAR/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/STAR/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 endif
 
 Output/Mutect2/WTS-STAR/%.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/WTS-STAR/%.vcf | build.log
@@ -4516,9 +4516,9 @@ Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNo
 
 Output/Mutect2/WTS-Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_NORMAL_ID))) | build.log Output/Mutect2/WTS-Bowtie2
 ifeq (,$(wildcard Output/WTS/Bowtie2/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam))
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 else
-	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/Bowtie2/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input "/Output/WTS/Bowtie2/$*.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --input "/Output/WTS/Bowtie2/$(PAIRED_NORMAL).Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam" --output $(addprefix /,$@) --normal-sample "$(PAIRED_NORMAL)" --panel-of-normals $(addprefix /,$(filter %.vcf.gz,$^)) --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 endif
 
 Output/Mutect2/WTS-Bowtie2/%.filter.vcf: $(REFERENCE_FASTA) Output/Mutect2/WTS-Bowtie2/%.vcf | build.log
