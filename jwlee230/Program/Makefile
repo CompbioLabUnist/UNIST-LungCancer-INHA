@@ -324,15 +324,27 @@ Output/PanelOfNormal/BWA/%.vcf: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDup
 Output/PanelOfNormal/Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bai | Output/PanelOfNormal/Bowtie2 build.log
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID)))
+Output/PanelOfNormal/BWA/%.filter.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/BWA/%.vcf | build.log
+	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/Bowtie2/%.filter.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/Bowtie2/%.vcf | build.log
+	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/BWA/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNormal/BWA/%.filter.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/Bowtie2/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNormal/Bowtie2/%.filter.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID)))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
-Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) | build.log
+Output/PanelOfNormal/BWA.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
-Output/PanelOfNormal/Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID))) | build.log
+Output/PanelOfNormal/Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
@@ -4423,7 +4435,13 @@ Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/STAR/
 Output/PanelOfNormal/WTS-STAR/%.vcf: $(REFERENCE_FASTA) Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/STAR/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai | build.log Output/PanelOfNormal/WTS-STAR
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 --native-pair-hmm-threads $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
+Output/PanelOfNormal/WTS-STAR/%.filter.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/WTS-STAR/%.vcf | build.log
+	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-STAR/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNormal/WTS-STAR/%.filter.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
@@ -4456,7 +4474,7 @@ Output/MutationSharedProportion/WTS-STAR.tsv: Python/calculate_MutationSharedPro
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step58-STAR: Output/WTS/STAR/Reference/Genome $(addprefix Output/WTS/STAR/1pass/,$(addsuffix .SJ.out.tab,$(WTS_ID))) Output/WTS/STAR/1pass/SJ.filterted.tab Output/WTS/STAR/Reference_2pass/Genome $(addprefix Output/WTS/STAR/2pass/,$(addsuffix .Aligned.out.sam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/STAR/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
-step58-PON: $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-STAR.vcf.gz
+step58-PON: $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .filter.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-STAR.vcf.gz
 step58-Mutect2: $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-STAR/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-STAR-SQC.venn.tar Output/Mutect2/WTS-STAR-ADC.venn.tar Output/MutationSharedProportion/WTS-STAR.tsv
 step58: step58-STAR step58-PON step58-Mutect2
 .PHONY: step58-STAR step58-PON step58-Mutect2 step58
@@ -4507,7 +4525,13 @@ Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai: Output/WTS/Bo
 Output/PanelOfNormal/WTS-Bowtie2/%.vcf: $(REFERENCE_FASTA) Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam Output/WTS/Bowtie2/%.Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai | build.log Output/PanelOfNormal/WTS-Bowtie2
 	$(DOCKER) $(GATK) Mutect2 --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --max-mnp-distance 0 1> $@.stdout 2> $@.stderr
 
-Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) | build.log
+Output/PanelOfNormal/WTS-Bowtie2/%.filter.vcf: $(REFERENCE_FASTA) Output/PanelOfNormal/WTS-Bowtie2/%.vcf | build.log
+	$(DOCKER) $(GATK) FilterMutectCalls --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-Bowtie2/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNormal/WTS-Bowtie2/%.filter.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
 
@@ -4540,7 +4564,7 @@ Output/MutationSharedProportion/WTS-Bowtie2.tsv: Python/calculate_MutationShared
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step59-Bowtie2: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
-step58-PON: $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz
+step58-PON: $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz
 step58-Mutect2: $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-Bowtie2-SQC.venn.tar Output/Mutect2/WTS-Bowtie2-ADC.venn.tar Output/MutationSharedProportion/WTS-Bowtie2.tsv
 step59: step59-Bowtie2 step59-PON step59-Mutect2
 .PHONY: step59-Bowtie2 step59-PON step59-Mutect2 step59
