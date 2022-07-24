@@ -77,9 +77,8 @@ if __name__ == "__main__":
     sample_list = list(map(step00.get_id, args.input))
 
     for sample in tqdm.tqdm(sample_list):
-        patient_samples[step00.get_patient(sample)] = set()
-
-    for sample in tqdm.tqdm(sample_list):
+        if step00.get_patient(sample) not in patient_samples:
+            patient_samples[step00.get_patient(sample)] = set()
         patient_samples[step00.get_patient(sample)].add(sample)
 
     matplotlib.use("Agg")
