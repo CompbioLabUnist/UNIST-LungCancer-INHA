@@ -337,10 +337,10 @@ Output/PanelOfNormal/Bowtie2/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNor
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/BWA/%.PASS.vcf.idx: Output/PanelOfNormal/BWA/%.PASS.vcf | build.log
-	$(DOCKER) $(GATK) IndexFeatureFile --index $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) IndexFeatureFile --input $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/Bowtie2/%.PASS.vcf.idx: Output/PanelOfNormal/Bowtie2/%.PASS.vcf | build.log
-	$(DOCKER) $(GATK) IndexFeatureFile --index $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) IndexFeatureFile --input $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID)))
 .PHONY: step08
@@ -4448,7 +4448,7 @@ Output/PanelOfNormal/WTS-STAR/%.PASS.vcf: Bash/select_pass.bash Output/PanelOfNo
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-STAR/%.PASS.vcf.idx: Output/PanelOfNormal/WTS-STAR/%.PASS.vcf | build.log
-	$(DOCKER) $(GATK) IndexFeatureFile --index $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) IndexFeatureFile --input $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-STAR.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-STAR/,$(addsuffix .PASS.vcf.idx,$(WTS_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
@@ -4542,7 +4542,7 @@ Output/PanelOfNormal/WTS-Bowtie2/%.PASS.vcf: Bash/select_pass.bash Output/PanelO
 	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-Bowtie2/%.PASS.vcf.idx: Output/PanelOfNormal/WTS-Bowtie2/%.PASS.vcf | build.log
-	$(DOCKER) $(GATK) IndexFeatureFile --index $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) IndexFeatureFile --input $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json: $(REFERENCE_FASTA) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf.idx,$(WTS_NORMAL_ID))) | build.log
 	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) $(foreach sample,$(addprefix /,$(filter %.vcf,$^)),--variant $(sample)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
