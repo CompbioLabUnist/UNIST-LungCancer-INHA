@@ -4,8 +4,8 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
-MEMS = 50
-PARALLEL = 10
+MEMS = 100
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5023,6 +5023,44 @@ Output/Pathseq/WES_vs_WTS/venn.%.pdf: Python/compare_PathSeq_venn.py Output/Path
 step66-venn: $(addprefix Output/Pathseq/WES_vs_WTS/venn.,$(addsuffix .pdf,$(TAXONOMY_TYPES)))
 step66: step66-venn
 .PHONY: step66-venn step66
+
+# Step 67 (t-SNE with Mutation Shared Proportion & Mutational Signature)
+# Output/MutationSharedProportion/BWA.tsv
+Output/MutationSharedProportion_Signature/tSNE Output/MutationSharedProportion_Signature/cluster Output/MutationSharedProportion_Signature/distance:
+	mkdir -p $@
+
+Output/MutationSharedProportion_Signature/tSNE/%.SigProfiler.SQC.absolute.median.tar: Python/draw_tSNE_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/tSNE
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/tSNE/%.SigProfiler.SQC.relative.median.tar: Python/draw_tSNE_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/tSNE
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/tSNE/%.deconstructSigs.SQC.median.tar: Python/draw_tSNE_MutationSharedProportion_deconstructSigs.py Output/deconstructSigs/%.signature.tsv Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/tSNE
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/cluster/%.SigProfiler.SQC.absolute.median.tar: Python/draw_clustermap_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/cluster
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/cluster/%.SigProfiler.SQC.relative.median.tar: Python/draw_clustermap_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/cluster
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/cluster/%.deconstructSigs.SQC.median.tar: Python/draw_clustermap_MutationSharedProportion_deconstructSigs.py Output/deconstructSigs/%.signature.tsv Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/cluster
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/distance/%.SigProfiler.SQC.absolute.median.tar: Python/draw_distance_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/distance
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Signature/distance/%.SigProfiler.SQC.relative.median.tar: Python/draw_distance_MutationSharedProportion_SigProfiler.py Output/SigProfiler/BWA/SBS96/Suggested_Solution/COSMIC_SBS96_Decomposed_Solution/Activities/COSMIC_SBS96_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MutationSharedProportion_Signature/distance
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step67-SigProfiler-tsne: Output/MutationSharedProportion_Signature/tSNE/BWA.SigProfiler.SQC.absolute.median.tar Output/MutationSharedProportion_Signature/tSNE/BWA.SigProfiler.SQC.relative.median.tar
+step67-deconstructSigs-tSNE: Output/MutationSharedProportion_Signature/tSNE/BWA.deconstructSigs.SQC.median.tar
+step67-SigProfiler-cluster: Output/MutationSharedProportion_Signature/cluster/BWA.SigProfiler.SQC.absolute.median.tar
+step67-deconstructSigs-cluster: Output/MutationSharedProportion_Signature/cluster/BWA.deconstructSigs.SQC.median.tar
+step67-SigProfiler-distance: Output/MutationSharedProportion_Signature/distance/BWA.SigProfiler.SQC.absolute.median.tar Output/MutationSharedProportion_Signature/distance/BWA.SigProfiler.SQC.relative.median.tar
+step67-SigProfiler: step67-SigProfiler-tsne step67-SigProfiler-cluster step67-SigProfiler-distance
+step67:step67-SigProfiler
+.PHONY: step67-SigProfiler-tsne step67-SigProfiler-cluster step67-SigProfiler-distance step67-SigProfiler step67
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
