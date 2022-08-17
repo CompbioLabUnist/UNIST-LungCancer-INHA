@@ -716,6 +716,9 @@ Output/MutationSharedProportion/BWA.tsv: Python/calculate_MutationSharedProporti
 Output/MutationSharedProportion/Bowtie2.tsv: Python/calculate_MutationSharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/MutationSharedProportion
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/MutationSharedProportion/BWA.SQC.tar: Python/draw_violin_MutationCount_MutationSharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+
 step14-BWA: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID)))
 step14-Bowtie2: $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID)))
 step14-histogram: Output/Mutect2/BWA-SQC.histogram.pdf Output/Mutect2/BWA-ADC.histogram.pdf Output/Mutect2/Bowtie2-SQC.histogram.pdf Output/Mutect2/Bowtie2-ADC.histogram.pdf
@@ -5025,7 +5028,6 @@ step66: step66-venn
 .PHONY: step66-venn step66
 
 # Step 67 (t-SNE with Mutation Shared Proportion & Mutational Signature)
-# Output/MutationSharedProportion/BWA.tsv
 Output/MutationSharedProportion_Signature/tSNE Output/MutationSharedProportion_Signature/cluster Output/MutationSharedProportion_Signature/distance:
 	mkdir -p $@
 
