@@ -29,4 +29,4 @@ if __name__ == "__main__":
         for input_file in args.input:
             os.system("cp -v {0} {1}".format(input_file, os.path.join(input_directory, step00.get_id(input_file) + ".vcf")))
 
-        sig.sigProfilerExtractor("vcf", args.output, input_data=tmpdir, reference_genome="GRCh38", opportunity_genome="GRCh38", exome=True, cpu=args.cpus)
+        sig.sigProfilerExtractor("vcf", args.output, input_data=tmpdir, reference_genome="GRCh38", opportunity_genome="GRCh38", exome=True, cpu=args.cpus, nmf_init="nndsvd")
