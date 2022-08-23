@@ -3,6 +3,7 @@ compare_mutation_shared_proportion.py: Compare mutation shared proportion
 """
 import argparse
 import multiprocessing
+import tarfile
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -36,8 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
-    parser.add_argument("--column", help="Column for Mutation Shared Proportion", choices=step00.sharing_columns, default=step00.sharing_columns[0])
+    parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold to use", type=int, default=30)
 
@@ -57,8 +57,8 @@ if __name__ == "__main__":
         raise ValueError("Clinical must end with .TSV!!")
     elif not args.cgc.endswith(".csv"):
         raise ValueError("CGC must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif args.threshold <= 5:
@@ -93,55 +93,62 @@ if __name__ == "__main__":
 
     patients &= set(mutect_data["Patient"])
 
-    if args.median:
-        cutting = numpy.median(clinical_data[args.column])
-    elif args.mean:
-        cutting = numpy.mean(clinical_data[args.column])
-    else:
-        raise Exception("Something went wrong!!")
+    figures = list()
+    for column in step00.sharing_columns:
+        if args.median:
+            cutting = numpy.median(clinical_data[column])
+        elif args.mean:
+            cutting = numpy.mean(clinical_data[column])
+        else:
+            raise Exception("Something went wrong!!")
 
-    lower_data = clinical_data.loc[(clinical_data[args.column] <= cutting)]
-    higher_data = clinical_data.loc[(clinical_data[args.column] > cutting)]
-    print(lower_data)
-    print(higher_data)
+        lower_data = clinical_data.loc[(clinical_data[column] <= cutting)]
+        higher_data = clinical_data.loc[(clinical_data[column] > cutting)]
+        print(lower_data)
+        print(higher_data)
 
-    data = list()
-    with multiprocessing.Pool(args.cpus) as pool:
-        for gene in tqdm.tqdm(list(cgc_data.index)):
-            data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(lower_data.index)])), "Lower"))
-            data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(higher_data.index)])), "Higher"))
-    output_data = pandas.DataFrame(data=data, columns=["Gene", "Count", "Lower/Higher"])
-    print(output_data)
+        data = list()
+        with multiprocessing.Pool(args.cpus) as pool:
+            for gene in tqdm.tqdm(list(cgc_data.index)):
+                data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(lower_data.index)])), "Lower"))
+                data.append((gene, sum(pool.starmap(query_mutation, [(gene, patient) for patient in list(higher_data.index)])), "Higher"))
+        output_data = pandas.DataFrame(data=data, columns=["Gene", "Count", "Lower/Higher"])
+        print(output_data)
 
-    matplotlib.use("Agg")
-    matplotlib.rcParams.update(step00.matplotlib_parameters)
-    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
+        matplotlib.use("Agg")
+        matplotlib.rcParams.update(step00.matplotlib_parameters)
+        seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    fig, axs = matplotlib.pyplot.subplots(figsize=(32 * 3, 18), ncols=3, sharey=True)
+        fig, axs = matplotlib.pyplot.subplots(figsize=(32 * 3, 18), ncols=3, sharey=True)
 
-    genes = sorted(list(cgc_data.index), key=lambda x: sum(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
-    tmp_data = output_data.loc[(output_data["Gene"].isin(genes))].sort_values(by="Count", ascending=False)
-    seaborn.barplot(data=tmp_data, x="Gene", y="Count", order=genes, hue="Lower/Higher", ci=None, palette={"Lower": "tab:cyan", "Higher": "tab:red"}, ax=axs[0])
-    axs[0].set_title(f"Total {len(clinical_data)} patients")
-    axs[0].set_xticklabels(genes, rotation="vertical")
-    axs[0].set_xlabel("")
-    axs[0].set_ylabel("Patients")
+        genes = sorted(list(cgc_data.index), key=lambda x: sum(output_data.loc[(output_data["Gene"] == x), "Count"]), reverse=True)[:args.threshold]
+        tmp_data = output_data.loc[(output_data["Gene"].isin(genes))].sort_values(by="Count", ascending=False)
+        seaborn.barplot(data=tmp_data, x="Gene", y="Count", order=genes, hue="Lower/Higher", ci=None, palette={"Lower": "tab:cyan", "Higher": "tab:red"}, ax=axs[0])
+        axs[0].set_title(f"Total {len(clinical_data)} patients")
+        axs[0].set_xticklabels(genes, rotation="vertical")
+        axs[0].set_xlabel("")
+        axs[0].set_ylabel("Patients")
 
-    tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
-    seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:cyan", ci=None, ax=axs[1])
-    axs[1].set_title(f"Lower {len(lower_data)} patients")
-    axs[1].set_xticklabels(tmp_data["Gene"], rotation="vertical")
-    axs[1].set_xlabel("")
-    axs[1].set_ylabel("Patients")
+        tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Lower")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
+        seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:cyan", ci=None, ax=axs[1])
+        axs[1].set_title(f"Lower {len(lower_data)} patients")
+        axs[1].set_xticklabels(tmp_data["Gene"], rotation="vertical")
+        axs[1].set_xlabel("")
+        axs[1].set_ylabel("Patients")
 
-    tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
-    seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:red", ci=None, ax=axs[2])
-    axs[2].set_title(f"Higher {len(higher_data)} patients")
-    axs[2].set_xticklabels(tmp_data["Gene"], rotation="vertical")
-    axs[2].set_xlabel("")
-    axs[2].set_ylabel("Patients")
+        tmp_data = output_data.loc[(output_data["Lower/Higher"] == "Higher")].sort_values(by="Count", ascending=False).iloc[:args.threshold, :]
+        seaborn.barplot(data=tmp_data, x="Gene", y="Count", color="tab:red", ci=None, ax=axs[2])
+        axs[2].set_title(f"Higher {len(higher_data)} patients")
+        axs[2].set_xticklabels(tmp_data["Gene"], rotation="vertical")
+        axs[2].set_xlabel("")
+        axs[2].set_ylabel("Patients")
 
-    matplotlib.pyplot.tight_layout()
+        matplotlib.pyplot.tight_layout()
 
-    fig.savefig(args.output)
-    matplotlib.pyplot.close(fig)
+        figures.append(f"{column}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    with tarfile.open(args.output, "w") as tar:
+        for figure in tqdm.tqdm(figures):
+            tar.add(figure, arcname=figure)

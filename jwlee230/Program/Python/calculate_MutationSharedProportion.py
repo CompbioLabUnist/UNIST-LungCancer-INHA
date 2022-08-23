@@ -46,6 +46,9 @@ if __name__ == "__main__":
     print(mutect_data)
 
     clinical_data[step00.sharing_columns[0]] = None
+    clinical_data[step00.sharing_columns[2]] = None
+    clinical_data[step00.sharing_columns[4]] = None
+    clinical_data[step00.sharing_columns[6]] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
@@ -56,8 +59,14 @@ if __name__ == "__main__":
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
         precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
         clinical_data.loc[patient, step00.sharing_columns[0]] = len(primary_set & precancer_set) / len(primary_set)
+        clinical_data.loc[patient, step00.sharing_columns[2]] = len(primary_set & precancer_set) / len(precancer_set | primary_set)
+        clinical_data.loc[patient, step00.sharing_columns[4]] = len(primary_set & precancer_set)
+        clinical_data.loc[patient, step00.sharing_columns[6]] = len(primary_set & precancer_set) / (len(primary_set) * step00.big / step00.WES_length)
 
     clinical_data[step00.sharing_columns[1]] = None
+    clinical_data[step00.sharing_columns[3]] = None
+    clinical_data[step00.sharing_columns[5]] = None
+    clinical_data[step00.sharing_columns[7]] = None
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient)]
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
@@ -68,30 +77,9 @@ if __name__ == "__main__":
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
         precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
         clinical_data.loc[patient, step00.sharing_columns[1]] = len(primary_set & precancer_set) / len(primary_set)
-
-    clinical_data[step00.sharing_columns[2]] = None
-    for patient in tqdm.tqdm(patients):
-        patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
-
-        if ("Primary" not in stage_set) and (len(stage_set) < 2):
-            continue
-
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, step00.sharing_columns[2]] = len(primary_set & precancer_set) / len(primary_set | precancer_set)
-
-    clinical_data[step00.sharing_columns[3]] = None
-    for patient in tqdm.tqdm(patients):
-        patient_data = mutect_data.loc[(mutect_data["Patient"] == patient)]
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
-
-        if ("Primary" not in stage_set) and (len(stage_set) < 2):
-            continue
-
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, step00.sharing_columns[3]] = len(primary_set & precancer_set) / len(primary_set | precancer_set)
+        clinical_data.loc[patient, step00.sharing_columns[3]] = len(primary_set & precancer_set) / len(precancer_set | primary_set)
+        clinical_data.loc[patient, step00.sharing_columns[5]] = len(primary_set & precancer_set)
+        clinical_data.loc[patient, step00.sharing_columns[7]] = len(primary_set & precancer_set) / (len(primary_set) * step00.big / step00.WES_length)
 
     clinical_data.dropna(subset=step00.sharing_columns, inplace=True)
     for column in tqdm.tqdm(step00.sharing_columns):

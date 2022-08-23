@@ -86,7 +86,7 @@ if __name__ == "__main__":
         seaborn.violinplot(data=input_data, x="Stage", y="Count", order=stage_list, hue=MSP, hue_order=["Lower", "Higher"], cut=1, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x, "Lower"), (x, "Higher")), stage_list)), data=input_data, x="Stage", y="Count", order=stage_list, hue=MSP, hue_order=["Lower", "Higher"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.ylabel("Short Nucleotide Variation Counts")
+        matplotlib.pyplot.ylabel("SNV Count")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"{MSP}.pdf")
