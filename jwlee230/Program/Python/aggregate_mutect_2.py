@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
 
-    stage_list = list(filter(lambda x: x in list(mutect_data["Cancer_Stage"]), reversed(step00.long_sample_type_list)))
+    stage_list = list(filter(lambda x: x in set(mutect_data["Cancer_Stage"]), reversed(step00.long_sample_type_list)))
     print(stage_list)
     for stage in tqdm.tqdm(stage_list):
         counter: collections.Counter = collections.Counter(mutect_data.loc[mutect_data["Cancer_Stage"] == stage].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     patient_data["TMB"] = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0] / step00.WES_length * 10 ** 6, my_comut.samples))
     print(patient_data)
 
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage", mapping=step00.stage_color_code)
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage", mapping=step00.stage_color_code, value_order=reversed(stage_list))
     my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", args.compare[0]]].set_axis(labels=["sample", "category", "value"], axis="columns"), name=args.compare[0])
     my_comut.add_categorical_data(mutect_data.loc[(mutect_data["Variant_Classification"].isin(set(step00.nonsynonymous_notations.values()))), ["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "TMB"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="TMB", mapping={"Counts": "purple"})

@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
 
-    stage_list = list(filter(lambda x: x in list(mutect_data["Cancer_Stage"]), reversed(step00.long_sample_type_list)))
+    stage_list = list(filter(lambda x: x in set(mutect_data["Cancer_Stage"]), reversed(step00.long_sample_type_list)))
     print(stage_list)
     for stage in tqdm.tqdm(stage_list):
         counter: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Cancer_Stage"] == stage)].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     if args.patient:
         my_comut.add_sample_indicators(patient_data[["Tumor_Sample_Barcode", "Patient"]].set_axis(labels=["sample", "group"], axis="columns"), name="Same patient")
 
-    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage", mapping=step00.stage_color_code)
+    my_comut.add_categorical_data(patient_data[["Tumor_Sample_Barcode", "Collection_Type_category", "Collection_Type_value"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Stage", mapping=step00.stage_color_code, value_order=reversed(stage_list))
     my_comut.add_categorical_data(mutect_data.loc[(mutect_data["Variant_Classification"].isin(set(step00.nonsynonymous_notations.values()))), ["Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification"]].set_axis(labels=["sample", "category", "value"], axis="columns"), name="Mutation type", category_order=driver_data["Gene"], priority=["Frameshift indel"], mapping=step00.nonsynonymous_coloring)
     my_comut.add_bar_data(patient_data[["Tumor_Sample_Barcode", "TMB"]].set_axis(labels=["sample", "Counts"], axis="columns"), name="Mutation count", ylabel="TMB", mapping={"Counts": "purple"})
     # my_comut.add_side_bar_data(driver_data[["Gene", "-log10(P)"]].set_axis(labels=["category", "value"], axis="columns"), name="P-value", xlabel="-log10(P)", paired_name="Mutation type", position="left", mapping={"value": "olive"})
