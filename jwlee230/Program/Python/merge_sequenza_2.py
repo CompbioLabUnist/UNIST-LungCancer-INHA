@@ -9,6 +9,7 @@ import step00
 
 def get_data(file_name: str) -> pandas.DataFrame:
     data = pandas.read_csv(file_name, sep="\t").dropna(axis="index").dropna(axis="index")
+    data.columns = ["chromosome", "start", "end"] + list(data.columns)[3:]
     data["Sample"] = file_name.split("/")[-2]
     return data
 
@@ -31,6 +32,7 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         input_data = pandas.concat(objs=pool.map(get_data, args.input), axis="index", copy=False, ignore_index=True)
+        input_data["Patient"] = pool.map(step00.get_patient, input_data["Sample"])
         input_data["Stage"] = pool.map(step00.get_long_sample_type, input_data["Sample"])
     print(input_data)
 
