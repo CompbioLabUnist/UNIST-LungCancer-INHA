@@ -285,6 +285,7 @@
         \end{table}
     \end{frame}
 
+    \subsubsection{Clinical Information in WES Data}
     \begin{frame}[allowframebreaks]
         \frametitle{WES Data Composition with Recurrence}
 
@@ -326,6 +327,7 @@
         \end{table}
     \end{frame}
 
+    \subsubsection{Clinical Information in WTS data}
     \begin{frame}[allowframebreaks]
         \frametitle{WTS Data Composition with Recurrence}
 
@@ -395,7 +397,8 @@
     \end{frame}
 
     \section{Results}
-    \subsection{Quality Checks with Size}
+    \subsection{Quality Checks}
+    \subsubsection{Quality Checks with Size}
     \begin{frame}
         \frametitle{File Size in WES Data}
 
@@ -414,7 +417,22 @@
         \end{figure}
     \end{frame}
 
-    \subsection{Quality Checks with FastQC}
+    \subsubsection{Quality Checks with Coverage Depth}
+    \begin{frame}
+        \frametitle{Coverage Depth on WES}
+
+        \begin{figure}
+            \includegraphics[width=\linewidth]{figures/FastQC/BWA.pdf}
+            \caption{Coverage Depth Plot}
+        \end{figure}
+
+        \begin{itemize}
+            \item Tumor DNA: 97.6$\times$; Germline DNA: 95.8$\times$ in TCGA LUAD \cite{LUAD-1}
+            \item Mean 121$\times$, with 83 \% of target bases above 30$\times$ in TCGA LUSC \cite{LUSC-1}
+        \end{itemize}
+    \end{frame}
+
+    \subsubsection{Quality Checks with FastQC}
     \begin{frame}
         \frametitle{FastQC?}
 
@@ -442,7 +460,7 @@
         \end{alertblock}
     \end{frame}
 
-    \begin{frame}[allowframebreaks]
+    \begin{frame}
         \frametitle{Failure on 33P1}
 
         \begin{figure}
@@ -455,16 +473,6 @@
             \end{array}$
             \caption{Per Base Sequence Quality Results}
         \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/FastQC/BWA.pdf}
-            \caption{Coverage Depth Plot}
-        \end{figure}
-
-        \begin{itemize}
-            \item Tumor DNA: 97.6$\times$; Germline DNA: 95.8$\times$ in TCGA LUAD \cite{LUAD-1}
-            \item Mean 121$\times$, with 83 \% of target bases above 30$\times$ in TCGA LUSC \cite{LUSC-1}
-        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -480,7 +488,7 @@
         \end{exampleblock}
     \end{frame}
 
-    \subsection{Quality Checks with Picard}
+    \subsubsection{Quality Checks with Picard}
     \begin{frame}
         \frametitle{Picard?}
 
@@ -500,7 +508,18 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Findings in Picard}
+        \frametitle{Findings in Quality Checks}
+
+        \begin{alertblock}{WES samples}
+            \begin{itemize}
+                \item 33P1 sample have not enough quality.
+                \item Other samples are good to analysis.
+            \end{itemize}
+        \end{alertblock}
+
+        \begin{exampleblock}{WTS samples}
+            All samples are good to analysis.
+        \end{exampleblock}
     \end{frame}
 
     \subsection{Single Nucleotide Variations Analysis}
@@ -551,9 +570,9 @@
         \end{block}
     \end{frame}
 
-    \subsubsection{Somatic Variant}
+    \subsubsection{Somatic Variants}
     \begin{frame}
-        \frametitle{Somatic Variant in LUSC}
+        \frametitle{Somatic Variants in LUSC}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.pdf}
@@ -562,7 +581,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Somatic Variant in LUAD}
+        \frametitle{Somatic Variants in LUAD}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.pdf}
@@ -570,9 +589,9 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{Somatic Variant with Recurrence}
+    \subsubsection{Somatic Variants with Recurrence}
     \begin{frame}
-        \frametitle{Somatic Variant in LUSC with Recurrence}
+        \frametitle{Somatic Variants in LUSC with Recurrence}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Recur.pdf}
@@ -581,7 +600,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Somatic Variant in LUAD with Recurrence}
+        \frametitle{Somatic Variants in LUAD with Recurrence}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Recur.pdf}
@@ -589,9 +608,9 @@
         \end{figure}
     \end{frame}
 
-    \subsubsection{Somatic Variant with Smoking}
+    \subsubsection{Somatic Variants with Smoking}
     \begin{frame}
-        \frametitle{Somatic Variant in LUSC with Smoking}
+        \frametitle{Somatic Variants in LUSC with Smoking}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-SQC.Smoking.pdf}
@@ -600,7 +619,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Somatic Variant in LUAD with Smoking}
+        \frametitle{Somatic Variants in LUAD with Smoking}
 
         \begin{figure}
             \includegraphics[width=\linewidth]{figures/Mutect2/BWA-ADC.Smoking.pdf}
@@ -695,9 +714,9 @@
             \begin{enumerate}
                 \item Lysine Methyltransferase 2D
                 \item KMT2D have a role in chromatin remodeling \\
-                $\Rightarrow$ transcription \& DNA repair \cite{KMT2D-3, KMT2D-4}
+                    $\Rightarrow$ transcription \& DNA repair \cite{KMT2D-3, KMT2D-4}
                 \item KMT2D deficiency impairs super-enhancers \\
-                $\therefore$ To confer a glycolytic vulnerability \cite{KMT2D-1}
+                    $\therefore$ To confer a glycolytic vulnerability \cite{KMT2D-1}
                 \item KMT2D mutation is associated with poor prognosis in NSCLC \cite{KMT2D-2}
             \end{enumerate}
         \end{block}
@@ -720,8 +739,8 @@
                 \item Common RB1 re-arrangements associated with histopathologic transformation \\
                 in non-smoking-related lung cancer \cite{RB1-2}
                 \item Nicotine \\
-                $\Rightarrow$ up-regulates FGFR3 \& RB1 expression \\
-                $\Rightarrow$ promote NSCLC cell proliferation \& EMT transition \cite{RB1-3}
+                    $\Rightarrow$ up-regulates FGFR3 \& RB1 expression \\
+                    $\Rightarrow$ promote NSCLC cell proliferation \& EMT transition \cite{RB1-3}
                 \item RB1 mutation predicts poor outcomes in NSCLC \cite{RB1-4}
             \end{enumerate}
         \end{block}
@@ -730,7 +749,7 @@
             \begin{enumerate}
                 \item RUNX1 Partner Transcriptional Co-Repressor 1
                 \item RUNX1T1 facilitates transcriptional repression \\
-                $\Leftarrow$ via DNA-binding transcription factors \& histone-modifying enzymes \cite{RUNX1T1-1, RUNX1T1-2, RUNX1T1-3}
+                    $\Leftarrow$ via DNA-binding transcription factors \& histone-modifying enzymes \cite{RUNX1T1-1, RUNX1T1-2, RUNX1T1-3}
                 \item RUNX1T1 has a role in SCLC \cite{RUNX1T1-4}
                 \item RUNX1T1 is associated with the brain metastatic process in lung cancer \cite{RUNX1T1-5}
             \end{enumerate}
@@ -751,7 +770,7 @@
         \frametitle{Findings in Mutation Sharing Proportion}
     \end{frame}
 
-    \subsection{Copy Number Variation Analysis with PureCN}
+    \subsection{Copy Number Variation Analysis}
      \begin{frame}
         \frametitle{PureCN?}
 
@@ -1113,7 +1132,6 @@
         \frametitle{Findings in PureCN}
     \end{frame}
 
-    \subsection{Copy Number Variation Analysis with Gistic}
     \begin{frame}
         \frametitle{Gistic?}
 
@@ -2149,6 +2167,10 @@
 
     \begin{frame}
         \frametitle{Findings in Smoking \& LUSC Gistic Results}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Copy Number Variation Analysis}
     \end{frame}
 
     \subsubsection{Gistic in Smoking \& LUAD}
