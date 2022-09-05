@@ -77,7 +77,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
-    parser.add_argument("clinical", help="Clinical data TSV file", type=str)
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("tsv", help="Output TSV file", type=str)
     parser.add_argument("pdf", help="Output PDF file", type=str)
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     elif not args.cgc.endswith(".csv"):
         raise ValueError("CGC must end with .CSV!!")
     elif not args.tsv.endswith(".tsv"):
-        raise ValueError("TSV must end with .tsv!!")
+        raise ValueError("TSV must end with .TSV!!")
     elif not args.pdf.endswith(".pdf"):
-        raise ValueError("PDF must end with .pdf!!")
+        raise ValueError("PDF must end with .PDF!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.p < 1):

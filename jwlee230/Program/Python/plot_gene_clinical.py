@@ -158,7 +158,7 @@ if __name__ == "__main__":
     mutation_data = mutation_data.loc[exact_test_data.index, :]
     print(exact_test_data)
 
-    mutation_data.columns = list(map(lambda x: "{0}-{1}".format(x, args.compare[1]) if (x in control_samples) else "{0}-{1}".format(x, args.compare[2]), list(mutation_data.columns)))
+    mutation_data.columns = list(map(lambda x: f"{x}-{args.compare[1]}" if (x in control_samples) else f"{x}-{args.compare[2]}", list(mutation_data.columns)))
     output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
     output_data.to_csv(args.table, sep="\t")
     print(output_data)
