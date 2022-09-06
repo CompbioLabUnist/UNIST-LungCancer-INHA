@@ -1,5 +1,5 @@
 """
-aggregate_mutect_sequenza.py: aggregate mutect MAF files with Sequenza CNV data
+aggregate_mutect_CNV.py: Aggregate mutect MAF files with CNV data
 """
 import argparse
 import itertools
@@ -12,14 +12,8 @@ import pandas
 import tqdm
 import step00
 
-watching = "depth.ratio"
-sequenza_data = pandas.DataFrame()
-
-
-def get_data(file_name: str) -> pandas.DataFrame:
-    data = pandas.read_csv(file_name, sep="\t", usecols=["chromosome", "start.pos", "end.pos", watching]).dropna(axis="index")
-    data["sample"] = file_name.split("/")[-2]
-    return data
+watching = ""
+CNV_data = pandas.DataFrame()
 
 
 def read_maf(filename: str) -> pandas.DataFrame:
@@ -30,25 +24,25 @@ def query(sample: str, chromosome: str, start: int, end: int) -> float:
     a = list()
     weights = list()
 
-    tmp_data = sequenza_data.loc[(sequenza_data["sample"] == sample) & (sequenza_data["chromosome"] == chromosome) & (sequenza_data["start.pos"] <= start) & (end <= sequenza_data["end.pos"]), :]
+    tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (CNV_data["start"] <= start) & (end <= CNV_data["end"]), :]
     for index, row in tmp_data.iterrows():
-        a.append(row["depth.ratio"])
+        a.append(row[watching])
         weights.append(end - start + 1)
 
-    tmp_data = sequenza_data.loc[(sequenza_data["sample"] == sample) & (sequenza_data["chromosome"] == chromosome) & (start <= sequenza_data["end.pos"]) & (sequenza_data["end.pos"] <= end), :]
+    tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (start <= CNV_data["end"]) & (CNV_data["end"] <= end), :]
     for index, row in tmp_data.iterrows():
-        a.append(row["depth.ratio"])
-        weights.append(row["end.pos"] - start + 1)
+        a.append(row[watching])
+        weights.append(row["end"] - start + 1)
 
-    tmp_data = sequenza_data.loc[(sequenza_data["sample"] == sample) & (sequenza_data["chromosome"] == chromosome) & (start <= sequenza_data["start.pos"]) & (sequenza_data["start.pos"] <= end), :]
+    tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (start <= CNV_data["start"]) & (CNV_data["start"] <= end), :]
     for index, row in tmp_data.iterrows():
-        a.append(row["depth.ratio"])
-        weights.append(end - row["start.pos"] + 1)
+        a.append(row[watching])
+        weights.append(end - row["start"] + 1)
 
-    tmp_data = sequenza_data.loc[(sequenza_data["sample"] == sample) & (sequenza_data["chromosome"] == chromosome) & (start <= sequenza_data["start.pos"]) & (sequenza_data["end.pos"] <= end), :]
+    tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (start <= CNV_data["start"]) & (CNV_data["end"] <= end), :]
     for index, row in tmp_data.iterrows():
-        a.append(row["depth.ratio"])
-        weights.append(row["end.pos"] - row["start.pos"] + 1)
+        a.append(row[watching])
+        weights.append(row["end"] - row["start"] + 1)
 
     if (not a) and (not weights):
         return 1.0
@@ -60,11 +54,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
+    parser.add_argument("cnv", help="CNV segment.tsv file", type=str)
     parser.add_argument("driver", help="MutEnricher Fisher enrichment output", type=str)
     parser.add_argument("census", help="Cancer gene census CSV file", type=str)
     parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output file", type=str)
-    parser.add_argument("--cnv", help="CNV result(s)", type=str, nargs="+", required=True)
+    parser.add_argument("--watching", help="Watching column name", type=str, required=True)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
     parser.add_argument("--ratio", help="Ratio threshold for CNV", type=float, default=0.2)
@@ -86,14 +81,14 @@ if __name__ == "__main__":
 
     if list(filter(lambda x: not x.endswith(".maf"), args.input)):
         raise ValueError("INPUT must end with .MAF!!")
+    elif not args.cnv.endswith(".tsv"):
+        raise ValueError("CNV must end with .TSV!!")
     elif not args.census.endswith(".csv"):
         raise ValueError("Census must end with .CSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
-    elif list(filter(lambda x: not x.endswith("sample_segments.txt"), args.cnv)):
-        raise ValueError("CNV must end with sample_segments.txt!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.p < 1):
@@ -103,6 +98,8 @@ if __name__ == "__main__":
 
     if not (args.patient or args.stage or args.gene):
         args.patient = True
+
+    watching = args.watching
 
     clinical_data = step00.get_clinical_data(args.clinical)
     print(clinical_data)
@@ -150,9 +147,9 @@ if __name__ == "__main__":
     driver_data.sort_values(by="Fisher_pval", ascending=False, ignore_index=True, inplace=True)
     print(driver_data)
 
-    with multiprocessing.Pool(args.cpus) as pool:
-        sequenza_data = pandas.concat(objs=pool.map(get_data, args.cnv), axis="index", copy=False, ignore_index=True, verify_integrity=True)
-    print(sequenza_data)
+    CNV_data = pandas.read_csv(args.cnv, sep="\t", index_col=0)
+    CNV_data = CNV_data.loc[(CNV_data["Patient"].isin(patients))]
+    print(CNV_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
         mutect_data["CNV"] = pool.starmap(query, mutect_data[["Tumor_Sample_Barcode", "Chromosome", "Start_Position", "End_Position"]].itertuples(index=False, name=None))
@@ -174,7 +171,7 @@ if __name__ == "__main__":
     print(stage_list)
 
     for stage in tqdm.tqdm(stage_list):
-        snv_counter: collections.Counter = collections.Counter(mutect_data.loc[mutect_data["Cancer_Stage"] == stage].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
+        snv_counter: collections.Counter = collections.Counter(mutect_data.loc[(mutect_data["Cancer_Stage"] == stage)].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
         driver_data[stage] = list(map(lambda x: snv_counter[x] / len(args.input), driver_data["Gene"]))
     driver_data["-log10(P)"] = -1 * numpy.log10(driver_data["Fisher_pval"])
     print(driver_data)
@@ -182,7 +179,7 @@ if __name__ == "__main__":
     cnv_present_data = pandas.DataFrame()
     cnv_present_data["Hugo_Symbol"] = sorted(driver_data["Gene"])
     for stage in tqdm.tqdm(stage_list):
-        cnv_counter: collections.Counter = collections.Counter(cnv_data.loc[(cnv_data["Cancer_Stage"] == stage)].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
+        cnv_counter: collections.Counter = collections.Counter(cnv_data.loc[cnv_data["Cancer_Stage"] == stage].drop_duplicates(subset=["Hugo_Symbol", "Tumor_Sample_Barcode"])["Hugo_Symbol"])
         cnv_present_data[stage] = list(map(lambda x: cnv_counter[x] / len(args.input), cnv_present_data["Hugo_Symbol"]))
     print(cnv_present_data)
 
