@@ -1,13 +1,15 @@
 """
-plot_CNV_MutationSharedProportion.py: violin plot Copy Number Variation with Mutation Shared Proportion
+plot_CNV_MutationSharedProportion.py: violin plot & joint plot Copy Number Variation with Mutation Shared Proportion
 """
 import argparse
+import itertools
 import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -100,9 +102,35 @@ if __name__ == "__main__":
         matplotlib.pyplot.title(MSP)
         matplotlib.pyplot.tight_layout()
 
-        figures.append(f"{MSP}.pdf")
+        figures.append(f"Violin_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
+
+        del output_data[MSP]
+
+    stage_list = list(filter(lambda x: output_data.loc[(output_data["Stage"] == x)].shape[0] > 3, step00.long_sample_type_list))
+    palette = dict([(stage, step00.stage_color_code[stage]) for stage in stage_list])
+
+    output_data = output_data.loc[(output_data["Stage"].isin(stage_list))]
+
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
+
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        figures.append(f"Joint_All_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
+        tmp_data = output_data.loc[(output_data["Stage"] == stage)]
+
+        r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Ploidy"])
+
+        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Ploidy", color=palette[stage], height=24, ratio=5, kind="reg")
+        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        figures.append(f"Joint_{stage}_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
