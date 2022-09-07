@@ -9,7 +9,7 @@ import step00
 
 def get_data(file_name: str) -> pandas.DataFrame:
     d = pandas.read_csv(file_name, quoting=2, index_col="Sampleid")
-    d["Sampleid"] = step00.get_id(file_name)
+    d.index = [step00.get_id(file_name)]
     return d
 
 
