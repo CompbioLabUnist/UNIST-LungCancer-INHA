@@ -36,6 +36,7 @@ if __name__ == "__main__":
         print(input_data)
         input_data["Patient"] = pool.map(step00.get_patient, input_data["Sample"])
         input_data["Stage"] = pool.map(step00.get_long_sample_type, input_data["Sample"])
+    input_data["weight"] = 1.0
     print(input_data)
 
     input_data.to_csv(args.output, sep="\t")
