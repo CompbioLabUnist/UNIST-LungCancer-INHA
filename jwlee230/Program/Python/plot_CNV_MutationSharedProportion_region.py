@@ -25,6 +25,16 @@ def get_chromosome_data(sample: str) -> int:
     return sum(tmp_data["end"]) - sum(tmp_data["start"]) + tmp_data.shape[0]
 
 
+def get_chromosome_data_loss(sample: str) -> int:
+    tmp_data = input_data.loc[(input_data["Sample"] == sample) & ((input_data[watching] * input_data["weight"]) <= (1 - threshold)), :]
+    return sum(tmp_data["end"]) - sum(tmp_data["start"]) + tmp_data.shape[0]
+
+
+def get_chromosome_data_gain(sample: str) -> int:
+    tmp_data = input_data.loc[(input_data["Sample"] == sample) & ((input_data[watching] * input_data["weight"]) >= (1 + threshold)), :]
+    return sum(tmp_data["end"]) - sum(tmp_data["start"]) + tmp_data.shape[0]
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -82,6 +92,8 @@ if __name__ == "__main__":
         output_data["Patient"] = pool.map(step00.get_patient, output_data["Sample"])
         output_data["Stage"] = pool.map(step00.get_long_sample_type, output_data["Sample"])
         output_data["Region"] = pool.map(get_chromosome_data, output_data["Sample"])
+        output_data["Region-Loss"] = pool.map(get_chromosome_data_loss, output_data["Sample"])
+        output_data["Region-Gain"] = pool.map(get_chromosome_data_gain, output_data["Sample"])
     print(output_data)
 
     sample_list = sorted(set(output_data["Sample"]), key=step00.sorting_by_type)
@@ -116,6 +128,22 @@ if __name__ == "__main__":
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+        fig, axs = matplotlib.pyplot.subplots(figsize=(40, 18), ncols=2)
+
+        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
+        statannotations.Annotator.Annotator(axs[0], [(("Lower", stage), ("Higher", stage)) for stage in stage_list], data=output_data, x=MSP, order=["Lower", "Higher"], y="Region-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
+        statannotations.Annotator.Annotator(axs[1], [(("Lower", stage), ("Higher", stage)) for stage in stage_list], data=output_data, x=MSP, order=["Lower", "Higher"], y="Region-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+        axs[0].set_title("CNV Loss")
+        axs[1].set_title("CNV Gain")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Violin_LossGain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
