@@ -116,17 +116,16 @@ if __name__ == "__main__":
     for i, chromosome in tqdm.tqdm(list(enumerate(chromosome_list))):
         drawing_data = output_data.loc[(output_data["Chromosome"] == chromosome)]
         drawing_stage_list = list(filter(lambda x: (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[1]), "Stage"])) and (x in set(drawing_data.loc[(drawing_data[args.compare[0]] == args.compare[2]), "Stage"])), stage_list))
-        drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
         try:
             stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data["Stage"] == stage) & (drawing_data[args.compare[0]] == clinical), args.watching] for stage, clinical in itertools.product(drawing_stage_list, args.compare[1:])])
         except ValueError:
             stat, p = 0.0, 1.0
 
-        seaborn.violinplot(data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:], inner="box", palette=drawing_palette, cut=1, ax=axs[i // ncols][i % ncols])
+        seaborn.violinplot(data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:], inner="box", cut=1, ax=axs[i // ncols][i % ncols])
         statannotations.Annotator.Annotator(axs[i // ncols][i % ncols], [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-        axs[i // ncols][i % ncols].set_title(f"{chromosome}: K.W. p={p:.2f}")
+        axs[i // ncols][i % ncols].set_title(f"{chromosome}: K.W. p={p:.3f}")
         axs[i // ncols][i % ncols].set_xlabel("")
         axs[i // ncols][i % ncols].set_ylabel("Ratio")
         axs[i // ncols][i % ncols].legend(loc="lower left")
