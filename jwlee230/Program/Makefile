@@ -3777,7 +3777,7 @@ step53-Distribution: Output/deconstructSigs/Distribution/BWA.SQC.Absolute.pdf Ou
 step53: step53-Preparation step53-deconstructSigs step53-Violin step53-Bar step53-Distribution
 .PHONY: step53-Preparation step53-deconstructSigs step53-Violin-Stage step53-Violin-Recurrence step53-Violin-Smoking step53-Violin step53-Bar-All step53-Bar-Subtype step53-Bar-Recurrence step53-Bar-Smoking step53-Bar step53-Distribution step53
 
-# Step 54 (Mutational Shared Porportion distribution)
+# Step 54 (Mutational Shared Proportion distribution)
 Output/Clinical_Distribution:
 	mkdir -p $@
 
@@ -3785,7 +3785,7 @@ Output/Clinical_Distribution/BWA.SQC.SharedProportion.pdf: Python/draw_distribut
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_Distribution/BWA.SQC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_Distribution/BWA.SQC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
@@ -3797,7 +3797,7 @@ Output/Clinical_Distribution/BWA.ADC.SharedProportion.pdf: Python/draw_distribut
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_Distribution/BWA.ADC.SharedProportion.SYN.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_Distribution/BWA.ADC.SharedProportion.Union.pdf: Python/draw_distribution_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | Output/Clinical_Distribution build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
@@ -4761,7 +4761,7 @@ Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union.tar: Python/dra
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "utation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
 
 step62-BWA-SQC: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union-SYN.tar
 step62-BWA-ADC: Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union-SYN.tar

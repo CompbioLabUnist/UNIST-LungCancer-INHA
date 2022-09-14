@@ -4,6 +4,7 @@ draw_distribution_SharedProportion.py: draw distribution of mutation shared prop
 import argparse
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import seaborn
 import pandas
 import step00
@@ -38,6 +39,11 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     patients = set(input_data.index)
     print(patients)
+
+    print("min:", min(input_data[args.column]))
+    print("mean:", numpy.mean(input_data[args.column]))
+    print("median:", numpy.median(input_data[args.column]))
+    print("max:", max(input_data[args.column]))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
