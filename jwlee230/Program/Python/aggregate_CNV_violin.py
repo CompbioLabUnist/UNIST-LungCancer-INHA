@@ -2,6 +2,7 @@
 aggregate_CNV_violin.py: Violin plot of CNV data for PRE-PRI comparing over chromosomes
 """
 import argparse
+import collections
 import itertools
 import multiprocessing
 import typing
@@ -95,8 +96,9 @@ if __name__ == "__main__":
     output_data["Stage"] = list(map(step00.get_long_sample_type, output_data["Sample"]))
     print(output_data)
 
-    stage_set = set(map(step00.get_long_sample_type, sample_list))
-    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+    stage_set = collections.Counter(list(map(step00.get_long_sample_type, sample_list)))
+    stage_list = list(filter(lambda x: stage_set[x] > 5, step00.long_sample_type_list))
+    print(stage_set)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)

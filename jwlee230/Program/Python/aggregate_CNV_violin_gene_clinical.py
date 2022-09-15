@@ -2,6 +2,7 @@
 aggregate_CNV_violin_gene_clinical.py: Violin plot of CNV data for PRE-PRI comparing over gene with clinical data
 """
 import argparse
+import collections
 import itertools
 import multiprocessing
 import tarfile
@@ -128,11 +129,12 @@ if __name__ == "__main__":
             output_data.loc[(output_data["Sample"] == sample) & (output_data["Gene"] == gene), args.watching] = numpy.average(a=a, weights=weights)
 
     output_data["Stage"] = list(map(step00.get_long_sample_type, output_data["Sample"]))
-    output_data[args.compare[0]] = list(map(lambda x: args.compare[1] if step00.get_patient(x) in control_patients else args.compare[2], output_data["Sample"]))
+    output_data[args.compare[0]] = list(map(lambda x: args.compare[1] if (step00.get_patient(x) in control_patients) else args.compare[2], output_data["Sample"]))
     print(output_data)
 
-    stage_set = set(map(step00.get_long_sample_type, sample_list))
-    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+    stage_set = collections.Counter(list(map(step00.get_long_sample_type, sample_list)))
+    stage_list = list(filter(lambda x: stage_set[x] > 5, step00.long_sample_type_list))
+    print(stage_set)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -152,7 +154,7 @@ if __name__ == "__main__":
             stat, p = 0.0, 1.0
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:], inner="box", cut=1, ax=ax)
-        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="simple", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.xlabel("")
