@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:], cut=1, linewidth=5, ax=ax)
         try:
-            statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(args.compare[1:], r=2)))), data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(args.compare[1:], r=2)))), data=input_data, x="Subtype", y=alpha, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
         except Exception:
             pass
 
