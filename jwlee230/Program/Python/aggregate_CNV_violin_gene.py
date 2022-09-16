@@ -127,7 +127,7 @@ if __name__ == "__main__":
     print(output_data)
 
     stage_set = collections.Counter(list(map(step00.get_long_sample_type, sample_list)))
-    stage_list = list(filter(lambda x: stage_set[x] > 5, step00.long_sample_type_list))
+    stage_list = list(filter(lambda x: stage_set[x] > 3, step00.long_sample_type_list))
     print(stage_set)
 
     matplotlib.use("Agg")

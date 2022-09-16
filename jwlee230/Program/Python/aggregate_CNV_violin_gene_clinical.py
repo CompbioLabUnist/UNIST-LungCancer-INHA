@@ -133,7 +133,7 @@ if __name__ == "__main__":
     print(output_data)
 
     stage_set = collections.Counter(list(map(step00.get_long_sample_type, sample_list)))
-    stage_list = list(filter(lambda x: stage_set[x] > 5, step00.long_sample_type_list))
+    stage_list = list(filter(lambda x: stage_set[x] > 3, step00.long_sample_type_list))
     print(stage_set)
 
     matplotlib.use("Agg")
@@ -154,7 +154,7 @@ if __name__ == "__main__":
             stat, p = 0.0, 1.0
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:], inner="box", cut=1, ax=ax)
-        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in drawing_stage_list], data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.xlabel("")
