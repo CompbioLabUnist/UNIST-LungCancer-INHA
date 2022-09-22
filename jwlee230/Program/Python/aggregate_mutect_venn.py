@@ -31,7 +31,10 @@ def draw_venn(sample: str) -> str:
 
     fig = matplotlib.pyplot.figure(figsize=(2 ** len(venn_data) + 40, 24))
 
-    upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    try:
+        upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    except AttributeError:
+        pass
 
     fig.savefig(figure_name, bbox_inches="tight")
     matplotlib.pyplot.close(fig)

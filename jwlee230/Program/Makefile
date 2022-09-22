@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
-MEMS = 25
-PARALLEL = 20
+CPUS = 10
+MEMS = 50
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5012,6 +5012,39 @@ step70-PureCN: Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC.med
 step70-CNVkit: Output/MutationSharedProportion_CNV/Region.BWA.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Region.BWA.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.BWA.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.BWA.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.CNVkit.SQC.mean.tar
 step70: step70-Sequenza step70-PureCN step70-CNVkit
 .PHONY: step70-Sequenza step70-PureCN step70-CNVkit step70
+
+# Step 71 (Joint Plot with Mutation Shared Proprotion and Mutation Count)
+Output/MutationSharedProportion_Count:
+	mkdir -p $@
+
+Output/MutationSharedProportion_Count/BWA-SQC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/BWA-SQC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/BWA-ADC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/BWA-ADC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/Bowtie2-SQC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/Bowtie2-SQC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/Bowtie2-ADC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MutationSharedProportion_Count/Bowtie2-ADC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step71: Output/MutationSharedProportion_Count/BWA-SQC.median.tar Output/MutationSharedProportion_Count/BWA-SQC.mean.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.median.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.mean.tar
+.PHONY: step71
+
+# Step 72 ()
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

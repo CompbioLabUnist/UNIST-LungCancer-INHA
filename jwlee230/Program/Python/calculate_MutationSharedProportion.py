@@ -53,7 +53,7 @@ if __name__ == "__main__":
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
 
-        if ("Primary" not in stage_set) and (len(stage_set) < 2):
+        if ("Primary" not in stage_set) or (len(stage_set) < 2):
             continue
 
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient)]
         stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
 
-        if ("Primary" not in stage_set) and (len(stage_set) < 2):
+        if ("Primary" not in stage_set) or (len(stage_set) < 2):
             continue
 
         primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
