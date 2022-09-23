@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 10
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5044,7 +5044,15 @@ Output/MutationSharedProportion_Count/Bowtie2-ADC.mean.tar: Python/draw_joint_Mu
 step71: Output/MutationSharedProportion_Count/BWA-SQC.median.tar Output/MutationSharedProportion_Count/BWA-SQC.mean.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.median.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.mean.tar
 .PHONY: step71
 
-# Step 72 ()
+# Step 72 (Mutation Shared Proportion vs. Gene Expression)
+Output/MutationSharedProportion_Expression:
+	mkdir -p $@
+
+Output/MutationSharedProportion_Expression/BWA-STAR.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median
+
+step72-STAR:
+step72-Bowtie2:
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

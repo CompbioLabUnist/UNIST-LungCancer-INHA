@@ -95,6 +95,7 @@ if __name__ == "__main__":
 
         figures.append(f"{stage}_{column}.pdf")
         g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):

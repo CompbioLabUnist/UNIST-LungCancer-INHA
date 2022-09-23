@@ -19,7 +19,7 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="CNV segment.tsv file", type=str)
+    parser.add_argument("input", help="CNV ploidy.tsv file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
