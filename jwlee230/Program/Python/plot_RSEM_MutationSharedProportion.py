@@ -1,5 +1,5 @@
 """
-plot_RSEM_MutationSharedProportion.py: Plot RSEM gene expression with Mutation Shared Proportion
+plot_RSEM_MutationSharedProportion.py: Plot RSEM gene expression with Mutation Shared Proportion with Correlation
 """
 import argparse
 import itertools
@@ -17,14 +17,46 @@ import tqdm
 import step00
 
 input_data = pandas.DataFrame()
-gene_list = list()
+gene_list: typing.List[str] = list()
 
 
 def pearson(sample: str) -> typing.Tuple[str, float, float]:
     drawing_data = input_data.loc[[sample, step00.get_paired_primary(sample)], gene_list].T
-    fig_name = f"Joint_{sample}_{step00.get_paired_primary(sample)}.pdf"
+    fig_name = f"Joint_Pearson_{sample}_{step00.get_paired_primary(sample)}.pdf"
 
     r, p = scipy.stats.pearsonr(drawing_data[sample], drawing_data[step00.get_paired_primary(sample)])
+
+    g = seaborn.jointplot(data=drawing_data, x=sample, y=step00.get_paired_primary(sample), kind="reg", height=24, dropna=True)
+    g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+    g.set_axis_labels(f"{sample} ({step00.get_long_sample_type(sample)})", f"{step00.get_paired_primary(sample)} (Primary)")
+
+    g.savefig(fig_name)
+    matplotlib.pyplot.close(g.fig)
+
+    return fig_name, r, p
+
+
+def spearman(sample: str) -> typing.Tuple[str, float, float]:
+    drawing_data = input_data.loc[[sample, step00.get_paired_primary(sample)], gene_list].T
+    fig_name = f"Joint_Spearman_{sample}_{step00.get_paired_primary(sample)}.pdf"
+
+    r, p = scipy.stats.spearmanr(drawing_data[sample], drawing_data[step00.get_paired_primary(sample)])
+
+    g = seaborn.jointplot(data=drawing_data, x=sample, y=step00.get_paired_primary(sample), kind="reg", height=24, dropna=True)
+    g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+    g.set_axis_labels(f"{sample} ({step00.get_long_sample_type(sample)})", f"{step00.get_paired_primary(sample)} (Primary)")
+
+    g.savefig(fig_name)
+    matplotlib.pyplot.close(g.fig)
+
+    return fig_name, r, p
+
+
+def kendall(sample: str) -> typing.Tuple[str, float, float]:
+    drawing_data = input_data.loc[[sample, step00.get_paired_primary(sample)], gene_list].T
+    fig_name = f"Joint_Kendall_{sample}_{step00.get_paired_primary(sample)}.pdf"
+
+    r, p = scipy.stats.kendalltau(drawing_data[sample], drawing_data[step00.get_paired_primary(sample)])
 
     g = seaborn.jointplot(data=drawing_data, x=sample, y=step00.get_paired_primary(sample), kind="reg", height=24, dropna=True)
     g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
@@ -98,18 +130,23 @@ if __name__ == "__main__":
 
     output_data = pandas.DataFrame(index=precancer_patient_list)
     with multiprocessing.Pool(args.cpus) as pool:
-        pool.map(pearson, precancer_list)
-        output_data[["Joint", "r", "p"]] = pool.map(pearson, precancer_list)
+        output_data[["Joint-Pearson", "Pearson-r", "Pearson-p"]] = pool.map(pearson, precancer_list)
+        output_data[["Joint-Spearman", "Spearman-r", "Spearman-p"]] = pool.map(spearman, precancer_list)
+        output_data[["Joint-Kendall", "Kendall-r", "Kendall-p"]] = pool.map(kendall, precancer_list)
     print(output_data)
 
-    figures = list(output_data["Joint"])
-    del output_data["Joint"]
+    correlations = ["Pearson", "Spearman", "Kendall"]
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data["r"] = pool.map(float, output_data["r"])
-        output_data["p"] = pool.map(float, output_data["p"])
+        for correlation in tqdm.tqdm(correlations):
+            output_data[f"{correlation}-r"] = pool.map(float, output_data[f"{correlation}-r"])
+            output_data[f"{correlation}-p"] = pool.map(float, output_data[f"{correlation}-p"])
+    print(output_data)
 
-    output_data["-log10(p)"] = -1 * numpy.log10(output_data["p"].to_numpy())
+    figures = list()
+    for correlation in tqdm.tqdm(correlations):
+        figures += list(output_data[f"Joint-{correlation}"])
+        del output_data[f"Joint-{correlation}"]
     print(output_data)
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
@@ -123,14 +160,15 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] < threshold) else "Higher", precancer_patient_list))
     print(output_data)
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP, correlation in tqdm.tqdm(list(itertools.product(step00.sharing_columns, correlations))):
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.scatterplot(data=output_data, x="r", y="-log10(p)", hue=MSP, hue_order=["Lower", "Higher"], palette={"Lower": "tab:blue", "Higher": "tab:red"}, s=1000, legend="full", ax=ax)
+        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y=f"{correlation}-r", inner="box", cut=1, ax=ax)
+        statannotations.Annotator.Annotator(ax, [("Lower", "Higher")], data=output_data, x=MSP, order=["Lower", "Higher"], y=f"{correlation}-r").configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.tight_layout()
 
-        figures.append(f"Scatter_{MSP}.pdf")
+        figures.append(f"Violin_{correlation}_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
