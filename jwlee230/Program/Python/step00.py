@@ -82,6 +82,8 @@ def get_paired_primary(ID: str) -> str:
     ID = get_id(ID)
     if ID in ["cn107A1"]:
         return ID[:-2] + "P"
+    elif ID in ["12N", "14N"]:
+        return ID[:-1] + "P1"
     elif ID[-1].isalpha():
         return ID[:-1] + "P"
     else:
