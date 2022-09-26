@@ -73,7 +73,8 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    compare = ["Higher", "Lower"]
+    compare = ["Lower", "Higher"]
+    palette = {"Lower": "tab:cyan", "Higher": "tab:red"}
 
     for alpha, column in tqdm.tqdm(list(itertools.product(alphas, step00.sharing_columns))):
         stage_order = list(filter(lambda x: all([not input_data.loc[(input_data["Subtype"] == x) & (input_data[column] == comparing)].empty for comparing in compare]), step00.long_sample_type_list))
@@ -85,14 +86,14 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, hue=column, hue_order=compare, cut=1, linewidth=5, ax=ax)
+        seaborn.violinplot(data=input_data, x="Subtype", y=alpha, order=stage_order, hue=column, hue_order=compare, palette=palette, cut=1, linewidth=5, ax=ax)
         try:
-            statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(compare, r=2)))), data=input_data, x="Subtype", y=alpha, order=stage_order, hue=column, hue_order=compare).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(compare, r=2)))), data=input_data, x="Subtype", y=alpha, order=stage_order, hue=column, hue_order=compare).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
         except Exception:
             pass
 
-        matplotlib.pyplot.ylabel(f"{column}.replace('_', ' ')")
-        matplotlib.pyplot.title(f"{alpha} (K.W. p={p:.3f})")
+        matplotlib.pyplot.ylabel(f"{column}")
+        matplotlib.pyplot.title(f"{alpha.replace('_', ' ')} (K.W. p={p:.3f})")
         matplotlib.pyplot.tight_layout()
 
         fig_name = f"{column}_{alpha}.pdf"
