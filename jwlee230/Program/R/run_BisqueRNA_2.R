@@ -28,7 +28,7 @@ main <- function(input_file, reference_file, output_file)
     output_data <- estimation_proportion$bulk.props
 
     print(head(output_data))
-    write.table(output_data, file=output_file, quote=FALSE, sep="\t", col.names=NA)
+    write.table(t(output_data), file=output_file, quote=FALSE, sep="\t", col.names=NA)
 }
 
 if (length(opt) == 4)
