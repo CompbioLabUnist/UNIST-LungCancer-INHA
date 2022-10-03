@@ -99,7 +99,6 @@ if __name__ == "__main__":
 
         statannotations.Annotator.Annotator(ax, [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
