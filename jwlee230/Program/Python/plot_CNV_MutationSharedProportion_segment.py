@@ -122,9 +122,10 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
 
-        statannotations.Annotator.Annotator(ax, [(("Lower", stage), ("Higher", stage)) for stage in stage_list], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.title(MSP)
+        matplotlib.pyplot.xlabel("")
+        matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
@@ -134,13 +135,17 @@ if __name__ == "__main__":
         fig, axs = matplotlib.pyplot.subplots(figsize=(40, 18), ncols=2)
 
         seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
-        statannotations.Annotator.Annotator(axs[0], [(("Lower", stage), ("Higher", stage)) for stage in stage_list], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(axs[0], [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
-        statannotations.Annotator.Annotator(axs[1], [(("Lower", stage), ("Higher", stage)) for stage in stage_list], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(axs[1], [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         axs[0].set_title("CNV Loss")
         axs[1].set_title("CNV Gain")
+        axs[0].set_xlabel("")
+        axs[1].set_xlabel("")
+        axs[0].set_ylabel("Number of somatic CNV segment (count)")
+        axs[1].set_ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_LossGain_{MSP}.pdf")
@@ -158,6 +163,8 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         g = seaborn.jointplot(data=output_data, x=MSP, y="Segment", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g.set_axis_labels(MSP, "Number of somatic CNV segment (count)")
+
         figures.append(f"Joint_All_{MSP}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
@@ -169,6 +176,8 @@ if __name__ == "__main__":
 
         g = seaborn.jointplot(data=tmp_data, x=MSP, y="Segment", color=palette[stage], height=24, ratio=5, kind="reg")
         g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g.set_axis_labels(MSP, "Number of somatic CNV segment (count)")
+
         figures.append(f"Joint_{stage}_{MSP}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)

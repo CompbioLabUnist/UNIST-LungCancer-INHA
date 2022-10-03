@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 50
-PARALLEL = 5
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1310,7 +1310,7 @@ Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/CIBERSORTx/%.tsv Output
 	$(DOCKER) rm -rfv $(@D) && mkdir -p $(@D)
 	docker run $(RUN_OPTS) --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires $(CIBERSORTx_TOKEN) --mixture $(addprefix /,$(word 1,$^)) --sigmatrix $(addprefix /,$(word 2,$^)) --threads $(CPUS) --QN TRUE --heatmap TRUE --cluster TRUE 1> $(@D).stdout 2> $(@D).stderr || true
 
-Output/CIBERSORTx/%.heatmap.pdf: Python/draw_heatmap_cibersort.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build
+Output/CIBERSORTx/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/%.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
@@ -1505,7 +1505,7 @@ Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/Deconvolution/%.RSEM.tsv $(LU
 Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/MuSiC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/MuSiC/%.tsv | build
+Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv | build.log
@@ -1535,7 +1535,7 @@ Output/BisqueRNA/%.GSE131907.tsv: R/run_BisqueRNA.R Output/Deconvolution/%.RSEM.
 Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/BisqueRNA
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
@@ -1565,7 +1565,7 @@ Output/SCDC/%.GSE131907.tsv: R/run_SCDC.R Output/Deconvolution/%.RSEM.tsv $(LUNG
 Output/SCDC/%.GSE162498.tsv: R/run_SCDC_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/SCDC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/SCDC/%.heatmap.pdf: Python/draw_heatmap_MuSiC.py Output/SCDC/%.tsv | build
+Output/SCDC/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/SCDC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | build.log
@@ -4742,55 +4742,19 @@ Output/Clinical_vs_Joint-Plot:
 Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
-
 Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Mutation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
-
 Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (SYN)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Mutation Shared Proportion (Union)" 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union-SYN.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "utation Shared Proportion (Union & SYN)" 1> $@.stdout 2> $@.stderr
-
-step62-BWA-SQC: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.Union-SYN.tar
-step62-BWA-ADC: Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.Union-SYN.tar
-step62-Bowtie2-SQC: Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.Union-SYN.tar
-step62-Bowtie2-ADC: Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.SYN.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.Union-SYN.tar
+step62-BWA-SQC: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar
+step62-BWA-ADC: Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar
+step62-Bowtie2-SQC: Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar
+step62-Bowtie2-ADC: Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
 step62: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC
 .PHONY: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC step62
 
