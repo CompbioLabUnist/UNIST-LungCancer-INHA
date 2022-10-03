@@ -522,7 +522,7 @@
         \end{exampleblock}
     \end{frame}
 
-    \subsection{Single Nucleotide Variations Analysis}
+    \subsection{Short Nucleotide Variations Analysis}
     \begin{frame}
         \frametitle{Mutect2?}
 
@@ -770,26 +770,26 @@
 
     \subsection{Copy Number Variation Analysis}
      \begin{frame}
-        \frametitle{PureCN?}
+        \frametitle{Sequenza?}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/pureCN.jpg}
-            \caption{Flowchart of the PureCN data pre-processing pipeline \protect\cite{pureCN1}}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/sequenza.jpg}
+            \caption{Representative output of the Sequenza algorithm \protect\cite{sequenza1}}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Purity \& Ploidy on WES}
+        \frametitle{Cellularity \& Ploidy on WES}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/PureCN/BWA-PureCN-SQC.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-Sequenza-SQC.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/PureCN/BWA-PureCN-ADC.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-Sequenza-ADC.pdf}
                 \\
                 \mbox{(a) LUSC Samples} & \mbox{(b) LUAD Samples} \\
             \end{array}$
-            \caption{Cellularity and Ploidy from PureCN}
+            \caption{Cellularity and Ploidy from Sequenza}
         \end{figure}
     \end{frame}
 
@@ -797,12 +797,12 @@
         \frametitle{LUSC in CNV Plot}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-SQC.pdf}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-SQC.pdf}
             \caption{LUSC in CNV Plot}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-SQC.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-SQC.pdf}
             \caption{LUSC in Violin Plots}
         \end{figure}
     \end{frame}
@@ -811,12 +811,12 @@
         \frametitle{LUSC with Recurrence in CNV Plot}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-SQC.Recurrence.pdf}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-SQC.Recurrence.pdf}
             \caption{LUSC with Recurrence in CNV Plot}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-SQC.Recurrence.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-SQC.Recurrence.pdf}
             \caption{LUSC with Recurrence in Violin Plots}
         \end{figure}
     \end{frame}
@@ -825,22 +825,36 @@
         \frametitle{LUSC with Smoking in CNV Plot}
 
         \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-SQC.Smoking.pdf}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-SQC.Smoking.pdf}
             \caption{LUSC with Smoking in CNV Plot}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-SQC.Smoking.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-SQC.Smoking.pdf}
             \caption{LUSC with Smoking in Violin Plots}
         \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Findings in PureCN with LUSC}
+        \frametitle{Findings in Sequenza with LUSC}
+
+        \begin{block}{Chr1 p-arm loss}
+            \begin{enumerate}
+                \item Chr1 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                \item Chr1 p-arm loss in Primary compared to CIS (p $<$ 0.05).
+            \end{enumerate}
+
+            \begin{table}
+                \caption{CGC Tier1 genes in Chr1 p-arm}
+                \resizebox{\linewidth}{!}
+                {\input{tables/GeneLocation/chr1-p.CGC-1.tex}}
+            \end{table}
+        \end{block}
 
         \begin{block}{Chr2 p-arm gain}
             \begin{enumerate}
-                \item Chr2 p-arm gain in Primary.
+                \item Chr2 p-arm gain in CIS compared to AAH (p $<$ 0.05).
+                \item Chr2 p-arm gain in Primary compared to CIS (p $<$ 0.05).
             \end{enumerate}
 
             \begin{table}
@@ -850,21 +864,10 @@
             \end{table}
         \end{block}
 
-        \begin{block}{Chr2 q-arm loss}
-            \begin{enumerate}
-                \item Chr2 q-arm loss in Recurrence \& Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr2 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr2-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
         \begin{block}{Chr3 p-arm loss}
             \begin{enumerate}
-                \item Chr3 p-arm loss in Primary.
+                \item Chr3 p-arm loss in CIS compared AAH (p $<$ 1e-5).
+                \item Chr3 p-arm loss in Primary compared to CIS (p $<$ 1e-5).
             \end{enumerate}
 
             \begin{table}
@@ -876,7 +879,8 @@
 
         \begin{block}{Chr3 q-arm gain}
             \begin{enumerate}
-                \item Chr3 q-arm gain in Primary.
+                \item Chr3 q-arm gain in CIS compared to AAH (p $<$ 1e-5).
+                \item Chr3 q-arm gain in Primary compared to CIS (p $<$ 1e-4).
             \end{enumerate}
 
             \begin{table}
@@ -886,140 +890,23 @@
             \end{table}
         \end{block}
 
-        \begin{block}{Chr5 q-arm loss}
+        \begin{block}{Chr4 p-arm loss}
             \begin{enumerate}
-                \item Chr5 q-arm loss in Primary.
+                \item Chr4 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                \item Chr4 p-arm loss in Primary compared to CIS (p $<$ 0.01).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr5 q-arm}
+                \caption{CGC Tier1 genes in Chr4 p-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr5-q.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr4-p.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr7 p-arm gain}
+        \begin{block}{Chr4 q-arm loss}
             \begin{enumerate}
-                \item Chr7 p-arm gain in Primary.
-                \item Chr7 p-arm gain in Recurrence.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr7 p-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr7-p.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr8 q-arm gain}
-            \begin{enumerate}
-                \item Chr8 q-arm gain in Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr8 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr8-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr9 q-arm gain}
-            \begin{enumerate}
-                \item Chr9 q-arm gain in Recurrence \& Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr9 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr9-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr14 q-arm gain}
-            \begin{enumerate}
-                \item Chr14 q-arm gain in Recurrence \& Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr14 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr14-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr19 p-arm gain}
-            \begin{enumerate}
-                \item Chr19 p-arm gain in Recurrence \& Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr19 p-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr19-p.CGC-1.tex}}
-            \end{table}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LUAD in CNV Plot}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-ADC.pdf}
-            \caption{LUAD in CNV Plot}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-ADC.pdf}
-            \caption{LUAD in Violin Plots}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LUAD with Recurrence in CNV Plot}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-ADC.Recurrence.pdf}
-            \caption{LUAD with Recurrence in CNV Plot}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-ADC.Recurrence.pdf}
-            \caption{LUAD with Recurrence in Violin Plots}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LUAD with Smoking in CNV Plot}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/PureCN/BWA-simple-ADC.Smoking.pdf}
-            \caption{LUAD with Smoking in CNV Plot}
-        \end{figure}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/PureCN/BWA-violin-ADC.Smoking.pdf}
-            \caption{LUAD with Smoking in Violin Plots}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in PureCN with LUAD}
-
-        \begin{block}{Chr1 q-arm gain}
-            \begin{enumerate}
-                \item Chr1 q-arm gain in Primary.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr1 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr1-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr4 q-arm gain}
-            \begin{enumerate}
-                \item Chr4 q-arm gain in Recurrence \& Primary.
+                \item Chr4 q-arm loss in CIS compared to AAH (p $<$ 0.05).
+                \item Chr4 q-arm loss in Primary compared to CIS (p $<$ 0.01).
             \end{enumerate}
 
             \begin{table}
@@ -1029,69 +916,75 @@
             \end{table}
         \end{block}
 
-        \begin{block}{Chr5 q-arm gain}
+        \begin{block}{Chr5 p-arm gain}
             \begin{enumerate}
-                \item Chr5 q-arm loss in Non-recurrence \& Precancer.
+                \item Chr5 p-arm gain in CIS compared to AAH (p $<$ 0.01).
+                \item Chr5 p-arm gain in Primary compared to CIS (p $<$ 0.05).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr5 q-arm}
+                \caption{CGC Tier1 genes in Chr5 p-arm}
+                \resizebox{\linewidth}{!}
+                {\input{tables/GeneLocation/chr5-p.CGC-1.tex}}
+            \end{table}
+        \end{block}
+
+        \begin{block}{Chr5 q-arm loss}
+            \begin{enumerate}
+                \item Chr5 q-arm loss in CIS comparde to AAH (p $<$ 1e-5).
+                \item Chr5 q-arm loss in Primary compared to CIS (p $<$ 1e-5).
+            \end{enumerate}
+
+            \begin{table}
+                \caption{CGC Tier1 genes in Ch5 q-arm}
                 \resizebox{\linewidth}{!}
                 {\input{tables/GeneLocation/chr5-q.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr6 p-arm gain}
+        \begin{block}{Chr7 p-arm gain}
             \begin{enumerate}
-                \item Chr6 p-arm gain in Non-recurrence \& Precancer.
+                \item Chr7 p-arm gain in R compared to NR in CIS \& Primary (p $<$ 0.05).
+                \item Chr7 p-arm gain in Primary compared to CIS (p $<$ 0.001).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr6 p-arm}
+                \caption{CGC Tier1 genes in Chr7 p-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr6-p.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr7-p.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr6 q-arm gain}
+        \begin{block}{Chr9 p-arm loss}
             \begin{enumerate}
-                \item Chr6 q-arm gain in Non-recurrence \& Precancer.
+                \item Chr9 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                \item Chr9 p-arm loss in Primary compared to CIS (p $<$ 0.05).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr6 q-arm}
+                \caption{CGC Tier1 genes in Chr9 p-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr6-q.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr9-p.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr6 q-arm loss}
+        \begin{block}{Chr10 q-arm loss}
             \begin{enumerate}
-                \item Chr6 q-arm loss in Primary.
+                \item Chr10 q-arm loss in CIS compared to AAH (p $<$ 0.01).
+                \item Chr10 q-arm loss in Primary compared to CIS (p $<$ 0.01).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr6 q-arm}
+                \caption{CGC Tier1 genes in Chr10 q-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr6-q.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr10-q.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr7 q-arm gain}
+        \begin{block}{Chr12 q-arm gain}
             \begin{enumerate}
-                \item Chr7 q-arm gain in Non-recurrence \& Precancer.
-            \end{enumerate}
-
-            \begin{table}
-                \caption{CGC Tier1 genes in Chr7 q-arm}
-                \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr7-q.CGC-1.tex}}
-            \end{table}
-        \end{block}
-
-        \begin{block}{Chr12 p-arm gain}
-            \begin{enumerate}
-                \item Chr12 p-arm loss in Non-recurrence \& Primary.
+                \item Chr12 p-arm gain in R compared to NR in CIS (p $<$ 0.05).
+                \item Chr12 p-arm gain in Primary compared to CIS (p $<$ 0.05).
             \end{enumerate}
 
             \begin{table}
@@ -1101,33 +994,106 @@
             \end{table}
         \end{block}
 
-        \begin{block}{Chr12 q-arm gain}
+        \begin{block}{Chr13 q-arm loss}
             \begin{enumerate}
-                \item Chr12 q-arm loss in Non-recurrence \& Primary.
+                \item Chr13 q-arm loss in CIS compared to AAH (p $<$ 0.001).
+                \item Chr13 q-arm loss in Primary compared to CIS (p $<$ 0.001).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr12 q-arm}
+                \caption{CGC Tier1 genes in Chr13 q-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr12-q.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr13-q.CGC-1.tex}}
             \end{table}
         \end{block}
 
-        \begin{block}{Chr22 q-arm loss}
+        \begin{block}{Chr20 q-arm loss}
             \begin{enumerate}
-                \item Chr22 q-arm loss in Primary.
+                \item Chr20 q-arm loss in CIS compared to AAH (p $<$ 0.01).
+                \item Chr20 q-arm loss in Primary compared to CIS (p $<$ 0.05).
             \end{enumerate}
 
             \begin{table}
-                \caption{CGC Tier1 genes in Chr22 q-arm}
+                \caption{CGC Tier1 genes in Chr20 q-arm}
                 \resizebox{\linewidth}{!}
-                {\input{tables/GeneLocation/chr22-q.CGC-1.tex}}
+                {\input{tables/GeneLocation/chr20-q.CGC-1.tex}}
+            \end{table}
+        \end{block}
+
+        \begin{block}{Chr21 q-arm loss}
+            \begin{enumerate}
+                \item Chr21 q-arm loss in CIS compared to AAH (p $<$ 0.05).
+                \item Chr21 q-arm loss in Primary compared to CIS (p $<$ 0.01).
+            \end{enumerate}
+
+            \begin{table}
+                \caption{CGC Tier1 genes in Chr21 q-arm}
+                \resizebox{\linewidth}{!}
+                {\input{tables/GeneLocation/chr21-q.CGC-1.tex}}
+            \end{table}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUAD in CNV Plot}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-ADC.pdf}
+            \caption{LUAD in CNV Plot}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-ADC.pdf}
+            \caption{LUAD in Violin Plots}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUAD with Recurrence in CNV Plot}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-ADC.Recurrence.pdf}
+            \caption{LUAD with Recurrence in CNV Plot}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-ADC.Recurrence.pdf}
+            \caption{LUAD with Recurrence in Violin Plots}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{LUAD with Smoking in CNV Plot}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Sequenza/BWA-simple-ADC.Smoking.pdf}
+            \caption{LUAD with Smoking in CNV Plot}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-ADC.Smoking.pdf}
+            \caption{LUAD with Smoking in Violin Plots}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Sequenza with LUAD}
+
+        \begin{block}{Chr1 q-arm loss}
+            \begin{enumerate}
+                \item Chr1 q-arm loss in Primary compared to AIS (p $<$ 0.05).
+            \end{enumerate}
+
+            \begin{table}
+                \caption{CGC Tier1 genes in Chr1 q-arm}
+                \resizebox{\linewidth}{!}
+                {\input{tables/GeneLocation/chr1-q.CGC-1.tex}}
             \end{table}
         \end{block}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Findings in PureCN}
+        \frametitle{Findings in Sequenza}
     \end{frame}
 
     \begin{frame}
@@ -2417,6 +2383,15 @@
 
     \begin{frame}
         \frametitle{Findings in Gistic}
+    \end{frame}
+
+    \subsection{Mutation Shared Proportion vs. CNV}
+    \begin{frame}
+        \frametitle{title}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in MSP vs. CNV}
     \end{frame}
 
     \subsection{VAF Analysis}
