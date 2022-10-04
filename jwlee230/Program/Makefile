@@ -1313,10 +1313,10 @@ Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/CIBERSORTx/%.tsv Output
 Output/CIBERSORTx/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/%.violin.tar: Python/draw_violin_plot_cibersort.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
+Output/CIBERSORTx/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/%.cluster.pdf: Python/draw_clustermap_cibersort.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
+Output/CIBERSORTx/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step22-RSEM: Output/CIBERSORTx/Bowtie2.SQC.tsv Output/CIBERSORTx/Bowtie2.ADC.tsv Output/CIBERSORTx/STAR.SQC.tsv Output/CIBERSORTx/STAR.ADC.tsv
@@ -1508,13 +1508,13 @@ Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/Deconvolution/%.RSEM.tsv $(
 Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/MuSiC/%.tsv | build.log
+Output/MuSiC/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/MuSiC/%.tsv | build.log
+Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/MuSiC/%.tsv | build.log
+Output/MuSiC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/MuSiC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step28-prepare: Output/Deconvolution/Bowtie2.SQC.RSEM.tsv Output/Deconvolution/Bowtie2.ADC.RSEM.tsv Output/Deconvolution/STAR.SQC.RSEM.tsv Output/Deconvolution/STAR.ADC.RSEM.tsv
@@ -1538,13 +1538,13 @@ Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/Deconvolution/%.RSE
 Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_BisqueRNA.py Output/BisqueRNA/%.tsv | build.log
+Output/BisqueRNA/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/BisqueRNA/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.GSE131907.tsv Output/BisqueRNA/Bowtie2.ADC.GSE131907.tsv Output/BisqueRNA/STAR.SQC.GSE131907.tsv Output/BisqueRNA/STAR.ADC.GSE131907.tsv Output/BisqueRNA/Bowtie2.SQC.GSE162498.tsv Output/BisqueRNA/Bowtie2.ADC.GSE162498.tsv Output/BisqueRNA/STAR.SQC.GSE162498.tsv Output/BisqueRNA/STAR.ADC.GSE162498.tsv
@@ -1568,13 +1568,13 @@ Output/SCDC/%.GSE162498.tsv: R/run_SCDC_2.R Output/Deconvolution/%.RSEM.tsv $(LU
 Output/SCDC/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/SCDC/%.tsv | build
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/SCDC/%.violin.tar: Python/draw_violin_plot_MuSiC.py Output/SCDC/%.tsv | build.log
+Output/SCDC/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/SCDC/%.cluster.pdf: Python/draw_clustermap_MuSiC.py Output/SCDC/%.tsv | build.log
+Output/SCDC/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/SCDC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_MuSiC.py Output/SCDC/%.tsv | build.log
+Output/SCDC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/SCDC/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 step30-SCDC: Output/SCDC/Bowtie2.SQC.GSE131907.tsv Output/SCDC/Bowtie2.ADC.GSE131907.tsv Output/SCDC/STAR.SQC.GSE131907.tsv Output/SCDC/STAR.ADC.GSE131907.tsv Output/SCDC/Bowtie2.SQC.GSE162498.tsv Output/SCDC/Bowtie2.ADC.GSE162498.tsv Output/SCDC/STAR.SQC.GSE162498.tsv Output/SCDC/STAR.ADC.GSE162498.tsv
@@ -3304,95 +3304,96 @@ step45: step45-VDT step45-RFS step45-OS
 Output/Deconvolution_vs_CNV:
 	mkdir -p $@
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-%.Sequenza-BWA.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/BWA.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/Bowtie2.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-%.Sequenza-BWA.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/STAR.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/STAR.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-%.Sequenza-Bowtie2.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/STAR.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/STAR.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-%.Sequenza-BWA.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/Bowtie2.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/Bowtie2.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-%.Sequenza-BWA.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/STAR.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/STAR.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-%.Sequenza-Bowtie2.tar: Python/compare_BisqueRNA_sequenza.py Output/BisqueRNA/STAR.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/BisqueRNA/STAR.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/Bowtie2.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-%.Sequenza-BWA.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.ADC.%.tsv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-%.Sequenza-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.ADC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_MuSiC_sequenza.py Output/MuSiC/STAR.ADC.%.tsv $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-%.Sequenza-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.ADC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.PureCN-BWA.tar: Python/compare_MuSiC_PureCN.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.PureCN-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.PureCN-Bowtie2.tar: Python/compare_MuSiC_PureCN.py Output/MuSiC/Bowtie2.SQC.%.tsv $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-%.PureCN-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/Bowtie2.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.PureCN-BWA.tar: Python/compare_MuSiC_PureCN.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.PureCN-BWA.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/BWA.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.PureCN-Bowtie2.tar: Python/compare_MuSiC_PureCN.py Output/MuSiC/STAR.SQC.%.tsv $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
+Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-%.PureCN-Bowtie2.tar: Python/compare_deconvolution_CNV.py Output/MuSiC/STAR.SQC.%.tsv Output/Sequenza/Bowtie2.sample.tsv $(CLINICAL_DATA_CSV) | Output/Deconvolution_vs_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 step46-MuSiC-Sequenza: Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE162498.Sequenza-Bowtie2.tar
 step46-BisqueRNA-Sequenza: Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.BisqueRNA-STAR-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.BisqueRNA-STAR-GSE162498.Sequenza-Bowtie2.tar
 step46-SCDC-Sequenza: Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.SCDC-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/SQC.SCDC-STAR-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-GSE131907.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-GSE131907.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.SCDC-Bowtie2-GSE162498.Sequenza-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-GSE162498.Sequenza-BWA.tar Output/Deconvolution_vs_CNV/ADC.SCDC-STAR-GSE162498.Sequenza-Bowtie2.tar
-step46: step46-MuSiC-Sequenza step46-BisqueRNA-Sequenza step46-SCDC-Sequenza
-.PHONY: step46-MuSiC-Sequenza step46-BisqueRNA-Sequenza step46-SCDC-Sequenza step46
+step46-MuSiC-PureCN: Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE131907.PureCN-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE131907.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE131907.PureCN-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE131907.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE162498.PureCN-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-Bowtie2-GSE162498.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE162498.PureCN-BWA.tar Output/Deconvolution_vs_CNV/SQC.MuSiC-STAR-GSE162498.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE131907.PureCN-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE131907.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE131907.PureCN-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE131907.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE162498.PureCN-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-Bowtie2-GSE162498.PureCN-Bowtie2.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE162498.PureCN-BWA.tar Output/Deconvolution_vs_CNV/ADC.MuSiC-STAR-GSE162498.PureCN-Bowtie2.tar
+step46: step46-MuSiC-Sequenza step46-BisqueRNA-Sequenza step46-SCDC-Sequenza step46-MuSiC-PureCN
+.PHONY: step46-MuSiC-Sequenza step46-BisqueRNA-Sequenza step46-SCDC-Sequenza step46-MuSiC-PureCN step46
 
 # Step 47 (Kaplan-Meier Plot with Shared Proportion)
 Output/Clinical_vs_KM-Plot:
