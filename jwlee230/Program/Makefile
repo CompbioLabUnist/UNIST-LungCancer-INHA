@@ -5061,58 +5061,38 @@ step71: Output/MutationSharedProportion_Count/BWA-SQC.median.tar Output/Mutation
 Output/MutationSharedProportion_Expression:
 	mkdir -p $@
 
-Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Correlation.BWA-%.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Distance.BWA-%.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Correlation.BWA-%.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Distance.BWA-%.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Correlation.Bowtie2-%.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Distance.Bowtie2-%.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Correlation.Bowtie2-%.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Expression
+Output/MutationSharedProportion_Expression/Distance.Bowtie2-%.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/STAR.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.median.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.mean.tar: Python/plot_RSEM_MutationSharedProportion_distance.py Output/RSEM/DEG/Bowtie2.tsv Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Expression
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-step72-STAR: Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.mean.tar
-step72-Bowtie2: Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.mean.tar
-step72: step72-STAR step72-Bowtie2
-.PHONY: step72-STAR step72-Bowtie2 step72
+step72-STAR-count: Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.SQC.mean.tar
+step72-Bowtie2-count: Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.SQC.mean.tar
+step72-STAR-TPM: Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.TPM.SQC.mean.tar
+step72-Bowtie2-TPM: Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.TPM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.TPM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.TPM.SQC.mean.tar
+step72-STAR-FPKM: Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-STAR.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-STAR.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-STAR.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-STAR.FPKM.SQC.mean.tar
+step72-Bowtie2-FPKM: Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.FPKM.SQC.mean.tar
+step72: step72-STAR-count step72-Bowtie2-count step72-STAR-TPM step72-Bowtie2-TPM step72-STAR-FPKM step72-Bowtie2-FPKM
+.PHONY: step72-STAR-count step72-Bowtie2-count step72-STAR-TPM step72-Bowtie2-TPM step72-STAR-FPKM step72-Bowtie2-FPKM step72
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
