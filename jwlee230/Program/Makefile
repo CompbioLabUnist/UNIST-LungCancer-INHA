@@ -442,6 +442,12 @@ Output/Sequenza/%-sequenza-SQC.pdf: Python/aggregate_CNV.py Output/Sequenza/%.sa
 Output/Sequenza/%-sequenza-ADC.pdf: Python/aggregate_CNV.py Output/Sequenza/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/Sequenza/%-stage-SQC.pdf: Python/aggregate_CNV_violin_ploidy.py Output/Sequenza/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/%-stage-ADC.pdf: Python/aggregate_CNV_violin_ploidy.py Output/Sequenza/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
 Output/Sequenza/%-genome-SQC.pdf: Python/aggregate_CNV_genome.py Output/Sequenza/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
@@ -533,7 +539,7 @@ Output/Sequenza/%-gene-ADC.Smoking.tar: Python/aggregate_CNV_violin_gene_clinica
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
 
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) Output/Sequenza/BWA.sample.tsv Output/Sequenza/Bowtie2.sample.tsv
-step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf
+step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/SQC-stage-SQC.pdf Output/Sequenza/SQC-stage-ADC.pdf Output/Sequenza/ADC-stage-SQC.pdf Output/Sequenza/ADC-stage-ADC.pdf
 step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.pdf
 step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf
 step13-genome-Clinical: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.pdf
@@ -2161,6 +2167,12 @@ Output/PureCN/%-PureCN-SQC.pdf: Python/aggregate_CNV.py Output/PureCN/%.sample.t
 Output/PureCN/%-PureCN-ADC.pdf: Python/aggregate_CNV.py Output/PureCN/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
+Output/PureCN/%-stage-SQC.pdf: Python/aggregate_CNV_violin_ploidy.py Output/PureCN/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/PureCN/%-stage-ADC.pdf: Python/aggregate_CNV_violin_ploidy.py Output/PureCN/%.sample.tsv $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
 Output/PureCN/%-genome-SQC.pdf: Python/aggregate_CNV_genome.py Output/PureCN/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC --type 1> $@.stdout 2> $@.stderr
 
@@ -2272,7 +2284,7 @@ Output/PureCN/%-gene-ADC.Smoking.tar: Python/aggregate_CNV_violin_gene_clinical.
 step37-Reference: Output/PureCN/Reference/hg38.txt# Output/PureCN/Referece/Mappability.bed
 step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/BWA/Normal_coverages.list Output/PureCN/BWA/normalDB_hg38.rds $(addprefix Output/PureCN/BWA/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(addprefix Output/PureCN/BWA/,$(addsuffix .seg.tsv,$(WES_REAL_TUMOR_ID))) Output/PureCN/BWA.sample.tsv Output/PureCN/BWA.segment.tsv
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(WES_REAL_TUMOR_ID))) Output/PureCN/Bowtie2.sample.tsv Output/PureCN/Bowtie2.segment.tsv
-step37-default: Output/PureCN/BWA-PureCN-SQC.pdf Output/PureCN/BWA-PureCN-ADC.pdf Output/PureCN/Bowtie2-PureCN-SQC.pdf Output/PureCN/Bowtie2-PureCN-ADC.pdf
+step37-default: Output/PureCN/BWA-PureCN-SQC.pdf Output/PureCN/BWA-PureCN-ADC.pdf Output/PureCN/Bowtie2-PureCN-SQC.pdf Output/PureCN/Bowtie2-PureCN-ADC.pdf Output/PureCN/BWA-stage-SQC.pdf Output/PureCN/BWA-stage-ADC.pdf Output/PureCN/Bowtie2-stage-SQC.pdf Output/PureCN/Bowtie2-stage-ADC.pdf
 step37-genome: Output/PureCN/BWA-genome-SQC.pdf Output/PureCN/BWA-genome-ADC.pdf Output/PureCN/Bowtie2-genome-SQC.pdf Output/PureCN/Bowtie2-genome-ADC.pdf Output/PureCN/BWA-genome-SQC.patient.pdf Output/PureCN/BWA-genome-ADC.patient.pdf Output/PureCN/Bowtie2-genome-SQC.patient.pdf Output/PureCN/Bowtie2-genome-ADC.patient.pdf
 step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf
 step37-genome-clinical: Output/PureCN/BWA-genome-SQC.Recurrence.pdf Output/PureCN/BWA-genome-ADC.Recurrence.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.pdf Output/PureCN/BWA-genome-SQC.Smoking.pdf Output/PureCN/BWA-genome-ADC.Smoking.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.pdf Output/PureCN/BWA-genome-SQC.Recurrence.patient.pdf Output/PureCN/BWA-genome-ADC.Recurrence.patient.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/PureCN/BWA-genome-SQC.Smoking.patient.pdf Output/PureCN/BWA-genome-ADC.Smoking.patient.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.patient.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.patient.pdf
