@@ -53,7 +53,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.clustermap(data=input_data, figsize=(input_data.shape[1], input_data.shape[0]), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(lambda x: "tab:red" if step00.get_patient(x) in SQCs else "tab:blue", input_data.columns)), tree_kws={"linewidths": 2.0}, xticklabels=True, yticklabels=True, square=False, cmap="bwr")
+    g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(lambda x: "tab:red" if step00.get_patient(x) in SQCs else "tab:blue", input_data.columns)), tree_kws={"linewidths": 2.0}, xticklabels=True, yticklabels=True, square=False, cmap="bwr")
 
     g.ax_heatmap.set_xlabel(f"{input_data.shape[1]} samples")
     g.ax_heatmap.set_ylabel(f"{input_data.shape[0]} genes")
