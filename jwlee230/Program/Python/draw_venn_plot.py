@@ -51,7 +51,10 @@ if __name__ == "__main__":
 
     fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
 
-    upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    try:
+        upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    except IndexError:
+        pass
 
     fig.savefig(args.output, bbox_inches="tight")
 
