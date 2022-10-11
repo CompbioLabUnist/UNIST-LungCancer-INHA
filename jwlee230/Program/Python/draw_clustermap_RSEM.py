@@ -3,10 +3,12 @@ draw_clustermap_RSEM.py: draw clustermap upon RSEM DEG data
 """
 import argparse
 import matplotlib
+import matplotlib.patches
 import matplotlib.pyplot
+import numpy
 import pandas
-import scipy
 import seaborn
+import tqdm
 import step00
 
 
@@ -30,7 +32,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col="gene_name")
+    input_data = pandas.read_csv(args.input, sep="\t", index_col="gene_name").fillna(0)
     print(input_data)
 
     clinical_data = step00.get_clinical_data(args.clinical)
@@ -48,21 +50,23 @@ if __name__ == "__main__":
     print(patients)
 
     input_data = input_data.loc[:, patients]
-    for index in list(input_data.index):
-        input_data.loc[index, :] = scipy.stats.zscore(input_data.loc[index, :])
-    input_data.dropna(axis="index", how="any", inplace=True)
-
-    input_data["std"] = list(input_data.std(axis="columns"))
-    input_data.sort_values(by="std", ascending=False, inplace=True)
-    input_data = input_data.iloc[:len(input_data) // 100, :]
-    del input_data["std"]
     print(input_data)
+
+    input_data = input_data.loc[list(filter(lambda x: numpy.var(input_data.loc[x, :]) > 0, list(input_data.index))), :]
+    print(input_data)
+
+    palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(input_data.columns)))
+    stage_set = set(map(step00.get_long_sample_type, list(input_data.columns)))
+    stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.clustermap(data=input_data, figsize=(input_data.shape[1], input_data.shape[0]), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(step00.get_color_by_type, input_data.columns)), tree_kws={"linewidths": 2.0}, xticklabels=True, yticklabels=True, square=False, cmap="bwr")
+    g = seaborn.clustermap(data=input_data, figsize=(input_data.shape[1] / 4, input_data.shape[1] / 2), row_cluster=True, col_cluster=True, col_colors=list(map(step00.get_color_by_type, input_data.columns)), xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=0, center=0, robust=True)
+
+    matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
     g.ax_heatmap.set_ylabel("")
 
     g.savefig(args.output)
+    g.savefig(args.output.replace(".pdf", ".png"))
