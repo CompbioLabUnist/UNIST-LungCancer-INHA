@@ -1119,10 +1119,10 @@ step18: step18-SQC-run step18-SQC-TPM-run step18-SQC-FPKM-run step18-ADC-run ste
 Output/RSEM/Plots/Cluster Output/RSEM/Plots/Venn Output/RSEM/Plots/Volcano Output/RSEM/Plots/Violin Output/RSEM/Enrichment:
 	mkdir -p $@
 
-Output/RSEM/Plots/Cluster/%.SQC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log
+Output/RSEM/Plots/Cluster/%.SQC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/DEG/%.SQC.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Cluster build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Cluster/%.ADC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log
+Output/RSEM/Plots/Cluster/%.ADC.pdf: Python/draw_clustermap_RSEM.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/DEG/%.ADC.Normal-AAH.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-AIS.DEG.tsv Output/RSEM/DEG/%.ADC.Normal-Primary.DEG.tsv| Output/RSEM/Plots/Cluster build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Cluster/%.ADC-SQC.pdf: Python/draw_clustermap_RSEM_2.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | Output/RSEM/Plots/Cluster build.log

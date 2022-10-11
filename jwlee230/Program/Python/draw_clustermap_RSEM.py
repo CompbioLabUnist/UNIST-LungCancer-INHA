@@ -5,7 +5,6 @@ import argparse
 import matplotlib
 import matplotlib.patches
 import matplotlib.pyplot
-import numpy
 import pandas
 import seaborn
 import tqdm
@@ -17,7 +16,9 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="RSEM result TSV file", type=str)
     parser.add_argument("clinical", help="Clinical CSV file", type=str)
+    parser.add_argument("DEG", help="DEG result TSV file", type=str, nargs="+")
     parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--ADC", help="Draw ADC pathway", action="store_true", default=False)
@@ -29,8 +30,12 @@ if __name__ == "__main__":
         raise ValueError("Input must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
+    elif list(filter(lambda x: not x.endswith(".tsv"), args.DEG)):
+        raise ValueError("DEG must end with .TSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
+    elif not (0 < args.p < 1):
+        raise ValueError("P-value must be between 0 and 1!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col="gene_name").fillna(0)
     print(input_data)
@@ -52,7 +57,13 @@ if __name__ == "__main__":
     input_data = input_data.loc[:, patients]
     print(input_data)
 
-    input_data = input_data.loc[list(filter(lambda x: numpy.var(input_data.loc[x, :]) > 0, list(input_data.index))), :]
+    DEG_list = list()
+    for DEG_file in tqdm.tqdm(args.DEG):
+        DEG_data = pandas.read_csv(DEG_file, sep="\t", index_col=0)
+        DEG_data = DEG_data.loc[(DEG_data["padj"] < args.p)]
+        DEG_list.append(set(DEG_data.index))
+
+    input_data = input_data.loc[sorted(set.union(*DEG_list)), :]
     print(input_data)
 
     palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(input_data.columns)))
