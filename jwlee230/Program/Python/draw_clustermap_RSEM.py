@@ -77,7 +77,9 @@ if __name__ == "__main__":
     g = seaborn.clustermap(data=input_data, figsize=(input_data.shape[1] / 4, input_data.shape[1] / 2), row_cluster=True, col_cluster=True, col_colors=list(map(step00.get_color_by_type, input_data.columns)), xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=0, center=0, robust=True)
 
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
-    g.ax_heatmap.set_ylabel("")
+
+    g.ax_heatmap.set_xlabel(f"{input_data.shape[1]} samples")
+    g.ax_heatmap.set_ylabel(f"{input_data.shape[0]} genes")
 
     g.savefig(args.output)
     g.savefig(args.output.replace(".pdf", ".png"))

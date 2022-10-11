@@ -13,7 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input RSEM filtered TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output file basename", type=str)
-    parser.add_argument("--compare", help="Comparison MSP", type=str, choices=step00.sharing_columns)
+    parser.add_argument("--compare", help="Comparison MSP", type=str, choices=step00.sharing_columns, default=step00.sharing_columns[0])
     parser.add_argument("--date", help="Selection is date", action="store_true", default=False)
 
     group_histology = parser.add_mutually_exclusive_group(required=True)
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(threshold)
 
-    clinical_data[f"{args.compare}-Lower/Higher"] = list(map(lambda x: "Lower" if (x <= threshold) else "Higher", clinical_data[args.compare]))
+    clinical_data[f"{args.compare}-Lower/Higher"] = list(map(lambda x: "Lower" if (x < threshold) else "Higher", clinical_data[args.compare]))
     print(clinical_data)
 
     f1 = set(clinical_data.loc[(clinical_data[f"{args.compare}-Lower/Higher"] == "Lower")].index)
