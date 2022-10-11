@@ -69,7 +69,7 @@ if __name__ == "__main__":
         DEG_data = DEG_data.loc[(DEG_data["padj"] < args.p)]
         DEG_list.append(set(DEG_data.index))
 
-    input_data = input_data.loc[sorted(set.union(*DEG_list)), :]
+    input_data = input_data.loc[sorted(set.union(*DEG_list)), sorted(input_data.columns, key=lambda x: (step00.long_sample_type_list.index(step00.get_long_sample_type(x)), clinical_data.loc[step00.get_patient(x), args.compare]))]
     print(input_data)
 
     if args.median:
