@@ -4297,24 +4297,33 @@
 
     \subsubsection{Comparing cancer stage in LUSC}
     \begin{frame}
+        \frametitle{DEG Heatmap in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.35 \linewidth]{figures/DEG/Cluster/STAR.FPKM.SQC.pdf}
+            \caption{DEG FPKM Heatmap of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots in LUSC}
-        Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (LUSC)
+        LUSC: Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal-Dysplasia.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Normal-Dysplasia.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Normal-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-Dysplasia} & \mbox{(b) Normal-CIS} & \mbox{(c) Normal-Primary} \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Dysplasia-CIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Dysplasia-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Dysplasia-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Dysplasia-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.CIS-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.CIS-Primary.volcano.pdf}
                 \\
                 \mbox{(d) Dysplasia-CIS} & \mbox{(e) Dysplasia-Primary} & \mbox{(f) CIS-Primary} \\
             \end{array}$
@@ -4323,20 +4332,20 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram in LUSC}
-        Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary (LUSC)
+        \frametitle{DEG Venn Diagrams in LUSC}
+        LUSC: Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both}& \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram in LUSC}
+            \caption{DEG Venn Diagrams in LUSC}
         \end{figure}
     \end{frame}
 
@@ -4344,12 +4353,12 @@
         \frametitle{Enrichment test with Normal vs. Dysplasia in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-Dysplasia.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Dysplasia.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Dysplasia}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-Dysplasia.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Dysplasia.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Dysplasia}
         \end{figure}
     \end{frame}
@@ -4358,12 +4367,12 @@
         \frametitle{Enrichment test with Normal vs. CIS in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-CIS.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-CIS.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. CIS}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-CIS.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-CIS.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. CIS}
         \end{figure}
     \end{frame}
@@ -4372,12 +4381,12 @@
         \frametitle{Enrichment test with Normal vs. Primary in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-Primary.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Primary.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Primary}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Normal-Primary.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Primary.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Primary}
         \end{figure}
     \end{frame}
@@ -4406,23 +4415,23 @@
     \subsubsection{Comparing cancer stage in LUAD}
     \begin{frame}
         \frametitle{DEG Volcano Plots in LUAD}
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary (LUAD)
+        LUAD: Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-AAH.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Normal-AAH.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-AIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Normal-AIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Normal-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-AAH} & \mbox{(b) Normal-AIS} & \mbox{(c) Normal-Primary} \\
 
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AAH-AIS.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.AAH-AIS.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AAH-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.AAH-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.ADC.AIS-Primary.volcano.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.AIS-Primary.volcano.pdf}
                 \\
                 \mbox{(d) AAH-AIS} & \mbox{(e) AAH-Primary} & \mbox{(f) AIS-Primary} \\
             \end{array}$
@@ -4431,21 +4440,20 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram in LUAD}
-
-        Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary (LUAD)
+        \frametitle{DEG Venn Diagrams in LUAD}
+        LUAD: Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} &\mbox{(b) Both} & \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram in LUAD}
+            \caption{DEG Venn Diagrams in LUAD}
         \end{figure}
     \end{frame}
 
@@ -4453,12 +4461,12 @@
         \frametitle{Enrichment test with Normal vs. AAH in LUAD}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-AAH.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AAH.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. AAH}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-AAH.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AAH.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. AAH}
         \end{figure}
     \end{frame}
@@ -4467,12 +4475,12 @@
         \frametitle{Enrichment test with Normal vs. AIS in LUAD}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-AIS.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AIS.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. AIS}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-AIS.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AIS.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. AIS}
         \end{figure}
     \end{frame}
@@ -4481,12 +4489,12 @@
         \frametitle{Enrichment test with Normal vs. Primary in LUAD}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-Primary.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-Primary.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Primary}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Normal-Primary.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-Primary.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Primary}
         \end{figure}
     \end{frame}
@@ -4541,9 +4549,9 @@
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Recur.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Nonrecur.Normal-CIS.volcano.pdf}
                 \\
                 \mbox{(a) Recur} & \mbox{(b) Non-recur} \\
             \end{array}$
@@ -4552,19 +4560,19 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram for R vs. NR with CIS in  LUSC}
+        \frametitle{DEG Venn Diagrams for R vs. NR with CIS in  LUSC}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram for R vs. NR with CIS in LUSC}
+            \caption{DEG Venn Diagrams for R vs. NR with CIS in LUSC}
         \end{figure}
     \end{frame}
 
@@ -4572,12 +4580,12 @@
         \frametitle{Enrichment test for Recur-specific with CIS in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Recur.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Recur.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Recur-specific}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Recur.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Recur.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Recur-specific}
         \end{figure}
     \end{frame}
@@ -4586,12 +4594,12 @@
         \frametitle{Enrichment test for Non-recur-specific with CIS in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Nonrecur.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Nonrecur.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Non-recur-specific}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Nonrecur.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Nonrecur.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Non-recur-specific}
         \end{figure}
     \end{frame}
@@ -4600,12 +4608,12 @@
         \frametitle{Enrichment test for Intersected with CIS in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Both.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Both.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Intersected}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-CIS.Both.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Both.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Intersected}
         \end{figure}
     \end{frame}
@@ -4615,9 +4623,9 @@
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Recur.Normal-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Nonrecur.Normal-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Recur} & \mbox{(b) Non-recur} \\
             \end{array}$
@@ -4626,19 +4634,19 @@
     \end{frame}
 
      \begin{frame}
-        \frametitle{DEG Venn Diagram for R vs. NR with Primary in  LUSC}
+        \frametitle{DEG Venn Diagrams for R vs. NR with Primary in  LUSC}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC-Primary.Recur-Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram for R vs. NR with Primary in LUSC}
+            \caption{DEG Venn Diagrams for R vs. NR with Primary in LUSC}
         \end{figure}
     \end{frame}
 
@@ -4646,12 +4654,12 @@
         \frametitle{Enrichment test for Recur-specific with Primary in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Recur.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Recur.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Recur-specific}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Recur.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Recur.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Recur-specific}
         \end{figure}
     \end{frame}
@@ -4660,12 +4668,12 @@
         \frametitle{Enrichment test for NR-specific with Primary in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Nonrecur.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Nonrecur.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Non-recur-specific}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Nonrecur.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Nonrecur.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Non-recur-specific}
         \end{figure}
     \end{frame}
@@ -4674,12 +4682,12 @@
         \frametitle{Enrichment test for Intersected with Primary in LUSC}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Both.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Both.Up.KEGG.pdf}
             \caption{Up-regulated Pathways for Intersected}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC-Primary.Both.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Both.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Intersected}
         \end{figure}
     \end{frame}
@@ -4726,11 +4734,11 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Recur.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Recur.Normal-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Recur.CIS-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Recur.CIS-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-CIS} & \mbox{(b) Normal-Primary} & \mbox{(c) CIS-Primary} \\
             \end{array}$
@@ -4739,19 +4747,19 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram with Recur in LUSC}
+        \frametitle{DEG Venn Diagrams with Recur in LUSC}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Recur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Recur.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Recur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Up.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram with Recur samples in LUSC}
+            \caption{DEG Venn Diagrams with Recur samples in LUSC}
         \end{figure}
     \end{frame}
 
@@ -4759,12 +4767,12 @@
         \frametitle{Enrichment test with Normal vs. CIS for Recur}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Recur.Normal-CIS.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-CIS.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. CIS for Recur in LUSC}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Recur.Normal-CIS.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-CIS.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. CIS for Recur in LUSC}
         \end{figure}
     \end{frame}
@@ -4773,12 +4781,12 @@
         \frametitle{Enrichment test with Normal vs. Primary for Recur}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Recur.Normal-Primary.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-Primary.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Primary for Recur in LUSC}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Recur.Normal-Primary.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-Primary.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Primary for Recur in LUSC}
         \end{figure}
     \end{frame}
@@ -4818,11 +4826,11 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-CIS.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Nonrecur.Normal-CIS.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Nonrecur.Normal-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.SQC.Nonrecur.CIS-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Nonrecur.CIS-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-CIS} & \mbox{(b) Normal-Primary} & \mbox{(c) CIS-Primary} \\
             \end{array}$
@@ -4835,11 +4843,11 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.SQC.Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Up.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both}& \mbox{(c) Down-regulated} \\
             \end{array}$
@@ -4851,12 +4859,12 @@
         \frametitle{Enrichment test with Normal vs. CIS for Non-recur}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Nonrecur.Normal-CIS.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-CIS.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. CIS for Non-recur in LUSC}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Nonrecur.Normal-CIS.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-CIS.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. CIS for Non-recur in LUSC}
         \end{figure}
     \end{frame}
@@ -4865,12 +4873,12 @@
         \frametitle{Enrichment test with Normal vs. Primary for Non-recur}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Primary for Non-recur in LUSC}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.SQC.Nonrecur.Normal-Primary.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-Primary.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Primary for Non-recur in LUSC}
         \end{figure}
     \end{frame}
@@ -4918,11 +4926,11 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-AIS.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Nonrecur.Normal-AIS.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.Normal-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Nonrecur.Normal-Primary.volcano.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.ADC.Nonrecur.AIS-Primary.volcano.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.ADC.Nonrecur.AIS-Primary.volcano.pdf}
                 \\
                 \mbox{(a) Normal-AIS} & \mbox{(b) Normal-Primary} & \mbox{(c) AIS-Primary} \\
             \end{array}$
@@ -4931,19 +4939,19 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{DEG Venn Diagram with Non-recur in LUAD}
+        \frametitle{DEG Venn Diagrams with Non-recur in LUAD}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Up.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.venn.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.ADC.Nonrecur.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Down.venn.pdf}
                 \\
                 \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
             \end{array}$
-            \caption{DEG Venn Diagram with Non-recur in LUAD}
+            \caption{DEG Venn Diagrams with Non-recur in LUAD}
         \end{figure}
     \end{frame}
 
@@ -4951,12 +4959,12 @@
         \frametitle{Enrichment test with Normal vs. AIS in LUAD}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Nonrecur.Normal-AIS.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-AIS.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. AIS for Non-recur in LUA}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Nonrecur.Normal-AIS.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-AIS.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. AIS for Non-recur in LUAD}
         \end{figure}
     \end{frame}
@@ -4965,12 +4973,12 @@
         \frametitle{Enrichment test with Normal vs. Primary in LUAD}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
             \caption{Up-regulated Pathways on Normal vs. Primary for Non-recur in LUA}
         \end{figure}
 
         \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.ADC.Nonrecur.Normal-Primary.Down.KEGG.pdf}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-Primary.Down.KEGG.pdf}
             \caption{Down-regulated Pathways on Normal vs. Primary for Non-recur in LUAD}
         \end{figure}
     \end{frame}
@@ -4996,6 +5004,131 @@
                 \item Up-regulated in many human cancers \cite{BLACAT1-3}
             \end{enumerate}
         \end{block}
+    \end{frame}
+
+    \subsubsection{Mutation Shared Proportion in LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Mutation Shared Proportion Distribution}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/Mutation_Shared_Proportion/Histogram/BWA.SQC.SharedProportion.pdf}
+            \caption{Mutation Shared Proportion (MSP) Distribution in LUSC}
+        \end{figure}
+
+        \begin{block}{Summary}
+            \begin{itemize}
+                \item Minimum: 0
+                \item Mean: 0.132
+                \item Median: 0.081
+                \item Maximum: 0.525
+            \end{itemize}
+        \end{block}
+
+        \begin{exampleblock}{MSP Lower/Higher}
+            By median (appr. 8 \%), MSP Lower/Higher are classified.
+        \end{exampleblock}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Heatmap with MSP in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.35 \linewidth]{figures/DEG/Cluster/STAR.FPKM.SQC.MSP-Median.pdf}
+            \caption{DEG FPKM Heatmap with MSP in LUSC}
+        \end{figure}
+        \framebreak
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.FPKM.SQC.Normal.MSP-Median.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.FPKM.SQC.CIS.MSP-Median.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.FPKM.SQC.Primary.MSP-Median.pdf}
+                \\
+                \mbox{(a) Normal} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+            \end{array}$
+            \caption{DEG FPKM Heatmap by Stages with MSP in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Volcano Plots with MSP in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Normal.MSP-Median.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.CIS.MSP-Median.volcano.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.FPKM.SQC.Primary.MSP-Median.volcano.pdf}
+                \\
+                \mbox{(a) Normal} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+            \end{array}$
+            \caption{DEG Volcano Plots with MSP in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Venn Diagrams with MSP in LUSC}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Up.venn.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Down.venn.pdf}
+                \\
+                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
+            \end{array}$
+            \caption{DEG Venn Diagrams with MSP in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Enrichment test with MSP in LUSC}
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.MSP-Median.Up.KEGG.pdf}
+            \caption{Up-regulated Pathways with MSP in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.MSP-Median.Down.KEGG.pdf}
+            \caption{Down-regulated Pathways with MSP in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal.MSP-Median.Up.KEGG.pdf}
+            \caption{Up-regulated Pathways with MSP in Normal}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal.MSP-Median.Down.KEGG.pdf}
+            \caption{Down-regulated Pathways with MSP in Normal}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.CIS.MSP-Median.Up.KEGG.pdf}
+            \caption{Up-regulated Pathways with MSP in CIS}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.CIS.MSP-Median.Down.KEGG.pdf}
+            \caption{Down-regulated Pathways with MSP in CIS}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Primary.MSP-Median.Up.KEGG.pdf}
+            \caption{Up-regulated Pathways with MSP in Primary}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Primary.MSP-Median.Down.KEGG.pdf}
+            \caption{Down-regulated Pathways with MSP in Primary}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Comparing MSP in LUSC}
     \end{frame}
 
     \begin{frame}
