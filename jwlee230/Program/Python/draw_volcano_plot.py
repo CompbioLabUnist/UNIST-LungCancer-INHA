@@ -70,6 +70,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.title("Up: {0:d} & Down: {1:d}".format(len(up_gene), len(down_gene)))
     if matplotlib.pyplot.ylim()[1] < 2:
         matplotlib.pyplot.ylim(top=2)
+    matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)
