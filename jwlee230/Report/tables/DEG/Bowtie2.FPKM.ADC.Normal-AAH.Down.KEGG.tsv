@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	Cholesterol metabolism	0.007481552373416279	203.55102040816325	996.4463577649728	NPC2	0.014963104746832557	0	0
+2	Lysosome	0.019078183095597404	78.22834645669292	309.72243930029543	NPC2	0.019078183095597404	0	0

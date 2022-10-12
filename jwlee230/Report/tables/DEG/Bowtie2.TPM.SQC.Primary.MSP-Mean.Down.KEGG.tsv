@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	Ether lipid metabolism	0.00020937355557931883	121.24012158054711	1027.0724207395506	LPCAT4,PLAAT3	0.005234338889482971	0	0
+2	Glycerophospholipid metabolism	0.0008365989320929864	59.211309523809526	419.5811550666976	LPCAT4,PLAAT3	0.010457486651162329	0	0
