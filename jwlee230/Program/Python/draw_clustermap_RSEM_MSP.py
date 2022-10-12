@@ -78,7 +78,7 @@ if __name__ == "__main__":
         threshold = numpy.mean(clinical_data.loc[list(set(map(step00.get_patient, samples))), args.compare])
     else:
         raise Exception("Something went wrong!!")
-    print(samples)
+    print(args.compare, samples)
 
     stage_set = set(map(step00.get_long_sample_type, list(input_data.columns)))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
