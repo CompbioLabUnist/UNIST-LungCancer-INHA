@@ -2,6 +2,7 @@
 draw_violin_plots_clinical.py: draw violin plots upon DEG with clinical data
 """
 import argparse
+import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
@@ -12,6 +13,34 @@ import statannotations.Annotator
 import tqdm
 import step00
 
+input_data = pandas.DataFrame()
+
+
+def run(gene: str) -> str:
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
+    except ValueError:
+        _, p = 0.0, 1.0
+
+    if p > 0.05:
+        return ""
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+
+    seaborn.violinplot(data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
+    statannotations.Annotator.Annotator(ax, [((a, stage), (b, stage)) for a, b in zip(args.compare[1:], args.compare[2:]) for stage in stage_order] + [((compare, a), (compare, b)) for a, b in zip(stage_order, stage_order[1:]) for compare in args.compare[1:]] + [], data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+    matplotlib.pyplot.ylabel(f"{gene} expression")
+    matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = gene + ".pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+
+    return fig_name
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -19,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
     parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--compare", help="Comparison grouping (type, control, case)", type=str, nargs=3, default=["Recurrence", "NO", "YES"])
+    parser.add_argument("--compare", help="Comparison grouping (type, controls, ...)", type=str, nargs="+", default=["Recurrence", "NO", "YES"])
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -36,6 +65,8 @@ if __name__ == "__main__":
         raise ValueError("CGC must end with .CSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
+    elif len(args.compare) < 3:
+        raise ValueError("Too few compare values!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 
@@ -47,22 +78,16 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
     elif args.ADC:
-        control_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[1])].index)
-        case_patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC") & (clinical_data[args.compare[0]] == args.compare[2])].index)
+        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
     else:
         raise Exception("Something went wrong!!")
-    patients = control_patients | case_patients
-    print(sorted(control_patients))
-    print(sorted(case_patients))
+    print(patients)
 
     cgc_data = pandas.read_csv(args.cgc, index_col="Gene Symbol")
     gene_set = set(cgc_data.index)
     print(cgc_data)
-
-    ylabel = args.input.split("/")[-1].split(".")[1]
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col="gene_name").T
 
@@ -71,32 +96,14 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[samples, sorted(gene_set)]
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    input_data[args.compare[0]] = list(map(lambda x: args.compare[1] if step00.get_patient(x) in control_patients else args.compare[2], list(input_data.index)))
+    input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
 
-    stage_order = list(filter(lambda x: (x in set(map(step00.get_long_sample_type, input_data.loc[(input_data[args.compare[0]] == args.compare[1])].index))) and (x in set(map(step00.get_long_sample_type, input_data.loc[(input_data[args.compare[0]] == args.compare[2])].index))), step00.long_sample_type_list))
+    stage_order = list(filter(lambda x: all([(x in set(map(step00.get_long_sample_type, input_data.loc[(input_data[args.compare[0]] == compare)].index))) for compare in args.compare[1:]]), step00.long_sample_type_list))
     print(stage_order)
 
-    figures = list()
-
-    for gene in tqdm.tqdm(gene_set):
-        try:
-            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
-        except ValueError:
-            stat, p = 0.0, 1.0
-
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
-        seaborn.violinplot(data=input_data, x="Stage", y=gene, order=stage_order, ax=ax, hue=args.compare[0], hue_order=args.compare[1:])
-        statannotations.Annotator.Annotator(ax, [((stage, args.compare[1]), (stage, args.compare[2])) for stage in stage_order], data=input_data, x="Stage", y=gene, order=stage_order, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
-
-        matplotlib.pyplot.ylabel(ylabel)
-        matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
-        matplotlib.pyplot.tight_layout()
-
-        figures.append(gene + ".pdf")
-        fig.savefig(figures[-1])
-        matplotlib.pyplot.close(fig)
+    with multiprocessing.Pool(args.cpus) as pool:
+        figures = list(filter(None, pool.map(run, sorted(gene_set))))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(figures):

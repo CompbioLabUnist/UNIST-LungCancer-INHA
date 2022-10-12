@@ -7,6 +7,7 @@ import matplotlib.pyplot
 import numpy
 import pandas
 import upsetplot
+import tqdm
 import step00
 
 if __name__ == "__main__":
@@ -32,9 +33,8 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .PDF!!")
 
     input_data = dict()
-    for annotation, input_file in zip(args.annotation, args.DEG):
-        DEG_data = pandas.read_csv(input_file, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
-        print(DEG_data)
+    for annotation, input_file in tqdm.tqdm(zip(args.annotation, args.DEG)):
+        DEG_data = pandas.read_csv(input_file, sep="\t", index_col=0).dropna(axis="index", how="any")
 
         if args.up:
             DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), :]
@@ -43,7 +43,6 @@ if __name__ == "__main__":
         else:
             raise Exception("Something went wrong!!")
 
-        print(DEG_data)
         input_data[annotation] = set(DEG_data.index)
 
     matplotlib.use("Agg")

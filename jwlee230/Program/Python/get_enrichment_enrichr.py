@@ -9,6 +9,7 @@ import numpy
 import pandas
 import seaborn
 import requests
+import tqdm
 import step00
 
 wanted_columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     elif not (0 < args.padj < 1):
         raise ValueError("Padj must be (0, 1)!!")
 
-    DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
+    DEG_data = pandas.read_csv(args.DEG, sep="\t", index_col=0).dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
     print(DEG_data)
 
@@ -101,7 +102,7 @@ if __name__ == "__main__":
         elif args.down:
             ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:cyan")
 
-        for index, row in drawing_data.iterrows():
+        for index, row in tqdm.tqdm(drawing_data.iterrows()):
             matplotlib.pyplot.text(0, index, "{0}: {1}".format(row["Term name"], row["Overlapping genes..."]), color="k", horizontalalignment="left", verticalalignment="center")
 
         matplotlib.pyplot.yticks([])

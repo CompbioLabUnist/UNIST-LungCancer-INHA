@@ -7,6 +7,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import tqdm
 import step00
 
 if __name__ == "__main__":
@@ -27,7 +28,7 @@ if __name__ == "__main__":
     elif args.annotation < 1:
         raise ValueError("Annotation must be positive!!")
 
-    DEG_data = pandas.read_csv(args.DEG, sep="\t", header=0, names=["gene_id", "baseMean", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj"], index_col="gene_id").dropna(axis="index", how="any")
+    DEG_data = pandas.read_csv(args.DEG, sep="\t", index_col=0).dropna(axis="index", how="any")
     DEG_data["-log(Padj)"] = -1 * numpy.log10(DEG_data["padj"], dtype=float)
     DEG_data["importance"] = list(map(lambda x: abs(x[0] * x[1]), zip(DEG_data["log2FoldChange"], DEG_data["-log(Padj)"])))
     DEG_data.sort_values(by="importance", ascending=False, inplace=True)
@@ -35,7 +36,7 @@ if __name__ == "__main__":
 
     up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
     down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
-    NS_gene = DEG_data.loc[((DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold)) & (DEG_data["log2FoldChange"] < numpy.log2(args.fold))) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
+    NS_gene = DEG_data.loc[(DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold)) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
 
     texts = list()
 
@@ -56,16 +57,17 @@ if __name__ == "__main__":
     matplotlib.pyplot.axvline(x=-1 * numpy.log2(args.fold), linestyle="--", color="black")
     matplotlib.pyplot.text(x=-1 * numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s="log2(FC)={0:.1f}".format(-1 * numpy.log2(args.fold)), rotation="vertical", horizontalalignment="right", verticalalignment="bottom", fontsize="xx-small")
 
-    for index, d in up_gene.iloc[:args.annotation, :].iterrows():
-        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:red", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
-    for index, d in down_gene.iloc[:args.annotation, :].iterrows():
-        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:blue", fontsize="large", bbox={"alpha": 0.4, "color": "white"}))
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=10 ** 3)
+    for index, d in tqdm.tqdm(up_gene.iloc[:args.annotation, :].iterrows()):
+        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:red", fontsize="large"))
+    for index, d in tqdm.tqdm(down_gene.iloc[:args.annotation, :].iterrows()):
+        texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:blue", fontsize="large"))
+
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=10 ** 3)
 
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlabel("log2(Fold_Change)")
     matplotlib.pyplot.ylabel("-log10(Padj)")
-    matplotlib.pyplot.title("Up: {0:d}, Down: {1:d}".format(len(up_gene), len(down_gene)))
+    matplotlib.pyplot.title("Up: {0:d} & Down: {1:d}".format(len(up_gene), len(down_gene)))
     if matplotlib.pyplot.ylim()[1] < 2:
         matplotlib.pyplot.ylim(top=2)
 
