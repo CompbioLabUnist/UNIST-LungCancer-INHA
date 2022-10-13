@@ -39,7 +39,7 @@ def run(MSP: str, gene: str) -> str:
     matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = f"{gene}_{MSP}.pdf"
+    fig_name = f"{MSP}_{gene}.pdf"
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
