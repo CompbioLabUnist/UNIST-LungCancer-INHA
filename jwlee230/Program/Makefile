@@ -1152,7 +1152,7 @@ Output/RSEM/Plots/Cluster/%.SQC.MSP-Median.pdf: Python/draw_clustermap_RSEM_MSP.
 Output/RSEM/Plots/Cluster/%.SQC.MSP-Mean.pdf: Python/draw_clustermap_RSEM_MSP.py Output/RSEM/DEG/%.SQC.MSP-Mean.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/DEG/%.SQC.Normal.MSP-Mean.DEG.tsv Output/RSEM/DEG/%.SQC.CIS.MSP-Mean.DEG.tsv Output/RSEM/DEG/%.SQC.Primary.MSP-Mean.DEG.tsv | Output/RSEM/Plots/Cluster build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --mean 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Cluster/%.SQC.Recur.pdf: Python/draw_clustermap_RSEM_clinical.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.CIS-Primary.DEG.tsv | Output/RSEM/Plots/Cluster build.log
+Output/RSEM/Plots/Cluster/%.SQC.Recur.pdf: Python/draw_clustermap_RSEM_clinical.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/DEG/%.SQC.Recur.Normal-CIS.DEG.tsv Output/RSEM/DEG/%.SQC.Recur.Normal-Primary.DEG.tsv | Output/RSEM/Plots/Cluster build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Cluster/%.SQC.CIS.Recur.pdf: Python/draw_clustermap_RSEM_clinical.py Output/RSEM/DEG/%.SQC.CIS.Nonrecur-Recur.tsv $(CLINICAL_DATA_CSV) Output/RSEM/DEG/%.SQC.CIS.Nonrecur-Recur.DEG.tsv | Output/RSEM/Plots/Cluster build.log
