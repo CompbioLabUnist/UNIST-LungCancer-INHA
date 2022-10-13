@@ -4295,7 +4295,7 @@
         \end{table}
     \end{frame}
 
-    \subsubsection{Comparing cancer stage in LUSC}
+    \subsubsection{Comparing Cancer Stages in LUSC}
     \begin{frame}
         \frametitle{DEG Heatmap in LUSC}
 
@@ -4331,26 +4331,115 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{DEG Venn Diagrams in LUSC}
-        LUSC: Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUSC}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Up.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/BCL2L12.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/HMGA2.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Down.venn.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/MSH6.pdf}
                 \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both}& \mbox{(c) Down-regulated} \\
+                \mbox{(a) BCL2L12} & \mbox{(b) HMGA2} & \mbox{(c) MSH6} \\
             \end{array}$
-            \caption{DEG Venn Diagrams in LUSC}
+            \caption{Up-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PABPC1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PPP2R1A.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/TP63.pdf}
+                \\
+                \mbox{(d) PABPC1} & \mbox{(e) PPP2R1A} & \mbox{(f) TP63} \\
+            \end{array}$
+            \caption{Up-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PABPC1.pdf}
+                \\
+                \mbox{(g) PABPC1} \\
+            \end{array}$
+            \caption{Up-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/CACNA1D.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/ELN.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/ESR1.pdf}
+                \\
+                \mbox{(a) CACNA1D} & \mbox{(b) ELN} & \mbox{(c) ESR1} \\
+            \end{array}$
+            \caption{Down-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/IL6ST.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/NTRK3.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PER1.pdf}
+                \\
+                \mbox{(d) IL6ST} & \mbox{(e) NTRK3} & \mbox{(f) PER1} \\
+            \end{array}$
+            \caption{Down-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PPARG.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/PTPRB.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/TNFRSF14.pdf}
+                \\
+                \mbox{(g) PPARG} & \mbox{(h) PTPRB} & \mbox{(i) TNFRSF14} \\
+            \end{array}$
+            \caption{Down-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.violin/ZNF331.pdf}
+                \\
+                \mbox{(j) ZNF331} \\
+            \end{array}$
+            \caption{Down-regulated genes in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots in LUSC}
+        LUSC: Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Up.venn.pdf}
+            \caption{Up-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Down.venn.pdf}
+            \caption{Down-regulated genes in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.venn.pdf}
+            \caption{Upset plot in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Dysplasia in LUSC}
+        \frametitle{Enrichment tests with Normal vs. Dysplasia in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Dysplasia.Up.KEGG.pdf}
@@ -4364,7 +4453,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. CIS in LUSC}
+        \frametitle{Enrichment tests with Normal vs. CIS in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-CIS.Up.KEGG.pdf}
@@ -4378,7 +4467,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Primary in LUSC}
+        \frametitle{Enrichment tests with Normal vs. Primary in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Normal-Primary.Up.KEGG.pdf}
@@ -4412,7 +4501,16 @@
         \end{block}
     \end{frame}
 
-    \subsubsection{Comparing cancer stage in LUAD}
+    \subsubsection{Comparing Cancer Stages in LUAD}
+    \begin{frame}
+        \frametitle{DEG Heatmap in LUAD}
+
+        \begin{figure}
+            \includegraphics[width=0.35 \linewidth]{figures/DEG/Cluster/STAR.FPKM.ADC.pdf}
+            \caption{DEG FPKM Heatmap of LUAD}
+        \end{figure}
+    \end{frame}
+
     \begin{frame}
         \frametitle{DEG Volcano Plots in LUAD}
         LUAD: Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary
@@ -4439,26 +4537,32 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{DEG Venn Diagrams in LUAD}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUAD}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots in LUAD}
         LUAD: Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ Primary
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Down.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} &\mbox{(b) Both} & \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams in LUAD}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Up.venn.pdf}
+            \caption{Up-regulated genes in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Down.venn.pdf}
+            \caption{Down-regulated genes in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.venn.pdf}
+            \caption{Upset Plot in LUAD}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. AAH in LUAD}
+        \frametitle{Enrichment tests with Normal vs. AAH in LUAD}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AAH.Up.KEGG.pdf}
@@ -4472,7 +4576,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. AIS in LUAD}
+        \frametitle{Enrichment tests with Normal vs. AIS in LUAD}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-AIS.Up.KEGG.pdf}
@@ -4486,7 +4590,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Primary in LUAD}
+        \frametitle{Enrichment tests with Normal vs. Primary in LUAD}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Normal-Primary.Up.KEGG.pdf}
@@ -4545,6 +4649,10 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{DEG Heatmap of R vs. NR with CIS in LUSC}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots for R vs. NR with CIS in LUSC}
 
         \begin{figure}
@@ -4559,25 +4667,31 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{DEG Venn Diagrams for R vs. NR with CIS in  LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots for R vs. NR with CIS in LUSC}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots for R vs. NR with CIS in  LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams for R vs. NR with CIS in LUSC}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Up.venn.pdf}
+            \caption{Up-regulated genes for R vs. NR with CIS in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.Down.venn.pdf}
+            \caption{Down-regulated genes for R vs. NR with CIS in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-CIS.Recur-Nonrecur.venn.pdf}
+            \caption{Upset plots for R vs. NR with CIS in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for Recur-specific with CIS in LUSC}
+        \frametitle{Enrichment tests for Recur-specific with CIS in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Recur.Up.KEGG.pdf}
@@ -4591,7 +4705,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for Non-recur-specific with CIS in LUSC}
+        \frametitle{Enrichment tests for Non-recur-specific with CIS in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Nonrecur.Up.KEGG.pdf}
@@ -4605,7 +4719,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for Intersected with CIS in LUSC}
+        \frametitle{Enrichment tests for Intersected with CIS in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Both.Up.KEGG.pdf}
@@ -4616,6 +4730,10 @@
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-CIS.Both.Down.KEGG.pdf}
             \caption{Down-regulated Pathways for Intersected}
         \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{DEG Heatmap for R vs. NR with Primary in LUSC}
     \end{frame}
 
     \begin{frame}
@@ -4633,25 +4751,31 @@
         \end{figure}
     \end{frame}
 
-     \begin{frame}
-        \frametitle{DEG Venn Diagrams for R vs. NR with Primary in  LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots for R vs. NR with Primary in LUSC}
+    \end{frame}
+
+     \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots for R vs. NR with Primary in LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Down.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams for R vs. NR with Primary in LUSC}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Up.venn.pdf}
+            \caption{Up-regulated genes for R vs. NR with Primary in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.Down.venn.pdf}
+            \caption{Down-regulated genes for R vs. NR with Primary in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC-Primary.Recur-Nonrecur.venn.pdf}
+            \caption{Upset plots for R vs. NR with Primary in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for Recur-specific with Primary in LUSC}
+        \frametitle{Enrichment tests for Recur-specific with Primary in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Recur.Up.KEGG.pdf}
@@ -4665,7 +4789,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for NR-specific with Primary in LUSC}
+        \frametitle{Enrichment tests for NR-specific with Primary in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Nonrecur.Up.KEGG.pdf}
@@ -4679,7 +4803,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test for Intersected with Primary in LUSC}
+        \frametitle{Enrichment tests for Intersected with Primary in LUSC}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC-Primary.Both.Up.KEGG.pdf}
@@ -4730,6 +4854,10 @@
 
     \subsubsection{Within Recur in LUSC}
     \begin{frame}
+        \frametitle{DEG Heatmap with Recur in LUSC}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots with Recur in LUSC}
 
         \begin{figure}
@@ -4746,25 +4874,31 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{DEG Venn Diagrams with Recur in LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots with Recur in LUSC}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots with Recur in LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Up.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams with Recur samples in LUSC}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Up.venn.pdf}
+            \caption{Up-regulated genes with Recur in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.Down.venn.pdf}
+            \caption{Down-regulated genes with Recur in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Recur.venn.pdf}
+            \caption{Upset Plot with Recur in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. CIS for Recur}
+        \frametitle{Enrichment tests with Normal vs. CIS for Recur}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-CIS.Up.KEGG.pdf}
@@ -4778,7 +4912,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Primary for Recur}
+        \frametitle{Enrichment tests with Normal vs. Primary for Recur}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Recur.Normal-Primary.Up.KEGG.pdf}
@@ -4822,6 +4956,10 @@
 
     \subsubsection{Within Non-recur in LUSC}
     \begin{frame}
+        \frametitle{DEG Heatmap within Non-recur in LUSC}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots with Non-recur in LUSC}
 
         \begin{figure}
@@ -4838,25 +4976,31 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{DEG Venn Diagram with Non-recur in LUSC}
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots with Non-recur in LUSC}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots with Non-recur in LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Up.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both}& \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagram with Non-recur in LUSC}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Up.venn.pdf}
+            \caption{Up-regulated genes with Non-recur in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.Down.venn.pdf}
+            \caption{Down-regulated genes with Non-recur in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.Nonrecur.venn.pdf}
+            \caption{Upset Plot with Non-recur in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. CIS for Non-recur}
+        \frametitle{Enrichment tests with Normal vs. CIS for Non-recur}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-CIS.Up.KEGG.pdf}
@@ -4870,7 +5014,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Primary for Non-recur}
+        \frametitle{Enrichment tests with Normal vs. Primary for Non-recur}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
@@ -4922,6 +5066,10 @@
     \end{frame}
 
     \begin{frame}
+        \frametitle{DEG Heatmap with Non-recur in LUAD}
+    \end{frame}
+
+    \begin{frame}
         \frametitle{DEG Volcano Plots with Non-recur in LUAD}
 
         \begin{figure}
@@ -4938,25 +5086,31 @@
         \end{figure}
     \end{frame}
 
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots with Non-recur in LUAD}
+    \end{frame}
+
     \begin{frame}
-        \frametitle{DEG Venn Diagrams with Non-recur in LUAD}
+        \frametitle{DEG Upset Plots with Non-recur in LUAD}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Down.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Both} & \mbox{(c) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams with Non-recur in LUAD}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Up.venn.pdf}
+            \caption{Up-regulated genes with Non-recur in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.Down.venn.pdf}
+            \caption{Down-regulated genes with Non-recur in LUAD}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.ADC.Nonrecur.venn.pdf}
+            \caption{Upset Plot with Non-recur in LUAD}
         \end{figure}
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. AIS in LUAD}
+        \frametitle{Enrichment tests with Normal vs. AIS in LUAD}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-AIS.Up.KEGG.pdf}
@@ -4970,7 +5124,7 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Enrichment test with Normal vs. Primary in LUAD}
+        \frametitle{Enrichment tests with Normal vs. Primary in LUAD}
 
         \begin{figure}
             \includegraphics[width=0.8 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.ADC.Nonrecur.Normal-Primary.Up.KEGG.pdf}
@@ -5070,22 +5224,25 @@
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{DEG Venn Diagrams with MSP in LUSC}
+        \frametitle{Violin Plots with MSP in LUSC}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{DEG Upset Plots with MSP in LUSC}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Up.venn.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Down.venn.pdf}
-                \\
-                \mbox{(a) Up-regulated} & \mbox{(b) Down-regulated} \\
-            \end{array}$
-            \caption{DEG Venn Diagrams with MSP in LUSC}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Up.venn.pdf}
+            \caption{Up-regulated genes with MSP in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/DEG/Pair-Venn/STAR.FPKM.SQC.MSP-Median.Down.venn.pdf}
+            \caption{Down-regulated genes with MSP in LUSC}
         \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Enrichment test with MSP in LUSC}
+        \frametitle{Enrichment tests with MSP in LUSC}
         \begin{figure}
             \includegraphics[width=0.7 \linewidth]{figures/DEG/Enrichment/STAR.FPKM.SQC.MSP-Median.Up.KEGG.pdf}
             \caption{Up-regulated Pathways with MSP in LUSC}
