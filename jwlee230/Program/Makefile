@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 5
 MEMS = 50
-PARALLEL = 10
+PARALLEL = 3
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1682,74 +1682,86 @@ step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predicti
 .PHONY: step27
 
 # Step 28 (MuSiC)
-Output/Deconvolution Output/MuSiC:
+Output/MuSiC Output/MuSiC/Tcell Output/MuSiC/clustermap Output/MuSiC/heatmap Output/MuSiC/violin:
 	mkdir -p $@
 
-Output/Deconvolution/Bowtie2.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
-
-Output/Deconvolution/Bowtie2.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
-
-Output/Deconvolution/STAR.SQC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
-
-Output/Deconvolution/STAR.ADC.RSEM.tsv: Python/aggregate_RSEM_deconvolution.py $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) $(CLINICAL_DATA_CSV) $(GENCODE_GTF) $(TREMBL_TSV) | Output/Deconvolution build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
-
-Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | build.log Output/MuSiC
+Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/RSEM/DEG/%.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | build.log Output/MuSiC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/MuSiC
+Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/RSEM/DEG/%.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/MuSiC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv | build
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/MuSiC/heatmap/%.SQC.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/MuSiC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/MuSiC/heatmap/%.ADC.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/MuSiC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/MuSiC/violin/%.SQC.tar: Python/draw_violin_plot_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MuSiC/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/MuSiC/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/MuSiC/violin/%.ADC.tar: Python/draw_violin_plot_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step28-prepare: Output/Deconvolution/Bowtie2.SQC.RSEM.tsv Output/Deconvolution/Bowtie2.ADC.RSEM.tsv Output/Deconvolution/STAR.SQC.RSEM.tsv Output/Deconvolution/STAR.ADC.RSEM.tsv
-step28-MuSiC: Output/MuSiC/Bowtie2.SQC.GSE131907.tsv Output/MuSiC/Bowtie2.ADC.GSE131907.tsv Output/MuSiC/STAR.SQC.GSE131907.tsv Output/MuSiC/STAR.ADC.GSE131907.tsv Output/MuSiC/Bowtie2.SQC.GSE162498.tsv Output/MuSiC/Bowtie2.ADC.GSE162498.tsv Output/MuSiC/STAR.SQC.GSE162498.tsv Output/MuSiC/STAR.ADC.GSE162498.tsv
-step28-heatmap: Output/MuSiC/Bowtie2.SQC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.heatmap.pdf Output/MuSiC/STAR.SQC.GSE131907.heatmap.pdf Output/MuSiC/STAR.ADC.GSE131907.heatmap.pdf Output/MuSiC/Bowtie2.SQC.GSE162498.heatmap.pdf Output/MuSiC/Bowtie2.ADC.GSE162498.heatmap.pdf Output/MuSiC/STAR.SQC.GSE162498.heatmap.pdf Output/MuSiC/STAR.ADC.GSE162498.heatmap.pdf
-step28-violin: Output/MuSiC/Bowtie2.SQC.GSE131907.violin.tar Output/MuSiC/Bowtie2.ADC.GSE131907.violin.tar Output/MuSiC/STAR.SQC.GSE131907.violin.tar Output/MuSiC/STAR.ADC.GSE131907.violin.tar Output/MuSiC/Bowtie2.SQC.GSE162498.violin.tar Output/MuSiC/Bowtie2.ADC.GSE162498.violin.tar Output/MuSiC/STAR.SQC.GSE162498.violin.tar Output/MuSiC/STAR.ADC.GSE162498.violin.tar
-step28-Tcell: Output/MuSiC/STAR.SQC.GSE131907.Tcell_density.pdf Output/MuSiC/STAR.ADC.GSE131907.Tcell_density.pdf Output/MuSiC/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/MuSiC/Bowtie2.ADC.GSE131907.Tcell_density.pdf
-step28: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell
-.PHONY: step28-prepare step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell step28
+Output/MuSiC/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/clustermap/%.ADC.pdf: Python/draw_clustermap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/Tcell/%.SQC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/Tcell/%.ADC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+step28-MuSiC: Output/MuSiC/Bowtie2.GSE131907.tsv Output/MuSiC/Bowtie2.GSE131907.tsv Output/MuSiC/STAR.GSE131907.tsv Output/MuSiC/STAR.GSE131907.tsv Output/MuSiC/Bowtie2.GSE162498.tsv Output/MuSiC/Bowtie2.GSE162498.tsv Output/MuSiC/STAR.GSE162498.tsv Output/MuSiC/STAR.GSE162498.tsv Output/MuSiC/Bowtie2.TPM.GSE131907.tsv Output/MuSiC/Bowtie2.TPM.GSE131907.tsv Output/MuSiC/STAR.TPM.GSE131907.tsv Output/MuSiC/STAR.TPM.GSE131907.tsv Output/MuSiC/Bowtie2.TPM.GSE162498.tsv Output/MuSiC/Bowtie2.TPM.GSE162498.tsv Output/MuSiC/STAR.TPM.GSE162498.tsv Output/MuSiC/STAR.TPM.GSE162498.tsv Output/MuSiC/Bowtie2.FPKM.GSE131907.tsv Output/MuSiC/Bowtie2.FPKM.GSE131907.tsv Output/MuSiC/STAR.FPKM.GSE131907.tsv Output/MuSiC/STAR.FPKM.GSE131907.tsv Output/MuSiC/Bowtie2.FPKM.GSE162498.tsv Output/MuSiC/Bowtie2.FPKM.GSE162498.tsv Output/MuSiC/STAR.FPKM.GSE162498.tsv Output/MuSiC/STAR.FPKM.GSE162498.tsv
+step28-heatmap: Output/MuSiC/heatmap/Bowtie2.GSE131907.SQC.pdf Output/MuSiC/heatmap/Bowtie2.GSE131907.ADC.pdf Output/MuSiC/heatmap/Bowtie2.GSE162498.SQC.pdf Output/MuSiC/heatmap/Bowtie2.GSE162498.ADC.pdf Output/MuSiC/heatmap/STAR.GSE131907.SQC.pdf Output/MuSiC/heatmap/STAR.GSE131907.ADC.pdf Output/MuSiC/heatmap/STAR.GSE162498.SQC.pdf Output/MuSiC/heatmap/STAR.GSE162498.ADC.pdf Output/MuSiC/heatmap/Bowtie2.TPM.GSE131907.SQC.pdf Output/MuSiC/heatmap/Bowtie2.TPM.GSE131907.ADC.pdf Output/MuSiC/heatmap/Bowtie2.TPM.GSE162498.SQC.pdf Output/MuSiC/heatmap/Bowtie2.TPM.GSE162498.ADC.pdf Output/MuSiC/heatmap/STAR.TPM.GSE131907.SQC.pdf Output/MuSiC/heatmap/STAR.TPM.GSE131907.ADC.pdf Output/MuSiC/heatmap/STAR.TPM.GSE162498.SQC.pdf Output/MuSiC/heatmap/STAR.TPM.GSE162498.ADC.pdf Output/MuSiC/heatmap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/MuSiC/heatmap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/MuSiC/heatmap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/MuSiC/heatmap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/MuSiC/heatmap/STAR.FPKM.GSE131907.SQC.pdf Output/MuSiC/heatmap/STAR.FPKM.GSE131907.ADC.pdf Output/MuSiC/heatmap/STAR.FPKM.GSE162498.SQC.pdf Output/MuSiC/heatmap/STAR.FPKM.GSE162498.ADC.pdf
+step28-violin: Output/MuSiC/violin/Bowtie2.GSE131907.SQC.tar Output/MuSiC/violin/Bowtie2.GSE131907.ADC.tar Output/MuSiC/violin/Bowtie2.GSE162498.SQC.tar Output/MuSiC/violin/Bowtie2.GSE162498.ADC.tar Output/MuSiC/violin/STAR.GSE131907.SQC.tar Output/MuSiC/violin/STAR.GSE131907.ADC.tar Output/MuSiC/violin/STAR.GSE162498.SQC.tar Output/MuSiC/violin/STAR.GSE162498.ADC.tar Output/MuSiC/violin/Bowtie2.TPM.GSE131907.SQC.tar Output/MuSiC/violin/Bowtie2.TPM.GSE131907.ADC.tar Output/MuSiC/violin/Bowtie2.TPM.GSE162498.SQC.tar Output/MuSiC/violin/Bowtie2.TPM.GSE162498.ADC.tar Output/MuSiC/violin/STAR.TPM.GSE131907.SQC.tar Output/MuSiC/violin/STAR.TPM.GSE131907.ADC.tar Output/MuSiC/violin/STAR.TPM.GSE162498.SQC.tar Output/MuSiC/violin/STAR.TPM.GSE162498.ADC.tar Output/MuSiC/violin/Bowtie2.FPKM.GSE131907.SQC.tar Output/MuSiC/violin/Bowtie2.FPKM.GSE131907.ADC.tar Output/MuSiC/violin/Bowtie2.FPKM.GSE162498.SQC.tar Output/MuSiC/violin/Bowtie2.FPKM.GSE162498.ADC.tar Output/MuSiC/violin/STAR.FPKM.GSE131907.SQC.tar Output/MuSiC/violin/STAR.FPKM.GSE131907.ADC.tar Output/MuSiC/violin/STAR.FPKM.GSE162498.SQC.tar Output/MuSiC/violin/STAR.FPKM.GSE162498.ADC.tar
+step28-cluster: Output/MuSiC/clustermap/Bowtie2.GSE131907.SQC.pdf Output/MuSiC/clustermap/Bowtie2.GSE131907.ADC.pdf Output/MuSiC/clustermap/Bowtie2.GSE162498.SQC.pdf Output/MuSiC/clustermap/Bowtie2.GSE162498.ADC.pdf Output/MuSiC/clustermap/STAR.GSE131907.SQC.pdf Output/MuSiC/clustermap/STAR.GSE131907.ADC.pdf Output/MuSiC/clustermap/STAR.GSE162498.SQC.pdf Output/MuSiC/clustermap/STAR.GSE162498.ADC.pdf Output/MuSiC/clustermap/Bowtie2.TPM.GSE131907.SQC.pdf Output/MuSiC/clustermap/Bowtie2.TPM.GSE131907.ADC.pdf Output/MuSiC/clustermap/Bowtie2.TPM.GSE162498.SQC.pdf Output/MuSiC/clustermap/Bowtie2.TPM.GSE162498.ADC.pdf Output/MuSiC/clustermap/STAR.TPM.GSE131907.SQC.pdf Output/MuSiC/clustermap/STAR.TPM.GSE131907.ADC.pdf Output/MuSiC/clustermap/STAR.TPM.GSE162498.SQC.pdf Output/MuSiC/clustermap/STAR.TPM.GSE162498.ADC.pdf Output/MuSiC/clustermap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/MuSiC/clustermap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/MuSiC/clustermap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/MuSiC/clustermap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/MuSiC/clustermap/STAR.FPKM.GSE131907.SQC.pdf Output/MuSiC/clustermap/STAR.FPKM.GSE131907.ADC.pdf Output/MuSiC/clustermap/STAR.FPKM.GSE162498.SQC.pdf Output/MuSiC/clustermap/STAR.FPKM.GSE162498.ADC.pdf
+step28-Tcell: Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.pdf Output/MuSiC/Tcell/Bowtie2.GSE131907.ADC.pdf Output/MuSiC/Tcell/Bowtie2.GSE162498.SQC.pdf Output/MuSiC/Tcell/Bowtie2.GSE162498.ADC.pdf Output/MuSiC/Tcell/STAR.GSE131907.SQC.pdf Output/MuSiC/Tcell/STAR.GSE131907.ADC.pdf Output/MuSiC/Tcell/STAR.GSE162498.SQC.pdf Output/MuSiC/Tcell/STAR.GSE162498.ADC.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.SQC.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.ADC.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE162498.SQC.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE162498.ADC.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.SQC.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.ADC.pdf Output/MuSiC/Tcell/STAR.TPM.GSE162498.SQC.pdf Output/MuSiC/Tcell/STAR.TPM.GSE162498.ADC.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.SQC.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.ADC.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE162498.SQC.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE162498.ADC.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.SQC.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.ADC.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE162498.SQC.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE162498.ADC.pdf
+step28: step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell
+.PHONY: step28-MuSiC step28-heatmap step28-violin step28-cluster step28-Tcell step28
 
 # Step 29 (BisqueRNA)
-Output/BisqueRNA:
+Output/BisqueRNA Output/BisqueRNA/Tcell Output/BisqueRNA/clustermap Output/BisqueRNA/heatmap Output/BisqueRNA/violin:
 	mkdir -p $@
 
-Output/BisqueRNA/%.GSE131907.tsv: R/run_BisqueRNA.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/BisqueRNA build.log
+Output/BisqueRNA/%.GSE131907.tsv: R/run_BisqueRNA.R Output/RSEM/DEG/%.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/BisqueRNA build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/Deconvolution/%.RSEM.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/BisqueRNA
+Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/RSEM/DEG/%.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/BisqueRNA
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/BisqueRNA/heatmap/%.SQC.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/BisqueRNA/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/BisqueRNA/heatmap/%.ADC.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/BisqueRNA/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/BisqueRNA/violin/%.SQC.tar: Python/draw_violin_plot_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/BisqueRNA/%.Tcell_density.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/BisqueRNA/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/BisqueRNA/violin/%.ADC.tar: Python/draw_violin_plot_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step29-BisqueRNA: Output/BisqueRNA/Bowtie2.SQC.GSE131907.tsv Output/BisqueRNA/Bowtie2.ADC.GSE131907.tsv Output/BisqueRNA/STAR.SQC.GSE131907.tsv Output/BisqueRNA/STAR.ADC.GSE131907.tsv Output/BisqueRNA/Bowtie2.SQC.GSE162498.tsv Output/BisqueRNA/Bowtie2.ADC.GSE162498.tsv Output/BisqueRNA/STAR.SQC.GSE162498.tsv Output/BisqueRNA/STAR.ADC.GSE162498.tsv
-step29-heatmap: Output/BisqueRNA/Bowtie2.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE131907.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE131907.heatmap.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.SQC.GSE162498.heatmap.pdf Output/BisqueRNA/STAR.ADC.GSE162498.heatmap.pdf
-step29-violin: Output/BisqueRNA/Bowtie2.SQC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE131907.violin.tar Output/BisqueRNA/STAR.SQC.GSE131907.violin.tar Output/BisqueRNA/STAR.ADC.GSE131907.violin.tar Output/BisqueRNA/Bowtie2.SQC.GSE162498.violin.tar Output/BisqueRNA/Bowtie2.ADC.GSE162498.violin.tar Output/BisqueRNA/STAR.SQC.GSE162498.violin.tar Output/BisqueRNA/STAR.ADC.GSE162498.violin.tar
-step29-cluster: Output/BisqueRNA/Bowtie2.SQC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE131907.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE131907.cluster.pdf Output/BisqueRNA/Bowtie2.SQC.GSE162498.cluster.pdf Output/BisqueRNA/Bowtie2.ADC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.SQC.GSE162498.cluster.pdf Output/BisqueRNA/STAR.ADC.GSE162498.cluster.pdf
-step29-Tcell: Output/BisqueRNA/STAR.SQC.GSE131907.Tcell_density.pdf Output/BisqueRNA/STAR.ADC.GSE131907.Tcell_density.pdf Output/BisqueRNA/Bowtie2.SQC.GSE131907.Tcell_density.pdf Output/BisqueRNA/Bowtie2.ADC.GSE131907.Tcell_density.pdf
+Output/BisqueRNA/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/clustermap/%.ADC.pdf: Python/draw_clustermap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/Tcell/%.SQC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/Tcell/%.ADC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+step29-BisqueRNA: Output/BisqueRNA/Bowtie2.GSE131907.tsv Output/BisqueRNA/Bowtie2.GSE131907.tsv Output/BisqueRNA/STAR.GSE131907.tsv Output/BisqueRNA/STAR.GSE131907.tsv Output/BisqueRNA/Bowtie2.GSE162498.tsv Output/BisqueRNA/Bowtie2.GSE162498.tsv Output/BisqueRNA/STAR.GSE162498.tsv Output/BisqueRNA/STAR.GSE162498.tsv Output/BisqueRNA/Bowtie2.TPM.GSE131907.tsv Output/BisqueRNA/Bowtie2.TPM.GSE131907.tsv Output/BisqueRNA/STAR.TPM.GSE131907.tsv Output/BisqueRNA/STAR.TPM.GSE131907.tsv Output/BisqueRNA/Bowtie2.TPM.GSE162498.tsv Output/BisqueRNA/Bowtie2.TPM.GSE162498.tsv Output/BisqueRNA/STAR.TPM.GSE162498.tsv Output/BisqueRNA/STAR.TPM.GSE162498.tsv Output/BisqueRNA/Bowtie2.FPKM.GSE131907.tsv Output/BisqueRNA/Bowtie2.FPKM.GSE131907.tsv Output/BisqueRNA/STAR.FPKM.GSE131907.tsv Output/BisqueRNA/STAR.FPKM.GSE131907.tsv Output/BisqueRNA/Bowtie2.FPKM.GSE162498.tsv Output/BisqueRNA/Bowtie2.FPKM.GSE162498.tsv Output/BisqueRNA/STAR.FPKM.GSE162498.tsv Output/BisqueRNA/STAR.FPKM.GSE162498.tsv
+step29-heatmap: Output/BisqueRNA/heatmap/Bowtie2.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/Bowtie2.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.GSE162498.ADC.pdf Output/BisqueRNA/heatmap/STAR.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/STAR.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/STAR.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/STAR.GSE162498.ADC.pdf Output/BisqueRNA/heatmap/Bowtie2.TPM.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.TPM.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/Bowtie2.TPM.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.TPM.GSE162498.ADC.pdf Output/BisqueRNA/heatmap/STAR.TPM.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/STAR.TPM.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/STAR.TPM.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/STAR.TPM.GSE162498.ADC.pdf Output/BisqueRNA/heatmap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/BisqueRNA/heatmap/STAR.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/heatmap/STAR.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/heatmap/STAR.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/heatmap/STAR.FPKM.GSE162498.ADC.pdf
+step29-violin: Output/BisqueRNA/violin/Bowtie2.GSE131907.SQC.tar Output/BisqueRNA/violin/Bowtie2.GSE131907.ADC.tar Output/BisqueRNA/violin/Bowtie2.GSE162498.SQC.tar Output/BisqueRNA/violin/Bowtie2.GSE162498.ADC.tar Output/BisqueRNA/violin/STAR.GSE131907.SQC.tar Output/BisqueRNA/violin/STAR.GSE131907.ADC.tar Output/BisqueRNA/violin/STAR.GSE162498.SQC.tar Output/BisqueRNA/violin/STAR.GSE162498.ADC.tar Output/BisqueRNA/violin/Bowtie2.TPM.GSE131907.SQC.tar Output/BisqueRNA/violin/Bowtie2.TPM.GSE131907.ADC.tar Output/BisqueRNA/violin/Bowtie2.TPM.GSE162498.SQC.tar Output/BisqueRNA/violin/Bowtie2.TPM.GSE162498.ADC.tar Output/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.tar Output/BisqueRNA/violin/STAR.TPM.GSE131907.ADC.tar Output/BisqueRNA/violin/STAR.TPM.GSE162498.SQC.tar Output/BisqueRNA/violin/STAR.TPM.GSE162498.ADC.tar Output/BisqueRNA/violin/Bowtie2.FPKM.GSE131907.SQC.tar Output/BisqueRNA/violin/Bowtie2.FPKM.GSE131907.ADC.tar Output/BisqueRNA/violin/Bowtie2.FPKM.GSE162498.SQC.tar Output/BisqueRNA/violin/Bowtie2.FPKM.GSE162498.ADC.tar Output/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.tar Output/BisqueRNA/violin/STAR.FPKM.GSE131907.ADC.tar Output/BisqueRNA/violin/STAR.FPKM.GSE162498.SQC.tar Output/BisqueRNA/violin/STAR.FPKM.GSE162498.ADC.tar
+step29-cluster: Output/BisqueRNA/clustermap/Bowtie2.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/Bowtie2.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.GSE162498.ADC.pdf Output/BisqueRNA/clustermap/STAR.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/STAR.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/STAR.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/STAR.GSE162498.ADC.pdf Output/BisqueRNA/clustermap/Bowtie2.TPM.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.TPM.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/Bowtie2.TPM.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.TPM.GSE162498.ADC.pdf Output/BisqueRNA/clustermap/STAR.TPM.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/STAR.TPM.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/STAR.TPM.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/STAR.TPM.GSE162498.ADC.pdf Output/BisqueRNA/clustermap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/clustermap/STAR.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/clustermap/STAR.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/clustermap/STAR.FPKM.GSE162498.ADC.pdf
+step29-Tcell: Output/BisqueRNA/Tcell/Bowtie2.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/Bowtie2.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.GSE162498.ADC.pdf Output/BisqueRNA/Tcell/STAR.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/STAR.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/STAR.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/STAR.GSE162498.ADC.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE162498.ADC.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE162498.ADC.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE162498.ADC.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.SQC.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.ADC.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE162498.SQC.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE162498.ADC.pdf
 step29: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell
 .PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-cluster step29-Tcell step29
 
