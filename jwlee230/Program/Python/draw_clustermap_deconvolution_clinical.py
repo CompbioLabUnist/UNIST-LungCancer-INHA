@@ -81,6 +81,9 @@ if __name__ == "__main__":
         selected_data = input_data.loc[:, selected_samples]
         selected_data = selected_data.loc[list(filter(lambda x: sum(selected_data.loc[x, :]) > 0.0, list(selected_data.index))), :]
 
+        if selected_data.shape[1] < 2:
+            continue
+
         g = seaborn.clustermap(data=selected_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=color_data.loc[selected_samples, args.column[0]], xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
         g.ax_heatmap.set_xlabel(f"{selected_data.shape[1]} {stage} samples")
