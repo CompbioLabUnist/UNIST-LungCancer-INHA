@@ -43,7 +43,8 @@ if __name__ == "__main__":
     print(patients)
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
-    input_data = input_data.loc[list(filter(lambda x: sum(input_data.loc[x, :]) > 0, list(input_data.index))), list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)))]
+    input_data = input_data.loc[:, list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)))]
+    input_data = input_data.loc[list(filter(lambda x: sum(input_data.loc[x, :]) > 0.0, list(input_data.index))), :]
     print(input_data)
 
     palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(input_data.columns)))
