@@ -51,7 +51,7 @@ if __name__ == "__main__":
     stage_set = set(map(step00.get_long_sample_type, list(input_data.columns)))
     stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
-    g = seaborn.clustermap(data=input_data, figsize=(32, input_data.shape[0] / 2), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=palette, xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
+    g = seaborn.clustermap(data=input_data, figsize=(input_data.shape[1], input_data.shape[0]), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=palette, xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
     g.ax_heatmap.set_xlabel(f"{input_data.shape[1]} samples")
     g.ax_heatmap.set_ylabel(f"{input_data.shape[0]} cell types")

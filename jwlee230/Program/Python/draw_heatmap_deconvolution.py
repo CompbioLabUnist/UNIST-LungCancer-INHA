@@ -46,7 +46,7 @@ if __name__ == "__main__":
     input_data = input_data.loc[sorted(input_data.index), sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)), key=step00.sorting_by_type)]
     print(input_data)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(32, input_data.shape[0] / 2))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(input_data.shape[1], input_data.shape[0]))
 
     seaborn.heatmap(data=input_data, xticklabels=True, yticklabels=True, square=False, ax=ax, cmap="Reds", vmin=0, vmax=1)
 
