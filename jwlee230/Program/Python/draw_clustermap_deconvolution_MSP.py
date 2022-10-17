@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     figures = list()
     for MSP in tqdm.tqdm(step00.sharing_columns):
-        g = seaborn.clustermap(data=input_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=color_data[["Stage", MSP]], xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=input_data, figsize=(32, input_data.shape[0] / 2), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=color_data[["Stage", MSP]], xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
         g.ax_heatmap.set_xlabel(f"{input_data.shape[1]} samples")
         g.ax_heatmap.set_ylabel(f"{input_data.shape[0]} cell types")
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         if selected_data.shape[1] < 2:
             continue
 
-        g = seaborn.clustermap(data=selected_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=color_data.loc[selected_samples, MSP], xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=selected_data, figsize=(32, input_data.shape[0] / 2), row_cluster=True, col_cluster=True, cbar_pos=(-0.04, 0.2, 0.02, 0.6), col_colors=color_data.loc[selected_samples, MSP], xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
         g.ax_heatmap.set_xlabel(f"{selected_data.shape[1]} {stage} samples")
         g.ax_heatmap.set_ylabel(f"{selected_data.shape[0]} cell types")
