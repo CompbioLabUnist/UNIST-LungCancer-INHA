@@ -49,7 +49,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(lambda x: "tab:red" if step00.get_patient(x) in SQCs else "tab:blue", input_data.columns)), xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=0, center=0, robust=True)
+    g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=True, col_cluster=True, cbar_pos=None, col_colors=list(map(lambda x: "tab:red" if step00.get_patient(x) in SQCs else "tab:blue", input_data.columns)), xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=1, center=0, robust=True)
 
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=x) for x in ["tab:red", "tab:blue"]], ["LUSC", "LUAD"], title="NSCLC", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 
