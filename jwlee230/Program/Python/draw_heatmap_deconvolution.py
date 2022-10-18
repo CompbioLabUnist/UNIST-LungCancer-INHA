@@ -43,13 +43,15 @@ if __name__ == "__main__":
     print(patients)
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0).T
-    input_data = input_data.loc[sorted(input_data.index), sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)), key=step00.sorting_by_type)]
+    input_data = input_data.loc[sorted(list(input_data.index), key=lambda x: sum(input_data.loc[x, :]), reverse=True), sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.columns)), key=step00.sorting_by_type)]
     print(input_data)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(input_data.shape[1] / 2, input_data.shape[0] / 2))
 
-    seaborn.heatmap(data=input_data, xticklabels=False, yticklabels=False, square=False, ax=ax, cmap="Reds", vmin=0, vmax=1, robust=True)
+    seaborn.heatmap(data=input_data, xticklabels=False, yticklabels=True, square=False, ax=ax, cmap="Reds", vmin=0, vmax=1, robust=True)
 
+    matplotlib.pyplot.xticks(fontsize="xx-small")
+    matplotlib.pyplot.yticks(fontsize="xx-small")
     matplotlib.pyplot.xlabel(f"{input_data.shape[1]} samples")
     matplotlib.pyplot.ylabel(f"{input_data.shape[0]} cell types")
     matplotlib.pyplot.tight_layout()
