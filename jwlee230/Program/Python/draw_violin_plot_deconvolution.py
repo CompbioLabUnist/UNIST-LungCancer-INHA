@@ -33,7 +33,7 @@ def run(cell: str) -> str:
         return ""
 
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"{cell}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel("Proportion")
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     if not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".tar"):
-        raise ValueError("Output must end with .tar!!")
+        raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
 

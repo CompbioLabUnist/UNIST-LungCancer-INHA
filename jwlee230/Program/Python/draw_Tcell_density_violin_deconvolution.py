@@ -72,7 +72,7 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y="T cell density", order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y="T cell density", order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=input_data, x="Stage", y="T cell density", order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()

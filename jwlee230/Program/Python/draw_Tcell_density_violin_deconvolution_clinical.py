@@ -2,6 +2,7 @@
 draw_Tcell_density_violin_deconvolution_clinical.py: draw T-cell density violin plot for deconvolution result with clinical values
 """
 import argparse
+import itertools
 import matplotlib
 import matplotlib.pyplot
 import pandas
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x=args.column[0], y="T cell density", order=args.column[1:], hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in zip(order, order[1:]) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order], data=input_data, x=args.column[0], y="T cell density", order=args.column[1:], hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order], data=input_data, x=args.column[0], y="T cell density", order=args.column[1:], hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
