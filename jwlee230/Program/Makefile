@@ -3948,7 +3948,7 @@ step47: step47-SQC
 .PHONY: step47-SQC step47
 
 # Step 48 (TIMER 2.0)
-Output/TIMER Output/TIMER-CNV:
+Output/TIMER Output/TIMER/Violin Output/TIMER/Clustermap Output/TIMER-CNV:
 	mkdir -p $@
 
 Output/TIMER/%.SQC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/TIMER
@@ -3958,10 +3958,22 @@ Output/TIMER/%.ADC.csv: Python/change_TSV_CSV.py Output/RSEM/DEG/%.tsv $(CLINICA
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/TIMER/%.estimation_matrix.csv: Output/TIMER/%.csv
-	@echo "You have to manually execute TIMER on < http://timer.cistrome.org > with $^ CSV file in order to make $@ CSV file!!"
+	@echo "You have to manually execute TIMER on < http://timer.cistrome.org & http://timer.comp-genomics.org > with $^ CSV file in order to make $@ CSV file!!"
 
-Output/TIMER/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/TIMER/Violin/%.tar: Python/draw_violin_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log Output/TIMER/Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Violin/%.Recurrence.tar: Python/draw_violin_TIMER_clinical.py Output/TIMER/%.estimation_matrix.csv $(CLINICAL_DATA_CSV) | build.log Output/TIMER/Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Violin/%.Smoking.tar: Python/draw_violin_TIMER_clinical.py Output/TIMER/%.estimation_matrix.csv $(CLINICAL_DATA_CSV) | build.log Output/TIMER/Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Violin/%.MSP-median.tar: Python/draw_violin_TIMER_MSP.py Output/TIMER/%.estimation_matrix.csv Output/MutationSharedProportion/BWA.tsv | build.log Output/TIMER/Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --median 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Violin/%.MSP-mean.tar: Python/draw_violin_TIMER_MSP.py Output/TIMER/%.estimation_matrix.csv Output/MutationSharedProportion/BWA.tsv | build.log Output/TIMER/Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --mean 1> $@.stdout 2> $@.stderr
 
 Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -3970,10 +3982,12 @@ Output/TIMER-CNV/%.Sequenza-Bowtie2.tar: Python/compare_TIMER_sequenza.py Output
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step48-CSV: Output/TIMER/STAR.SQC.csv Output/TIMER/STAR.TPM.SQC.csv Output/TIMER/STAR.FPKM.SQC.csv Output/TIMER/STAR.ADC.csv Output/TIMER/STAR.TPM.ADC.csv Output/TIMER/STAR.FPKM.ADC.csv Output/TIMER/Bowtie2.SQC.csv Output/TIMER/Bowtie2.TPM.SQC.csv Output/TIMER/Bowtie2.FPKM.SQC.csv Output/TIMER/Bowtie2.ADC.csv Output/TIMER/Bowtie2.TPM.ADC.csv Output/TIMER/Bowtie2.FPKM.ADC.csv
-step48-violin: Output/TIMER/STAR.SQC.tar Output/TIMER/STAR.TPM.SQC.tar Output/TIMER/STAR.FPKM.SQC.tar Output/TIMER/STAR.ADC.tar Output/TIMER/STAR.TPM.ADC.tar Output/TIMER/STAR.FPKM.ADC.tar Output/TIMER/Bowtie2.SQC.tar Output/TIMER/Bowtie2.TPM.SQC.tar Output/TIMER/Bowtie2.FPKM.SQC.tar Output/TIMER/Bowtie2.ADC.tar Output/TIMER/Bowtie2.TPM.ADC.tar Output/TIMER/Bowtie2.FPKM.ADC.tar
-step48-CNV: Output/TIMER-CNV/STAR.SQC.Sequenza-BWA.tar Output/TIMER-CNV/STAR.ADC.Sequenza-BWA.tar Output/TIMER-CNV/Bowtie2.SQC.Sequenza-BWA.tar Output/TIMER-CNV/Bowtie2.ADC.Sequenza-BWA.tar Output/TIMER-CNV/STAR.SQC.Sequenza-Bowtie2.tar Output/TIMER-CNV/STAR.ADC.Sequenza-Bowtie2.tar Output/TIMER-CNV/Bowtie2.SQC.Sequenza-Bowtie2.tar Output/TIMER-CNV/Bowtie2.ADC.Sequenza-Bowtie2.tar
-step48: step48-CSV step48-violin
-.PHONY: step48-CSV step48-violin step48
+step48-violin: Output/TIMER/Violin/Bowtie2.SQC.tar Output/TIMER/Violin/STAR.SQC.tar Output/TIMER/Violin/Bowtie2.ADC.tar Output/TIMER/Violin/STAR.ADC.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.tar Output/TIMER/Violin/STAR.TPM.SQC.tar Output/TIMER/Violin/Bowtie2.TPM.ADC.tar Output/TIMER/Violin/STAR.TPM.ADC.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.tar Output/TIMER/Violin/STAR.FPKM.SQC.tar Output/TIMER/Violin/Bowtie2.FPKM.ADC.tar Output/TIMER/Violin/STAR.FPKM.ADC.tar
+step48-violin-Recurrence: Output/TIMER/Violin/Bowtie2.SQC.Recurrence.tar Output/TIMER/Violin/STAR.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.ADC.Recurrence.tar Output/TIMER/Violin/STAR.ADC.Recurrence.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.Recurrence.tar Output/TIMER/Violin/STAR.TPM.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.TPM.ADC.Recurrence.tar Output/TIMER/Violin/STAR.TPM.ADC.Recurrence.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.Recurrence.tar Output/TIMER/Violin/STAR.FPKM.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.FPKM.ADC.Recurrence.tar Output/TIMER/Violin/STAR.FPKM.ADC.Recurrence.tar
+step48-violin-Smoking: Output/TIMER/Violin/Bowtie2.SQC.Smoking.tar Output/TIMER/Violin/STAR.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.ADC.Smoking.tar Output/TIMER/Violin/STAR.ADC.Smoking.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.Smoking.tar Output/TIMER/Violin/STAR.TPM.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.TPM.ADC.Smoking.tar Output/TIMER/Violin/STAR.TPM.ADC.Smoking.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.Smoking.tar Output/TIMER/Violin/STAR.FPKM.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.FPKM.ADC.Smoking.tar Output/TIMER/Violin/STAR.FPKM.ADC.Smoking.tar
+step48-violin-MSP: Output/TIMER/Violin/Bowtie2.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.SQC.MSP-median.tar Output/TIMER/Violin/STAR.SQC.MSP-mean.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.TPM.SQC.MSP-median.tar Output/TIMER/Violin/STAR.TPM.SQC.MSP-mean.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.FPKM.SQC.MSP-median.tar Output/TIMER/Violin/STAR.FPKM.SQC.MSP-mean.tar 
+step48: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP
+.PHONY: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP step48
 
 # Step 49 (MiXCR)
 Output/MiXCR/WES Output/MiXCR/WTS:
