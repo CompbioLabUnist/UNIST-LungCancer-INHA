@@ -41,10 +41,10 @@ if __name__ == "__main__":
     print(input_data)
 
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data[args.column[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column[0]], list(input_data.index)))
     for stage in set(input_data["Stage"]):
         if any([(len(input_data.loc[(input_data["Stage"] == stage) & (input_data[args.column[0]] == clinical)]) < 3) for clinical in args.column[1:]]):
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
-    input_data[args.column[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column[0]], list(input_data.index)))
     print(input_data)
 
     histology &= set(map(step00.get_patient, list(input_data.index)))

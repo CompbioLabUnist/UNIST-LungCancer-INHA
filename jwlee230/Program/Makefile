@@ -3975,6 +3975,9 @@ Output/TIMER/Violin/%.MSP-median.tar: Python/draw_violin_TIMER_MSP.py Output/TIM
 Output/TIMER/Violin/%.MSP-mean.tar: Python/draw_violin_TIMER_MSP.py Output/TIMER/%.estimation_matrix.csv Output/MutationSharedProportion/BWA.tsv | build.log Output/TIMER/Violin
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --mean 1> $@.stdout 2> $@.stderr
 
+Output/TIMER/Clustermap/%.tar: Python/draw_clustermap_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log Output/TIMER/Clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
