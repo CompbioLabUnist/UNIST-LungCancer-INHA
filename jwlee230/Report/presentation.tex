@@ -2479,434 +2479,6 @@
         \frametitle{Findings in Tumor Evolution Trajectories Analysis}
     \end{frame}
 
-    \subsection{Bulk Cell Deconvolution}
-    \begin{frame}
-        \frametitle{BisqueRNA?}
-
-        \begin{figure}
-            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Bisque.jpg}
-            \caption{Workflow for BisqueRNA \protect\cite{Bisque1}}
-        \end{figure}
-    \end{frame}
-
-    \subsubsection{Reference by \protect\citeA{singlecell1}}
-    \begin{frame}
-        \frametitle{Reference Single-cell Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_1.jpg}
-            \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plot in LUSC}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.SQC.GSE131907.cluster.pdf}
-            \caption{Cluster Plot in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUSC}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ActivatedDCs.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/AT2.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/CD1c+DCs.pdf}
-                \\
-                \mbox{(a) Activated DCs} & \mbox{(b) Alveolar type II} & \mbox{(c) Langerhans cells} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Ciliated.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/ExhaustedTfh.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/mo-Mac.pdf}
-                \\
-                \mbox{(d) Ciliated cells} & \mbox{\tiny (e) Exhausted T follicular helper} & \mbox{(f) Mo \& Mac} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/pDCs.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/PleuralMac.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/Treg.pdf}
-                \\
-                \mbox{(g) Plasmacytoid DCs} & \mbox{(h) Pleural Mac} & \mbox{(i) Regulatory T cells} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE131907.violin/tS1.pdf}
-                &
-                &
-                \\
-                \mbox{(j) Transcriptional states 1} &  & \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
-
-        \begin{block}{Activated DCs}
-            \begin{enumerate}
-                \item Activated DCs have higher proportion in Normal samples.
-                \item DCs are central regulators of adaptive immune response, \textit{e.g.} anti-tumoral responses .
-                \item DCs establish a rare immune cell population in tumors .
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Alveolar type II}
-            \begin{enumerate}
-                \item Alveolar type II have lower proportion in Normal samples.
-                \item Alveolar type II proliferate to restore epithelium, and participate in innate immune response \cite{ATII-1}.
-                \item Capability of initiating lung cancer development \cite{ATII-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD1c+ DCs (Langerhans cells; LCs)}
-            \begin{enumerate}
-                \item LCs have higher proportion in Normal samples.
-                \item LCs impact on pathology by inducing tolerance or mediating inflammation \cite{LCs-1}
-                \item LCs facilitate DNA damage and squamous cell carcinoma \cite{LCs-2}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Ciliated cells}
-            \begin{enumerate}
-                \item Ciliated cells have higher proportion in Normal samples.
-                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
-                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Exhausted T follicular helper cells (Tfh)}
-            \begin{enumerate}
-                \item Exhausted Tfh is gradually decreased along cancer worsen.
-                \item Tfh cell response is critical for viral infection \cite{Tfh-1, Tfh-2}.
-                \item Down-regulated Tfh exhaustion correlate with compromise CD8 T-cell immunity \cite{Tfh-3}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Monocyte \& Macrophage}
-            \begin{enumerate}
-                \item Monocyte \& Macrophage have lower proportion in Normal samples.
-                \item Monocyte is a regulator of tumor development \& progression \cite{monocyte-1}.
-                \item Macrophage is a regulator of link between inflammation \& cancer \cite{macrophage-1}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Plasmacytoid DCs (pDCs)}
-            \begin{enumerate}
-                \item pDCs have higher proportion in Normal samples.
-                \item pDCs bring capacities of innate \& adaptive immunity \cite{pDCs-1}.
-                \item Infiltrated pDCs in neoplasms $\Rightarrow$ Poor prognosis \cite{pDCs-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Pleural Macrophages}
-            \begin{enumerate}
-                \item Pleural macrophages have higher proportion in Normal samples.
-                \item Neutrophil recruitment in pleural inflammation \cite{PleuralMac-1}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Regulatory T cells (Tregs)}
-            \begin{enumerate}
-                \item Tregs have higher proportion in Normal samples.
-                \item Elevation of Tregs $\Uparrow$ in solid tumors \& hematologic malignancies \cite{Tregs-1}.
-                \item Increasing Tregs $\Uparrow$ along metastatic stage in NSCLC \cite{Tregs-2} ??.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Tumor cell states 1 (tS1)}
-            \begin{enumerate}
-                \item tS1 have lower proportion in Normal samples.
-                \item Represent a de-regulation of normal differentiation programs \cite{singlecell1}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plot in LUAD}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE131907.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUAD}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Ciliated.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Club.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/MAST.pdf}
-                \\
-                \mbox{(a) Ciliated cells} & \mbox{(b) Club Cell} & \mbox{(c) Mast cell} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/NK.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Smoothmusclecells.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE131907.violin/Tip-likeECs.pdf}
-                \\
-                \mbox{(d) NK cells} & \mbox{(e) Smooth muscle cells} & \mbox{(f) Tip-like ECs} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
-
-        \begin{block}{Cilited cells}
-            \begin{enumerate}
-                \item Cilited cells have higher proportion in Normal than Primary samples.
-                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
-                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Club cells}
-            \begin{enumerate}
-                \item Club cells have higher proportion in Normal than Primary samples.
-                \item Club cells form LUAD in adult mice \cite{club-1}.
-                \item Club cells in smoking-associated LUAD \cite{club-2}.
-                \item Increasing club cells $\Rightarrow$ Good indicator of advanced bronchopulmonary dysplasia \cite{club-3}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Mast cells}
-            \begin{enumerate}
-                \item Mast cells have higher proportion in Normal than Primary samples.
-                \item Mast cells activated by lung cancer-derived extracellular vesicles \cite{mast-1}.
-                \item Mast cell promote $\Uparrow$ tumor metastasis \cite{mast-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Natural Killer cells (NK cells)}
-            \begin{enumerate}
-                \item NK cells have higher proportion in Primary than Normal samples.
-                \item NK cells play a major role in innate immune system \cite{NK-2}.
-                \item NK cells can induce immune response against tumor cells \cite{NK-2}.
-                \item NK cells may induce tumor regression in lung cancer \cite{NK-1} ??.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Smooth muscle cells}
-            \begin{enumerate}
-                \item Smooth muscle cells have higher proportion in Primary than Normal samples.
-                \item Hypoxia is a characteristic feature of solid tumors \cite{hypoxia-1, hypoxia-2}.
-                \item $\therefore$ Smooth muscle cells pathway is up-regulated in cancer \cite{smooth-1, smooth-2}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Tip-like endothelial cells (ECs)}
-            \begin{enumerate}
-                \item Tip-like ECs have lower proportion in Primary than Normal samples.
-                \item Tip-like ECs were determined into migratory \& basement-membrane remodeling phenotypes \cite{tip-2}.
-                \item Tip-like ECs replaced with immature ones in NSCLC \cite{tip-1}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \subsubsection{Reference by \protect\citeA{singlecell2}}
-    \begin{frame}
-        \frametitle{Reference Single-cell Data}
-
-        \begin{figure}
-            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_2.png}
-            \caption{Characterization of CD3$^+$ TILs in NSCLC \protect\cite{singlecell2}}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plots in LUSC}
-
-        \begin{figure}
-            \includegraphics[width=\linewidth]{figures/BisqueRNA/clustermap/STAR.SQC.GSE162498.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Violin Plots in LUSC}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-MCM5.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4_8-TOP2A.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-CCR8.pdf}
-                \\
-                \mbox{(a) CD4/8-MCM5} & \mbox{(b) CD4/8-TOP2A} & \mbox{(c) CD4-CCR8} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-MAL.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD4-SELL.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.SQC.GSE162498.violin/CD8-SLC4A10.pdf}
-                \\
-                \mbox{(d) CD4-MAL} & \mbox{(e) CD4-SELL} & \mbox{(f) CD8-SLC4A10} \\
-            \end{array}$
-            \caption{Violin Plots in LUSC}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
-
-        \begin{block}{CD4/8-MCM5}
-            \begin{enumerate}
-                \item CD4/8-MCM5 have lower proportion in Normal.
-                \item MCM5, mini-chromosome maintenance protein 5, acts as component of MCM complex \cite{MCM5-1}.
-                \item MCM5, thus, play a major role in replication and cell cycle progression \cite{MCM5-2}.
-                \item MCM5 could be adverse prognostic marker for NSCLC \cite{MCM5-3} and lung cancer \cite{MCM5-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4/8-TOP2A}
-            \begin{enumerate}
-                \item CD4/8-TOP2A have higher proportion in Normal.
-                \item TOP2A, topoisomerase IIA, have an essential role for modulating DNA topology \& cell division \cite{TOP2A-1}.
-                \item TOP2A over-expressed $\Uparrow$ in bladder cancer \cite{TOP2A-2}, LUAD \cite{TOP2A-3} and NSCLC \cite{TOP2A-4} ??
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-CCR8}
-            \begin{enumerate}
-                \item CD4-CCR8 is gradually increased along tumor progression.
-                \item CCR8, C-C chemokine receptor type 8, might modulate monocyte chemotaxis and tymic cell line apoptosis \cite{CCR8-1}.
-                \item CCR8 up-regulated along tumor progression in bladder \cite{CCR8-2}, colon \cite{CCR8-3}, and breast cancer \cite{CCR8-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-MAL}
-            \begin{enumerate}
-                \item CD4-MAL have lower proportion in Primary.
-                \item MAL, myelin and lymphocyte protein, play a role in indirect route for egress of transcytosing cargo \cite{MAL-1}.
-                \item Over-expression of MAL was correlated with worse prognostic factors in uterine carcinoma \cite{MAL-2}.
-                \item MAL was highly methylated in gastric cancer \cite{MAL-3}.
-                \item MAL acts as a tumor suppressor or a tumor progression factor among cancer types \cite{MAL-4}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-SELL}
-            \begin{enumerate}
-                \item CD4-SELL have higher proportion in Primary.
-                \item SELL, a calcium-dependent lectin, controls cell adhesion with neighboring cells \cite{SELL-1, SELL-2}.
-                \item SELL over-expressed in breast cancer \cite{SELL-3}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD8-SLC4A10}
-            \begin{enumerate}
-                \item CD8-SLC4A10 have lower proportion in Primary.
-                \item SLC4A10, sodium-driven chloride bicarbonate exchanger, have an essential role in regulating intracellular pH \cite{SLC4A10-1}.
-                \item SLC4A10 distruption leads to an extreme change in the cellular phenotype \cite{SLC4A10-2}.
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Cluster Plots in LUAD}
-
-        \begin{figure}
-            \includegraphics[height=0.6 \textheight]{figures/BisqueRNA/clustermap/STAR.ADC.GSE162498.cluster.pdf}
-            \caption{Cluster Plot in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Violin Plots in LUAD}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-GZMA.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-SESN1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.ADC.GSE162498.violin/CD4-TNFRSF18.pdf}
-                \\
-                \mbox{(a) CD4-GZMA} & \mbox{(b) CD4-SESN1} & \mbox{(c) CD4-TNFRSF18} \\
-            \end{array}$
-            \caption{Violin Plots in LUAD}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
-
-        \begin{block}{CD4-GZMA}
-            \begin{enumerate}
-                \item CD4-GZMA have higher proportion in AIS than Normal.
-                \item GZMA, granzyme A, activates caspase-independent pyroptosis through the immunological synapse \cite{GZMA-1, GZMA-2, GZMA-3}.
-                \item GZMA promotes many cancers.
-                \begin{itemize}
-                    \item colorectal cancer \cite{GZMA-4, GZMA-5}
-                    \item breast cancer \cite{GZMA-6}
-                    \item NSCLC \cite{GZMA-7}
-                \end{itemize}
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-SESN1}
-            \begin{enumerate}
-                \item CD4-SESN1 have higher proportion in AIS than Normal.
-                \item SESN1, sestrin-1, acts as an intracellular \textit{leucine} sensor that controls the TORC1 signaling pathway \cite{SESN1-1, SESN1-2}.
-                \item SESN1 is controlled by p53 tumor suppressor, and thus affects in cell growth regulation \cite{SESN1-3}.
-                \item Inhibitor of SESN1 implicates to the pro-oxidant and oncogenic effects of mutant p53 \cite{SESN1-4}?
-                \item SESN1 plays opposite role in \textit{early} and \textit{late} stage of lung carcinogenesis \cite{SESN1-5}.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4-TNFRSF18}
-            \begin{enumerate}
-                \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
-                \item TNFRSF18, tumor necrosis factor receptor super-family member 18, is a receptor for TNFSF18.
-                \item TNFSF18 regulates T-cell responses, and promotes $\Uparrow$ leukocyte adhesion to endothelial cells \cite{TNFRSF18-1}.
-                \item TNFRSF18 was negatively correlated with survival in endometrial cancer \cite{TNFRSF18-2}?
-            \end{enumerate}
-        \end{block}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Findings in Bulk Cell Deconvolution}
-    \end{frame}
-
         \subsection{Discovery of Mutational Signature}
     \begin{frame}
         \frametitle{Mutational Signature?}
@@ -5426,6 +4998,567 @@
 
     \begin{frame}
         \frametitle{Findings in DEG Analysis}
+    \end{frame}
+
+        \subsection{Bulk Cell Deconvolution}
+    \begin{frame}
+        \frametitle{BisqueRNA?}
+
+        \begin{figure}
+            \includegraphics[width=0.6 \linewidth]{figures/Workflow/Bisque.jpg}
+            \caption{Workflow for BisqueRNA \protect\cite{Bisque1}}
+        \end{figure}
+    \end{frame}
+
+    \subsubsection{Reference by \protect\citeA{singlecell1}}
+    \begin{frame}
+         \frametitle{Reference Single-cell Data (GSE131907)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_1.jpg}
+            \caption{Comprehensive dissection and clustering of 208,506 single cells from LUAD patients \protect\cite{singlecell1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plot in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.pdf}
+            \caption{Cluster Plot in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots upon Cancer Stages in LUSC}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/ExhaustedTfh.pdf} \\
+                \mbox{(a) Exhausted Tfh} \\
+            \end{array}$
+            \caption{Down-regulated in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/AT1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/AT2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/FollicularBcells.pdf}
+                \\
+                \mbox{(a) Alveolar type I} & \mbox{(b) Alveolar type II} & \mbox{(c) Follicular B cells} \\
+            \end{array}$
+            \caption{Up-regulated in CIS \& Primary of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/mo-Mac.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/tS1.pdf}
+                \\
+                \mbox{(d) mo-Mac} & \mbox{(e) tS1} \\
+            \end{array}$
+            \caption{Up-regulated in CIS \& Primary of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/CD1c+DCs.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/CD4+Th.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/CD8lowT.pdf}
+                \\
+                \mbox{(a) CD1c+ DCs} & \mbox{(b) CD4+ Th} & \mbox{(c) CD8-low T} \\
+            \end{array}$
+            \caption{Down-regulated in CIS \& Primary of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/Ciliated.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/MALTBcells.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/PleuralMac.pdf}
+                \\
+                \mbox{(d) Ciliated} & \mbox{(e) MALT B cells} & \mbox{(f) Pleural Mac} \\
+            \end{array}$
+            \caption{Down-regulated in CIS \& Primary of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/Treg.pdf} \\
+                \mbox{(g) Treg} \\
+            \end{array}$
+            \caption{Down-regulated in CIS \& Primary of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Cluster Plot upon Recurrence in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Recurrence/All.pdf}
+            \caption{Cluster Plot upon Recurrence in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Recurrence/Normal.pdf}
+            \caption{Cluster Plot upon Recurrence in Normal of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Recurrence/CIS+AIS.pdf}
+            \caption{Cluster Plot upon Recurrence in CIS of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Recurrence/Primary.pdf}
+            \caption{Cluster Plot upon Recurrence in Primary of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots upon Recurrence in LUSC}
+
+        \begin{figure}
+            $\begin{array}{c}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/mo-Mac.pdf} \\
+                \mbox{(a) mo-Mac} \\
+            \end{array}$
+            \caption{Up-regulated in NR \& R of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/CD8lowT.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/ExhaustedTfh.pdf}
+                \\
+                \mbox{(a) CD8-low T} & \mbox{(b) Exhausted Tfh} \\
+            \end{array}$
+            \caption{Down-regulated in NR \& R of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/AT1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/AT2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/FollicularBcells.pdf}
+                \\
+                \mbox{(a) AT1} & \mbox{(b) AT2} & \mbox{(c) Follicular B cells} \\
+            \end{array}$
+            \caption{Up-regulated in NR of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/tS1.pdf} \\
+                \mbox{(d) tS1} \\
+            \end{array}$
+            \caption{Up-regulated in NR of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/CD1c+DCs.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/CD4+Th.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/Ciliated.pdf}
+                \\
+                \mbox{(a) CD1c+ DCs} & \mbox{(b) CD4+ Th} & \mbox{(c) Ciliated} \\
+            \end{array}$
+            \caption{Down-regulated in NR of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/MALTBcells.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC.Recurrence/PleuralMac.pdf}
+                \\
+                \mbox{(d) MALT B cells} & \mbox{(e) Pleural Mac} \\
+            \end{array}$
+            \caption{Down-regulated in NR of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Cluster Plot upon Smoking in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Smoking/All.pdf}
+            \caption{Cluster Plot upon Smoking in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Smoking/Normal.pdf}
+            \caption{Cluster Plot upon Smoking in Normal of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Smoking/CIS+AIS.pdf}
+            \caption{Cluster Plot upon Smoking in CIS of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.Smoking/Primary.pdf}
+            \caption{Cluster Plot upon Smoking in Primary of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots upon Smoking in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \mbox{(a) CD1c+ DCs} & \mbox{(b) CD4+ Th} & \mbox{(c) Ciliated} \\
+            \end{array}$
+            \caption{Down-regulated in NR of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Cluster Plot upon MSP in LUSC}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-All.pdf}
+            \caption{Cluster Plot upon MSP in LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Normal.pdf}
+            \caption{Cluster Plot upon MSP in Normal of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-CIS+AIS.pdf}
+            \caption{Cluster Plot upon MSP in CIS of LUSC}
+        \end{figure}
+
+        \begin{figure}
+            \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.FPKM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Primary.pdf}
+            \caption{Cluster Plot upon MSP in Primary of LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots upon MSP in LUSC}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
+
+        \begin{block}{Activated DCs}
+            \begin{enumerate}
+                \item Activated DCs have higher proportion in Normal samples.
+                \item DCs are central regulators of adaptive immune response, \textit{e.g.} anti-tumoral responses .
+                \item DCs establish a rare immune cell population in tumors .
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Alveolar type II (AT2)}
+            \begin{enumerate}
+                \item Alveolar type II have lower proportion in Normal samples.
+                \item Alveolar type II proliferate to restore epithelium, and participate in innate immune response \cite{ATII-1}.
+                \item Capability of initiating lung cancer development \cite{ATII-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD1c+ DCs (Langerhans cells; LCs)}
+            \begin{enumerate}
+                \item LCs have higher proportion in Normal samples.
+                \item LCs impact on pathology by inducing tolerance or mediating inflammation \cite{LCs-1}
+                \item LCs facilitate DNA damage and squamous cell carcinoma \cite{LCs-2}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Ciliated cells}
+            \begin{enumerate}
+                \item Ciliated cells have higher proportion in Normal samples.
+                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
+                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Exhausted T follicular helper cells (Tfh)}
+            \begin{enumerate}
+                \item Exhausted Tfh is gradually decreased along cancer worsen.
+                \item Tfh cell response is critical for viral infection \cite{Tfh-1, Tfh-2}.
+                \item Down-regulated Tfh exhaustion correlate with compromise CD8 T-cell immunity \cite{Tfh-3}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Monocyte \& Macrophage (mo-Mac)}
+            \begin{enumerate}
+                \item Monocyte \& Macrophage have lower proportion in Normal samples.
+                \item Monocyte is a regulator of tumor development \& progression \cite{monocyte-1}.
+                \item Macrophage is a regulator of link between inflammation \& cancer \cite{macrophage-1}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Plasmacytoid DCs (pDCs)}
+            \begin{enumerate}
+                \item pDCs have higher proportion in Normal samples.
+                \item pDCs bring capacities of innate \& adaptive immunity \cite{pDCs-1}.
+                \item Infiltrated pDCs in neoplasms $\Rightarrow$ Poor prognosis \cite{pDCs-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Pleural Macrophages}
+            \begin{enumerate}
+                \item Pleural macrophages have higher proportion in Normal samples.
+                \item Neutrophil recruitment in pleural inflammation \cite{PleuralMac-1}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Regulatory T cells (Tregs)}
+            \begin{enumerate}
+                \item Tregs have higher proportion in Normal samples.
+                \item Elevation of Tregs $\Uparrow$ in solid tumors \& hematologic malignancies \cite{Tregs-1}.
+                \item Increasing Tregs $\Uparrow$ along metastatic stage in NSCLC \cite{Tregs-2} ??.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Tumor cell states 1 (tS1)}
+            \begin{enumerate}
+                \item tS1 have lower proportion in Normal samples.
+                \item Represent a de-regulation of normal differentiation programs \cite{singlecell1}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plot in LUAD}
+
+        \begin{figure}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \mbox{(a) Ciliated cells} & \mbox{(b) Club Cell} & \mbox{(c) Mast cell} \\
+            \end{array}$
+            \caption{Violin Plots in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
+
+        \begin{block}{Cilited cells}
+            \begin{enumerate}
+                \item Cilited cells have higher proportion in Normal than Primary samples.
+                \item A terminally differentiated population in lung epithelial cells \cite{ciliated-1}.
+                \item Generated under homeostatic condition or response to epithelial injury \cite{ciliated-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Club cells}
+            \begin{enumerate}
+                \item Club cells have higher proportion in Normal than Primary samples.
+                \item Club cells form LUAD in adult mice \cite{club-1}.
+                \item Club cells in smoking-associated LUAD \cite{club-2}.
+                \item Increasing club cells $\Rightarrow$ Good indicator of advanced bronchopulmonary dysplasia \cite{club-3}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Mast cells}
+            \begin{enumerate}
+                \item Mast cells have higher proportion in Normal than Primary samples.
+                \item Mast cells activated by lung cancer-derived extracellular vesicles \cite{mast-1}.
+                \item Mast cell promote $\Uparrow$ tumor metastasis \cite{mast-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Natural Killer cells (NK cells)}
+            \begin{enumerate}
+                \item NK cells have higher proportion in Primary than Normal samples.
+                \item NK cells play a major role in innate immune system \cite{NK-2}.
+                \item NK cells can induce immune response against tumor cells \cite{NK-2}.
+                \item NK cells may induce tumor regression in lung cancer \cite{NK-1} ??.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Smooth muscle cells}
+            \begin{enumerate}
+                \item Smooth muscle cells have higher proportion in Primary than Normal samples.
+                \item Hypoxia is a characteristic feature of solid tumors \cite{hypoxia-1, hypoxia-2}.
+                \item $\therefore$ Smooth muscle cells pathway is up-regulated in cancer \cite{smooth-1, smooth-2}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{Tip-like endothelial cells (ECs)}
+            \begin{enumerate}
+                \item Tip-like ECs have lower proportion in Primary than Normal samples.
+                \item Tip-like ECs were determined into migratory \& basement-membrane remodeling phenotypes \cite{tip-2}.
+                \item Tip-like ECs replaced with immature ones in NSCLC \cite{tip-1}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \subsubsection{Reference by \protect\citeA{singlecell2}}
+    \begin{frame}
+        \frametitle{Reference Single-cell Data (GSE162498)}
+
+        \begin{figure}
+            \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_2.png}
+            \caption{Characterization of CD3$^+$ TILs in NSCLC \protect\cite{singlecell2}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plots in LUSC}
+
+        \begin{figure}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Violin Plots in LUSC}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \mbox{(a) CD4/8-MCM5} & \mbox{(b) CD4/8-TOP2A} & \mbox{(c) CD4-CCR8} \\
+            \end{array}$
+            \caption{Violin Plots in LUSC}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUSC}
+
+        \begin{block}{CD4/8-MCM5}
+            \begin{enumerate}
+                \item CD4/8-MCM5 have lower proportion in Normal.
+                \item MCM5, mini-chromosome maintenance protein 5, acts as component of MCM complex \cite{MCM5-1}.
+                \item MCM5, thus, play a major role in replication and cell cycle progression \cite{MCM5-2}.
+                \item MCM5 could be adverse prognostic marker for NSCLC \cite{MCM5-3} and lung cancer \cite{MCM5-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4/8-TOP2A}
+            \begin{enumerate}
+                \item CD4/8-TOP2A have higher proportion in Normal.
+                \item TOP2A, topoisomerase IIA, have an essential role for modulating DNA topology \& cell division \cite{TOP2A-1}.
+                \item TOP2A over-expressed $\Uparrow$ in bladder cancer \cite{TOP2A-2}, LUAD \cite{TOP2A-3} and NSCLC \cite{TOP2A-4} ??
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-CCR8}
+            \begin{enumerate}
+                \item CD4-CCR8 is gradually increased along tumor progression.
+                \item CCR8, C-C chemokine receptor type 8, might modulate monocyte chemotaxis and tymic cell line apoptosis \cite{CCR8-1}.
+                \item CCR8 up-regulated along tumor progression in bladder \cite{CCR8-2}, colon \cite{CCR8-3}, and breast cancer \cite{CCR8-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-MAL}
+            \begin{enumerate}
+                \item CD4-MAL have lower proportion in Primary.
+                \item MAL, myelin and lymphocyte protein, play a role in indirect route for egress of transcytosing cargo \cite{MAL-1}.
+                \item Over-expression of MAL was correlated with worse prognostic factors in uterine carcinoma \cite{MAL-2}.
+                \item MAL was highly methylated in gastric cancer \cite{MAL-3}.
+                \item MAL acts as a tumor suppressor or a tumor progression factor among cancer types \cite{MAL-4}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-SELL}
+            \begin{enumerate}
+                \item CD4-SELL have higher proportion in Primary.
+                \item SELL, a calcium-dependent lectin, controls cell adhesion with neighboring cells \cite{SELL-1, SELL-2}.
+                \item SELL over-expressed in breast cancer \cite{SELL-3}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD8-SLC4A10}
+            \begin{enumerate}
+                \item CD8-SLC4A10 have lower proportion in Primary.
+                \item SLC4A10, sodium-driven chloride bicarbonate exchanger, have an essential role in regulating intracellular pH \cite{SLC4A10-1}.
+                \item SLC4A10 distruption leads to an extreme change in the cellular phenotype \cite{SLC4A10-2}.
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Cluster Plots in LUAD}
+
+        \begin{figure}
+            \caption{Cluster Plot in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Violin Plots in LUAD}
+
+        \begin{figure}
+            $\begin{array}{ccc}
+                \mbox{(a) CD4-GZMA} & \mbox{(b) CD4-SESN1} & \mbox{(c) CD4-TNFRSF18} \\
+            \end{array}$
+            \caption{Violin Plots in LUAD}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]
+        \frametitle{Findings in Bulk Cell Deconvolution with LUAD}
+
+        \begin{block}{CD4-GZMA}
+            \begin{enumerate}
+                \item CD4-GZMA have higher proportion in AIS than Normal.
+                \item GZMA, granzyme A, activates caspase-independent pyroptosis through the immunological synapse \cite{GZMA-1, GZMA-2, GZMA-3}.
+                \item GZMA promotes many cancers.
+                \begin{itemize}
+                    \item colorectal cancer \cite{GZMA-4, GZMA-5}
+                    \item breast cancer \cite{GZMA-6}
+                    \item NSCLC \cite{GZMA-7}
+                \end{itemize}
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-SESN1}
+            \begin{enumerate}
+                \item CD4-SESN1 have higher proportion in AIS than Normal.
+                \item SESN1, sestrin-1, acts as an intracellular \textit{leucine} sensor that controls the TORC1 signaling pathway \cite{SESN1-1, SESN1-2}.
+                \item SESN1 is controlled by p53 tumor suppressor, and thus affects in cell growth regulation \cite{SESN1-3}.
+                \item Inhibitor of SESN1 implicates to the pro-oxidant and oncogenic effects of mutant p53 \cite{SESN1-4}?
+                \item SESN1 plays opposite role in \textit{early} and \textit{late} stage of lung carcinogenesis \cite{SESN1-5}.
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{CD4-TNFRSF18}
+            \begin{enumerate}
+                \item CD4-TNFRSF18 have lower proportion in AIS than Normal.
+                \item TNFRSF18, tumor necrosis factor receptor super-family member 18, is a receptor for TNFSF18.
+                \item TNFSF18 regulates T-cell responses, and promotes $\Uparrow$ leukocyte adhesion to endothelial cells \cite{TNFRSF18-1}.
+                \item TNFRSF18 was negatively correlated with survival in endometrial cancer \cite{TNFRSF18-2}?
+            \end{enumerate}
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{TIMER?}
+
+        \begin{figure}
+            \includegraphics[width=0.5 \linewidth]{figures/Workflow/TIMER.jpg}
+            \caption{Overview of TIMER modules \protect\cite{TIMER-1}}
+        \end{figure}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Findings in Bulk Cell Deconvolution}
     \end{frame}
 
     \subsection{Identification of Microbial Sequences}
