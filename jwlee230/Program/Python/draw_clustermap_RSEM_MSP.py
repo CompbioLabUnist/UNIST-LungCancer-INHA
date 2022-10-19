@@ -93,7 +93,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=(input_data.shape[0] > 1), col_cluster=(len(stage_set) == 1), col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=1, center=0, robust=True, dendrogram_ratio=(0.2 if (input_data.shape[0] > 1) else 0.01, 0.2 if (len(stage_set) == 1) else 0.01), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
+    g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=(input_data.shape[0] > 1), col_cluster=(len(stage_set) == 1), col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=1 if (input_data.shape[0] > 5) else 0, center=0, robust=True, dendrogram_ratio=(0.2 if (input_data.shape[0] > 1) else 0.01, 0.2 if (len(stage_set) == 1) else 0.01), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
 
     if len(stage_set) > 1:
         matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=step00.stage_color_code[x]) for x in stage_list], stage_list, title="Stages", bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)

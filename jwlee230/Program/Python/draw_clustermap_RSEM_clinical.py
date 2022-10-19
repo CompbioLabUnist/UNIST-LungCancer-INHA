@@ -86,9 +86,9 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     if input_data.shape[0] > 1:
-        g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=True, col_cluster=True, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=1, center=0, robust=True, dendrogram_ratio=(0.2, 0.2), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
+        g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=True, col_cluster=True, col_colors=col_colors, xticklabels=False, yticklabels=False, square=False, cmap="coolwarm", z_score=1 if (input_data.shape[0] > 5) else 0, center=0, robust=True, dendrogram_ratio=(0.2, 0.2), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
     else:
-        g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=False, col_cluster=True, col_colors=col_colors, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", z_score=1, center=0, robust=True, dendrogram_ratio=(0.01, 0.2), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
+        g = seaborn.clustermap(data=input_data, figsize=(18, 32), row_cluster=False, col_cluster=True, col_colors=col_colors, xticklabels=False, yticklabels=True, square=False, cmap="coolwarm", z_score=1 if (input_data.shape[0] > 5) else 0, center=0, robust=True, dendrogram_ratio=(0.01, 0.2), cbar_pos=(-0.1, 0.6, 0.05, 0.18))
 
     matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=x) for x in clinical_colors.values()], clinical_colors.keys(), title=args.compare, bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 

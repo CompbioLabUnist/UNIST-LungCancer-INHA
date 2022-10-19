@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
+CPUS = 10
 MEMS = 100
-PARALLEL = 3
+PARALLEL = 4
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -29,7 +29,7 @@ PICARD = java $(JAVA_OPTS) -jar /Tools/picard.jar
 VCF2MAF = perl /Tools/vcf2maf-1.6.19/vcf2maf.pl
 MUTENRICHER = $(PYTHON) /Tools/MutEnricher-1.3.1/mutEnricher.py
 TMPFS = /tmpfs
-CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "23aabc1d937bb0ae7fe0d4bf50c04b0c"
+CIBERSORTx_TOKEN = --username "jwlee230@unist.ac.kr" --token "39da7a4693786d20ca8317ec96844b75"
 PYCLONE = /root/anaconda2/envs/pyclone/bin/PyClone
 HELMSMAN = /root/anaconda2/envs/helmsman/bin/python3 /Tools/helmsman-1.5.3/helmsman.py
 PURECN_EXTDATA_DIR = /usr/local/lib/R/site-library/PureCN/extdata
@@ -1485,33 +1485,111 @@ step21-plot: $(addprefix Output/PyClone/BWA-Plots/,$(addsuffix .CCF.pdf,$(filter
 step21: step21-preprocess step21-pyclone step21-plot
 .PHONY: step21-preprocess step21-pyclone step21-plot step21
 
-# Step 22 (Run CIBERSORTx; deprecated)
-Output/CIBERSORTx:
+# Step 22 (Run CIBERSORTx)
+Output/CIBERSORTx Output/CIBERSORTx/Tcell Output/CIBERSORTx/clustermap Output/CIBERSORTx/heatmap Output/CIBERSORTx/violin:
 	mkdir -p $@
 
 Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_NORMALIZED_MATRIX_TXT) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt: Output/RSEM/DEG/%.tsv Output/CIBERSORTx/GSE131907_signature.tsv | build.log
+Output/CIBERSORTx/%.GSE131907/CIBERSORTxGEP_NA_Weights.txt: Output/RSEM/DEG/%.tsv Output/CIBERSORTx/GSE131907_signature.tsv | build.log
 	$(DOCKER) rm -rfv $(@D) && mkdir -p $(@D)
 	docker run $(RUN_OPTS) --volume $(abspath $(dir $<)):/src/data --volume $(abspath $(@D)):/src/outdir cibersortx/hires $(CIBERSORTx_TOKEN) --mixture $(addprefix /,$(word 1,$^)) --sigmatrix $(addprefix /,$(word 2,$^)) --threads $(CPUS) --QN TRUE --heatmap TRUE --cluster TRUE 1> $(@D).stdout 2> $(@D).stderr || true
 
-Output/CIBERSORTx/%.heatmap.pdf: Python/draw_heatmap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CIBERSORTx/heatmap/%.SQC.pdf: Python/draw_heatmap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/%.violin.tar: Python/draw_violin_plot_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/CIBERSORTx/heatmap/%.ADC.pdf: Python/draw_heatmap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/heatmap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CIBERSORTx/%.cluster.pdf: Python/draw_clustermap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+Output/CIBERSORTx/violin/%.SQC.tar: Python/draw_violin_plot_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step22-RSEM: Output/CIBERSORTx/Bowtie2.SQC.tsv Output/CIBERSORTx/Bowtie2.ADC.tsv Output/CIBERSORTx/STAR.SQC.tsv Output/CIBERSORTx/STAR.ADC.tsv
-step22-CIBERSORTx: Output/CIBERSORTx/GSE131907_signature.tsv Output/CIBERSORTx/Bowtie2.SQC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/Bowtie2.ADC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.SQC/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.ADC/CIBERSORTxGEP_NA_Weights.txt
-step22-heatmap: Output/CIBERSORTx/Bowtie2.SQC.heatmap.pdf Output/CIBERSORTx/Bowtie2.ADC.heatmap.pdf Output/CIBERSORTx/STAR.SQC.heatmap.pdf Output/CIBERSORTx/STAR.ADC.heatmap.pdf
-step22-violin: Output/CIBERSORTx/Bowtie2.SQC.violin.tar Output/CIBERSORTx/Bowtie2.ADC.violin.tar Output/CIBERSORTx/STAR.SQC.violin.tar Output/CIBERSORTx/STAR.ADC.violin.tar
-step22-cluster: Output/CIBERSORTx/Bowtie2.SQC.cluster.pdf Output/CIBERSORTx/STAR.SQC.cluster.pdf Output/CIBERSORTx/Bowtie2.ADC.cluster.pdf Output/CIBERSORTx/STAR.ADC.cluster.pdf
-step22: step22-RSEM step22-CIBERSORTx step22-heatmap step22-violin step22-cluster
-.PHONY: step22-RSEM step22-CIBERSORTx step22-heatmap step22-violin step22-cluster step22
+Output/CIBERSORTx/violin/%.ADC.tar: Python/draw_violin_plot_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.SQC.Recurrence.tar: Python/draw_violin_plot_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.ADC.Recurrence.tar: Python/draw_violin_plot_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.SQC.Smoking.tar: Python/draw_violin_plot_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.ADC.Smoking.tar: Python/draw_violin_plot_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.SQC.MSP-median.tar: Python/draw_violin_plot_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.ADC.pdf: Python/draw_clustermap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.SQC.Recurrence.pdf: Python/draw_clustermap_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.ADC.Recurrence.pdf: Python/draw_clustermap_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.SQC.Smoking.pdf: Python/draw_clustermap_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.ADC.Smoking.pdf: Python/draw_clustermap_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.SQC.MSP-median.pdf: Python/draw_clustermap_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/clustermap/%.SQC.MSP-mean.pdf: Python/draw_clustermap_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.SQC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.ADC.pdf: Python/draw_Tcell_density_violin_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.SQC.Recurrence.pdf: Python/draw_Tcell_density_violin_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.ADC.Recurrence.pdf: Python/draw_Tcell_density_violin_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.SQC.Smoking.pdf: Python/draw_Tcell_density_violin_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.ADC.Smoking.pdf: Python/draw_Tcell_density_violin_deconvolution_clinical.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.SQC.MSP-median.tar: Python/draw_Tcell_density_violin_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/Tcell/%.SQC.MSP-mean.tar: Python/draw_Tcell_density_violin_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/Tcell
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+step22-CIBERSORTx: Output/CIBERSORTx/GSE131907_signature.tsv Output/CIBERSORTx/Bowtie2/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/Bowtie2.TPM/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.TPM/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/Bowtie2.FPKM/CIBERSORTxGEP_NA_Weights.txt Output/CIBERSORTx/STAR.FPKM/CIBERSORTxGEP_NA_Weights.txt
+step22-heatmap: Output/CIBERSORTx/heatmap/Bowtie2.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/Bowtie2.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.GSE162498.ADC.pdf Output/CIBERSORTx/heatmap/STAR.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/STAR.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/STAR.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/STAR.GSE162498.ADC.pdf Output/CIBERSORTx/heatmap/Bowtie2.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/Bowtie2.TPM.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.TPM.GSE162498.ADC.pdf Output/CIBERSORTx/heatmap/STAR.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/STAR.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/STAR.TPM.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/STAR.TPM.GSE162498.ADC.pdf Output/CIBERSORTx/heatmap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/CIBERSORTx/heatmap/STAR.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/heatmap/STAR.FPKM.GSE131907.ADC.pdf Output/CIBERSORTx/heatmap/STAR.FPKM.GSE162498.SQC.pdf Output/CIBERSORTx/heatmap/STAR.FPKM.GSE162498.ADC.pdf
+step22-violin: Output/CIBERSORTx/violin/Bowtie2.GSE131907.SQC.tar Output/CIBERSORTx/violin/Bowtie2.GSE131907.ADC.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.SQC.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.ADC.tar Output/CIBERSORTx/violin/STAR.GSE131907.SQC.tar Output/CIBERSORTx/violin/STAR.GSE131907.ADC.tar Output/CIBERSORTx/violin/STAR.GSE162498.SQC.tar Output/CIBERSORTx/violin/STAR.GSE162498.ADC.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.SQC.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.ADC.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.SQC.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.ADC.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.SQC.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.ADC.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.SQC.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.ADC.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.SQC.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.ADC.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.SQC.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.ADC.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.SQC.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.ADC.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.SQC.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.ADC.tar
+step22-violin-Recurrence: Output/CIBERSORTx/violin/Bowtie2.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.ADC.Recurrence.tar
+step22-violin-Smoking: Output/CIBERSORTx/violin/Bowtie2.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.ADC.Smoking.tar
+step22-violin-MSP: Output/CIBERSORTx/violin/Bowtie2.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/Bowtie2.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/Bowtie2.TPM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.TPM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/Bowtie2.FPKM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/violin/STAR.FPKM.GSE162498.SQC.MSP-mean.tar
+step22-cluster: Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.ADC.pdf Output/CIBERSORTx/clustermap/STAR.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/STAR.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/STAR.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/STAR.GSE162498.ADC.pdf Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.ADC.pdf Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.ADC.pdf Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.ADC.pdf Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.ADC.pdf Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.SQC.pdf Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.ADC.pdf
+step22-cluster-Recurrence: Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.SQC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.ADC.Recurrence.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.ADC.Recurrence.tar
+step22-cluster-Smoking: Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.SQC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.SQC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.ADC.Smoking.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.ADC.Smoking.tar
+step22-cluster-MSP: Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/Bowtie2.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/Bowtie2.TPM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.TPM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/Bowtie2.FPKM.GSE162498.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.SQC.MSP-median.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/clustermap/STAR.FPKM.GSE162498.SQC.MSP-mean.tar
+step22-Tcell: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.ADC.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.ADC.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.ADC.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.ADC.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.ADC.pdf
+step22-Tcell-Recurrence: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.ADC.Recurrence.pdf
+step22-Tcell-Smoking: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.ADC.Smoking.pdf
+step22-Tcell-Smoking: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.MSP-mean.tar
+step22: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking
+.PHONY: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking step22
 
 # Step 23 (VAF plot)
 Output/VAF Output/VAF-tSNE:
