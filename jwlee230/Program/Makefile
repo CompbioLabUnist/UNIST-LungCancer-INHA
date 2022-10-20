@@ -3978,6 +3978,18 @@ Output/TIMER/Violin/%.MSP-mean.tar: Python/draw_violin_TIMER_MSP.py Output/TIMER
 Output/TIMER/Clustermap/%.tar: Python/draw_clustermap_TIMER.py Output/TIMER/%.estimation_matrix.csv | build.log Output/TIMER/Clustermap
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/TIMER/Clustermap/%.Smoking.tar: Python/draw_clustermap_TIMER_clinical.py Output/TIMER/%.estimation_matrix.csv $(CLINICAL_DATA_CSV) | build.log Output/TIMER/Clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --column "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Clustermap/%.Recurrence.tar: Python/draw_clustermap_TIMER_clinical.py Output/TIMER/%.estimation_matrix.csv $(CLINICAL_DATA_CSV) | build.log Output/TIMER/Clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Clustermap/%.MSP-median.tar: Python/draw_clustermap_TIMER_MSP.py Output/TIMER/%.estimation_matrix.csv Output/MutationSharedProportion/BWA.tsv | build.log Output/TIMER/Clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --median 1> $@.stdout 2> $@.stderr
+
+Output/TIMER/Clustermap/%.MSP-mean.tar: Python/draw_clustermap_TIMER_MSP.py Output/TIMER/%.estimation_matrix.csv Output/MutationSharedProportion/BWA.tsv | build.log Output/TIMER/Clustermap
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --mean 1> $@.stdout 2> $@.stderr
+
 Output/TIMER-CNV/%.Sequenza-BWA.tar: Python/compare_TIMER_sequenza.py Output/TIMER/%.estimation_matrix.csv $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) | build.log Output/TIMER-CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -3989,8 +4001,12 @@ step48-violin: Output/TIMER/Violin/Bowtie2.SQC.tar Output/TIMER/Violin/STAR.SQC.
 step48-violin-Recurrence: Output/TIMER/Violin/Bowtie2.SQC.Recurrence.tar Output/TIMER/Violin/STAR.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.ADC.Recurrence.tar Output/TIMER/Violin/STAR.ADC.Recurrence.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.Recurrence.tar Output/TIMER/Violin/STAR.TPM.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.TPM.ADC.Recurrence.tar Output/TIMER/Violin/STAR.TPM.ADC.Recurrence.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.Recurrence.tar Output/TIMER/Violin/STAR.FPKM.SQC.Recurrence.tar Output/TIMER/Violin/Bowtie2.FPKM.ADC.Recurrence.tar Output/TIMER/Violin/STAR.FPKM.ADC.Recurrence.tar
 step48-violin-Smoking: Output/TIMER/Violin/Bowtie2.SQC.Smoking.tar Output/TIMER/Violin/STAR.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.ADC.Smoking.tar Output/TIMER/Violin/STAR.ADC.Smoking.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.Smoking.tar Output/TIMER/Violin/STAR.TPM.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.TPM.ADC.Smoking.tar Output/TIMER/Violin/STAR.TPM.ADC.Smoking.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.Smoking.tar Output/TIMER/Violin/STAR.FPKM.SQC.Smoking.tar Output/TIMER/Violin/Bowtie2.FPKM.ADC.Smoking.tar Output/TIMER/Violin/STAR.FPKM.ADC.Smoking.tar
 step48-violin-MSP: Output/TIMER/Violin/Bowtie2.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.SQC.MSP-median.tar Output/TIMER/Violin/STAR.SQC.MSP-mean.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.TPM.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.TPM.SQC.MSP-median.tar Output/TIMER/Violin/STAR.TPM.SQC.MSP-mean.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.MSP-median.tar Output/TIMER/Violin/Bowtie2.FPKM.SQC.MSP-mean.tar Output/TIMER/Violin/STAR.FPKM.SQC.MSP-median.tar Output/TIMER/Violin/STAR.FPKM.SQC.MSP-mean.tar
-step48: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP
-.PHONY: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP step48
+step48-clustermap: Output/TIMER/Clustermap/Bowtie2.SQC.tar Output/TIMER/Clustermap/STAR.SQC.tar Output/TIMER/Clustermap/Bowtie2.TPM.SQC.tar Output/TIMER/Clustermap/STAR.TPM.SQC.tar Output/TIMER/Clustermap/Bowtie2.FPKM.SQC.tar Output/TIMER/Clustermap/STAR.FPKM.SQC.tar Output/TIMER/Clustermap/Bowtie2.ADC.tar Output/TIMER/Clustermap/STAR.ADC.tar Output/TIMER/Clustermap/Bowtie2.TPM.ADC.tar Output/TIMER/Clustermap/STAR.TPM.ADC.tar Output/TIMER/Clustermap/Bowtie2.FPKM.ADC.tar Output/TIMER/Clustermap/STAR.FPKM.ADC.tar
+step48-clustermap-Recurrence: Output/TIMER/Clustermap/Bowtie2.SQC.Recurrence.tar Output/TIMER/Clustermap/STAR.SQC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.ADC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.ADC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.TPM.SQC.Recurrence.tar Output/TIMER/Clustermap/STAR.TPM.SQC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.TPM.ADC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.TPM.ADC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.FPKM.SQC.Recurrence.tar Output/TIMER/Clustermap/STAR.FPKM.SQC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.FPKM.ADC.Recurrence.tar Output/TIMER/Clustermap/Bowtie2.FPKM.ADC.Recurrence.tar
+step48-clustermap-Smoking: Output/TIMER/Clustermap/Bowtie2.SQC.Smoking.tar Output/TIMER/Clustermap/STAR.SQC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.ADC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.ADC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.TPM.SQC.Smoking.tar Output/TIMER/Clustermap/STAR.TPM.SQC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.TPM.ADC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.TPM.ADC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.FPKM.SQC.Smoking.tar Output/TIMER/Clustermap/STAR.FPKM.SQC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.FPKM.ADC.Smoking.tar Output/TIMER/Clustermap/Bowtie2.FPKM.ADC.Smoking.tar
+step48-clustermap-MSP: Output/TIMER/Clustermap/Bowtie2.SQC.MSP-median.tar Output/TIMER/Clustermap/STAR.SQC.MSP-median.tar Output/TIMER/Clustermap/Bowtie2.SQC.MSP-mean.tar Output/TIMER/Clustermap/STAR.SQC.MSP-mean.tar Output/TIMER/Clustermap/Bowtie2.TPM.SQC.MSP-median.tar Output/TIMER/Clustermap/STAR.TPM.SQC.MSP-median.tar Output/TIMER/Clustermap/Bowtie2.TPM.SQC.MSP-mean.tar Output/TIMER/Clustermap/STAR.TPM.SQC.MSP-mean.tar Output/TIMER/Clustermap/Bowtie2.FPKM.SQC.MSP-median.tar Output/TIMER/Clustermap/STAR.FPKM.SQC.MSP-median.tar Output/TIMER/Clustermap/Bowtie2.FPKM.SQC.MSP-mean.tar Output/TIMER/Clustermap/STAR.FPKM.SQC.MSP-mean.tar
+step48: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP step48-clustermap step48-clustermap-Recurrence step48-clustermap-Smoking step48-clustermap-MSP
+.PHONY: step48-CSV step48-violin step48-violin-Recurrence step48-violin-Smoking step48-violin-MSP step48-clustermap step48-clustermap-Recurrence step48-clustermap-Smoking step48-clustermap-MSP step48
 
 # Step 49 (MiXCR)
 Output/MiXCR/WES Output/MiXCR/WTS:

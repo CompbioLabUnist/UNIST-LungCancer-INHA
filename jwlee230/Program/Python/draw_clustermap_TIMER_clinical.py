@@ -1,10 +1,11 @@
 """
-draw_clustermap_TIMER.py: draw clustermap plot from TIMER result
+draw_clustermap_TIMER_cluster.py: draw clustermap plot from TIMER result with clinical information
 """
 import argparse
 import itertools
 import tarfile
 import matplotlib
+import matplotlib.colors
 import matplotlib.pyplot
 import pandas
 import seaborn
@@ -16,12 +17,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input", help="TIMER result CSV file", type=str)
+    parser.add_argument("clinical", help="Clinical information CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--column", help="Clinical information column", nargs="+", default=["Recurrence", "NO", "YES"])
 
     args = parser.parse_args()
 
     if not args.input.endswith(".csv"):
         raise ValueError("Input must end with .CSV!!")
+    elif not args.clinical.endswith(".csv"):
+        raise ValueError("Clinical must end with .CSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
 
@@ -29,13 +34,26 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
+    clinical_data = step00.get_clinical_data(args.clinical)
+    print(clinical_data)
+
     input_data = pandas.read_csv(args.input, index_col=0).T
     cells = list(input_data.columns)
     tools = sorted(set(map(lambda x: x.split("_")[-1], cells)))
     print(input_data)
 
-    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    patients = set(map(step00.get_patient, list(input_data.index))) & set(clinical_data.index)
+    clinical_data = clinical_data.loc[sorted(patients), :]
+    input_data = input_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index))), :]
+    print(clinical_data)
     print(input_data)
+
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data[args.column[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column[0]], list(input_data.index)))
+    print(input_data)
+
+    clinical_color_dict = dict(zip(args.column[1:], matplotlib.colors.TABLEAU_COLORS))
+    print(clinical_color_dict)
 
     figures = list()
     for tool in tqdm.tqdm(tools):
@@ -45,13 +63,16 @@ if __name__ == "__main__":
         for index in list(drawing_data.index):
             drawing_data.loc[index, :] = drawing_data.loc[index, :] / sum(drawing_data.loc[index, :])
 
-        palette = list(map(lambda x: step00.stage_color_code[step00.get_long_sample_type(x)], list(drawing_data.index)))
+        color_data = pandas.DataFrame(index=drawing_data.index)
+        color_data["Stage"] = list(map(step00.get_color_by_type, list(color_data.index)))
+        color_data[args.column[0]] = list(map(lambda x: clinical_color_dict[clinical_data.loc[step00.get_patient(x), args.column[0]]], list(color_data.index)))
+
         stage_set = set(map(step00.get_long_sample_type, list(drawing_data.index)))
         stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
 
         drawing_data = drawing_data.T
 
-        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), col_colors=palette, xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), col_colors=color_data, xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
         g.ax_heatmap.set_ylabel(f"{drawing_data.shape[0]} cell types")
         g.ax_heatmap.set_xlabel(f"{drawing_data.shape[1]} samples")
@@ -73,12 +94,20 @@ if __name__ == "__main__":
         for index in list(drawing_data.index):
             drawing_data.loc[index, :] = drawing_data.loc[index, :] / sum(drawing_data.loc[index, :])
 
+        color_data = pandas.DataFrame(index=drawing_data.index)
+        color_data[args.column[0]] = list(map(lambda x: clinical_color_dict[clinical_data.loc[step00.get_patient(x), args.column[0]]], list(color_data.index)))
+
+        stage_set = set(map(step00.get_long_sample_type, list(drawing_data.index)))
+        stage_list = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
+
         drawing_data = drawing_data.T
 
-        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), xticklabels=False, yticklabels=True, square=False, z_score=1, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), col_colors=color_data, xticklabels=False, yticklabels=False, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
-        g.ax_heatmap.set_ylabel(f"{drawing_data.shape[0]} cell types")
-        g.ax_heatmap.set_xlabel(f"{drawing_data.shape[1]} {stage} samples")
+        g.ax_heatmap.set_xlabel(f"{drawing_data.shape[0]} cell types")
+        g.ax_heatmap.set_ylabel(f"{drawing_data.shape[1]} {stage} samples")
+
+        matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=clinical_color_dict[x]) for x in args.column[1:]], args.column[1:], title=args.column[0], bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 
         figures.append(f"{tool}-{stage}.pdf")
         g.savefig(figures[-1])
