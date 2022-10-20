@@ -102,10 +102,10 @@ if __name__ == "__main__":
 
         drawing_data = drawing_data.T
 
-        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), col_colors=color_data, xticklabels=False, yticklabels=False, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), col_colors=color_data, xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
-        g.ax_heatmap.set_xlabel(f"{drawing_data.shape[0]} cell types")
-        g.ax_heatmap.set_ylabel(f"{drawing_data.shape[1]} {stage} samples")
+        g.ax_heatmap.set_ylabel(f"{drawing_data.shape[0]} cell types")
+        g.ax_heatmap.set_xlabel(f"{drawing_data.shape[1]} {stage} samples")
 
         matplotlib.pyplot.legend([matplotlib.patches.Patch(facecolor=clinical_color_dict[x]) for x in args.column[1:]], args.column[1:], title=args.column[0], bbox_to_anchor=(0, 1), bbox_transform=matplotlib.pyplot.gcf().transFigure)
 
