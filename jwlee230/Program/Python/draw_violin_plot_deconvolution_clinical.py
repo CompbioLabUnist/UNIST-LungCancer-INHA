@@ -80,8 +80,8 @@ if __name__ == "__main__":
         seaborn.violinplot(data=input_data, x=args.column[0], y=cell, order=args.column[1:], hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order], data=input_data, x=args.column[0], y=cell, order=args.column[1:], hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.title(f"{cell}: Kruskal-Wallis p={p:.3f}")
-        matplotlib.pyplot.ylabel("Proportion")
+        matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
+        matplotlib.pyplot.ylabel(f"Proportion of {cell}")
         matplotlib.pyplot.tight_layout()
 
         fig_name = f"{cell}.pdf"

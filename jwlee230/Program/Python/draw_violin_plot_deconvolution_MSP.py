@@ -93,15 +93,15 @@ if __name__ == "__main__":
         seaborn.violinplot(data=input_data, x=MSP, y=cell, order=MSP_order, hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in MSP_order] + [((a, stage), (b, stage)) for a, b in zip(MSP_order, MSP_order[1:]) for stage in order], data=input_data, x=MSP, y=cell, order=MSP_order, hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        matplotlib.pyplot.title(f"{cell}: Kruskal-Wallis p={p:.3f}")
-        matplotlib.pyplot.ylabel("Proportion")
+        matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
+        matplotlib.pyplot.ylabel(f"Proportion of {cell}")
         matplotlib.pyplot.tight_layout()
 
-        fig_name = f"{MSP}_{cell}.pdf"
+        fig_name = f"{cell}.pdf"
         for r in replaced:
             fig_name = fig_name.replace(r, "")
-        figures.append(fig_name)
-        fig.savefig(fig_name)
+        figures.append(MSP + "-" + fig_name)
+        fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output, "w") as tar:
