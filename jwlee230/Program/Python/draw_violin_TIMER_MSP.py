@@ -93,7 +93,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.ylabel(f"{title} from {tool}")
         matplotlib.pyplot.tight_layout()
 
-        figures.append(MSP + "-" + cell.replace(" ", "").replace("(", "").replace(")", "").replace("/", "_") + ".pdf")
+        figures.append(f"{MSP}-{tool}-{title}.pdf".replace("/", "_"))
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
