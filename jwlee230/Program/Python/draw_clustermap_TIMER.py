@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
         drawing_data = drawing_data.T
 
-        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), xticklabels=False, yticklabels=True, square=False, z_score=1, cmap="coolwarm", center=0, robust=True)
+        g = seaborn.clustermap(data=drawing_data, figsize=(32, 18), row_cluster=True, col_cluster=True, cbar_pos=(-0.05, 0.3, 0.02, 0.5), xticklabels=False, yticklabels=True, square=False, z_score=0, cmap="coolwarm", center=0, robust=True)
 
         g.ax_heatmap.set_ylabel(f"{drawing_data.shape[0]} cell types")
         g.ax_heatmap.set_xlabel(f"{drawing_data.shape[1]} {stage} samples")
