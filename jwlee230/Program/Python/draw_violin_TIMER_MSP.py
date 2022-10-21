@@ -72,12 +72,11 @@ if __name__ == "__main__":
     figures = list()
     for cell, MSP in tqdm.tqdm(list(itertools.product(cells, step00.sharing_columns))):
         title, tool = cell.split("_")
-        tmp = set.intersection(*[set(input_data.loc[(input_data[MSP] == clinical), "Stage"]) for clinical in MSP_order])
-        order = list(filter(lambda x: x in tmp, step00.long_sample_type_list))
+        order = list(filter(lambda x: all([(x in set(input_data.loc[(input_data[MSP] == clinical), "Stage"])) for clinical in MSP_order]), step00.long_sample_type_list))
         palette = list(map(lambda x: step00.stage_color_code[x], order))
 
         try:
-            stat, p = scipy.stats.kruskal(*list(filter(None, [input_data.loc[(input_data["Stage"] == stage) & (input_data[MSP] == clinical), cell] for clinical in MSP_order for stage in order])))
+            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[MSP] == clinical), cell] for clinical in MSP_order for stage in order])
         except ValueError:
             _, p = 0.0, 1.0
 

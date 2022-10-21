@@ -50,7 +50,7 @@ if __name__ == "__main__":
         title, tool = cell.split("_")
 
         try:
-            stat, p = scipy.stats.kruskal(*list(filter(None, [input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])))
+            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
         except ValueError:
             _, p = 0.0, 1.0
 
