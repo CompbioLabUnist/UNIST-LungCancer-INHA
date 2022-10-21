@@ -43,7 +43,7 @@ if __name__ == "__main__":
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     input_data[args.column[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.column[0]], list(input_data.index)))
     for stage in set(input_data["Stage"]):
-        if any([(len(input_data.loc[(input_data["Stage"] == stage) & (input_data[args.column[0]] == clinical)]) < 3) for clinical in args.column[1:]]):
+        if any([(len(input_data.loc[(input_data["Stage"] == stage) & (input_data[args.column[0]] == clinical)]) < 1) for clinical in args.column[1:]]):
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
     print(input_data)
 
@@ -68,13 +68,24 @@ if __name__ == "__main__":
         except ValueError:
             _, p = 0.0, 1.0
 
-        if p > 0.05:
+        compare_list = list()
+        for (x1, y1), (x2, y2) in [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order]:
+            try:
+                stat, pvalue = scipy.stats.mannwhitneyu(input_data.loc[(input_data[args.column[0]] == x1) & (input_data["Stage"] == y1), cell], input_data.loc[(input_data[args.column[0]] == x2) & (input_data["Stage"] == y2), cell])
+            except ValueError:
+                continue
+
+            if pvalue < 0.05:
+                compare_list.append(((x1, y1), (x2, y2)))
+
+        if (p > 0.05) and (not compare_list):
             continue
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         seaborn.violinplot(data=input_data, x=args.column[0], order=args.column[1:], y=cell, hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order], data=input_data, x=args.column[0], order=args.column[1:], y=cell, hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        if compare_list:
+            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=args.column[0], order=args.column[1:], y=cell, hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel(f"{title} from {tool}")

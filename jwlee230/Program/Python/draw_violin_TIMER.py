@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     for stage in set(input_data["Stage"]):
-        if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
+        if len(input_data.loc[(input_data["Stage"] == stage)]) < 1:
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
     print(input_data)
 
@@ -50,17 +50,28 @@ if __name__ == "__main__":
         title, tool = cell.split("_")
 
         try:
-            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])
+            stat, p = scipy.stats.kruskal(*list(filter(None, [input_data.loc[(input_data["Stage"] == stage), cell] for stage in order])))
         except ValueError:
             _, p = 0.0, 1.0
 
-        if p > 0.05:
+        compare_list = list()
+        for a, b in itertools.combinations(order, r=2):
+            try:
+                stat, pvalue = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == a), cell], input_data.loc[(input_data["Stage"] == b), cell])
+            except ValueError:
+                continue
+
+            if pvalue < 0.05:
+                compare_list.append((a, b))
+
+        if (p > 0.05) and (not compare_list):
             continue
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        if compare_list:
+            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel(f"{title} from {tool}")
