@@ -4,7 +4,6 @@ plot_signature_violin_relative.py: violin plot cancer signature by stage with re
 import argparse
 import itertools
 import multiprocessing
-import os.path
 import tarfile
 import typing
 import matplotlib
@@ -20,30 +19,29 @@ input_data = pandas.DataFrame()
 order: typing.List[str] = list()
 
 
-def draw_violin(signature: str) -> pandas.DataFrame:
+def draw_violin(signature: str) -> str:
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), signature] for stage in order])
     except ValueError:
         _, p = 0.0, 1.0
 
+    if p > 0.05:
+        return ""
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
-    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, inner="box", ax=ax)
+    seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, palette=step00.stage_color_code, inner="box", linewidth=5, ax=ax)
     statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = "{0}.pdf".format(signature)
-    fig.savefig(os.path.join(step00.tmpfs, fig_name))
+    fig_name = f"{signature}.pdf"
+    fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
-    outputs = [signature]
-    for control, case in list(itertools.combinations(order, 2)):
-        outputs.append(scipy.stats.mannwhitneyu(list(input_data.loc[(input_data["Stage"] == control), signature]), list(input_data.loc[(input_data["Stage"] == case), signature]))[1])
-
-    return pandas.DataFrame(data=outputs, index=["Signature"] + list(map(lambda x: x[0] + "-" + x[1], list(itertools.combinations(order, 2))))).T
+    return fig_name
 
 
 if __name__ == "__main__":
@@ -96,11 +94,8 @@ if __name__ == "__main__":
     print(order)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        output_data = pandas.concat(objs=pool.map(draw_violin, signatures), join="outer", ignore_index=True, axis="index").set_index(keys="Signature", verify_integrity=True)
-    output_data.to_csv(os.path.join(step00.tmpfs, "output.tsv"), sep="\t", float_format="{:.2e}".format)
-    print(output_data)
+        figures = list(filter(None, pool.map(draw_violin, signatures)))
 
     with tarfile.open(name=args.output, mode="w") as tar:
-        tar.add(os.path.join(step00.tmpfs, "output.tsv"), arcname="output.tsv")
-        for file in tqdm.tqdm(list(output_data.index)):
-            tar.add(os.path.join(step00.tmpfs, file + ".pdf"), arcname=file + ".pdf")
+        for figure in tqdm.tqdm(figures):
+            tar.add(figure, arcname=figure)

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     if not args.input.endswith(".tsv"):
         raise ValueError("INPUT must end with .TSV!!")
     elif not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical data must end with .csv!!")
+        raise ValueError("Clinical data must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         input_data = input_data.loc[:, signatures]
     else:
         raise Exception("Something went wrong!!")
-    input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
 
     matplotlib.use("Agg")
@@ -79,13 +79,14 @@ if __name__ == "__main__":
     for j, (column, color) in tqdm.tqdm(list(enumerate(zip(signatures, itertools.cycle(matplotlib.colors.XKCD_COLORS))))):
         matplotlib.pyplot.bar(range(input_data.shape[0]), list(input_data.loc[:, column]), bottom=input_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
 
-    matplotlib.pyplot.xlabel("{0} Samples".format(input_data.shape[0]))
     if args.absolute:
         matplotlib.pyplot.ylabel("Counts")
     elif args.relative:
         matplotlib.pyplot.ylabel("Proportion")
     else:
         raise Exception("Something went wrong!!")
+
+    matplotlib.pyplot.xlabel("{0} Samples".format(input_data.shape[0]))
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.legend(ncol=3)

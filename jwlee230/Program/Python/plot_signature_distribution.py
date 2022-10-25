@@ -22,7 +22,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical data must end with .csv!!")
+        raise ValueError("Clinical data must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 

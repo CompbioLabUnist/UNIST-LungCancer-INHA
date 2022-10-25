@@ -29,7 +29,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical data must end with .csv!!")
+        raise ValueError("Clinical data must end with .CSV!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
@@ -55,10 +55,10 @@ if __name__ == "__main__":
     print(signatures)
 
     input_data = input_data.loc[:, signatures + ["Total"]]
-    input_data["Subtype"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
 
-    order = list(filter(lambda x: x in set(input_data["Subtype"]), step00.long_sample_type_list))
+    order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
     print(order)
 
     matplotlib.use("Agg")
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     fig, axs = matplotlib.pyplot.subplots(nrows=len(order), figsize=(32, 9 * len(order)), sharey=True)
 
     for i, subtype in tqdm.tqdm(enumerate(order)):
-        drawing_data = input_data.loc[(input_data["Subtype"] == subtype), signatures + ["Total"]].copy()
+        drawing_data = input_data.loc[(input_data["Stage"] == subtype), signatures + ["Total"]].copy()
 
         if args.absolute:
             drawing_data.sort_values(by=sorted(signatures, key=lambda x: sum(drawing_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
@@ -82,17 +82,19 @@ if __name__ == "__main__":
         for j, (column, color) in enumerate(zip(signatures, itertools.cycle(matplotlib.colors.TABLEAU_COLORS))):
             axs[i].bar(range(drawing_data.shape[0]), list(drawing_data.loc[:, column]), bottom=drawing_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
 
-        axs[i].set_xlabel("{0} Samples".format(drawing_data.shape[0]))
         if args.absolute:
             axs[i].set_ylabel("Counts")
         elif args.relative:
             axs[i].set_ylabel("Proportion")
         else:
             raise Exception("Something went wrong!!")
-        axs[i].set_xticks([])
-        axs[i].grid(True)
+
         if i == 0:
             axs[i].legend()
+
+        axs[i].set_xlabel(f"{drawing_data.shape[0]} {subtype} Samples")
+        axs[i].set_xticks([])
+        axs[i].grid(True)
         axs[i].set_title(subtype)
 
     matplotlib.pyplot.tight_layout()
