@@ -25,9 +25,6 @@ def draw_violin(signature: str) -> str:
     except ValueError:
         _, p = 0.0, 1.0
 
-    if p > 0.05:
-        return ""
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, palette=step00.stage_color_code, inner="box", linewidth=5, ax=ax)
