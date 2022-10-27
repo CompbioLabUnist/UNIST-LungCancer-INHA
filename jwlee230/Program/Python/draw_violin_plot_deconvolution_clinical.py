@@ -75,10 +75,17 @@ if __name__ == "__main__":
         if p > 0.05:
             continue
 
+        compare_list = list()
+        for (c1, s1), (c2, s2) in [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in itertools.combinations(args.column[1:], r=2) for stage in order]:
+            _, p_value = scipy.stats.mannwhitneyu(input_data.loc[(input_data[args.column[0]] == c1) & (input_data["Stage"] == s1), cell], input_data.loc[(input_data[args.column[0]] == c2) & (input_data["Stage"] == s2), cell])
+            if p_value < 0.05:
+                compare_list.append(((c1, s1), (c2, s2)))
+
         fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
         seaborn.violinplot(data=input_data, x=args.column[0], y=cell, order=args.column[1:], hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, [((clinical, a), (clinical, b)) for a, b in itertools.combinations(order, r=2) for clinical in args.column[1:]] + [((a, stage), (b, stage)) for a, b in zip(args.column[1:], args.column[2:]) for stage in order], data=input_data, x=args.column[0], y=cell, order=args.column[1:], hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        if compare_list:
+            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=args.column[0], y=cell, order=args.column[1:], hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel(f"Proportion of {cell}")

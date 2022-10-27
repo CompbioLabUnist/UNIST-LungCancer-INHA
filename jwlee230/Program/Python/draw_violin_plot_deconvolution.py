@@ -32,8 +32,15 @@ def run(cell: str) -> str:
     if p > 0.05:
         return ""
 
+    compare_list = list()
+    for a, b in itertools.combinations(order, r=2):
+        _, p_value = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == a), cell], input_data.loc[(input_data["Stage"] == b), cell])
+        if p_value < 0.05:
+            compare_list.append((a, b))
+
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, r=2)), data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if compare_list:
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel(f"Proportion of {cell}")
