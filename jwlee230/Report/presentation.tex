@@ -4976,22 +4976,20 @@
             $\begin{array}{ccc}
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_FEN1.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_NCOA2.pdf}
-                &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_PCBP1.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_SDHA.pdf}
                 \\
-                \mbox{(d) FEN1} & \mbox{(e) NCOA2} & \mbox{(f) PCBP1} \\
+                \mbox{(d) FEN1}  & \mbox{(e) PCBP1} & \mbox{(f) SDHA} \\
             \end{array}$
             \caption{Up-regulated genes with MSP in CIS of LUSC}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_SDHA.pdf}
-                &
+            $\begin{array}{c}
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_TRIM33.pdf}
                 \\
-                \mbox{(g) SDHA} & \mbox{(h) TRIM33} \\
+                \mbox{(g) TRIM33} \\
             \end{array}$
             \caption{Up-regulated genes with MSP in CIS of LUSC}
         \end{figure}
@@ -5125,15 +5123,6 @@
             \end{enumerate}
         \end{block}
 
-         \begin{block}{NCOA2}
-            \begin{enumerate}
-                \item Up-regulated in CIS of MSP-higher compared to MSP-lower.
-                \item Nuclear Receptro Co-activator 2
-                \item Critical regulator of glucose metabolism regulator \cite{NCOA2-1}.
-                \item NCOA2 promote cancer cell growth in breast cancer \cite{NCOA2-2}.
-            \end{enumerate}
-        \end{block}
-
          \begin{block}{PCBP1}
             \begin{enumerate}
                 \item Up-regulated in CIS of MSP-higher compared to MSP-lower.
@@ -5185,18 +5174,35 @@
         \begin{block}{PRDM1}
             \begin{enumerate}
                 \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
+                \item PR/SET Domain 1
+                \item Mediates a transcriptional program in various innate \& adaptive immune system \cite{PRDM1-1}.
+                \item High expressions of PRDM1 were observed in many cancers including LUAD \cite{PRDM1-2} ??
+                \item High PRDM1 are associated with poor survival in hepatocellular carcinoma \cite{PRDM1-3} ??
             \end{enumerate}
         \end{block}
 
         \begin{block}{KAT7}
             \begin{enumerate}
                 \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
+                \item K (Lysine) Acetyltransferase 7
+                \item Regulates various processes, e.g. gene transription, immune regulation \cite{KAT7-1}.
+                \item UHRF1 is associated with KAT7 $\Rightarrow$ Negatively regulates KAT7-mediated H3K14 acetylation \\
+                    $\therefore$ Suppression of colon cancer cell proliferation \cite{KAT7-2}
+                \item Long non-coding RNA-KAT7 is negatively associated with \cite{KAT7-3}:
+                \begin{itemize}
+                    \item tumor size
+                    \item tumor differentiation
+                    \item lymph node metastasis
+                \end{itemize}
             \end{enumerate}
         \end{block}
 
-        \begin{block}{NCOA2}
+         \begin{block}{NCOA2}
             \begin{enumerate}
                 \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
+                \item Nuclear Receptro Co-activator 2
+                \item Critical regulator of glucose metabolism regulator \cite{NCOA2-1}.
+                \item NCOA2 promote cancer cell growth in breast cancer \cite{NCOA2-2} ??
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -5253,7 +5259,7 @@
                 &
                 \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE131907.SQC/FollicularBcells.pdf}
                 \\
-                \mbox{(a) Alveolar type I} & \mbox{(b) Alveolar type II} & \mbox{(c) Follicular B cells} \\
+                \mbox{(a) AT1} & \mbox{(b) AT2} & \mbox{(c) Follicular B cells} \\
             \end{array}$
             \caption{Up-regulated cell types in CIS \& Primary of LUSC}
         \end{figure}
@@ -5307,13 +5313,15 @@
     \begin{frame}[allowframebreaks]
         \frametitle{Findings in GSE131907 upon Stages in LUSC}
 
-        \begin{block}{Alveolar type I (AT1)}
+        \begin{block}{Alveolar types I (AT1)}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary compared to Normal.
+                \item AT1 initiated LUAD in distal way \cite{AT1-1}.
+                \item
             \end{enumerate}
         \end{block}
 
-        \begin{block}{Alveolar type II (AT2)}
+        \begin{block}{Alveolar types II (AT2)}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary compared to Normal.
             \end{enumerate}
@@ -5860,60 +5868,102 @@
         \begin{block}{CD4-CCR8}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary.
+                \item C-C motif Chemokine Receptor 8
+                \item Regulate monocyte chemotaxis \& thymic cell line apoptosis \cite{CCR8-1}.
+                \item Enhance migration, invasion, and epithelial-mesenchymal transition \cite{CCR8-2}.
+                \item Targeting CCR8 induces anti-tumor immunity in colon cancer \cite{CCR8-3}.
+                \item CCR8 is highly expressed in regulatory T-cell \\
+                    $\therefore$ High CCR8 correlates with poor prognosis in breast cancer \cite{CCR8-4}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-GZMA}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary.
+                \item Granzyme A
+                \item Activates caspase-independent pyroptosis in leukocytes \\
+                    including T-cell \& NK-cell \cite{GZMA-1, GZMA-2, GZMA-3}.
+                \item Extracellular GZMA promotes colorectal cancer development \cite{GZMA-4}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-SELL}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary.
+                \item Selectin L
+                \item Promotes initial tethering and rolling of leukocytes in endothelia \cite{SELL-1, SELL-2}
+                \item Higher expression of SELL is associated with better survival overcome \cite{SELL-3} ?
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-LAYN}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary.
+                \item Layillin
+                \item Receptor for hyaluronate \cite{LAYN-1}.
+                \item High LAYN expression is correlated with poor OS \& PFS in gastric cancer \cite{LAYN-2}.
+                \item LAYN is a known exhausted marker in NSCLC \cite{LAYN-3}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD48-MCM5}
             \begin{enumerate}
                 \item Up-regulated in CIS \& Primary.
+                \item Mini-chromosome Maintenance complex component 5
+                \item Replicative helicase that essential for DNA replication \& elongation \cite{MCM5-1, MCM5-2}.
+                \item MCM5 \& MCM7 indicate possible role in proliferation of NSCLC \cite{MCM5-3}.
+                \item High expression of MCM5 have shorter OS in LUSC \cite{MCM5-4}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-IL32}
             \begin{enumerate}
                 \item Down-regulated in CIS \& Primary.
+                \item Interleukin-32
+                \item Cytokine involved in innate \& adaptive immune response \cite{IL32-1}.
+                \item IL32 promote tumor invasion and metastasis in breast cancer \cite{IL32-2}.
+                \item Positive IL32 expression had shorter OS in colon cancer \cite{IL32-3}.
+                \item Increased IL32 expression in LUAD \cite{IL32-4} \\
+                    $\Rightarrow$ correspond to clinical stage, lymph node metastases, \& distance metastasis
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD4-MAL}
             \begin{enumerate}
                 \item Down-regulated in CIS \& Primary.
+                \item Myelin and Lymphocyte protein
+                \item Vesicular trafficking cycling between Golgi complex \& apical plasma membrane \cite{MAL-1}.
+                \item DNA hyper-methlyation of MAL in cervical cancer \& precursor lesions \cite{MAL-2}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-GZMH}
             \begin{enumerate}
                 \item Down-regulated in CIS \& Primary.
+                \item Granzyme H
+                \item Necessary for target cell lysis in cell-mediated immune responses \cite{GZMH-1, GZMH-2}.
+                \item Exhaustion signature in NSCLC \cite{GZMH-3} ?
+                \item \textit{A. muciniphila}-negative NSCLC patient had lower expression of GZMH \& worse OS \cite{GZMH-4}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD8-SLC4A10}
             \begin{enumerate}
                 \item Down-regulated in CIS \& Primary.
+                \item Solute Carrier Family 4 member 10
+                \item Sodium/bicarbonate co-transporter that regulates intracellular pH \cite{SLC4A10-1}.
+                \item Genetic distruption of SLC4A10 reduces several mitochondrial enzymes \cite{SLC4A10-2}.
             \end{enumerate}
         \end{block}
 
         \begin{block}{CD48-TOP2A}
             \begin{enumerate}
                 \item Down-regulated in CIS \& Primary.
+                \item DNA Topoisomerase II Alpha
+                \item Alters DNA topology \cite{TOP2A-1}.
+                \item Over-expression of TOP2A in bladder urothelial carcinoma \cite{TOP2A-2} ?
+                \item TOP2A promotes tumor progression and predicts poor prognosis in LUAD \cite{TOP2A-3} ?
+                \item TOP2A: Prognostic marker in NSCLC \cite{TOP2A-4}.
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -6109,47 +6159,23 @@
         \frametitle{Violin Plots upon MSP in LUSC}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-CD8+CD4+MixedTh.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE162498.SQC.MSP-median/Mutation Shared Proportion-CD8-LAYN.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-FollicularBcells.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-mo-Mac.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE162498.SQC.MSP-median/Mutation Shared Proportion-CD48-MCM5.pdf}
                 \\
-                \mbox{(a) {\small CD8+ CD4+ Mixed Th}} & \mbox{(b) Follicular B cells} & \mbox{(c) mo-Mac} \\
+                \mbox{(a) CD8-LAYN} & \mbox{(b) CD48-MCM5} \\
             \end{array}$
             \caption{Up-regulated cell types in CIS \& Primary of MSP-higher}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{c}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-tS1.pdf}
-                \\
-                \mbox{(d) tS1} \\
-            \end{array}$
-            \caption{Up-regulated cell types in CIS \& Primary of MSP-higher}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-CD4+Th.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Ciliated.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-MALTBcells.pdf}
-                \\
-                \mbox{(a) CD4+ Th} & \mbox{(b) Ciliated} & \mbox{(c) MALT B cells} \\
-            \end{array}$
-            \caption{Down-regulated cell types in CIS \& Primary of MSP-higher}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-PleuralMac.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE162498.SQC.MSP-median/Mutation Shared Proportion-CD8-GZMH.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Treg.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/BisqueRNA/violin/STAR.FPKM.GSE162498.SQC.MSP-median/Mutation Shared Proportion-CD8-SLC4A10.pdf}
                 \\
-                \mbox{(d) Pleural Mac} & \mbox{(e) Treg} \\
+                \mbox{(a) CD8-GZMH} & \mbox{(b) CD8-SLC4A10} \\
             \end{array}$
             \caption{Down-regulated cell types in CIS \& Primary of MSP-higher}
         \end{figure}
@@ -6158,57 +6184,43 @@
     \begin{frame}[allowframebreaks]
         \frametitle{Findings in GSE162498 upon MSP in LUSC}
 
-        \begin{block}{CD8+ CD4+ Mixed Th}
+        \begin{block}{CD8-LAYN}
             \begin{enumerate}
-                \item Up-regulated in CIS \& Primary of MSP-higher.
+                \item Up-regulated in CIS of MSP-higher than MSP-lower.
+                \item Layillin
+                \item Receptor for hyaluronate \cite{LAYN-1}.
+                \item High LAYN expression is correlated with poor OS \& PFS \\
+                    in gastric cancer \cite{LAYN-2}.
+                \item LAYN is a known exhausted marker in NSCLC \cite{LAYN-3}.
             \end{enumerate}
         \end{block}
 
-        \begin{block}{Follicular B cells}
+        \begin{block}{CD8-MCM5}
             \begin{enumerate}
-                \item Up-regulated in CIS \& Primary of MSP-higher.
+                \item Up-regulated in CIS of MSP-higher than MSP-lower.
+                \item Mini-chromosome Maintenance complex component 5
+                \item Replicative helicase that essential for DNA replication \& elongation \cite{MCM5-2}.
+                \item MCM5 \& MCM7 indicate possible role in proliferation of NSCLC \cite{MCM5-3}.
+                \item High expression of MCM5 have shorter OS in LUSC \cite{MCM5-4}.
             \end{enumerate}
         \end{block}
 
-        \begin{block}{mo-Mac}
+        \begin{block}{CD8-GZMH}
             \begin{enumerate}
-                \item Up-regulated in CIS \& Primary of MSP-higher.
+                \item Down-regulated only in CIS \& Primary of MSP-higher.
+                \item Granzyme H
+                \item Necessary for target cell lysis in cell-mediated immune responses \cite{GZMH-1, GZMH-2}.
+                \item Exhaustion signature in NSCLC \cite{GZMH-3}.
+                \item \textit{A. muciniphila}-negative NSCLC patient had lower expression of GZMH \& worse OS \cite{GZMH-4}.
             \end{enumerate}
         \end{block}
 
-        \begin{block}{tS1}
+        \begin{block}{CD8-SLC4A10}
             \begin{enumerate}
-                \item Up-regulated in CIS of MSP-higher.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{CD4+ Th}
-            \begin{enumerate}
-                \item Down-regulated in CIS \& Primary of MSP-higher.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Ciliated}
-            \begin{enumerate}
-                \item Down-regulated in CIS of MSP-higher.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{MALT B cells}
-            \begin{enumerate}
-                \item Down-regulated in CIS \& Primary of MSP-higher.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Pleural Mac}
-            \begin{enumerate}
-                \item Down-regulated in CIS \& Primary of MSP-higher.
-            \end{enumerate}
-        \end{block}
-
-        \begin{block}{Treg}
-            \begin{enumerate}
-                \item Down-regulated in CIS \& Primary of MSP-higher.
+                \item Down-regulated only in CIS \& Primary of MSP-higher.
+                \item Solute Carrier Family 4 member 10
+                \item Sodium/bicarbonate co-transporter that regulates intracellular pH \cite{SLC4A10-1}.
+                \item Genetic distruption of SLC4A10 reduces several mitochondrial enzymes \cite{SLC4A10-2}.
             \end{enumerate}
         \end{block}
     \end{frame}
@@ -6454,6 +6466,33 @@
 
     \begin{frame}[allowframebreaks]
         \frametitle{Findings in TIMER with LUSC}
+
+        \begin{block}{B-cell}
+            \begin{enumerate}
+                \item Down-regulated in CIS of MSP-higher than MSP-lower.
+            \end{enumerate}
+        \end{block}
+
+         \begin{block}{Neutrophil}
+            \begin{enumerate}
+                \item Down-regulated in CIS of MSP-higher than MSP-lower.
+                \item Down-regulated in Primary than CIS in MSP-lower
+            \end{enumerate}
+        \end{block}
+
+         \begin{block}{CD4+ T-cell}
+            \begin{enumerate}
+                \item Down-regulated in Normal of MSP-higher than MSP-lower.
+                \item Down-regulated in CIS of MSP-higher than MSP-lower.
+                \item Down-regulated in Primary of MSP-higher than MSP-lower.
+            \end{enumerate}
+        \end{block}
+
+         \begin{block}{CD8+ T-cell}
+            \begin{enumerate}
+                \item Down-regulated in CIS than Normal in MSP-higher.
+            \end{enumerate}
+        \end{block}
     \end{frame}
 
     \begin{frame}
