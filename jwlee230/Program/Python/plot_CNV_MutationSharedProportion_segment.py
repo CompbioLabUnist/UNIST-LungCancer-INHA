@@ -146,14 +146,28 @@ if __name__ == "__main__":
 
         fig, axs = matplotlib.pyplot.subplots(figsize=(40, 18), ncols=2)
 
-        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
-        statannotations.Annotator.Annotator(axs[0], [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        compare_list = list()
+        for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
+            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment-Loss"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment-Loss"])
+            if p < 0.05:
+                compare_list.append(((x1, s1), (x2, s2)))
 
-        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
-        statannotations.Annotator.Annotator(axs[1], [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
+        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
+        if compare_list:
+            statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        axs[0].set_title("CNV Loss")
-        axs[1].set_title("CNV Gain")
+        compare_list = list()
+        for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
+            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment-Gain"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment-Gain"])
+            if p < 0.05:
+                compare_list.append(((x1, s1), (x2, s2)))
+
+        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
+        if compare_list:
+            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+
+        axs[0].set_title("CNV Segment Loss")
+        axs[1].set_title("CNV Segment Gain")
         axs[0].set_ylabel("Number of somatic CNV segment (count)")
         axs[1].set_ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
