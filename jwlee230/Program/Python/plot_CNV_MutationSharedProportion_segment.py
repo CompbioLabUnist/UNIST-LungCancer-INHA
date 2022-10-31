@@ -104,6 +104,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
+    MSP_order = ["Lower", "Higher"]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
         if args.median:
@@ -115,15 +116,27 @@ if __name__ == "__main__":
 
         output_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] < cutting) else "Higher", output_data["Patient"]))
 
-        stage_list = list(filter(lambda x: (x in set(output_data.loc[(output_data[MSP] == "Lower"), "Stage"])) and (x in set(output_data.loc[(output_data[MSP] == "Higher"), "Stage"])), step00.long_sample_type_list))
+        stage_list = list(filter(lambda x: all([(x in set(output_data.loc[(output_data[MSP] == x1), "Stage"])) for x1 in MSP_order]), step00.long_sample_type_list))
         palette = dict([(stage, step00.stage_color_code[stage]) for stage in stage_list])
+
+        compare_list = list()
+        for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
+            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment"])
+            if p < 0.05:
+                compare_list.append(((x1, s1), (x2, s2)))
+
+        try:
+            stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Segment"] for x, s in itertools.product(MSP_order, stage_list)])
+        except ValueError:
+            p = 1.0
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(20, 18))
 
         seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
+        if compare_list:
+            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
-        statannotations.Annotator.Annotator(ax, [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [(("Lower", a), ("Lower", b)) for a, b in zip(stage_list, stage_list[1:])] + [(("Higher", a), ("Higher", b)) for a, b in zip(stage_list, stage_list[1:])], data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
-
+        matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
 
