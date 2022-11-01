@@ -285,38 +285,6 @@
         \end{table}
     \end{frame}
 
-    \subsubsection{Clinical Information in WES Data}
-    \begin{frame}[allowframebreaks]
-        \frametitle{WES Data Composition with Recurrence}
-
-        \begin{table}
-            \caption{LUSC WES Data with Recurrence}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_SQC_recurrence.tex}}
-        \end{table}
-
-        \begin{table}
-            \caption{LUAD WES Data with Recurrence}
-            \input{tables/WES_samples/WES_ADC_recurrence.tex}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{WES Data Composition with Smoking}
-
-        \begin{table}
-            \caption{LUSC WES Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_SQC_smoking.tex}}
-        \end{table}
-
-        \begin{table}
-            \caption{LUAD WES Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WES_samples/WES_ADC_smoking.tex}}
-        \end{table}
-    \end{frame}
-
     \subsection{WTS Data}
     \begin{frame}
         \frametitle{WTS Data Composition}
@@ -324,37 +292,6 @@
         \begin{table}
             \caption{Number of WTS samples}
             \input{tables/WTS_samples/WTS_samples.tex}
-        \end{table}
-    \end{frame}
-
-    \subsubsection{Clinical Information in WTS data}
-    \begin{frame}[allowframebreaks]
-        \frametitle{WTS Data Composition with Recurrence}
-
-        \begin{table}
-            \caption{LUSC WTS Data with Recurrence}
-            \input{tables/WTS_samples/WTS_SQC_recurrence.tex}
-        \end{table}
-
-        \begin{table}
-            \caption{LUAD WTS Data with Recurrence}
-            \input{tables/WTS_samples/WTS_ADC_recurrence.tex}
-        \end{table}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{WTS Data Composition with Smoking}
-
-        \begin{table}
-            \caption{LUSC WTS Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WTS_samples/WTS_SQC_smoking.tex}}
-        \end{table}
-
-        \begin{table}
-            \caption{LUAD WTS Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WTS_samples/WTS_ADC_smoking.tex}}
         \end{table}
     \end{frame}
 
@@ -1368,7 +1305,13 @@
         \frametitle{Violin Plot of MSP vs. CNV Region}
 
         \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+            $\begin{array}{cc}
+                \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+                &
+                \includegraphics[width=0.6 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Violin_LossGain_Mutation Shared Proportion.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Loss \& Gain} \\
+            \end{array}$
             \caption{Violin Plot for MSP vs. CNV Region}
         \end{figure}
     \end{frame}
@@ -1394,7 +1337,13 @@
         \frametitle{Violin Plot of MSP vs. CNV Segment}
 
         \begin{figure}
-            \includegraphics[width=0.4 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+            $\begin{array}{cc }
+                \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+                &
+                \includegraphics[width=0.6 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Violin_LossGain_Mutation Shared Proportion.pdf}
+                \\
+                \mbox{(a) All} & \mbox{(b) Loss \& Gain} \\
+            \end{array}$
             \caption{Violin Plot for MSP vs. CNV Segment}
         \end{figure}
     \end{frame}
@@ -3099,35 +3048,26 @@
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_ALK.pdf}
-                &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_BRD4.pdf}
                 &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_EIF4A2.pdf}
+                &
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_FEN1.pdf}
                 \\
-                \mbox{(a) ALK} & \mbox{(b) BRD4} & \mbox{(c) EIF4A2} \\
+                \mbox{(a) BRD4} & \mbox{(b) EIF4A2} & \mbox{(c) FEN1} \\
             \end{array}$
             \caption{Up-regulated genes with MSP in CIS of LUSC}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_FEN1.pdf}
-                &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_PCBP1.pdf}
                 &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_SDHA.pdf}
-                \\
-                \mbox{(d) FEN1}  & \mbox{(e) PCBP1} & \mbox{(f) SDHA} \\
-            \end{array}$
-            \caption{Up-regulated genes with MSP in CIS of LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{c}
+                &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_TRIM33.pdf}
                 \\
-                \mbox{(g) TRIM33} \\
+                \mbox{(d) PCBP1}  & \mbox{(e) SDHA} & \mbox{(f) TRIM33} \\
             \end{array}$
             \caption{Up-regulated genes with MSP in CIS of LUSC}
         \end{figure}
@@ -3138,22 +3078,20 @@
                 &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_CRTC3.pdf}
                 &
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_PRDM1.pdf}
+                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_KAT7.pdf}
                 \\
-                \mbox{(a) CCR7} & \mbox{(b) CRTC3} & \mbox{(c) PRDM1} \\
+                \mbox{(a) CCR7} & \mbox{(b) CRTC3} & \mbox{(c) KAT7} \\
             \end{array}$
             \caption{Down-regulated genes with MSP in CIS of LUSC}
         \end{figure}
 
         \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_KAT7.pdf}
-                &
+            $\begin{array}{cc}
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_KMT2A.pdf}
                 &
                 \includegraphics[width=0.3 \linewidth]{figures/DEG/Violin/STAR.FPKM.SQC.MSP-Median.violin/Mutation Shared Proportion_NCOA2.pdf}
                 \\
-                \mbox{(d) KAT7} & \mbox{(e) KMT2A} & \mbox{(f) NCOA2} \\
+                \mbox{(d) KMT2A} & \mbox{(e) NCOA2} \\
             \end{array}$
             \caption{Down-regulated genes with MSP in CIS of LUSC}
         \end{figure}
@@ -3219,16 +3157,6 @@
 
     \begin{frame}[allowframebreaks]
         \frametitle{Findings in Comparing MSP in LUSC}
-
-        \begin{block}{ALK}
-            \begin{enumerate}
-                \item Up-regulated in CIS of MSP-higher compared to MSP-lower.
-                \item Anaplastic Lymphoma Kinase
-                \item Genesis \& Differentiation of nervous system \cite{ALK-1}.
-                \item ALK inhibitors in NSCLC treatment \cite{ALK-2}.
-                \item Crizotinib: ALK-tyrosine kinase inhibitor \cite{ALK-3}.
-            \end{enumerate}
-        \end{block}
 
         \begin{block}{BRD4}
             \begin{enumerate}
@@ -3309,21 +3237,11 @@
             \end{enumerate}
         \end{block}
 
-        \begin{block}{PRDM1}
-            \begin{enumerate}
-                \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
-                \item PR/SET Domain 1
-                \item Mediates a transcriptional program in various innate \& adaptive immune system \cite{PRDM1-1}.
-                \item High expressions of PRDM1 were observed in many cancers including LUAD \cite{PRDM1-2} ??
-                \item High PRDM1 are associated with poor survival in hepatocellular carcinoma \cite{PRDM1-3} ??
-            \end{enumerate}
-        \end{block}
-
         \begin{block}{KAT7}
             \begin{enumerate}
                 \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
                 \item K (Lysine) Acetyltransferase 7
-                \item Regulates various processes, e.g. gene transription, immune regulation \cite{KAT7-1}.
+                \item Regulates various processes, e.g. gene transcription, immune regulation \cite{KAT7-1}.
                 \item UHRF1 is associated with KAT7 $\Rightarrow$ Negatively regulates KAT7-mediated H3K14 acetylation \\
                     $\therefore$ Suppression of colon cancer cell proliferation \cite{KAT7-2}
                 \item Long non-coding RNA-KAT7 is negatively associated with \cite{KAT7-3}:
@@ -3335,12 +3253,37 @@
             \end{enumerate}
         \end{block}
 
+        \begin{block}{KMT2A}
+            \begin{enumerate}
+                \item Down-regulated in Normal \& CIS of MSP-higher compared to MSP-lower.
+                \item K (Lysine) Methyltransferase 2A
+                \item Essential role in early development and hematopoiesis \cite{KMT2A-1, KMT2A-2}.
+                \item KMT2A is frequently mutated in leukemia \cite{KMT2A-3, KMT2A-4}.
+                \item Rearrangement on KMT2A is associated with worse outcome in acute myeloid leukemia \cite{KMT2A-6}.
+                \item KMT2A is frequently mutated in NSCLC, associated with higher TMB \& PD-L1 expression \cite{KMT2A-5}.
+            \end{enumerate}
+        \end{block}
+
          \begin{block}{NCOA2}
             \begin{enumerate}
                 \item Down-regulated in CIS of MSP-higher compared to MSP-lower.
-                \item Nuclear Receptro Co-activator 2
-                \item Critical regulator of glucose metabolism regulator \cite{NCOA2-1}.
-                \item NCOA2 promote cancer cell growth in breast cancer \cite{NCOA2-2} ??
+                \item Nuclear Receptor Co-activator 2
+                \item Critical regulator of glucose metabolism \cite{NCOA2-1}.
+                \item NCOA2 expression correlates with leukocytes in head and neck cancer \cite{NCOA2-2}: \\
+                    B-cells, T-cells, Neutrophils, Macrophages \& Dendritic cells
+                \item NCOA2 promotes cancer cell growth in breast cancer \cite{NCOA2-3} ??
+                \item NCOA2 knockdown inhibits growth \& progression of gastric cancer \cite{NCOA2-4} ??
+            \end{enumerate}
+        \end{block}
+
+        \begin{block}{HLA-DRB1}
+            \begin{enumerate}
+                \item Down-regulated in MSP-higher compared to MSP-lower.
+                \item Involved in many depleted pathways in Normal.
+                \item MHC complex, Class II, DR beta 1
+                \item Present antigenic peptides that involves in phagocytosis of apoptotic tumor cells \cite{HLA-DRB1-1}.
+                \item HLA-DRB1 is correlated with survival and prognosis in melanoma \cite{HLA-DRB1-2}.
+                \item Negatively correlated with prognosis in LUAD \cite{TNFRSF14-2}.
             \end{enumerate}
         \end{block}
     \end{frame}
