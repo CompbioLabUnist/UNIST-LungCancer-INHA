@@ -152,6 +152,11 @@ if __name__ == "__main__":
             if p < 0.05:
                 compare_list.append(((x1, s1), (x2, s2)))
 
+        try:
+            stat, p_loss = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Region-Loss"] for x, s in itertools.product(MSP_order, stage_list)])
+        except ValueError:
+            p_loss = 1.0
+
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
         if compare_list:
             statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
@@ -162,12 +167,17 @@ if __name__ == "__main__":
             if p < 0.05:
                 compare_list.append(((x1, s1), (x2, s2)))
 
+        try:
+            stat, p_gain = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Region-Gain"] for x, s in itertools.product(MSP_order, stage_list)])
+        except ValueError:
+            p_gain = 1.0
+
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
         if compare_list:
             statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
-        axs[0].set_title("CNV Region Loss")
-        axs[1].set_title("CNV Region Gain")
+        axs[0].set_title(f"CNV Loss: K.W. p={p_loss:.3f}")
+        axs[1].set_title(f"CNV Gain: K.W. p={p_gain:.3f}")
         axs[0].set_ylabel("Size of somatic CNV region (bp)")
         axs[1].set_ylabel("Size of somatic CNV region (bp)")
         matplotlib.pyplot.tight_layout()
