@@ -20,6 +20,12 @@ input_data = pandas.DataFrame()
 def run(gene: str) -> str:
     stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
 
+    compare_list = list()
+    for s1, s2 in itertools.combinations(stage_order, r=2):
+        stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == s1), gene], input_data.loc[(input_data["Stage"] == s2), gene])
+        if p < 0.05:
+            compare_list.append((s1, s2))
+
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
     except ValueError:
@@ -31,7 +37,8 @@ def run(gene: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x="Stage", order=stage_order, palette=step00.stage_color_code, y=gene, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(stage_order, r=2)), data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if compare_list:
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{gene} expression")
     matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")

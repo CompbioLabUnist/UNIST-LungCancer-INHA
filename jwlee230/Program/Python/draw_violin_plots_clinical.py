@@ -2,6 +2,7 @@
 draw_violin_plots_clinical.py: draw violin plots upon DEG with clinical data
 """
 import argparse
+import itertools
 import multiprocessing
 import tarfile
 import matplotlib
@@ -17,6 +18,12 @@ input_data = pandas.DataFrame()
 
 
 def run(gene: str) -> str:
+    compare_list = list()
+    for (c1, s1), (c2, s2) in [((a, stage), (b, stage)) for a, b in itertools.combinations(args.compare[1:], r=2) for stage in stage_order] + [((compare, a), (compare, b)) for a, b in itertools.combinations(stage_order, r=2) for compare in args.compare[1:]]:
+        stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == s1) & (input_data[args.compare[0]] == c1), gene], input_data.loc[(input_data["Stage"] == s2) & (input_data[args.compare[0]] == c2), gene])
+        if p < 0.05:
+            compare_list.append(((c1, s1), (c2, s2)))
+
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
     except ValueError:
@@ -28,7 +35,8 @@ def run(gene: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, [((a, stage), (b, stage)) for a, b in zip(args.compare[1:], args.compare[2:]) for stage in stage_order] + [((compare, a), (compare, b)) for a, b in zip(stage_order, stage_order[1:]) for compare in args.compare[1:]] + [], data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if compare_list:
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{gene} expression")
     matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
@@ -99,7 +107,7 @@ if __name__ == "__main__":
     input_data[args.compare[0]] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), args.compare[0]], list(input_data.index)))
     print(input_data)
 
-    stage_order = list(filter(lambda x: all([(x in set(map(step00.get_long_sample_type, input_data.loc[(input_data[args.compare[0]] == compare)].index))) for compare in args.compare[1:]]), step00.long_sample_type_list))
+    stage_order = list(filter(lambda x: all([(x in set(input_data.loc[(input_data[args.compare[0]] == compare), "Stage"])) for compare in args.compare[1:]]), step00.long_sample_type_list))
     print(stage_order)
 
     with multiprocessing.Pool(args.cpus) as pool:
