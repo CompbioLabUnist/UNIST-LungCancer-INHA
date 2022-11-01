@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("DEG", help="DEG result TSV file", type=str, nargs="+")
     parser.add_argument("output", help="Output PDF file", type=str)
     parser.add_argument("--compare", help="Comparison MSP", type=str, choices=step00.sharing_columns, default=step00.sharing_columns[0])
+    parser.add_argument("--fold", help="Fold change threshold", type=float, default=2)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     DEG_list = list()
     for DEG_file in tqdm.tqdm(args.DEG):
         DEG_data = pandas.read_csv(DEG_file, sep="\t", index_col=0)
-        DEG_data = DEG_data.loc[(DEG_data["padj"] < args.p)]
+        DEG_data = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["pvalue"] < args.p) & (DEG_data["padj"] < args.p)]
         DEG_list.append(set(DEG_data.index))
 
     input_data = input_data.loc[sorted(set.union(*DEG_list)), sorted(input_data.columns, key=lambda x: (step00.long_sample_type_list.index(step00.get_long_sample_type(x)), clinical_data.loc[step00.get_patient(x), args.compare]))]
