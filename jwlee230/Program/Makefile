@@ -1049,10 +1049,10 @@ Output/RSEM/DEG/%.ADC.MSP-Mean.tsv Output/RSEM/DEG/%.ADC.MSP-Mean.coldata: Pytho
 Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%.coldata | build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --readcount $(addprefix /,$(filter %.tsv,$^)) --coldata $(addprefix /,$(filter %.coldata,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG-List/%.Up.tex Output/RSEM/DEG-List/%.Up.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | Output/RSEM/DEG-List build.log
+Output/RSEM/DEG-List/%.Up.tex Output/RSEM/DEG-List/%.Up.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/DEG-List build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --up 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/DEG-List/%.Down.tex Output/RSEM/DEG-List/%.Down.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.tsv | Output/RSEM/DEG-List build.log
+Output/RSEM/DEG-List/%.Down.tex Output/RSEM/DEG-List/%.Down.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/DEG-List build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --down 1> $@.stdout 2> $@.stderr
 
 step18-preparation: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/Bowtie2.tsv Output/RSEM/DEG/Bowtie2.TPM.tsv Output/RSEM/DEG/Bowtie2.FPKM.tsv $(addprefix Output/RSEM/STAR/,$(addsuffix .genes.results,$(WTS_ID))) Output/RSEM/DEG/STAR.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/RSEM/DEG/STAR.FPKM.tsv
