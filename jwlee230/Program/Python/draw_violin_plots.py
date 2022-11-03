@@ -31,7 +31,7 @@ def run(gene: str) -> str:
     except ValueError:
         _, p = 0., 1.0
 
-    if p > 0.05:
+    if (p > 0.05) and (not compare_list):
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
