@@ -3755,6 +3755,8 @@
                 \item Solute Carrier Family 4 member 10
                 \item Sodium/bicarbonate co-transporter that regulates intracellular pH \cite{SLC4A10-1}.
                 \item Genetic distruption of SLC4A10 reduces several mitochondrial enzymes \cite{SLC4A10-2}.
+                \item Patients who had lower SLC4A10 expression in CD8+ T-cell \\
+                    had lower disease free survival in liver cancer \cite{SLC4A10-3}.
             \end{enumerate}
         \end{block}
 
@@ -4217,90 +4219,9 @@
         \end{figure}
     \end{frame}
 
+    \subsubsection{LUSC Taxonomy Distribution upon MSP}
     \begin{frame}[allowframebreaks]
-        \frametitle{LUSC Taxonomy Distribution -- Smoking}
-
-        \begin{table}
-            \caption{LUSC WTS Data with Smoking}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WTS_samples/WTS_SQC_smoking.tex}}
-        \end{table}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Smoking.genus.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Smoking.species.pdf}
-                \\
-                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
-            \end{array}$
-            \caption{Taxonomy Distribution of LUSC by Smoking}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LUSC Taxonomy Distribution -- Recurrence}
-
-        \begin{table}
-            \caption{LUSC WTS Data with Recurrence}
-            \resizebox{!}{0.3 \textheight}
-            {\input{tables/WTS_samples/WTS_SQC_recurrence.tex}}
-        \end{table}
-
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Recurrence.genus.pdf}
-                &
-                \includegraphics[width=0.4 \linewidth]{figures/PathSeq/WTS/STAR/Bar/Bar-STAR-SQC.Recurrence.species.pdf}
-                \\
-                \mbox{(a) Genus level} & \mbox{(b) Species level} \\
-            \end{array}$
-            \caption{Taxonomy Distribution of LUSC by Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Differentially expressed taxa -- Recur. -- Genus level}
-
-        \begin{block}{Differentially expressed genera}
-            28 / 1770 (1.58 \%) genera passed K.W. test (p $<$ 0.01)
-        \end{block}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.genus/Lyngbya.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.genus/Salimicrobium.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.genus/Tenacibaculum.pdf}
-                \\
-            \end{array}$
-            \caption{Differentially expressed genera in Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Differentially expressed taxa -- Recur. -- Species level}
-
-        \begin{block}{Differentially expressed species}
-            133 / 11880 (1.12 \%) species passed K.W. test (p $<$ 0.01)
-        \end{block}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.species/Lyngbya_sp._PCC_8106.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.species/Scytonema_millei.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.Recurrence.species/Tenacibaculum_sp._LPB0136.pdf}
-                \\
-            \end{array}$
-            \caption{Differentially expressed species in Recurrence}
-        \end{figure}
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{LUSC Taxonomy Distribution -- Mutation Shared}
+        \frametitle{LUSC Taxonomy Distribution -- MSP}
 
         \begin{figure}
             $\begin{array}{cc}
@@ -4310,12 +4231,12 @@
                 \\
                 \mbox{(a) Genus level} & \mbox{(b) Species level} \\
             \end{array}$
-            \caption{Taxonomy Distribution of LUSC by Mutation Shared Proportion}
+            \caption{Taxonomy Distribution of LUSC by MSP}
         \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Differentially expressed taxa -- Shared -- Genus level}
+        \frametitle{Differentially expressed taxa -- MSP -- Genus level}
 
         \begin{block}{Differentially expressed genera}
             59 / 1770 (3.33 \%) genera passed K.W. test (p $<$ 0.01)
@@ -4330,7 +4251,7 @@
                 \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.MutationSharedProportion-Median.genus/Rhodocista.pdf}
                 \\
             \end{array}$
-            \caption{Differentially expressed genera in Mutation Shared Proportion}
+            \caption{Differentially expressed genera in MSP}
         \end{figure}
 
         \begin{figure}
@@ -4342,12 +4263,12 @@
                 \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.MutationSharedProportion-Median.genus/Sinomonas.pdf}
                 \\
             \end{array}$
-            \caption{Differentially expressed genera in M.S.P. -- CIS \& Primary}
+            \caption{Differentially expressed genera in MSP -- CIS \& Primary}
         \end{figure}
     \end{frame}
 
     \begin{frame}[allowframebreaks]
-        \frametitle{Differentially expressed taxa -- Shared -- Species level}
+        \frametitle{Differentially expressed taxa -- MSP -- Species level}
 
         \begin{block}{Differentially expressed genera}
             270 / 11880 (2.27 \%) species passed K.W. test (p $<$ 0.01)
@@ -4362,7 +4283,7 @@
                 \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.MutationSharedProportion-Median.species/Rhodocista_sp._MIMtkB3.pdf}
                 \\
             \end{array}$
-            \caption{Differentially expressed genera in Mutation Shared Proportion}
+            \caption{Differentially expressed genera in MSP}
         \end{figure}
 
         \begin{figure}
@@ -4374,7 +4295,7 @@
                 \includegraphics[width=0.3 \linewidth]{figures/PathSeq/WTS/STAR/Violin/Violin-STAR-SQC.MutationSharedProportion-Median.species/Sinomonas_atrocyanea.pdf}
                 \\
             \end{array}$
-            \caption{Differentially expressed genera in M.S.P -- CIS \& Primary}
+            \caption{Differentially expressed genera in MSP -- CIS \& Primary}
         \end{figure}
     \end{frame}
 
