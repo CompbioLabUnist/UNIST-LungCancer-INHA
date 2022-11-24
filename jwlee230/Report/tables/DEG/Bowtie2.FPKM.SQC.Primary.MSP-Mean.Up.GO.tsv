@@ -1,0 +1,4 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	ubiquitin protein ligase activity (GO:0061630)	0.026127555206944056	75.32824427480917	274.5537306563038	ZNRF1	0.03881659490573744	0	0
+2	ubiquitin-like protein ligase activity (GO:0061659)	0.026818242550171748	73.34200743494424	265.40073699980786	ZNRF1	0.03881659490573744	0	0
+3	ubiquitin-protein transferase activity (GO:0004842)	0.03881659490573744	50.14578005115089	162.91899689167585	ZNRF1	0.03881659490573744	0	0

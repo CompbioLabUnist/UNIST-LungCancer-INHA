@@ -1,0 +1,2 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	voltage-gated sodium channel activity (GO:0005248)	7.188597063443213e-05	10.707470414201184	102.1538659202517	SCN3B,CACNA1H,SCN1B,CACNA1G,SCN1A,SCN2B	0.039105968025131076	0	0

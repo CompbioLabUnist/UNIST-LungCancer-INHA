@@ -1,0 +1,4 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	vascular endothelial growth factor-activated receptor activity (GO:0005021)	0.0006998773712248138	3332.0	24205.66526687677	NRP2	0.001649550933578069	0	0
+2	semaphorin receptor activity (GO:0017154)	0.0010997006223853795	1998.8	13617.259334619379	NRP2	0.001649550933578069	0	0
+3	transmembrane receptor protein tyrosine kinase activity (GO:0004714)	0.0059910742376778365	337.9491525423729	1729.4495649366188	NRP2	0.0059910742376778365	0	0

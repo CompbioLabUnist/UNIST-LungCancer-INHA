@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	protein phosphatase 2A binding (GO:0051721)	0.000756249572304744	56.65909090909091	407.2167684458615	ENSA,MASTL	0.030134162635098716	0	0
+2	protein phosphatase binding (GO:0019903)	0.001181731868043087	16.00483870967742	107.88500435701086	ENSA,PIK3R2,MASTL	0.030134162635098716	0	0

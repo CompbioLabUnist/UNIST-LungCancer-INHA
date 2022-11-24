@@ -1,0 +1,5 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	K48-linked polyubiquitin modification-dependent protein binding (GO:0036435)	0.000599909243874975	3998.6	29664.54247254577	ZFAND2B	0.0023996369754999	0	0
+2	polyubiquitin modification-dependent protein binding (GO:0031593)	0.005093556593495773	398.96	2106.4206103192937	ZFAND2B	0.010187113186991547	0	0
+3	guanyl-nucleotide exchange factor activity (GO:0005085)	0.01484473949298198	134.1216216216216	564.6667427694166	LAMTOR4	0.01979298599064264	0	0
+4	GTPase activator activity (GO:0005096)	0.03331839376607531	58.6955223880597	199.66136952958874	LAMTOR4	0.03331839376607531	0	0

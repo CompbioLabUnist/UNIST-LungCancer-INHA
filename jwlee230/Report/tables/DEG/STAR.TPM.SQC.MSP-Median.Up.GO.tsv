@@ -1,0 +1,2 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	kinase binding (GO:0019900)	0.00023100479625997694	10.701206140350877	89.6019704056198	GADD45A,TOLLIP,WWC2,CD24,ADIPOR1	0.009471196646659054	0	0

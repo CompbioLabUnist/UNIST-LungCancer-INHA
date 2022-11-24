@@ -1,0 +1,2 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	MHC class II receptor activity (GO:0032395)	0.0001296906626357424	40.958592132505174	366.5940816539631	HLA-DQA1,HLA-DQB2,HLA-DPA1	0.03514616957428619	0	0

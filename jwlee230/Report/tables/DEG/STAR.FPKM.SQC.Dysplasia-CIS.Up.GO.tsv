@@ -1,0 +1,4 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	retinal dehydrogenase activity (GO:0001758)	0.0007998405838081707	2855.8571428571427	20365.397503539738	ALDH8A1	0.003999202919040853	0	0
+2	oxidoreductase activity, acting on the aldehyde or oxo group of donors, NAD or NADP as acceptor (GO:0016620)	0.001999013056978533	1051.5263157894738	6535.342984161837	ALDH8A1	0.004997532642446333	0	0
+3	DNA-binding transcription repressor activity, RNA polymerase II-specific (GO:0001227)	0.025436622895786153	77.4235294117647	284.2655437694921	ZFP90	0.04239437149297692	0	0

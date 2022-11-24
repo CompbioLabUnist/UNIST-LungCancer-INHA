@@ -1,0 +1,4 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	transforming growth factor beta-activated receptor activity (GO:0005024)	7.347354101262715e-07	237.61904761904762	3356.0733042831894	ACVRL1,LTBP4,ENG	5.804409739997545e-05	0	0
+2	transmembrane receptor protein serine/threonine kinase activity (GO:0004675)	2.7081250704780845e-06	142.52857142857144	1827.1099620264538	ACVRL1,LTBP4,ENG	0.00010697094028388434	0	0
+3	transforming growth factor beta binding (GO:0050431)	6.675090990537933e-06	101.77551020408163	1212.8717540971234	ACVRL1,LTBP4,ENG	0.00017577739608416556	0	0

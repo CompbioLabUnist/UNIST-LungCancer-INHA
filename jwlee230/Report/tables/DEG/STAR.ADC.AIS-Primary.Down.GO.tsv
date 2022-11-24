@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	nucleoside-triphosphatase activity (GO:0017111)	0.00022117671118295927	10.301936159079016	86.706746128714	DYNC2H1,LRRK2,MTG2,SRP54,CFTR	0.027996011092488757	0	0
+2	chloride channel regulator activity (GO:0017081)	0.00040282030348904685	80.75708502024291	631.279748139968	SGK3,CFTR	0.027996011092488757	0	0

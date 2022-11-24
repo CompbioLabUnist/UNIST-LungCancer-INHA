@@ -1,0 +1,2 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	guanyl-nucleotide exchange factor activity (GO:0005085)	0.00012415711106114887	5.144431486880467	46.26882526412598	DOCK5,FARP1,FGD5,FGD6,DOCK9,RAPGEF2,RIN3,RASGRP2,ARHGEF7	0.04059937531699568	0	0

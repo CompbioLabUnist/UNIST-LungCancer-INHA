@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	guanyl-nucleotide exchange factor activity (GO:0005085)	0.007449914722160563	19851.0	97261.02051561224	LAMTOR4	0.014899829444321127	0	0
+2	GTPase activator activity (GO:0005096)	0.01679986623008202	19664.0	80354.66195868133	LAMTOR4	0.01679986623008202	0	0

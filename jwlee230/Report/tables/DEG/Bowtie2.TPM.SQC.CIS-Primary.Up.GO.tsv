@@ -1,0 +1,3 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	transaminase activity (GO:0008483)	0.0010997006223853795	1998.8	13617.259334619379	BCAT1	0.002199401244770759	0	0
+2	receptor antagonist activity (GO:0048019)	0.0027980636576703175	739.6666666666666	4348.372853162505	IGSF1	0.0027980636576703175	0	0

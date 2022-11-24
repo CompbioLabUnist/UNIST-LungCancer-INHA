@@ -1,0 +1,2 @@
+Rank	Term name	P-value	Z-score	Combined score	Overlapping genes	Adjusted p-value	Old p-value	Old adjusted p-value
+1	amyloid-beta binding (GO:0001540)	0.00023250061747295107	14.713862120088955	123.10525891297736	BACE1,ITGA2,FPR2,SORL1	0.029992579654010688	0	0
