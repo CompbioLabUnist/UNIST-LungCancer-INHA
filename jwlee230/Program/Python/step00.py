@@ -45,6 +45,11 @@ PathSeq_type_list = ["class", "family", "genus", "kingdom", "no_rank", "order", 
 sharing_strategy = ["Chromosome", "Start_Position", "End_Position", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"]
 sharing_columns = ["Mutation Shared Proportion", "Mutation Shared Proportion (SYN)", "Mutation Shared Proportion (Union)", "Mutation Shared Proportion (Union & SYN)", "Mutation Shared Count", "Mutation Shared Count (SYN)", "Mutation Shared Count per TMB", "Mutation Shared Count (SYN) per TMB"]
 
+pathway_gene_set_library = ["KEGG_2021_Human", "MSigDB_Oncogenic_Signatures", "GO_Molecular_Function_2021"]
+pathway_wanted_columns = ["Rank", "Term name", "P-value", "Z-score", "Combined score", "Overlapping genes", "Adjusted p-value", "Old p-value", "Old adjusted p-value"]
+pathway_addlist_url = "https://maayanlab.cloud/Enrichr/addList"
+pathway_enrichment_url = "https://maayanlab.cloud/Enrichr/enrich"
+
 
 def file_list(path: str) -> typing.List[str]:
     """
