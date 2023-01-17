@@ -195,6 +195,10 @@ Docker/Tools/helmsman.tar.gz: | Docker/Tools
 	wget "https://github.com/carjed/helmsman/archive/refs/tags/1.5.3.tar.gz" -O $@
 TOOLS += Docker/Tools/helmsman.tar.gz
 
+Docker/Tools/mobster.tar.gz: | Docker/Tools
+	wget "https://github.com/jyhehir/mobster/archive/refs/tags/v0.2.4.1.tar.gz" -O $@
+TOOLS += Docker/Tools/mobster.tar.gz
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@

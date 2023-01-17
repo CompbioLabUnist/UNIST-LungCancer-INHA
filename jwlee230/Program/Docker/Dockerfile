@@ -12,7 +12,7 @@ RUN mkdir /Tools
 
 # Python3
 ADD Tools/Python.tar.xz /Tools/
-RUN cd /Tools/Python-3.9.1 && ./configure --enable-loadable-sqlite-extensions --enable-optimizations && make -j && make -j install && make -j altinstall
+RUN cd /Tools/Python-3.9.1 && ./configure --enable-loadable-sqlite-extensions --enable-optimizations --enable-big-digits=30 --with-ensurepip && make -j && make -j install && make -j altinstall
 ADD requirements.txt /Tools/requirements.txt
 RUN pip3 install --upgrade wheel pip && pip3 install --requirement /Tools/requirements.txt
 
@@ -20,7 +20,7 @@ RUN pip3 install --upgrade wheel pip && pip3 install --requirement /Tools/requir
 ADD Tools/Miniconda.sh /Tools/
 RUN cd /Tools && bash Miniconda.sh -b
 ENV PATH=/root/anaconda2/bin:$PATH
-RUN conda create -n pyclone -c bioconda -c conda-forge pyclone
+RUN conda create -n pyclone -c bioconda -c conda-forge pyclone==0.13.1
 
 # Samtools
 ADD Tools/samtools.tar.bz2 /Tools/
@@ -59,14 +59,14 @@ ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
 ADD GitHub.pat /root/.Renviron
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'R.utils'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('renozao/xbioc@1354168bd7e64be4ee1f9f74e971a61556d75003')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC@fc0ca72792dfc65003e10162a3619c02fd8742d1', 'meichendong/SCDC@2b0b2abcf5d06361003961bdec4f56223ce7bde2'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree', 'caravagn/mtree', 'caravagnalab/revolver'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber@b3de1b00165b112bdcbc44be61e236a88a634c9a')" && Rscript -e "remotes::install_github('Subhayan18/CRUST@105a60f211b411f9d00a6ab8e17c947f4a521227')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'BSgenome.Hsapiens.UCSC.hg19', 'BSgenome.Hsapiens.UCSC.hg38'))" && Rscript -e "install.packages(c('BisqueRNA', 'Seurat', 'deconstructSigs'))"
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'devtools', 'R.utils'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('renozao/xbioc@1354168bd7e64be4ee1f9f74e971a61556d75003')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages(c('sequenza'))" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "devtools::install_github(c('xuranw/MuSiC@fc0ca72792dfc65003e10162a3619c02fd8742d1', 'meichendong/SCDC@2b0b2abcf5d06361003961bdec4f56223ce7bde2'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "devtools::install_github(c('caravagn/ctree@df8dc8395725f396e9f7cefa3a9e46d3b7b113ec', 'caravagn/mtree@8459f273264f425e60d8694258d94465c05217dd', 'caravagnalab/revolver@7ee825ae419d38ceb2b1613bb19cb409952ab00b'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber@b3de1b00165b112bdcbc44be61e236a88a634c9a')" && Rscript -e "remotes::install_github('Subhayan18/CRUST@105a60f211b411f9d00a6ab8e17c947f4a521227')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'BSgenome.Hsapiens.UCSC.hg19', 'BSgenome.Hsapiens.UCSC.hg38'))" && Rscript -e "install.packages(c('BisqueRNA', 'Seurat', 'deconstructSigs'))"
 ENV R_LIBS=/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library
 
 # VEP
 ADD Tools/VEP.zip /Tools/
 ADD Tools/BigFile.tar.gz /Tools/
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
-RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
+RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 # BCFtools
@@ -106,7 +106,7 @@ ENV PATH=/opt/fusioncatcher/bin:$PATH
 
 # STAR-Fusion
 ADD Tools/Star-Fusion.tar.gz /Tools/
-RUN cpanm --notest DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS PerlIO::gzip
+RUN cpanm DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS PerlIO::gzip
 ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 
 # QAPA
@@ -117,7 +117,8 @@ RUN cd /Tools && unzip QAPA.zip && cd qapa-master && conda install -c bioconda -
 RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; genInstall.install('GRCh38')"
 
 # Mobster
-RUN cd /Tools && git clone "https://github.com/jyhehir/mobster.git" && cd mobster && git-lfs pull
+ADD Tools/mobster.tar.gz /Tools/
+RUN cd /Tools/mobster && git-lfs pull
 RUN conda install -c bioconda -c conda-forge mobster
 
 # Gistic
