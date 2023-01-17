@@ -66,7 +66,7 @@ ENV R_LIBS=/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/libr
 ADD Tools/VEP.zip /Tools/
 ADD Tools/BigFile.tar.gz /Tools/
 ENV KENT_SRC=/Tools/kent-335_base/src MACHTYPE=x86_64 CFLAGS="-fPIC"
-RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
+RUN cd /Tools/kent-335_base/src/lib && make -j && cd ../jkOwnLib && make -j && cd /Tools && unzip VEP.zip && cd ensembl-vep-release-103 && cpanm --with-recommends --notest --installdeps . && perl INSTALL.pl --NO_TEST --NO_UPDATE && cd /Tools/ensembl-vep-release-103/Bio/EnsEMBL/Variation && sed -i -e '900,906d' TranscriptVariationAllele.pm
 ENV PATH=/Tools/ensembl-vep-release-103:$PATH
 
 # BCFtools
@@ -106,7 +106,7 @@ ENV PATH=/opt/fusioncatcher/bin:$PATH
 
 # STAR-Fusion
 ADD Tools/Star-Fusion.tar.gz /Tools/
-RUN cpanm DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS PerlIO::gzip
+RUN cpanm --notest DB_File URI::Escape Set::IntervalTree Carp::Assert JSON::XS PerlIO::gzip
 ENV PATH=/Tools/STAR-Fusion.v1.10.1:$PATH
 
 # QAPA
@@ -118,8 +118,7 @@ RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; ge
 
 # Mobster
 ADD Tools/mobster.tar.gz /Tools/
-RUN cd /Tools/mobster && git-lfs pull
-RUN conda install -c bioconda -c conda-forge mobster
+RUN cd /Tools/mobster && git-lfs pull && conda install -c bioconda -c conda-forge mobster==0.2.4
 
 # Gistic
 ADD Tools/Gistic.tar.gz /Tools/
