@@ -118,7 +118,7 @@ RUN python3 -c "from SigProfilerMatrixGenerator import install as genInstall; ge
 
 # Mobster
 ADD Tools/mobster.tar.gz /Tools/
-RUN cd /Tools/mobster && git-lfs pull && conda install -c bioconda -c conda-forge mobster==0.2.4
+RUN cd /Tools && git clone https://github.com/jyhehir/mobster && cd mobster && git checkout 5b7bae9b7eab057cc969c07c895c17401072eed0 && git-lfs pull && conda install -c bioconda -c conda-forge mobster
 
 # Gistic
 ADD Tools/Gistic.tar.gz /Tools/
@@ -131,8 +131,8 @@ RUN cd /Tools && unzip MiXCR.zip
 ENV PATH=/Tools/mixcr-3.0.13:$PATH
 
 # RTCR
-ADD Tools/RTCR.zip /Tools/
-RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python2 setup.py install
+# ADD Tools/RTCR.zip /Tools/
+# RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python2 setup.py install
 
 # Helmsman
 ADD Tools/helmsman.tar.gz /Tools/
