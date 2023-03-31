@@ -3,6 +3,7 @@ calculate_MutationSharedProportion.py: calculate Mutation Shared Proportion
 """
 import argparse
 import multiprocessing
+import numpy
 import pandas
 import tqdm
 import step00
@@ -85,5 +86,8 @@ if __name__ == "__main__":
     for column in tqdm.tqdm(step00.sharing_columns):
         clinical_data[column] = list(map(float, clinical_data[column]))
     print(clinical_data)
+
+    for column in step00.sharing_columns:
+        print(column, f"{numpy.min(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.mean(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.median(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.max(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}")
 
     clinical_data.to_csv(args.output, sep="\t")
