@@ -159,7 +159,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
         if compare_list:
-            statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         compare_list = list()
         for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
         if compare_list:
-            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         axs[0].set_title(f"CNV Loss: K.W. p={p_loss:.3f}")
         axs[1].set_title(f"CNV Gain: K.W. p={p_gain:.3f}")

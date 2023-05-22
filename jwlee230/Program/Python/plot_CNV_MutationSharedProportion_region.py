@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
         if compare_list:
-            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=MSP_order, y="Region", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=MSP_order, y="Region", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel("Size of somatic CNV region (bp)")
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         except ValueError:
             p_loss = 1.0
 
-        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
+        seaborn.v2023-05-22iolinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
         if compare_list:
             statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
         if compare_list:
-            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         axs[0].set_title(f"CNV Loss: K.W. p={p_loss:.3f}")
         axs[1].set_title(f"CNV Gain: K.W. p={p_gain:.3f}")

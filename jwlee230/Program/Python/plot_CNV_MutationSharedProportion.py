@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
         seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
         if compare_list:
-            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.tight_layout()
