@@ -5,7 +5,7 @@ import argparse
 import matplotlib
 import matplotlib.pyplot
 import pandas
-import venn
+import upsetplot
 import step00
 
 if __name__ == "__main__":
@@ -45,9 +45,13 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-    venn.venn(input_data, ax=ax, fmt=step00.venn_format, fontsize=step00.matplotlib_parameters["font.size"])
-    matplotlib.pyplot.tight_layout()
+    fig = matplotlib.pyplot.figure(figsize=(10 * len(input_data) + 10, 24))
 
-    fig.savefig(args.output)
+    try:
+        upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+    except IndexError:
+        pass
+
+    fig.savefig(args.output, bbox_inches="tight")
+
     matplotlib.pyplot.close(fig)
