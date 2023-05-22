@@ -115,8 +115,14 @@
             12.3 \% of all cancers \cite{lung3}
         \end{block}
 
-        \begin{block}{The most important factor}
-            \textbf{Tobacco}
+        \begin{block}{Causes of lung cancer \\ \cite{lung6}}
+            \begin{enumerate}
+                \item Tobacco
+                \item Cooking oil fumes
+                \item Tuberculosis history
+                \item Menopausal hormone replacement
+                \item ...
+            \end{enumerate}
         \end{block}
     \end{frame}
 
@@ -256,9 +262,9 @@
         \frametitle{Lung Cancer Data}
 
         \begin{itemize}
-            \item Exome (WES) (sample $n$=289) \\
-                + Transcriptome (WTS) (sample $n$=166)
-            \item Normal + \{Dysplasia, AAH, CIS + AIS, MIA\} + Primary
+            \item Exome (WES) (sample n=289) \\
+                + Transcriptome (WTS) (sample n=166)
+            \item Normal + \{Dysplasia, AAH, CIS+AIS, MIA\} + Primary
             \begin{itemize}
                 \item Adenocarcinoma in situ
                 \item Atypical adenomatous hyperplasia
@@ -268,8 +274,8 @@
             \end{itemize}
             \item Adenocarcinoma (LUAD) \& Squamous cell carcinoma (LUSC)
             \begin{enumerate}
-                \item Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ LUAD (patient $n$=18)
-                \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (patient $n$=77)
+                \item Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ LUAD (patient n=18)
+                \item Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ LUSC (patient n=77)
             \end{enumerate}
         \end{itemize}
     \end{frame}
@@ -2320,102 +2326,6 @@
                 \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
             \end{array}$
             \caption{SBS87 vs. Recurrence-Free Survival in LUSC}
-        \end{figure}
-
-    \end{frame}
-
-    \begin{frame}[allowframebreaks]
-        \frametitle{Mutational Signatures vs. Volume Doubling Time}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS1.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS1.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS1 vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS2.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS2.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS2.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS2 vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS4.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS4.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS4.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS4 vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS5.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS5.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS5.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS5 vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS10b.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS10b.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS10b.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS10b vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS13.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS13.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS13.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS13 vs. Volume Doubling Time in LUSC}
-        \end{figure}
-
-        \begin{figure}
-            $\begin{array}{ccc}
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/CIS+AIS-SBS87.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/Primary-SBS87.pdf}
-                &
-                \includegraphics[width=0.3 \linewidth]{figures/SigProfiler_Clinical/BWA-SQC-VDT_SBS/All-SBS87.pdf}
-                \\
-                \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
-            \end{array}$
-            \caption{SBS87 vs. Volume Doubling Time in LUSC}
         \end{figure}
     \end{frame}
 
