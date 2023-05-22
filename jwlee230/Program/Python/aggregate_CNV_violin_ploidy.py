@@ -56,13 +56,20 @@ if __name__ == "__main__":
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
+    pairs = list()
+    for stage_a, stage_b in zip(stage_list, stage_list[1:]):
+        p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage_a), args.watching], input_data.loc[(input_data["Stage"] == stage_b), args.watching])[1]
+        if p < 0.05:
+            pairs.append((stage_a, stage_b))
+
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), "Ploidy"] for stage in stage_list])
     except ValueError:
         stat, p = 0.0, 1.0
 
     seaborn.violinplot(data=input_data, x="Stage", y="Ploidy", order=stage_list, inner="box", palette=step00.stage_color_code, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_list, stage_list[1:])), data=input_data, x="Stage", y="Ploidy", order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if pairs:
+        statannotations.Annotator.Annotator(ax, pairs, data=input_data, x="Stage", y="Ploidy", order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()

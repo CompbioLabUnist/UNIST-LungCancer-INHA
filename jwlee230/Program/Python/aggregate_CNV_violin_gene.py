@@ -143,13 +143,20 @@ if __name__ == "__main__":
         drawing_stage_list = list(filter(lambda x: x in set(drawing_data["Stage"]), stage_list))
         drawing_palette = list(map(lambda x: step00.stage_color_code[x], drawing_stage_list))
 
+        pairs = list()
+        for stage_a, stage_b in zip(drawing_stage_list, drawing_stage_list[1:]):
+            p = scipy.stats.mannwhitneyu(drawing_data.loc[(drawing_data["Stage"] == stage_a), args.watching], drawing_data.loc[(drawing_data["Stage"] == stage_b), args.watching])[1]
+            if p < 0.05:
+                pairs.append((stage_a, stage_b))
+
         try:
             stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data["Stage"] == stage), args.watching] for stage in drawing_stage_list])
         except ValueError:
             stat, p = 0.0, 1.0
 
         seaborn.violinplot(data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, inner="box", palette=drawing_palette, cut=1, ax=ax)
-        statannotations.Annotator.Annotator(ax, list(zip(drawing_stage_list, drawing_stage_list[1:])), data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        if pairs:
+            statannotations.Annotator.Annotator(ax, pairs, data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.xlabel("")
