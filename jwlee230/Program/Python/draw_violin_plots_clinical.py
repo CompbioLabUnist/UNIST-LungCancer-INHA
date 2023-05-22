@@ -32,17 +32,17 @@ def run(gene: str) -> str:
     if (p > 0.05):
         return ""
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
     if compare_list:
-        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=args.compare[0], order=args.compare[1:], y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{gene} expression")
     matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = gene + ".pdf"
+    fig_name = f"{gene}.pdf"
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 

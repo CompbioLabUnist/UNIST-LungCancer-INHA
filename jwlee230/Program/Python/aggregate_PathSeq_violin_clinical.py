@@ -34,7 +34,7 @@ def draw_violin(taxon: str) -> str:
 
     seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, hue=compare[0], hue_order=compare[1:], cut=1, linewidth=5, ax=ax)
     try:
-        statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(compare[1:], r=2)))), data=output_data, x="Subtype", y=taxon, order=stage_order, hue=compare[0], hue_order=compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, list(map(lambda x: ((x[0], x[1][0]), (x[0], x[1][1])), itertools.product(stage_order, itertools.combinations(compare[1:], r=2)))), data=output_data, x="Subtype", y=taxon, order=stage_order, hue=compare[0], hue_order=compare[1:]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
     except Exception:
         pass
 
@@ -100,7 +100,6 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.map(draw_violin, taxa_list)))
-
     print(len(figures))
 
     with tarfile.open(args.output, "w") as tar:

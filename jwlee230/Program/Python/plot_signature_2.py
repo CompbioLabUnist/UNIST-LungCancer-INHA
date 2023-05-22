@@ -22,15 +22,22 @@ hue_order: typing.List[str] = list()
 
 
 def draw_violin(signature: str, clinical: str) -> str:
+    pairs = list()
+    for (c1, s1), (c2, s2) in compare_order:
+        p = scipy.stats.mannwhitneyu(input_data.loc[(input_data[clinical] == c1) & (input_data["Stage"] == s1), signature], input_data.loc[(input_data[clinical] == c2) & (input_data["Stage"] == s2), signature])[1]
+        if p < 0.05:
+            pairs.append(((c1, s1), (c2, s2)))
+
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(order, hue_order)])
     except ValueError:
         _, p = 0.0, 1.0
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=input_data, x=clinical, order=order, y=signature, hue="Stage", hue_order=hue_order, palette=step00.stage_color_code, inner="box", cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, compare_order, data=input_data, x=clinical, order=order, y=signature, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if pairs:
+        statannotations.Annotator.Annotator(ax, pairs, data=input_data, x=clinical, order=order, y=signature, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
     matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")

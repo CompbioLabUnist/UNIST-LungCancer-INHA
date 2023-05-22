@@ -19,8 +19,6 @@ replaced = " ()/"
 
 
 def run(cell: str) -> str:
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
-
     order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
     palette = list(map(lambda x: step00.stage_color_code[x], order))
 
@@ -38,9 +36,10 @@ def run(cell: str) -> str:
         if p_value < 0.05:
             compare_list.append((a, b))
 
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     seaborn.violinplot(data=input_data, x="Stage", y=cell, order=order, palette=palette, cut=1, linewidth=5, ax=ax)
     if compare_list:
-        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
     matplotlib.pyplot.ylabel(f"Proportion of {cell}")

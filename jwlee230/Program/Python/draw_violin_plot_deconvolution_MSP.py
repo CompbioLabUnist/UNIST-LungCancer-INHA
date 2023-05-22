@@ -94,11 +94,11 @@ if __name__ == "__main__":
             if p_value < 0.05:
                 compare_list.append(((c1, s1), (c2, s2)))
 
-        fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=input_data, x=MSP, y=cell, order=MSP_order, hue="Stage", hue_order=order, palette=palette, cut=1, linewidth=5, ax=ax)
         if compare_list:
-            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=MSP, y=cell, order=MSP_order, hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=MSP, y=cell, order=MSP_order, hue="Stage", hue_order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
         matplotlib.pyplot.ylabel(f"Proportion of {cell}")

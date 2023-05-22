@@ -20,15 +20,22 @@ order: typing.List[str] = list()
 
 
 def draw_violin(signature: str) -> str:
+    pairs = list()
+    for stage1, stage2 in itertools.combinations(order, r=2):
+        p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage1), signature], input_data.loc[(input_data["Stage"] == stage2), signature])[1]
+        if p < 0.05:
+            pairs.append((stage1, stage2))
+
     try:
         stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), signature] for stage in order])
     except ValueError:
         _, p = 0.0, 1.0
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=input_data, x="Stage", y=signature, order=order, palette=step00.stage_color_code, inner="box", linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(itertools.combinations(order, 2)), data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    if pairs:
+        statannotations.Annotator.Annotator(ax, pairs, data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Proportion")
     matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
@@ -83,7 +90,7 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
     input_data["Total"] = input_data.sum(axis="columns")
-    for index in list(input_data.index):
+    for index in tqdm.tqdm(list(input_data.index)):
         input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))

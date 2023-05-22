@@ -30,7 +30,7 @@ def draw_violin(taxon: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
 
     seaborn.violinplot(data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, list(zip(stage_order, stage_order[1:])), data=output_data, x="Subtype", y=taxon, order=stage_order, palette=step00.stage_color_code).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{taxon} (%)")
     matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
@@ -106,7 +106,6 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.map(draw_violin, taxa_list)))
-
     print(len(figures))
 
     with tarfile.open(args.output, "w") as tar:
