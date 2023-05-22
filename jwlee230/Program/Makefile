@@ -224,7 +224,7 @@ stop:
 # Slurm
 run: | log Output build.log
 	echo -e "#!/bin/bash\nmake -j $(PARALLEL) -C $(PWD) latest" > tmp.sh
-	sbatch --chdir=$(abspath .) --cpus-per-task=$(shell echo "$(CPUS) * $(PARALLEL)" | bc) --error="$(abspath log)/%x.e%A" --job-name="Lung_$(DATE)" --mail-type=ALL --mail-user="230@fumire.moe" --mem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
+	sbatch --chdir=$(abspath .) --cpus-per-task=$(shell echo "$(CPUS) * $(PARALLEL)" | bc) --error="$(abspath log)/%x.e%A" --job-name="Lung_$(DATE)" --mail-type=ALL --mail-user="jwlee230@compbio.unist.ac.kr" --mem=$(shell echo "$(MEMS) * $(PARALLEL)" | bc)G --output="$(abspath log)/%x.o%A" --export=ALL tmp.sh
 .PHONY: run
 
 # Actual
