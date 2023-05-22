@@ -8,6 +8,7 @@ import multiprocessing
 import matplotlib
 import matplotlib.colors
 import matplotlib.pyplot
+import numpy
 import pandas
 import step00
 
@@ -50,10 +51,15 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
+
     matplotlib.pyplot.bar(x=list(input_data.index), height=input_data["Size"], color=input_data["color"])
+    matplotlib.pyplot.axhline(numpy.mean(input_data["Size"]), color="k", linestyle="--")
+    matplotlib.pyplot.text(0, numpy.mean(input_data["Size"]), f"Mean: {numpy.mean(input_data['Size']):.1f} GB", color="k", horizontalalignment="left", verticalalignment="baseline")
+    matplotlib.pyplot.axhline(numpy.median(input_data["Size"]), color="k", linestyle=":")
+    matplotlib.pyplot.text(len(input_data), numpy.median(input_data["Size"]), f"Median: {numpy.median(input_data['Size']):.1f} GB", color="k", horizontalalignment="right", verticalalignment="baseline")
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(sorted(set(list(map(step00.get_patient, args.input)))))))
+    matplotlib.pyplot.xlabel("Total {0} paired samples from {1} Patients".format(len(list(map(step00.get_id, args.input))) / 2, len(sorted(set(list(map(step00.get_patient, args.input)))))))
     matplotlib.pyplot.ylabel("Size (GB)")
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.tight_layout()
