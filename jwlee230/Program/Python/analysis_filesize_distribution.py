@@ -59,7 +59,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.text(len(input_data), numpy.median(input_data["Size"]), f"Median: {numpy.median(input_data['Size']):.1f} GB", color="k", horizontalalignment="right", verticalalignment="baseline")
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} paired samples from {1} Patients".format(len(list(map(step00.get_id, args.input))) / 2, len(sorted(set(list(map(step00.get_patient, args.input)))))))
+    matplotlib.pyplot.xlabel("Total {0} paired samples from {1} Patients".format(len(list(map(step00.get_id, args.input))) // 2, len(sorted(set(list(map(step00.get_patient, args.input)))))))
     matplotlib.pyplot.ylabel("Size (GB)")
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.tight_layout()

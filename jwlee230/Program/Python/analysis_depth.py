@@ -13,12 +13,12 @@ import pandas
 import step00
 
 
-def get_depth(file_name: str) -> typing.Tuple[str, float, float]:
+def get_depth(file_name: str) -> typing.Tuple[str, float, float, int]:
     """
     get_depth: get depth of coverage from file
     """
     data = pandas.read_csv(file_name, sep="\t", names=["CHROM", "POS", "Depth"], skiprows=1, verbose=True)
-    return (step00.get_id(file_name), numpy.mean(data["Depth"]), numpy.std(data["Depth"]) / 2)
+    return (step00.get_id(file_name), numpy.mean(data["Depth"]), numpy.std(data["Depth"]) / 2, len(data))
 
 
 if __name__ == "__main__":
@@ -42,8 +42,10 @@ if __name__ == "__main__":
     print(IDs)
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        depth_data = pandas.DataFrame(data=pool.map(get_depth, args.input), columns=["ID", "mean", "std"])
+        depth_data = pandas.DataFrame(data=pool.map(get_depth, args.input), columns=["ID", "mean", "std", "num"])
     print(depth_data)
+
+    mean_value = sum(list(map(lambda x: x[1] * x[3], depth_data.itertuple(index=False, name=None)))) / sum(depth_data["num"])
 
     patient_colors = dict(zip(sorted(set(list(map(step00.get_patient, args.input)))), itertools.cycle(matplotlib.colors.XKCD_COLORS.keys())))
     sample_colors = dict(list(map(lambda x: (x, matplotlib.colors.XKCD_COLORS[patient_colors[step00.get_patient(x)]]), list(map(step00.get_id, args.input)))))
@@ -54,7 +56,11 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
+
     matplotlib.pyplot.bar(x=list(depth_data.index), height=depth_data["mean"], color=depth_data["color"], yerr=depth_data["std"])
+
+    matplotlib.pyplot.axhline(mean_value, color="k", linestyle="--")
+    matplotlib.pyplot.text(0, mean_value, f"Mean: {mean_value:.1f}", color="k", horizontalalignment="left", verticalalignment="baseline")
 
     matplotlib.pyplot.xticks([])
     matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(sorted(set(list(map(step00.get_patient, args.input)))))))
