@@ -29,7 +29,7 @@ def draw_violin(signature: str, clinical: str) -> str:
             pairs.append(((c1, s1), (c2, s2)))
 
     try:
-        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(order, hue_order)])
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(order, hue_order)], nan_policy="omit")
     except ValueError:
         _, p = 0.0, 1.0
 
@@ -40,7 +40,7 @@ def draw_violin(signature: str, clinical: str) -> str:
         statannotations.Annotator.Annotator(ax, pairs, data=input_data, x=clinical, order=order, y=signature, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Count")
-    matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.title(f"{signature}: K.W. p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"{signature}.pdf"
