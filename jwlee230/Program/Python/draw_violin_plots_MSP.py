@@ -43,7 +43,7 @@ def run(MSP: str, gene: str) -> str:
         statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=MSP, order=order, y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{gene} expression")
-    matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.title(f"{gene}: K.W. p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"{MSP}_{gene}.pdf"

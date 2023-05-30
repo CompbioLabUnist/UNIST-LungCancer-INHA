@@ -41,7 +41,7 @@ def run(cell: str) -> str:
     if compare_list:
         statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.title(f"{cell} K.W. p={p:.3f}")
     matplotlib.pyplot.ylabel(f"Proportion of {cell}")
     matplotlib.pyplot.tight_layout()
 
