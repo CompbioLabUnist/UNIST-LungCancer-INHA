@@ -29,7 +29,7 @@ def draw_violin(signature: str, clinical: str) -> str:
             pairs.append(((c1, s1), (c2, s2)))
 
     try:
-        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(order, hue_order)], nan_policy="omit")
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(hue_order, order)], nan_policy="omit")
     except ValueError:
         _, p = 0.0, 1.0
 

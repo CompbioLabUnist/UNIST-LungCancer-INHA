@@ -17,6 +17,7 @@ import step00
 
 input_data = pandas.DataFrame()
 order: typing.List[str] = list()
+stage_order: typing.List[str] = list()
 compare_order: typing.List[typing.Tuple[typing.Tuple[str, str], typing.Tuple[str, str]]] = list()
 hue_order: typing.List[str] = list()
 
@@ -29,7 +30,7 @@ def draw_violin(signature: str, clinical: str) -> str:
             pairs.append(((c1, s1), (c2, s2)))
 
     try:
-        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(order, hue_order)], nan_policy="omit")
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[clinical] == clinical_value), signature] for stage, clinical_value in itertools.product(hue_order, order)], nan_policy="omit")
     except ValueError:
         _, p = 0.0, 1.0
 
@@ -100,7 +101,6 @@ if __name__ == "__main__":
     compare_order = [((c, s1), (c, s2)) for s1, s2 in itertools.combinations(hue_order, r=2) for c in order] + [((c1, s), (c2, s)) for c1, c2 in itertools.combinations(order, r=2) for s in hue_order]
     print(order)
     print(hue_order)
-    print(compare_order)
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.starmap(draw_violin, [(signature, args.compare[0]) for signature in signatures])))
