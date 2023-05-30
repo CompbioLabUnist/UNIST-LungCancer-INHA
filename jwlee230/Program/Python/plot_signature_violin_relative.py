@@ -38,7 +38,7 @@ def draw_violin(signature: str) -> str:
         statannotations.Annotator.Annotator(ax, pairs, data=input_data, x="Stage", y=signature, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Proportion")
-    matplotlib.pyplot.title(f"{signature}: Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.title(f"{signature}: K.W. p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"{signature}.pdf"
