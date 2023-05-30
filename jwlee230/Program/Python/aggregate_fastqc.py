@@ -2,11 +2,14 @@
 aggregate_fastqc.py: aggregate FastQC results into a single figure
 """
 import argparse
+import itertools
 import os
 import zipfile
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import pandas
+import seaborn
 import tqdm
 import step00
 
@@ -24,7 +27,7 @@ if __name__ == "__main__":
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output file must end with .pdf!!")
     elif args.threshold < 0:
-        raise ValueError("Threshold must be positive!!")
+        raise ValueError("Threshold must be non-negative!!")
 
     args.input.sort(key=step00.sorting)
 
@@ -45,32 +48,28 @@ if __name__ == "__main__":
     file_set = set(data["File"])
     item_set = set(data["Item"]) - {"Per tile sequence quality", "Per sequence GC content", "Adapter Content"}
 
+    output_data = pandas.DataFrame(numpy.zeros((len(item_set), len(file_set))), index=sorted(item_set), columns=sorted(file_set), dtype=float)
+    for f, item in tqdm.tqdm(list(itertools.product(sorted(file_set), sorted(item_set)))):
+        result = data.loc[(data["Item"] == item) & (data["File"] == f), "Result"].to_numpy()[0]
+        if result == "PASS":
+            output_data.loc[item, f] = 1.0
+        elif result == "WARN":
+            output_data.loc[item, f] = 0.5
+        elif result == "FAIL":
+            output_data.loc[item, f] = 0.0
+        else:
+            raise Exception("Something went wrong!!")
+    print(output_data)
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(len(file_set) / 5, len(item_set) * 2))
 
-    for i, f in tqdm.tqdm(enumerate(sorted(file_set))):
-        FAIL_count = 0
-        for j, item in enumerate(sorted(item_set, reverse=True)):
-            result = data.loc[(data["Item"] == item) & (data["File"] == f), "Result"].to_numpy()[0]
+    seaborn.heatmap(data=output_data, vmin=0, center=0.5, vmax=1, cbar=False, square=False, xticklabels=False, cmap="RdYlGn", ax=ax)
 
-            if result == "PASS":
-                matplotlib.pyplot.scatter(i, j, s=100, marker="o", c="tab:green")
-            elif result == "WARN":
-                matplotlib.pyplot.scatter(i, j, s=100, marker="^", c="tab:olive")
-            elif result == "FAIL":
-                matplotlib.pyplot.scatter(i, j, s=100, marker="X", c="tab:red")
-                FAIL_count += 1
-            else:
-                raise Exception("Something went wrong!!")
-        if FAIL_count > args.threshold:
-            print(f, FAIL_count)
-
-    matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.yticks(range(len(item_set)), sorted(item_set, reverse=True), fontsize="xx-small")
     matplotlib.pyplot.xlabel("Files")
-    matplotlib.pyplot.ylabel("Tests")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

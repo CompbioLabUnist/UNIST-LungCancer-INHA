@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     pairs = list()
     for stage_a, stage_b in zip(stage_list, stage_list[1:]):
-        p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage_a), args.watching], input_data.loc[(input_data["Stage"] == stage_b), args.watching])[1]
+        p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == stage_a), "Ploidy"], input_data.loc[(input_data["Stage"] == stage_b), "Ploidy"])[1]
         if p < 0.05:
             pairs.append((stage_a, stage_b))
 
