@@ -29,7 +29,7 @@ def draw_venn(sample: str) -> str:
     for sample in sample_list:
         venn_data[sample] = query_data[sample]
 
-    fig = matplotlib.pyplot.figure(figsize=(2 ** len(venn_data) + 40, 24))
+    fig = matplotlib.pyplot.figure(figsize=(10 * len(input_data) + 10, 24))
 
     try:
         upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)

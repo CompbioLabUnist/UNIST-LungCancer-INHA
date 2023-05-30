@@ -84,7 +84,7 @@ if __name__ == "__main__":
     for stage in tqdm.tqdm(selected_stage_list):
         input_data[stage] = set(mutect_data.loc[(mutect_data["Cancer_subtype"] == stage), "Hugo_Symbol"])
 
-    fig = matplotlib.pyplot.figure(figsize=(2 ** len(input_data) + 40, 24))
+    fig = matplotlib.pyplot.figure(figsize=(10 * len(input_data) + 10, 24))
 
     upsetplot.plot(upsetplot.from_contents(input_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
