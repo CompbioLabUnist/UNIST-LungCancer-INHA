@@ -41,7 +41,7 @@ def run(cell: str) -> str:
     if compare_list:
         statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=cell, order=order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"{cell} K.W. p={p:.3f}")
+    matplotlib.pyplot.title(f"{cell}: K.W. p={p:.3f}")
     matplotlib.pyplot.ylabel(f"Proportion of {cell}")
     matplotlib.pyplot.tight_layout()
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     print(input_data)
 
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
-    for stage in set(input_data["Stage"]):
+    for stage in tqdm.tqdm(set(input_data["Stage"])):
         if len(input_data.loc[(input_data["Stage"] == stage)]) < 3:
             input_data = input_data.loc[~(input_data["Stage"] == stage)]
     print(input_data)

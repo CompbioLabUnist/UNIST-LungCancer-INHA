@@ -77,8 +77,7 @@ if __name__ == "__main__":
         taxa_list.sort(key=lambda x: numpy.mean(drawing_data.loc[:, x]), reverse=True)
         samples = sorted(list(drawing_data.index), key=lambda x: tuple(drawing_data.loc[x, taxa_list].to_numpy()), reverse=True)
         drawing_data = drawing_data.loc[samples, taxa_list]
-        print(subtype, taxa_list[:10])
-        for j, taxon in enumerate(tqdm.tqdm(taxa_list)):
+        for j, taxon in tqdm.tqdm(list(enumerate(taxa_list))):
             labeling = (j < 5)
             if labeling:
                 axs[i].bar(range(len(samples)), height=drawing_data.iloc[:, j], bottom=numpy.sum(drawing_data.iloc[:, :j], axis=1), color=taxa_coloring[taxon], label=taxon)

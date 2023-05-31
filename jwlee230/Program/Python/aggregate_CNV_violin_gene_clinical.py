@@ -163,7 +163,7 @@ if __name__ == "__main__":
         if pairs:
             statannotations.Annotator.Annotator(ax, pairs, data=drawing_data, x="Stage", y=args.watching, order=drawing_stage_list, hue=args.compare[0], hue_order=args.compare[1:]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        matplotlib.pyplot.title(f"{gene}: Kruskal-Wallis p={p:.3f}")
+        matplotlib.pyplot.title(f"{gene}: K.W. p={p:.3f}")
         matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel("Ratio")
 

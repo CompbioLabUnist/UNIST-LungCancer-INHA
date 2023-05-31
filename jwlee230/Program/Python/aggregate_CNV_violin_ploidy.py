@@ -71,7 +71,7 @@ if __name__ == "__main__":
     if pairs:
         statannotations.Annotator.Annotator(ax, pairs, data=input_data, x="Stage", y="Ploidy", order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
+    matplotlib.pyplot.title(f"Ploidy: K.W. p={p:.3f}")
     matplotlib.pyplot.tight_layout()
 
     fig.savefig(args.output)

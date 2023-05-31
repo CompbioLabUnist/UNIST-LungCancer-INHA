@@ -16,10 +16,10 @@ import tqdm
 import step00
 
 input_data = pandas.DataFrame()
+order = ["Lower", "Higher"]
 
 
 def run(MSP: str, gene: str) -> str:
-    order = ["Lower", "Higher"]
     stage_order = list(filter(lambda x: all([(x in set(input_data.loc[(input_data[MSP] == compare), "Stage"])) for compare in order]), step00.long_sample_type_list))
 
     compare_list = list()

@@ -43,7 +43,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
     matplotlib.pyplot.scatter(NS_gene["log2FoldChange"], NS_gene["-log(Padj)"], color="tab:gray")
     matplotlib.pyplot.scatter(up_gene["log2FoldChange"], up_gene["-log(Padj)"], color="tab:red")
     matplotlib.pyplot.scatter(down_gene["log2FoldChange"], down_gene["-log(Padj)"], color="tab:blue")
@@ -62,11 +62,11 @@ if __name__ == "__main__":
     for index, d in tqdm.tqdm(down_gene.iloc[:args.annotation, :].iterrows()):
         texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:blue", fontsize="large"))
 
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=10 ** 3)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
 
     matplotlib.pyplot.grid(True)
-    matplotlib.pyplot.xlabel("log2(Fold_Change)")
-    matplotlib.pyplot.ylabel("-log10(Padj)")
+    matplotlib.pyplot.xlabel("Normal-like← log2(FoldChange) →Primary-like")
+    matplotlib.pyplot.ylabel("-log10(P.adj.)")
     matplotlib.pyplot.title("Up: {0:d} & Down: {1:d}".format(len(up_gene), len(down_gene)))
     if matplotlib.pyplot.ylim()[1] < 2:
         matplotlib.pyplot.ylim(top=2)
