@@ -2,6 +2,7 @@
 get_enrichment_enrichr_2.py: compare two results & get enrichment information with Enrichr
 """
 import argparse
+import time
 import json
 import matplotlib
 import matplotlib.pyplot
@@ -20,16 +21,18 @@ def read_TSV(filename: str) -> pandas.DataFrame:
 
 
 def get_response(url: str, payload):
-    if payload is not None:
-        response = requests.post(url, files=payload)
-    else:
-        response = requests.get(url)
+    while True:
+        if payload is not None:
+            response = requests.post(url, files=payload)
+        else:
+            response = requests.get(url)
 
-    if not response.ok:
-        raise Exception("Response is not Ok!! {0}!!".format(response.status_code))
-
-    data = json.loads(response.text)
-    return data
+        if not response.ok:
+            print("Response is not Ok!! {0}!!".format(response.status_code))
+            time.sleep(5)
+        else:
+            data = json.loads(response.text)
+            return data
 
 
 if __name__ == "__main__":
@@ -106,7 +109,7 @@ if __name__ == "__main__":
     if enrichment_data.empty:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(step00.pathway_wanted_columns))])
 
-        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize=step00.matplotlib_parameters["axes.titlesize"], color="k", horizontalalignment="center", verticalalignment="center", fontsize="x-large")
+        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize="xx-large", color="k", horizontalalignment="center", verticalalignment="center")
         matplotlib.pyplot.xticks([])
         matplotlib.pyplot.yticks([])
     else:
@@ -131,8 +134,8 @@ if __name__ == "__main__":
         matplotlib.pyplot.ylim(-1, 10)
         matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black", alpha=0.5)
         ax.invert_yaxis()
-        matplotlib.pyplot.tight_layout()
 
+    matplotlib.pyplot.tight_layout()
     fig.savefig(args.output + ".pdf")
     matplotlib.pyplot.close(fig)
 
