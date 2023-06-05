@@ -38,7 +38,7 @@ if __name__ == "__main__":
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig = matplotlib.pyplot.figure(figsize=(10 * len(input_data) + 10, 24))
+    fig = matplotlib.pyplot.figure(figsize=(10 * len(output_data) + 10, 24))
 
     upsetplot.plot(upsetplot.from_contents(output_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 

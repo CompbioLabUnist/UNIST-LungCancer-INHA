@@ -157,7 +157,7 @@ if __name__ == "__main__":
         except ValueError:
             p_loss = 1.0
 
-        seaborn.v2023-05-22iolinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
+        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
         if compare_list:
             statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Region-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
