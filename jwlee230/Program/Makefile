@@ -228,7 +228,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step66 step67 step68 step69 step70 step71 step72
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step66 step67 step68 step69 step70 step71 step72 step73
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -305,7 +305,7 @@ step06: $(addprefix Output/WES/,$(addsuffix .BWA.Sort.dm-tmp.bam,$(WES_ID))) $(a
 #Output/WES/%.Sort.MarkDuplicate.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.bai | build.log
 #	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
-#Output/WES/%.Sort.MarkDuplicate.BQSR.bam: Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.BQSR.table $(REFERENCE_FASTA) | build.log
+#Output/WES/%.Sort.MarkDuplicate.BQSR.bam: $(REFERENCE_FASTA) Output/WES/%.Sort.MarkDuplicate.bam Output/WES/%.Sort.MarkDuplicate.BQSR.table | build.log
 #	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
 
 Output/WES/%.Sort.MarkDuplicate.BQSR.bai: Output/WES/%.Sort.MarkDuplicate.BQSR.bam | build.log
@@ -655,15 +655,15 @@ step14-Sharing: Output/MutationSharedProportion/BWA.tsv Output/MutationSharedPro
 step14: step14-BWA step14-Bowtie2 step14-histogram step14-heatmap step14-clustermap step14-venn step14-Sharing
 .PHONY: step14-BWA step14-Bowtie2 step14-histogram step14-heatmap step14-clustermap step14-venn step14-Sharing step14
 
-# Step 15 (HaplotypeCaller)
+# Step 15 (HaplotypeCaller: WES)
 Output/HaplotypeCaller/BWA Output/HaplotypeCaller/Bowtie2:
 	mkdir -p $@
 
 Output/HaplotypeCaller/BWA/%.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.BWA.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller/BWA build.log
-	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence "GVCF" --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller/Bowtie2/%.g.vcf.gz: $(REFERENCE_FASTA) Output/WES/%.Bowtie2.Sort.MarkDuplicate.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller/Bowtie2 build.log
-	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence GVCF --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --emit-ref-confidence "GVCF" --dbsnp $(addprefix /,$(filter %.vcf,$^)) --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller/BWA/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller/BWA/,$(addsuffix .g.vcf.gz,$(WES_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --sample "$*" 1> $@.stdout 2> $@.stderr
@@ -5659,6 +5659,83 @@ step72-STAR-FPKM: Output/MutationSharedProportion_Expression/Correlation.BWA-STA
 step72-Bowtie2-FPKM: Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.BWA-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.BWA-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.FPKM.SQC.median.tar Output/MutationSharedProportion_Expression/Correlation.Bowtie2-Bowtie2.FPKM.SQC.mean.tar Output/MutationSharedProportion_Expression/Distance.Bowtie2-Bowtie2.FPKM.SQC.mean.tar
 step72: step72-STAR-count step72-Bowtie2-count step72-STAR-TPM step72-Bowtie2-TPM step72-STAR-FPKM step72-Bowtie2-FPKM
 .PHONY: step72-STAR-count step72-Bowtie2-count step72-STAR-TPM step72-Bowtie2-TPM step72-STAR-FPKM step72-Bowtie2-FPKM step72
+
+# Step 73 (After-processing of RSEM)
+Output/RSEM/STAR/%.genome.Sort.bam: $(REFERENCE_FASTA) Output/RSEM/STAR/%.genome.bam | build.log
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "LENIENT" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.bai: Output/RSEM/STAR/%.Sort.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/RSEM/STAR/%.Sort.bam Output/RSEM/STAR/%.Sort.bai | build.log
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY "LENIENT" --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/RSEM/STAR/%.Sort.dm-tmp.bam | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.bai: Output/RSEM/STAR/%.Sort.MarkDuplicate.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bam: $(REFERENCE_FASTA) Output/RSEM/STAR/%.Sort.MarkDuplicate.bam Output/RSEM/STAR/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) SplitNCigarReads --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bai: Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bam Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.BQSR.bam: $(REFERENCE_FASTA) Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.bam Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.BQSR.bai: Output/RSEM/STAR/%.Sort.MarkDuplicate.Split.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.genome.Sort.bam: $(REFERENCE_FASTA) Output/RSEM/Bowtie2/%.genome.bam | build.log
+	$(DOCKER) $(PICARD) AddOrReplaceReadGroups --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --RGLB "Library" --RGPL "Illumina" --RGPU "PlatformUnit" --RGSM "$*" --RGID "$*" --COMPRESSION_LEVEL 9 --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --SORT_ORDER "coordinate" --VALIDATION_STRINGENCY "LENIENT" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.bai: Output/RSEM/Bowtie2/%.Sort.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.dm-tmp.bam: $(REFERENCE_FASTA) Output/RSEM/Bowtie2/%.Sort.bam Output/RSEM/Bowtie2/%.Sort.bai | build.log
+	$(DOCKER) $(PICARD) MarkDuplicates --INPUT $(addprefix /,$(filter %.bam,$^)) --REFERENCE_SEQUENCE $(addprefix /,$(filter %.fasta,$^)) --OUTPUT $(addprefix /,$@) --METRICS_FILE $(addprefix /,$@.metrics) --ASSUME_SORTED true --VALIDATION_STRINGENCY "LENIENT" --COMPRESSION_LEVEL 9 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.bam: Bash/remove_CR.bash Output/RSEM/Bowtie2/%.Sort.dm-tmp.bam | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.bai: Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bam: $(REFERENCE_FASTA) Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.bam Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.bai | build.log
+	$(DOCKER) $(GATK) SplitNCigarReads --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bai: Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.BQSR.table: $(REFERENCE_FASTA) $(REFERENCE_KNOWN_VCF) Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bam Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bai | build.log
+	$(DOCKER) $(GATK) BaseRecalibrator --input $(addprefix /,$(filter %.bam,$^)) $(foreach site,$(addprefix /,$(filter %.vcf,$^)),--known-sites $(site)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.BQSR.bam: $(REFERENCE_FASTA) Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.bam Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.BQSR.table | build.log
+	$(DOCKER) $(GATK) ApplyBQSR --bqsr-recal-file $(addprefix /,$(filter %.table,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --reference $(addprefix /,$(filter %.fasta,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.BQSR.bai: Output/RSEM/Bowtie2/%.Sort.MarkDuplicate.Split.BQSR.bam | build.log
+	$(DOCKER) samtools index -b -@ $(CPUS) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+step73-STAR: $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.bai,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.bai,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.table,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.bam,$(WTS_ID))) $(addprefix Output/RSEM/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.bai,$(WTS_ID)))
+step73-Bowtie2: $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.bam,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.bai,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.bam,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.bai,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.table,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.bam,$(WTS_ID))) $(addprefix Output/RSEM/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.bai,$(WTS_ID)))
+step73: step73-STAR step73-Bowtie2
+.PHONY: step73-STAR step73-Bowtie2 step73
+
+# Step 74 (HaplotypeCaller: WTS)
+Output/HaplotypeCaller-RNA/STAR Output/HaplotypeCaller-RNA/Bowtie2:
+	mkdir -p $@
+
+Output/HaplotypeCaller-RNA/STAR/%.g.vcf.gz: $(REFERENCE_FASTA) Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller-RNA/STAR build.log
+	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) --emit-ref-confidence "GVCF" --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
+
+# Step ## (SigProfilterExtractor: RNA-seq)
+Output/SigProfiler-RNA/BWA Output/SigProfiler-RNA/Bowtie2:
+	mkdir -p $@
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
