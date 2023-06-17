@@ -228,7 +228,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step66 step67 step68 step69 step70 step71 step72 step73
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -5736,7 +5736,28 @@ Output/HaplotypeCaller-RNA/STAR/%.g.vcf.gz: $(REFERENCE_FASTA) Output/RSEM/STAR/
 Output/HaplotypeCaller-RNA/STAR/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .g.vcf.gz,$(WTS_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --sample "$*" 1> $@.stdout 2> $@.stderr
 
-step74-STAR: $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .g.vcf.gz,$(WTS_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .sample_map.tsv,$(WTS_TUMOR_ID)))
+Output/HaplotypeCaller-RNA/STAR/%.genomicsdb/callset.json: $(REFEREFENCE_FASTA) Output/HaplotypeCaller-RNA/STAR/%.sample_map.tsv | build.log
+	$(DOCKER) $(GATK) GenomicsDBImport --reference $(addprefix /,$(filter %.fasta,$^)) --genomicsdb-workspace-path $(addprefix /,$(@D)) --sample-name-map $(addprefix /,$(filter %.tsv,$^)) --reader-threads $(CPUS) --max-num-intervals-to-import-in-parallel $(CPUS) --overwrite-existing-genomicsdb-workspace true --merge-input-intervals true $(foreach chr,$(CHROMOSOMES),--intervals $(chr)) 1> $(@D).stdout 2> $(@D).stderr
+	$(DOCKER) chmod --recursive 777 $(addprefix /,$(@D))
+
+Output/HaplotypeCaller-RNA/STAR/%.vcf.gz: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/HaplotypeCaller-RNA/STAR/%.genomicsdb/callset.json | build.log
+	$(DOCKER) $(GATK) GenotypeGVCFs --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller-RNA/STAR/%.VQSR.recal Output/HaplotypeCaller-RNA/STAR/%.VQSR.tranches: $(REFERENCE_FASTA) $(REFERENCE_HAPMAP_VCF) $(REFERENCE_OMNI_VCF) $(REFERENCE_1000G_VCF) $(REFERENCE_DBSNP_VCF) Output/HaplotypeCaller-RNA/STAR/%.vcf.gz | build.log
+	$(DOCKER) $(GATK) VariantRecalibrator --reference $(addprefix /,$(filter %.fasta,$^)) --output $(addprefix /,$(basename $@).recal) --tranches-file $(addprefix /,$(basename $@).tranches) --variant $(addprefix /,$(lastword $^)) --use-annotation MQ --use-annotation MQRankSum --use-annotation ReadPosRankSum --use-annotation FS --use-annotation SOR --mode BOTH --resource:hapmap,known=false,training=true,truth=true,prior=15.0 $(addprefix /,$(REFERENCE_HAPMAP_VCF)) --resource:omni,known=false,training=true,truth=false,prior=12.0 $(addprefix /,$(REFERENCE_OMNI_VCF)) --resource:1000G,known=false,training=true,truth=false,prior=10.0 $(addprefix /,$(REFERENCE_1000G_VCF)) --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 $(addprefix /,$(REFERENCE_DBSNP_VCF)) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller-RNA/STAR/%.VQSR.vcf: $(REFERENCE_FASTA) Output/HaplotypeCaller-RNA/STAR/%.VQSR.recal Output/HaplotypeCaller-RNA/STAR/%.VQSR.tranches | build.log
+	$(DOCKER) $(GATK) ApplyVQSR --reference $(addprefix /,$(filter %.fasta,$^)) --variant $(addprefix /,$(filter %.vcf.gz,$^)) --recal-file $(addprefix /,$(filter %.recal,$^)) --tranches-file $(addprefix /,$(filter %.tranches,$^)) --output $(addprefix /,$@) --truth-sensitivity-filter-level 99.0 --mode BOTH 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller-RNA/STAR/%.VQSR.PASS.vcf: Bash/select_pass.bash Output/HaplotypeCaller-RNA/STAR/%.VQSR.vcf | build.log
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/HaplotypeCaller-RNA/STAR/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/HaplotypeCaller-RNA/STAR/%.VQSR.PASS.vcf | build.log
+	$(DOCKER) $(VCF2MAF) --vep-path "/Tools/ensembl-vep-release-103" --vep-data "/Data" --vep-forks $(CPUS) --ncbi-build "GRCh38" --input-vcf $(addprefix /,$(filter %.vcf,$^)) --output $(addprefix /,$@) --tumor-id "$*" --normal-id "$(PAIRED_NORMAL)" --ref-fasta $(addprefix /,$(filter %.fasta,$^)) --tmp-dir $(TMPFS) 1> $@.stdout 2> $@.stderr
+
+step74-STAR: $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .g.vcf.gz,$(WTS_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .sample_map.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .genomicsdb/callset.json,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .vcf.gz,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.recal,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.PASS.maf,$(WTS_TUMOR_ID)))
+step74: step74-STAR
+.PHONY: step74-STAR step74
 
 # Step ## (SigProfilterExtractor: RNA-seq)
 Output/SigProfiler-RNA/BWA Output/SigProfiler-RNA/Bowtie2:
@@ -5755,3 +5776,4 @@ Output/SigProfiler-RNA/BWA Output/SigProfiler-RNA/Bowtie2:
 # https://github.com/raphael-group/spruce/
 
 # Step ## (CRUST)
+
