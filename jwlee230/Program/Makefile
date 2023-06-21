@@ -2993,7 +2993,7 @@ step41: step41-BWA step41-Bowtie2
 Output/CollectRnaSeqMetrics/STAR Output/CollectRnaSeqMetrics/Bowtie2:
 	mkdir -p $@
 
-Output/CollectRnaSeqMetrics/STAR/%.RNA_metrics: $(UCSC_REFFLAT_TXT) Output/RSEM/Bowtie2/%.genome.bam | Output/CollectRnaSeqMetrics/STAR build.log
+Output/CollectRnaSeqMetrics/STAR/%.RNA_metrics: $(UCSC_REFFLAT_TXT) Output/RSEM/STAR/%.genome.bam | Output/CollectRnaSeqMetrics/STAR build.log
 	$(DOCKER) $(PICARD) CollectRnaSeqMetrics --INPUT $(addprefix /,$(filter %.bam,$^)) --OUTPUT $(addprefix /,$@) --REF_FLAT $(addprefix /,$(filter %.txt,$^)) --STRAND_SPECIFICITY NONE 1> $@.stdout 2> $@.stderr
 
 Output/CollectRnaSeqMetrics/Bowtie2/%.RNA_metrics: $(UCSC_REFFLAT_TXT) Output/RSEM/Bowtie2/%.genome.bam | Output/CollectRnaSeqMetrics/Bowtie2 build.log
