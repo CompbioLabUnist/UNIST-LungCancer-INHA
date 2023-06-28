@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 5
-MEMS = 50
-PARALLEL = 30
+CPUS = 10
+MEMS = 150
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5734,7 +5734,7 @@ clean-step73:
 Output/HaplotypeCaller-RNA/STAR Output/HaplotypeCaller-RNA/Bowtie2:
 	mkdir -p $@
 
-Output/HaplotypeCaller-RNA/STAR/%.g.vcf.gz: $(REFERENCE_FASTA) Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bam $(REFERENCE_DBSNP_VCF) | Output/HaplotypeCaller-RNA/STAR build.log
+Output/HaplotypeCaller-RNA/STAR/%.g.vcf.gz: $(REFERENCE_FASTA) $(REFERENCE_DBSNP_VCF) Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bam | Output/HaplotypeCaller-RNA/STAR build.log
 	$(DOCKER) $(GATK) HaplotypeCaller --reference $(addprefix /,$(filter %.fasta,$^)) --input $(addprefix /,$(filter %.bam,$^)) --output $(addprefix /,$@) --dbsnp $(addprefix /,$(filter %.vcf,$^)) --emit-ref-confidence "GVCF" --native-pair-hmm-threads $(CPUS) --native-pair-hmm-use-double-precision true 1> $@.stdout 2> $@.stderr
 
 Output/HaplotypeCaller-RNA/STAR/%.sample_map.tsv: Python/make_sample_map_haplotypecaller.py $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .g.vcf.gz,$(WTS_ID))) | build.log
@@ -5786,8 +5786,8 @@ Output/HaplotypeCaller-RNA/Bowtie2/%.VQSR.PASS.maf: $(REFERENCE_FASTA) Output/Ha
 
 step74-STAR: $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .g.vcf.gz,$(WTS_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .sample_map.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .genomicsdb/callset.json,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .vcf.gz,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.recal,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.PASS.maf,$(WTS_TUMOR_ID)))
 step74-Bowtie2: $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .g.vcf.gz,$(WTS_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .sample_map.tsv,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .genomicsdb/callset.json,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .vcf.gz,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .VQSR.recal,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .VQSR.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .VQSR.PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/HaplotypeCaller-RNA/Bowtie2/,$(addsuffix .VQSR.PASS.maf,$(WTS_TUMOR_ID)))
-step74: step74-STAR step74-Bowtie2
-.PHONY: step74-STAR step74-Bowtie2 step74
+step74: step74-STAR
+.PHONY: step74-STAR step74
 
 # Step ## (SigProfilterExtractor: RNA-seq)
 Output/SigProfiler-RNA/BWA Output/SigProfiler-RNA/Bowtie2:
