@@ -28,3 +28,4 @@ dash-bio-utils==0.0.8
 scikit-bio==0.5.7
 UpSetPlot==0.6.1
 fastcluster==1.2.6
+PyPDF==1.13
