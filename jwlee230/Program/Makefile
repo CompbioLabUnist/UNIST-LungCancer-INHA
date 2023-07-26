@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 15
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -3957,7 +3957,7 @@ Output/Clinical_vs_KM-Plot:
 	mkdir -p $@
 
 Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
 
 Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
@@ -5807,6 +5807,8 @@ step75-SigProfiler: Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.tx
 step75: step75-SigProfiler
 .PHONY: step75-SigProfiler step75
 
+# Step 76 ()
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
@@ -5820,4 +5822,3 @@ step75: step75-SigProfiler
 # https://github.com/raphael-group/spruce/
 
 # Step ## (CRUST)
-

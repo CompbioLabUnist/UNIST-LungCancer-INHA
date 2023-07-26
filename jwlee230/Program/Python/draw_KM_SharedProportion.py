@@ -3,6 +3,7 @@ draw_KM_SharedProportion.py: Draw Kaplan-Meier plot with mutation shared proport
 """
 import argparse
 import tarfile
+import typing
 import lifelines
 import lifelines.statistics
 import matplotlib
@@ -76,17 +77,26 @@ if __name__ == "__main__":
     figures = list()
 
     for column in tqdm.tqdm(survival_columns):
+        if column == "Recurrence-Free Survival":
+            lower_events: typing.Optional[typing.List[bool]] = list(map(lambda x: x == 1, lower_data["Recurrence"]))
+            higher_events: typing.Optional[typing.List[bool]] = list(map(lambda x: x == 1, higher_data["Recurrence"]))
+        elif column == "Overall Survival":
+            lower_events = None
+            higher_events = None
+        else:
+            raise ValueError("Something went wrong!!")
+
         fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
 
         kmf = lifelines.KaplanMeierFitter()
 
-        kmf.fit(lower_data[column], label=f"Lower Shared Proportion ({len(lower_data)} patients)")
+        kmf.fit(lower_data[column], event_observed=lower_events, label=f"Lower Shared Proportion ({len(lower_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:blue")
 
-        kmf.fit(higher_data[column], label=f"Higher Shared Proportion ({len(higher_data)} patients)")
+        kmf.fit(higher_data[column], event_observed=higher_events, label=f"Higher Shared Proportion ({len(higher_data)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
-        p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column]).p_value
+        p_value = lifelines.statistics.logrank_test(lower_data[column], higher_data[column], event_observed_A=lower_events, event_observed_B=higher_events).p_value
         matplotlib.pyplot.text(max(input_data[column]) / 2, 1.0, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
