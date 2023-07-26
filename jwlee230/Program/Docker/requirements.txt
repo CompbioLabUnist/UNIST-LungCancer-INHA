@@ -29,3 +29,4 @@ scikit-bio==0.5.7
 UpSetPlot==0.6.1
 fastcluster==1.2.6
 PyPDF==1.13
+PyPDF2==2.12.1
