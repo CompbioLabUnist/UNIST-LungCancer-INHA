@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5790,7 +5790,7 @@ step74: step74-STAR step74-Bowtie2
 .PHONY: step74-STAR step74-Bowtie2 step74
 
 # Step 75 (SigProfilerExtractor: RNA-seq)
-Output/SigProfiler-RNA/STAR Output/SigProfiler-RNA/Bowtie2:
+Output/SigProfiler-RNA/STAR Output/SigProfiler-RNA/Bowtie2 Output/SigProfiler-RNA/STAR-Violin Output/SigProfiler-RNA/Bowtie2-Violin:
 	mkdir -p $@
 
 Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler-RNA/STAR/DBS78_De-Novo_Activities_refit.txt Output/SigProfiler-RNA/STAR/COSMIC_ID83_Activities_refit.txt Output/SigProfiler-RNA/STAR/ID83_De-Novo_Activities_refit.txt Output/SigProfiler-RNA/STAR/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler-RNA/STAR/SBS96_De-Novo_Activities_refit.txt: Python/run_SigProfiler.py $(addprefix Output/HaplotypeCaller-RNA/STAR/,$(addsuffix .VQSR.PASS.vcf,$(WTS_TUMOR_ID))) | Output/SigProfiler-RNA/STAR build.log
@@ -5803,9 +5803,46 @@ Output/SigProfiler-RNA/Bowtie2/COSMIC_DBS78_Activities_refit.txt Output/SigProfi
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(@D)) --cpus $(CPUS) 1> $(@D).stdout 2> $(@D).stderr
 	$(DOCKER) cp -v $(addprefix /,$(@D)/**/*Activities_refit.txt $(@D))
 
+Output/SigProfiler-RNA/%-Violin/COSMIC-SingleBase.SQC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-SingleBase.ADC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-DoubleBase.ADC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-Indel.SQC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-Indel.ADC.Subtype.Absolute.tar: Python/plot_signature.py Output/SigProfiler-RNA/STAR/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-SingleBase.SQC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-SingleBase.ADC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-DoubleBase.ADC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-Indel.SQC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stdout
+
+Output/SigProfiler-RNA/%-Violin/COSMIC-Indel.ADC.Subtype.Relative.tar: Python/plot_signature_violin_relative.py Output/SigProfiler-RNA/STAR/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Violin
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stdout
+
 step75-SigProfiler: Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler-RNA/Bowtie2/COSMIC_DBS78_Activities_refit.txt
-step75: step75-SigProfiler
-.PHONY: step75-SigProfiler step75
+step75-Violin: Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.Relative.tar
+step75: step75-SigProfiler step75-Violin
+.PHONY: step75-SigProfiler step75-Violin step75
 
 # Step 76 ()
 
