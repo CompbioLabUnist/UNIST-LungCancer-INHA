@@ -5875,15 +5875,51 @@ Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.ADC.Absolute.pdf: Python/plot_signatur
 Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.ADC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler-RNA/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
 
+Output/SigProfiler-RNA/%-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler-RNA/%-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler-RNA/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler-RNA/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
+
 step75-SigProfiler: Output/SigProfiler-RNA/STAR/COSMIC_DBS78_Activities_refit.txt Output/SigProfiler-RNA/Bowtie2/COSMIC_DBS78_Activities_refit.txt
 step75-Violin-Subtype: Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-DoubleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/STAR-Violin/COSMIC-Indel.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.Absolute.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.SQC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-SingleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-DoubleBase.ADC.Subtype.Relative.tar Output/SigProfiler-RNA/Bowtie2-Violin/COSMIC-Indel.ADC.Subtype.Relative.tar
 step75-Bar-SQC: Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.SQC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.SQC.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.SQC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.SQC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.SQC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.SQC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.SQC.Relative.pdf
 step75-Bar-ADC: Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.ADC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.ADC.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.ADC.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.ADC.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.ADC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.ADC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.ADC.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.ADC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.ADC.Relative.pdf
-step75-Bar-Subtype:
+step75-Bar-Subtype: Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf Output/SigProfiler-RNA/STAR-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.ADC.Subtype.Absolute.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-SingleBase.ADC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-DoubleBase.ADC.Subtype.Relative.pdf Output/SigProfiler-RNA/Bowtie2-Bar/COSMIC-Indel.ADC.Subtype.Relative.pdf
 step75-Bar-Smoking:
 step75-Bar-Recurrence:
-step75: step75-SigProfiler step75-Violin-Subtype step75-Bar-SQC step75-Bar-ADC
-.PHONY: step75-SigProfiler step75-Violin-Subtype step75-Bar-SQC step75-Bar-ADC step75
+step75: step75-SigProfiler step75-Violin-Subtype step75-Bar-SQC step75-Bar-ADC step75-Bar-Subtype
+.PHONY: step75-SigProfiler step75-Violin-Subtype step75-Bar-SQC step75-Bar-ADC step75-Bar-Subtype step75
 
 # Step 76 ()
 
