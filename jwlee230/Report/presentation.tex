@@ -1405,9 +1405,21 @@
                 \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
                 \begin{enumerate}
                     \item APOBEC3A is probably responsible in human cancer
-                    \item APOBEC3B may also contribute
+                    \item APOBEC3B may also contribute SBS13
                 \end{enumerate}
                 \item may be generated directly by DNA replication
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS3}
+            \begin{itemize}
+                \item DNA double-strand break-repair \cite{signature2}
+                \item SBS3 is associated with BRCA1 \& BRCA2 mutations in many cancer types
+                \begin{enumerate}
+                    \item breast cancer
+                    \item pancreatic cancer
+                    \item ovarian cancer
+                \end{enumerate}
             \end{itemize}
         \end{block}
 
@@ -1415,28 +1427,66 @@
             \begin{itemize}
                 \item Tobacco smoking \cite{signature3}
                 \item Exposed to tabacco carcinogens \textit{e.g.} benzopyrene
+                \item SBS4 is associated with many cancer types
+                \begin{enumerate}
+                    \item head and neck cancer \& esophageal cancer
+                    \item liver cancer
+                    \item LUAD \& LUSC \& small cell lung carcinoma
+                \end{enumerate}
             \end{itemize}
         \end{block}
 
         \begin{block}{SBS5}
             \begin{itemize}
                 \item Unknown \cite{signature3}
-                \item SBS5 $\Uparrow$ in bladder cancer
-                \item SBS5 $\Uparrow$ in many cancer types \\
-                    $\because$ Tobacco smoking
+                \item SBS5 $\Uparrow$ in many cancer types
+                \item SBS5 might be associated with
+                \begin{enumerate}
+                    \item Tobacco smoking
+                    \item Aging
+                    \item NER deficiency
+                \end{enumerate}
             \end{itemize}
         \end{block}
 
         \begin{block}{SBS10b}
             \begin{itemize}
                 \item Polymerase $\epsilon$ exonuclease domain mutations \cite{signature1}
+                \item SBS10b generates large number of somatic mutations.
             \end{itemize}
         \end{block}
 
         \begin{block}{SBS13}
             \begin{itemize}
                 \item Activity of the AID/APOBEC family of cytidine deaminases \cite{signature2}
-                \item SBS13 is usually found with SBS2
+                \item SBS13 is associated with APOBEC1, APOBEC3A \& APOBEC3B.
+                \item SBS13 is usually found with SBS2.
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS19}
+            \begin{itemize}
+                \item SBS19 is found only in Pilocytic astrocytoma \cite{signature3}
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS26}
+            \begin{itemize}
+                \item SBS26 is found in breast cancer, cervical cancer, \& uterine carcinoma \cite{signature2, signature3}
+                \item Association with defective DNA mismatch repair
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS30}
+            \begin{itemize}
+                \item SBS30 is found in breast cancer \cite{signature2, signature3}
+                \item Associated with BER deficiency
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{SBS54}
+            \begin{itemize}
+                \item Possible sequencing artifact \cite{signature1}
             \end{itemize}
         \end{block}
 
@@ -1458,7 +1508,7 @@
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
-            \caption{SBS Bar Plot in LUSC}
+            \caption{SBS Bar Plot in LUSC -- WES}
         \end{figure}
 
         \begin{figure}
@@ -1469,7 +1519,29 @@
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype in LUSC}
+            \caption{SBS Bar Plot by Cancer Stage in LUSC -- WES}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot in LUSC -- RNA-seq}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf}
+                &
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf}
+                \\
+                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Stage in LUSC -- RNA-seq}
         \end{figure}
     \end{frame}
 
@@ -1484,38 +1556,67 @@
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Smoking in LUSC}
+            \caption{SBS Bar Plot by Cancer Stage \& Smoking in LUSC -- WES}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS5.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Smoking.Absolute.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS5.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Smoking.Relative.pdf}
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+            \end{array}$
+            \caption{SBS Bar Plot by Cancer Stage \& Smoking in LUSC -- RNA-seq}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS1.pdf}
+                \\
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
+
+                 \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS1.pdf}
+                \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
+            \end{array}$
+            \caption{SBS1 Signature in LUSC with Smoking}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS5.pdf}
+                \\
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS5.pdf}
+                \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
             \end{array}$
             \caption{SBS5 Signature in LUSC with Smoking}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS10b.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS87.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS10b.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS87.pdf}
                 \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
-            \end{array}$
-            \caption{SBS10b Signature in LUSC with Smoking}
-        \end{figure}
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
 
-        \begin{figure}
-            $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS87.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Absolute/SBS87.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS87.pdf}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Smoking.Relative/SBS87.pdf}
                 \\
-                \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
             \end{array}$
             \caption{SBS87 Signature in LUSC with Smoking}
         \end{figure}
@@ -1532,18 +1633,69 @@
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
-            \caption{SBS Bar Plot by Cancer Subtype \& Recurrence in LUSC}
+            \caption{SBS Bar Plot by Cancer Stage \& Recurrence in LUSC -- WES}
         \end{figure}
 
         \begin{figure}
             $\begin{array}{cc}
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS1.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Recurrence.Absolute.pdf}
                 &
-                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS1.pdf}
+                \includegraphics[width=0.4 \linewidth]{figures/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Recurrence.Relative.pdf}
                 \\
                 \mbox{(a) Absolute} & \mbox{(b) Relative} \\
             \end{array}$
+            \caption{SBS Bar Plot by Cancer Stage \& Recurrence in LUSC -- RNA-seq}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS1.pdf}
+                \\
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS1.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS1.pdf}
+                \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
+            \end{array}$
             \caption{SBS1 Signature in LUSC with Recurrence}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS5.pdf}
+                \\
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS5.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS5.pdf}
+                \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
+            \end{array}$
+            \caption{SBS5 Signature in LUSC with Recurrence}
+        \end{figure}
+
+        \begin{figure}
+            $\begin{array}{cc}
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS87.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS87.pdf}
+                \\
+                \mbox{(a) WES - Absolute} & \mbox{(b) WES - Relative} \\
+
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Absolute/SBS87.pdf}
+                &
+                \includegraphics[width=0.2 \linewidth]{figures/SigProfiler-RNA/STAR-Violin/COSMIC-SingleBase.SQC.Recurrence.Relative/SBS87.pdf}
+                \\
+                \mbox{(c) RNA-seq - Absolute} & \mbox{(d) RNA-seq - Relative} \\
+            \end{array}$
+            \caption{SBS87 Signature in LUSC with Recurrence}
         \end{figure}
     \end{frame}
 
