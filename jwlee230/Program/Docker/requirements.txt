@@ -30,4 +30,4 @@ UpSetPlot==0.6.1
 fastcluster==1.2.6
 PyPDF==1.13
 PyPDF2==2.12.1
-scipy==1.8.1
+scipy==1.10.0
