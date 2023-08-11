@@ -1,0 +1,177 @@
+% !TeX spellcheck = en_US
+% !TeX encoding = UTF-8
+\documentclass{beamer}
+
+\mode<presentation> { \usetheme{Madrid} }
+
+\usepackage{graphicx, graphics}
+\usepackage[notocbib]{apacite}
+\usepackage[style=iso]{datetime2}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage{booktabs}
+\DeclareGraphicsExtensions{.pdf, .png, .jpg, .gif}
+
+\AtBeginSection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \thesection. \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \thesection. \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\AtBeginSubsubsection[]
+{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{title}
+            \thesection. \insertsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=4pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection. \insertsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \begin{beamercolorbox}[sep=3pt, center, shadow=true, rounded=true]{title}
+            \usebeamerfont{subtitle}
+            \thesection.\thesubsection.\thesubsubsection. \insertsubsubsectionhead
+            \par
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+\title{Lung precancer analysis}
+
+\author[Jaewoong Lee]
+{
+    Jaewoong Lee
+    \and
+    Semin Lee
+}
+
+\institute[UNIST BME]
+{
+    Department of Biomedical Engineering
+    \newline
+    Ulsan National Institute of Science and Technology
+    \medskip
+    \newline
+    \textit{jwlee230@unist.ac.kr}
+}
+
+\date{\today}
+
+\begin{document}
+    \begin{frame}
+        \titlepage
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Overview}
+        \tableofcontents[hideallsubsections]
+    \end{frame}
+
+    \section{Introduction}
+        \subsection{Lung cancer}
+            \begin{frame}
+                \frametitle{Lung cancer?}
+            \end{frame}
+
+            \begin{frame}[allowframebreaks]
+                \frametitle{Type of lung cancer}
+            \end{frame}
+
+        \subsection{LUSC \& LUAD}
+            \begin{frame}
+                \frametitle{LUSC}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{LUAD}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{LUSC \& LUAD}
+            \end{frame}
+
+        \subsection{Study objectives}
+            \begin{frame}
+                \frametitle{Study objectives}
+            \end{frame}
+
+    \section{Materials}
+        \begin{frame}
+            \frametitle{Study subjects}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{WES data composition}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{RNA-seq data composition}
+        \end{frame}
+
+    \section{Results}
+        \subsection{Quality Checks}
+
+        \subsection{Short nucleotide variations (SNV) analysis}
+
+        \subsection{Mutation shared proportion (MSP)}
+
+        \subsection{Copy number variation (CNV) analysis}
+            \subsubsection{MSP \& CNV}
+
+        \subsection{Mutational signature analysis}
+            \subsubsection{MSP \& signature}
+
+        \subsection{Differentially expressed gene (DEG) analysis}
+            \subsubsection{MSP \& DEG}
+
+        \subsection{Deconvolution analysis}
+            \subsubsection{Reference data by ...}
+
+            \subsubsection{Reference data by ...}
+
+            \subsubsection{TIMER}
+
+        \subsection{Microbial sequences analysis}
+
+    \section{Discussion}
+
+    \section{References}
+    \begin{frame}[allowframebreaks]
+        \frametitle{References}
+        \bibliographystyle{apacite}
+        \bibliography{reference_2}
+    \end{frame}
+\end{document}
