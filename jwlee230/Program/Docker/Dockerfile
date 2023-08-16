@@ -14,7 +14,7 @@ RUN mkdir /Tools
 ADD Tools/Python.tar.xz /Tools/
 RUN cd /Tools/Python-3.9.1 && ./configure --enable-loadable-sqlite-extensions --enable-optimizations --enable-big-digits=30 --with-ensurepip && make -j && make -j install && make -j altinstall
 ADD requirements.txt /Tools/requirements.txt
-RUN pip3 install --upgrade wheel pip && pip3 install --requirement /Tools/requirements.txt
+RUN pip3 install wheel==0.40.0 pip==23.1.2 && pip3 install --requirement /Tools/requirements.txt
 
 # Conda
 ADD Tools/Miniconda.sh /Tools/
