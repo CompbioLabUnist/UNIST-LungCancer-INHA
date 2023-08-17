@@ -171,7 +171,7 @@ Docker/Tools/Spruce.zip: | Docker/Tools
 TOOLS += Docker/Tools/Spruce.zip
 
 Docker/Tools/QAPA.zip: | Docker/Tools
-	wget "https://codeload.github.com/morrislab/qapa/zip/refs/heads/master" -O $@
+	wget "https://github.com/morrislab/qapa/archive/refs/tags/v1.3.3.zip" -O $@
 TOOLS += Docker/Tools/QAPA.zip
 
 Docker/Tools/annovar.latest.tar.gz: | Docker/Tools
