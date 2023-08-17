@@ -29,7 +29,7 @@ if __name__ == "__main__":
     elif not args.clinical.endswith(".csv"):
         raise ValueError("Clinical must end with .CSV!!")
     elif not args.geneset.endswith(".txt"):
-        raise ValueError("DEG must end with .TSV!!")
+        raise ValueError("GENESET must end with .TXT!!")
     elif not args.output.endswith(".pdf"):
         raise ValueError("Output must end with .PDF!!")
 
