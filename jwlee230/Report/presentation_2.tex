@@ -207,18 +207,29 @@
                     \end{array}$
                     \caption{K-M plot for LUSC \& LUAD \cite{lung-05}}
                 \end{figure}
+
+                \begin{block}{LUSC \& LUAD}
+                    LUSC patients have worse prognosis than LUAD patients.
+                \end{block}
             \end{frame}
 
         \subsection{Study objectives}
-            \begin{frame}[allowframebreaks]
+            \begin{frame}
                 \frametitle{Study objectives}
 
                 \begin{block}{Find different mutations}
                     \begin{itemize}
                         \item between WES \& WTS
-                        \item from cancer \& precancer
+                        \item from precancer \& cancer
                     \end{itemize}
                 \end{block}
+
+                \begin{exampleblock}{Predictor of cancer progression}
+                    \begin{itemize}
+                        \item Find biomarkers to predict prognosis of LUSC
+                        \item Predict cancer that may aggressively progress
+                    \end{itemize}
+                \end{exampleblock}
             \end{frame}
 
     \section{Materials}
@@ -415,7 +426,7 @@
                     \caption{MSP distribution in LUSC}
                 \end{figure}
 
-                \begin{exampleblock}{MSP lower \& higher}
+                \begin{exampleblock}{MSP lower \& higher threshold}
                     By median (appr. 8\%), MSP lower \& higher are classified.
                 \end{exampleblock}
             \end{frame}
@@ -527,7 +538,7 @@
 
                 \begin{figure}
                     \includegraphics[width=0.6 \linewidth]{figures/LungCancer/cancerization.jpg}
-                    \caption{Field cancerization \cite{cancerization-01}}
+                    \caption{Field cancerization \protect\cite{cancerization-01}}
                 \end{figure}
 
                 \begin{block}{Findings in MSP}
@@ -541,6 +552,15 @@
             \end{frame}
 
         \subsection{Copy number variation (CNV) analysis}
+            \begin{frame}
+                \frametitle{Tools for CNV analysis}
+
+                \begin{itemize}
+                    \item Sequenza \cite{sequenza-01}
+                    \item GISTIC2.0 \cite{gistic-01}
+                \end{itemize}
+            \end{frame}
+
             \begin{frame}
                 \frametitle{Cellularity \& Ploidy}
 
@@ -559,7 +579,7 @@
                 \end{figure}
 
                 \begin{figure}
-                    \includegraphics[width=0.7 \linewidth]{figures/Sequenza/BWA-violin-SQC.pdf}
+                    \includegraphics[width=0.8 \linewidth]{figures/Sequenza/BWA-violin-SQC.pdf}
                     \caption{Arm-level CNV violin plot in LUSC}
                 \end{figure}
 
@@ -874,6 +894,15 @@
 
             \begin{frame}
                 \frametitle{Findings in CNV analysis}
+
+                \begin{block}{CNV \& Cancer progression}
+                    \begin{itemize}
+                        \item CNV $\Rightarrow$ Gene amplification, gain, loss, \& deletion \\
+                            $\Rightarrow$ Activity of various signaling pathways $\Rightarrow$ Cancer progression \cite{copynumber-01, copynumber-02}.
+                        \item In CIS, MSP-higher patients have more abundant CNV than MSP-lower. \\
+                            $\therefore$ MSP-higher $\Rightarrow$ Cancerization $\Rightarrow$ Worse survival ?
+                    \end{itemize}
+                \end{block}
             \end{frame}
 
         \subsection{Mutational signature analysis}
@@ -882,8 +911,16 @@
 
                 \begin{figure}
                     \includegraphics[width=0.6 \linewidth]{figures/LungCancer/signatures.jpg}
-                    \caption{Mutational burdens across PCAWG tumor types }
+                    \caption{Mutational burdens across PCAWG tumor types \protect\cite{signature-02}}
                 \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Tools for mutational signature analysis}
+
+                \begin{itemize}
+                    \item SigProfiler \cite{signature-02}
+                \end{itemize}
             \end{frame}
 
             \subsubsection{Cancer stage \& signature}
@@ -1040,7 +1077,7 @@
                         \begin{itemize}
                             \item Endogenous mutational process \cite{signature-01}.
                             \item SBS1 generates G$>$T mismatches in double-stranded DNA.
-                            \item $\therefore$ Fail2 to detect \& remove these mismatches
+                            \item $\therefore$ Fail to detect \& remove these mismatches
                         \end{itemize}
                     \end{block}
 
@@ -1139,6 +1176,16 @@
 
         \subsection{Differentially expressed gene (DEG) analysis}
             \begin{frame}
+                \frametitle{Tools for DEG analysis}
+
+                \begin{itemize}
+                    \item RSEM \cite{rsem-01}
+                    \item Enrichr \cite{enrichr-01}
+                    \item KEGG \cite{kegg-01}
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}
                 \frametitle{DEG selection strategy}
 
                 \begin{block}{Fold change}
@@ -1211,12 +1258,284 @@
                     \begin{columns}
                         \begin{column}{0.4 \textwidth}
                             \begin{figure}
-                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/AFDN.pdf}
-                                \caption{AFDN in LUSC}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/CACNA1D.pdf}
+                                \caption{CACNA1D in LUSC}
                             \end{figure}
                         \end{column}
                         \begin{column}{0.55 \textwidth}
-                            \begin{block}{AFDN}
+                            \begin{block}{CACNA1D}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/CIITA.pdf}
+                                \caption{CIITA in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{CIITA}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/CRTC3.pdf}
+                                \caption{CRTC3 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{CRTC3}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/ELN.pdf}
+                                \caption{ELN in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{ELN}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/ESR1.pdf}
+                                \caption{ESR1 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{ESR1}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/HMGA1.pdf}
+                                \caption{HMGA1 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{CHMGA1IITA}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/HMGA2.pdf}
+                                \caption{HMGA2 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{HMGA2}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/IL6ST.pdf}
+                                \caption{IL6ST in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{IL6ST}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/MSH6.pdf}
+                                \caption{MSH6 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{MSH6}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/NTRK3.pdf}
+                                \caption{NTRK3 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{NTRK3}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/PABPC1.pdf}
+                                \caption{PABPC1 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{PABPC1}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/PER1.pdf}
+                                \caption{PER1 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{PER1}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/PPARG.pdf}
+                                \caption{PPARG in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{PPARG}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/PPP2R1A.pdf}
+                                \caption{PPP2R1A in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{PPP2R1A}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/PTPRB.pdf}
+                                \caption{PTPRB in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{PTPRB}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/TNFRSF14.pdf}
+                                \caption{TNFRSF14 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{TNFRSF14}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/TP63.pdf}
+                                \caption{TP63 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{TP63}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/ZNF331.pdf}
+                                \caption{ZNF331 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{ZNF331}
                                 \begin{itemize}
                                     \item
                                 \end{itemize}
@@ -1315,6 +1634,17 @@
 
             \begin{frame}
                 \frametitle{Findings in DEG analysis}
+
+                \begin{figure}
+                    \includegraphics[width=0.6 \linewidth]{figures/LungCancer/senescent.jpg}
+                    \caption{Senescence promote tumorigenesis \protect\cite{senescent-01}}
+                \end{figure}
+
+                \begin{block}{Findings in DEG analysis}
+                    \begin{itemize}
+                        \item Senescent macrophages play a role in lung tumorigenesis \cite{senescent-01, senescent-02, senescent-03}.
+                    \end{itemize}
+                \end{block}
             \end{frame}
 
         \subsection{Deconvolution analysis}
@@ -1423,6 +1753,20 @@
     \section{Discussion}
         \begin{frame}
             \frametitle{Field cancerization}
+
+            \begin{figure}
+                \includegraphics[width=0.9 \linewidth]{figures/LungCancer/cancerization.jpg}
+                \caption{Field cancerization \protect\cite{cancerization-01}}
+            \end{figure}
+        \end{frame}
+
+        \begin{frame}
+            \frametitle{Senescent \& Tumorigenesis}
+
+            \begin{figure}
+                \includegraphics[width=0.9 \linewidth]{figures/LungCancer/senescent.jpg}
+                \caption{Senescent macrophages promote lung tumorigenesis \protect\cite{senescent-01}}
+            \end{figure}
         \end{frame}
 
     \section{References}
