@@ -1279,22 +1279,10 @@ Output/RSEM/Plots/Violin/%.ADC.Smoking-Detail.violin.tar: Python/draw_violin_plo
 Output/RSEM/Plots/Violin/%.SQC.Smoking-Detail.violin.tar: Python/draw_violin_plots_clinical.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Violin/%.SQC.MSP-Median.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
+Output/RSEM/Plots/Violin/%.SQC.MSP-Median.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Violin/%.SQC.MSP-Mean.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.TPM.SQC.MSP-Median.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.TPM.SQC.MSP-Mean.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.FPKM.SQC.MSP-Median.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.FPKM.SQC.MSP-Mean.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
+Output/RSEM/Plots/Violin/%.SQC.MSP-Mean.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.Up.KEGG.tsv Output/RSEM/Enrichment/%.Up.KEGG.tex Output/RSEM/Enrichment/%.Up.KEGG.pdf: Python/get_enrichment_enrichr.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/Enrichment build.log
@@ -6113,22 +6101,10 @@ Output/RSEM/Plots/Violin/%.SQC.senescence.tar: Python/draw_violin_plots_geneset.
 Output/RSEM/Plots/Violin/%.ADC.senescence.tar: Python/draw_violin_plots_geneset.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Violin/%.SQC.MSP-Median.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
+Output/RSEM/Plots/Violin/%.SQC.MSP-Median.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-Output/RSEM/Plots/Violin/%.SQC.MSP-Mean.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.TPM.SQC.MSP-Median.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.TPM.SQC.MSP-Mean.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.FPKM.SQC.MSP-Median.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/RSEM/Plots/Violin/%.FPKM.SQC.MSP-Mean.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/WTS-%.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
+Output/RSEM/Plots/Violin/%.SQC.MSP-Mean.senescence.tar: Python/draw_violin_plots_MSP_geneset.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
 
 step76-cluster-stage: Output/RSEM/Plots/Cluster/STAR.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.ADC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.TPM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.TPM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.ADC.senescence.pdf
