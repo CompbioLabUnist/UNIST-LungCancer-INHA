@@ -104,69 +104,1326 @@
         \subsection{Lung cancer}
             \begin{frame}
                 \frametitle{Lung cancer?}
+
+                \begin{block}{The most common cancer}
+                    12.2\% of all cancers \cite{cancer-01}
+                \end{block}
+
+                \begin{block}{Causes of lung cancer \\
+                    \cite{lung-01}}
+                    \begin{enumerate}
+                        \item Tobacco smoking
+                        \item Cooking oil fumes
+                        \item Tuberculosis history
+                        \item Menopausal hormone replacement
+                        \item ...
+                    \end{enumerate}
+                \end{block}
             \end{frame}
 
             \begin{frame}[allowframebreaks]
                 \frametitle{Type of lung cancer}
+
+                \begin{block}{Type of lung cancer \\
+                    \cite{lung-02}}
+                    \begin{enumerate}
+                        \item Adeonocarcinoma (LUAD): 40\% $\bigstar$
+                        \item Squamous cell carcinoma (LUSC): 25\% $\bigstar$
+                        \item Small cell carcinoma: 20\%
+                        \item Large cell carcinoma: 10\%
+                        \item Adenosquamous carcinoma: $<$5\%
+                        \item ...
+                    \end{enumerate}
+                \end{block}
+
+                \begin{figure}
+                    \includegraphics[width=0.4 \linewidth]{figures/LungCancer/classification.png}
+                    \caption{Lung cancer classification \cite{lung-03}}
+                \end{figure}
             \end{frame}
 
         \subsection{LUSC \& LUAD}
             \begin{frame}
                 \frametitle{LUSC}
+
+                \begin{block}{TCGA LUSC \cite{LUSC-01}}
+                    \begin{itemize}
+                        \item 96\% patients reported past/present tobacco smoking.
+                        \item Not present EGFR and ALK fusions.
+                        \item Recurrent mutations:
+                        \begin{itemize}
+                            \item TP53
+                            \item NFE2L2
+                            \item KEAP1
+                            \item ...
+                        \end{itemize}
+                        \item High rate of copy number alteration.
+                        \item Amplication of NFE2L2, MYC, CDK6, MDM2, BCL2L1, \& EYS.
+                        \item Deletion of FOXP1, PTEN, \& NF1.
+                    \end{itemize}
+                \end{block}
             \end{frame}
 
             \begin{frame}
                 \frametitle{LUAD}
+
+                \begin{block}{TCGA LUAD \cite{LUAD-01}}
+                    \begin{itemize}
+                        \item 81\% patients reported past/present tobacco smoking.
+                        \item Candidate driver genes: RTK, RAS, \& RAF
+                        \item Cancer-associated mutations:
+                        \begin{enumerate}
+                            \item KRAS (32\%)
+                            \item EGFR (11\%)
+                            \item BRAF (7\%)
+                        \end{enumerate}
+                        \item Enriched mutations: TP53, KEAP1, NF1, \& RIT1
+                        \item Fusions: ROS + RET
+                    \end{itemize}
+                \end{block}
             \end{frame}
 
-            \begin{frame}
+            \begin{frame}[allowframebreaks]
                 \frametitle{LUSC \& LUAD}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.3 \linewidth]{figures/LungCancer/SQC.png}
+                        &
+                        \includegraphics[width=0.3 \linewidth]{figures/LungCancer/ADC.png}
+                        \\
+                        \mbox{(a) LUSC} & \mbox{(b) LUAD} \\
+                    \end{array}$
+                    \caption{LUSC and LUAD histology \cite{lung-04}}
+                \end{figure}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/LungCancer/wang1.png}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/LungCancer/wang2.png}
+                        \\
+                        \mbox{(a) All patients} & \mbox{(b) By cancer stages}
+                    \end{array}$
+                    \caption{K-M plot for LUSC \& LUAD \cite{lung-05}}
+                \end{figure}
             \end{frame}
 
         \subsection{Study objectives}
-            \begin{frame}
+            \begin{frame}[allowframebreaks]
                 \frametitle{Study objectives}
+
+                \begin{block}{Find different mutations}
+                    \begin{itemize}
+                        \item between WES \& WTS
+                        \item from cancer \& precancer
+                    \end{itemize}
+                \end{block}
             \end{frame}
 
     \section{Materials}
-        \begin{frame}
+        \begin{frame}[allowframebreaks]
             \frametitle{Study subjects}
+
+            \begin{block}{WES \& WTS}
+                \begin{itemize}
+                    \item WES: sample n=289
+                    \item WTS: sample n=166
+                \end{itemize}
+            \end{block}
+
+            \begin{block}{Lung cancer stages}
+                \begin{enumerate}
+                    \item Normal
+                    \item Dysplasia
+                    \item AAH: Atypical adenomatous hyperplasia
+                    \item AIS: Adenocarcinoma \textit{in situ}
+                    \item CIS: Carcinoma \textit{in situ}
+                    \item MIA: Minimally invasive adenocarcinoma
+                    \item Primary
+                \end{enumerate}
+            \end{block}
+
+            \begin{block}{Lung cancer evolution}
+                \begin{itemize}
+                    \item LUAD (patient n=18): Normal $\rightarrow$ AAH $\rightarrow$ AIS $\rightarrow$ MIA $\rightarrow$ Primary
+                    \item LUSC (patient n=77): Normal $\rightarrow$ Dysplasia $\rightarrow$ CIS $\rightarrow$ Primary
+                \end{itemize}
+            \end{block}
         \end{frame}
 
         \begin{frame}
             \frametitle{WES data composition}
+
+            \begin{table}
+                \caption{Number of WES samples}
+                \input{tables/WES_samples/WES_samples.tex}
+            \end{table}
         \end{frame}
 
         \begin{frame}
             \frametitle{RNA-seq data composition}
+
+            \begin{table}
+                \caption{Number of WTS samples}
+                \input{tables/WTS_samples/WTS_samples.tex}
+            \end{table}
         \end{frame}
 
     \section{Results}
         \subsection{Quality Checks}
+            \begin{frame}
+                \frametitle{File size in WES data}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/Size/WES.pdf}
+                    \caption{File size distribution in WES data}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{File size in WTS data}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/Size/WTS.pdf}
+                    \caption{File size distribution in WTS data}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Coverage depth on WES}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/FastQC/BWA.pdf}
+                    \caption{Coverage depth in WES}
+                \end{figure}
+
+                \begin{block}{Compared with TCGA}
+                    \begin{itemize}
+                        \item LUAD: Tumor DNA: 97.6$\times$ \& Germline: 95.8$\times$ \cite{LUAD-01}
+                        \item LUSC: Mean 121$\times$ of target bases above 30$\times$ \cite{LUSC-01}
+                    \end{itemize}
+                \end{block}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{FastQC on WES}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/FastQC/FastQC_WES.pdf}
+                    \caption{FastQC with WES data}
+                \end{figure}
+
+                \begin{alertblock}{Failure on 33P1 sample}
+                    $\therefore$ 33P1 is excluded from further analyses.
+                \end{alertblock}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{FastQC on WTS}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/FastQC/FastQC_WTS.pdf}
+                    \caption{FastQC with WTS data}
+                \end{figure}
+
+                \begin{exampleblock}{All samples are good to analysis}
+                    $\because$ No sample has more than 5 failures.
+                \end{exampleblock}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Picard on WES}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/CollectMultipleMetrics/BWA.pdf}
+                    \caption{Quality distribution by WES data}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in quality checks}
+
+                \begin{alertblock}{WES data}
+                    \begin{itemize}
+                        \item 33P1 sample have not enough quality.
+                        \item Other samples are good to analysis.
+                    \end{itemize}
+                \end{alertblock}
+
+                \begin{exampleblock}{WTS data}
+                    All samples are good to analysis.
+                \end{exampleblock}
+            \end{frame}
 
         \subsection{Short nucleotide variations (SNV) analysis}
+            \begin{frame}
+                \frametitle{Driver gene selection strategy}
+
+                \begin{block}{COSMIC cancer gene census (CGC) \cite{CGC-01}}
+                    Gene $\in$ CGC tier 1 set
+                \end{block}
+
+                \begin{block}{Fisher false discovery rate (FDR)}
+                    Fisher FDR $<$ 0.05
+                \end{block}
+
+                \begin{block}{Fisher p-value}
+                    Fisher p-value $<$ 0.05
+                \end{block}
+
+                \begin{block}{Gene p-value}
+                    Gene p-value $<$ 0.05
+                \end{block}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{SNV in LUSC}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/Mutect2/BWA-SQC.pdf}
+                    \caption{CoMut plot with LUSC}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in SNV analysis}
+            \end{frame}
 
         \subsection{Mutation shared proportion (MSP)}
+            \begin{frame}
+                \frametitle{MSP?}
+
+                \begin{block}{Definition of MSP}
+                    MSP = (Precancer $\cap$Primary) / Primary
+                \end{block}
+
+                \begin{block}{Selection strategy}
+                    \begin{enumerate}
+                        \item Non-synonymous: point mutation, frame-shift, splice site, etc.
+                        \item Same site: chromosome, start position, \& end position
+                        \item Same allele: reference \& tumor allele
+                    \end{enumerate}
+                \end{block}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{MSP distribution}
+
+                \begin{figure}
+                    \includegraphics[width=0.6 \linewidth]{figures/Mutation_Shared_Proportion/Histogram/BWA.SQC.SharedProportion.pdf}
+                    \caption{MSP distribution in LUSC}
+                \end{figure}
+
+                \begin{exampleblock}{MSP lower \& higher}
+                    By median (appr. 8\%), MSP lower \& higher are classified.
+                \end{exampleblock}
+            \end{frame}
+
+            \begin{frame}[allowframebreaks]
+                \frametitle{MSP with clinical data}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Overall Survival.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/Joint_Plot/BWA-SQC-SharedProportion/Recurrence-Free Survival.pdf}
+                        \\
+                        \mbox{(a) Overall survival} & \mbox{(b) Recurrence-free survival} \\
+                    \end{array}$
+                    \caption{MSP with clinical data from LUSC}
+                \end{figure}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Overall-Survival.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Mutation_Shared_Proportion/KM_Plot/BWA-SQC-SharedProportion/Recurrence-Free-Survival.pdf}
+                        \\
+                        \mbox{(a) Overall survival} & \mbox{(b) Recurrence-free survival} \\
+                    \end{array}$
+                    \caption{KM plot with median separation from LUSC}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}[allowframebreaks]
+                \frametitle{Mutation shared genes}
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/Mutation_Shared_Proportion/Genes/BWA.SQC.Mean.pdf}
+                    \caption{Mutation shared gene with median separation from LUSC}
+                \end{figure}
+                \framebreak
+
+                \begin{figure}
+                    \includegraphics[width=0.9 \linewidth]{figures/Mutation_Shared_Proportion/Exact/BWA-SQC.Median.pdf}
+                    \caption{Exact test on mutation shared genes with median separation from LUSC}
+                \end{figure}
+
+                \begin{block}{Notable genes}
+                    \begin{enumerate}
+                        \item KMT2D
+                        \item NOTCH1
+                        \item RB1
+                        \item RUNX1T1
+                        \item TP53
+                    \end{enumerate}
+                \end{block}
+
+                \begin{block}{KMT2D}
+                    \begin{itemize}
+                        \item Lysine methyltransferase 2D
+                        \item KMT2D have a role in chromatin remodeling \\
+                            $\Rightarrow$ Transcription \& DNA repair \cite{KMT2D-01, KMT2D-02}
+                        \item KMT2D deficiency impairs super-enhancers \\
+                            $\therefore$ To confer a glycolytic vulnerability \cite{KMT2D-03}
+                        \item KMT2D mutation is associated with poor prognosis in NSCLC \cite{KMT2D-04}
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{NOTCH1}
+                    \begin{itemize}
+                        \item Notch homolog protein 1
+                        \item NOTCH1 regulates cell-fate determination \cite{NOTCH1-01, NOTCH1-02}
+                        \item NOTCH1 controls EMT in lung cancer \cite{NOTCH1-03}
+                        \item Lung cancer patients have more mutations in NOTCH1 \cite{NOTCH1-04}
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{RB1}
+                    \begin{itemize}
+                        \item Retinoblastoma transcriptional co-repressor 1
+                        \item Tumor suppressor \\
+                            $\Leftarrow$ G1/S transition of cell cycle \cite{RB1-01}
+                        \item Common RB1 re-arrangements associated with histopathologic transformation in non-smoking-related lung cancer \cite{RB1-02}
+                        \item Nicotine \\
+                            $\Rightarrow$ up-regulates FGFR2 \& RB1 expression \\
+                            $\Rightarrow$ promote NSCLC cell proliferation \& EMT \cite{RB1-03}
+                        \item RB1 mutation predicts poor outcomes in NSCLC \cite{RB1-04}
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{RUNX1T1}
+                    \begin{itemize}
+                        \item RUNX1 partner transcriptional co-repressor 1
+                        \item RUNX1T1 facilitates transcriptional repression \\
+                            $\Leftarrow$ via DNA-binding transcription factors \& histone-modifying enzymes \cite{RUNX1T1-01, RUNX1T1-02}
+                        \item RUNX1T1 has a role in SCLC \cite{RUNX1T1-03}
+                        \item RUNX1T1 is associated with brain metastasis process in lung cancer \cite{RUNX1T1-04}
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{TP53}
+                    \begin{itemize}
+                        \item Tumor protein P53
+                        \item TP53 mutation is associated with better response \& longer survival under immune-checkpoint inhibitor treatment in NSCLC \cite{TP53-01}
+                        \item TP53 interacts with human lung cancer microbiome \cite{TP53-02}
+                    \end{itemize}
+                \end{block}
+            \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in MSP}
+
+                \begin{figure}
+                    \includegraphics[width=0.6 \linewidth]{figures/LungCancer/cancerization.jpg}
+                    \caption{Field cancerization \cite{cancerization-01}}
+                \end{figure}
+
+                \begin{block}{Findings in MSP}
+                    \begin{itemize}
+                        \item Correlation between MSP \& clinical value
+                        \item How does MSP work in lung cancer?
+                        \item $\therefore$ Field cancerization? \\
+                            Both enabled by \& causes changes to tissue microenvironment.
+                    \end{itemize}
+                \end{block}
+            \end{frame}
 
         \subsection{Copy number variation (CNV) analysis}
+            \begin{frame}
+                \frametitle{Cellularity \& Ploidy}
+
+                \begin{figure}
+                    \includegraphics[width=0.4 \linewidth]{figures/Sequenza/BWA-sequenza-SQC.pdf}
+                    \caption{Cellulartiy \& Ploidy in LUSC}
+                \end{figure}
+            \end{frame}
+
+            \begin{frame}[allowframebreaks]
+                \frametitle{Arm-level CNV plot in LUSC}
+
+                \begin{figure}
+                    \includegraphics[width=0.7 \linewidth]{figures/Sequenza/BWA-simple-SQC.pdf}
+                    \caption{Arm-level CNV genome plot in LUSC}
+                \end{figure}
+
+                \begin{figure}
+                    \includegraphics[width=0.7 \linewidth]{figures/Sequenza/BWA-violin-SQC.pdf}
+                    \caption{Arm-level CNV violin plot in LUSC}
+                \end{figure}
+
+                \begin{block}{Chr1 p-arm loss}
+                    \begin{enumerate}
+                        \item Chr1 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr1 p-arm loss in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr1 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr1-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr2 p-arm gain}
+                    \begin{enumerate}
+                        \item Chr2 p-arm gain in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr2 p-arm gain in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr2 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr2-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr3 p-arm loss}
+                    \begin{enumerate}
+                        \item Chr3 p-arm loss in CIS compared AAH (p $<$ 1e-5).
+                        \item Chr3 p-arm loss in Primary compared to CIS (p $<$ 1e-5).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr3 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr3-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr3 q-arm gain}
+                    \begin{enumerate}
+                        \item Chr3 q-arm gain in CIS compared to AAH (p $<$ 1e-5).
+                        \item Chr3 q-arm gain in Primary compared to CIS (p $<$ 1e-4).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr3 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr3-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr4 p-arm loss}
+                    \begin{enumerate}
+                        \item Chr4 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr4 p-arm loss in Primary compared to CIS (p $<$ 0.01).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr4 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr4-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr4 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr4 q-arm loss in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr4 q-arm loss in Primary compared to CIS (p $<$ 0.01).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr4 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr4-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr5 p-arm gain}
+                    \begin{enumerate}
+                        \item Chr5 p-arm gain in CIS compared to AAH (p $<$ 0.01).
+                        \item Chr5 p-arm gain in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr5 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr5-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr5 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr5 q-arm loss in CIS comparde to AAH (p $<$ 1e-5).
+                        \item Chr5 q-arm loss in Primary compared to CIS (p $<$ 1e-5).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Ch5 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr5-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr7 p-arm gain}
+                    \begin{enumerate}
+                        \item Chr7 p-arm gain in Primary compared to CIS (p $<$ 0.001).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr7 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr7-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr9 p-arm loss}
+                    \begin{enumerate}
+                        \item Chr9 p-arm loss in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr9 p-arm loss in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr9 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr9-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr10 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr10 q-arm loss in CIS compared to AAH (p $<$ 0.01).
+                        \item Chr10 q-arm loss in Primary compared to CIS (p $<$ 0.01).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr10 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr10-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr12 q-arm gain}
+                    \begin{enumerate}
+                        \item Chr12 p-arm gain in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr12 p-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr12-p.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr13 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr13 q-arm loss in CIS compared to AAH (p $<$ 0.001).
+                        \item Chr13 q-arm loss in Primary compared to CIS (p $<$ 0.001).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr13 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr13-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr20 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr20 q-arm loss in CIS compared to AAH (p $<$ 0.01).
+                        \item Chr20 q-arm loss in Primary compared to CIS (p $<$ 0.05).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr20 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr20-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+
+                \begin{block}{Chr21 q-arm loss}
+                    \begin{enumerate}
+                        \item Chr21 q-arm loss in CIS compared to AAH (p $<$ 0.05).
+                        \item Chr21 q-arm loss in Primary compared to CIS (p $<$ 0.01).
+                    \end{enumerate}
+
+                    \begin{table}
+                        \caption{CGC Tier1 genes in Chr21 q-arm}
+                        \resizebox{\linewidth}{!}
+                        {\input{tables/GeneLocation/chr21-q.CGC-1.tex}}
+                    \end{table}
+                \end{block}
+            \end{frame}
+
+            \begin{frame}[allowframebreaks]
+                \frametitle{Peak-level CNV plot in LUSC}
+
+                \begin{figure}
+                    $\begin{array}{cccc}
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Dysplasia/amp_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-CIS/amp_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Precancer/amp_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Primary/amp_qplot.png}
+                        \\
+
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Dysplasia/amp_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-CIS/del_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Precancer/del_qplot.png}
+                        &
+                        \includegraphics[width=0.15 \linewidth]{figures/Gistic/BWA-CNVkit/SQC-Primary/del_qplot.png}
+                        \\
+
+                        \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
+                    \end{array}$
+                    \caption{Peak-level CNV plot in LUSC}
+                \end{figure}
+            \end{frame}
+
             \subsubsection{MSP \& CNV}
+                \begin{frame}
+                    \frametitle{CNV?}
+
+                    \begin{block}{Ploidy?}
+                        Average copy number of chromosome in sample (count)
+                    \end{block}
+
+                    \begin{block}{Region?}
+                        Region length of CNV loss/gain (base-pair)
+                    \end{block}
+
+                    \begin{block}{Segment?}
+                        Segment count of CNV loss/gain (count)
+                    \end{block}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{MSP \& CNV ploidy}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Ploidy/CopyNumber.BWA.Sequenza.SQC.median/Joint_All_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Ploidy/CopyNumber.BWA.Sequenza.SQC.median/Joint_CIS+AIS_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Ploidy/CopyNumber.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
+                            \\
+
+                            \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                        \end{array}$
+                        \caption{Scatter plot for MSP \& CNV ploidy}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.4 \linewidth]{figures/MutationSharedProportion_CNV/Ploidy/CopyNumber.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+                        \caption{Violin plot for MSP \& CNV ploidy}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{MSP \& CNV region}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Joint_All_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Joint_CIS+AIS_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
+                            \\
+
+                            \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                        \end{array}$
+                        \caption{Scatter plot for MSP \& CNV region}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.4 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+                        \caption{Violin plot for MSP \& CNV region}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{MSP \& CNV segment}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Joint_All_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Joint_CIS+AIS_Mutation Shared Proportion.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
+                            \\
+
+                            \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                        \end{array}$
+                        \caption{Scatter plot for MSP \& CNV segment}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.4 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Violin_Mutation Shared Proportion.pdf}
+                        \caption{Violin plot for MSP \& CNV segment}
+                    \end{figure}
+                \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in CNV analysis}
+            \end{frame}
 
         \subsection{Mutational signature analysis}
+            \begin{frame}
+                \frametitle{Mutational signature?}
+
+                \begin{figure}
+                    \includegraphics[width=0.6 \linewidth]{figures/LungCancer/signatures.jpg}
+                    \caption{Mutational burdens across PCAWG tumor types }
+                \end{figure}
+            \end{frame}
+
+            \subsubsection{Cancer stage \& signature}
+                \begin{frame}[allowframebreaks]
+                    \frametitle{SBS in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{SBS bar plot in LUSC}
+                    \end{figure}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-SingleBase.SQC.Subtype.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{SBS bar plot by cancer stage in LUSC}
+                    \end{figure}
+                    \framebreak
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Subtype.Relative/SBS1.pdf}
+                                \caption{SBS1 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{SBS1}
+                                \begin{itemize}
+                                    \item Endogenous mutational process \cite{signature-01}.
+                                    \item SBS1 generates G$>$T mismatches in double-stranded DNA.
+                                    \item $\therefore$ Fail2 to detect \& remove these mismatches
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Subtype.Relative/SBS4.pdf}
+                                \caption{SBS4 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{SBS4}
+                                \begin{itemize}
+                                    \item Tobacco smoking \cite{signature-02}.
+                                    \item Exposed to tobacco carcinogens such as benzopyrene.
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/SigProfiler/BWA-Violin/COSMIC-SingleBase.SQC.Subtype.Relative/SBS5.pdf}
+                                \caption{SBS5 in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{SBS5}
+                                \begin{itemize}
+                                    \item Unknown \cite{signature-02}.
+                                    \item SBS5 increasing in many cancer types such as bladder cancer. \\
+                                        $\because$ Tobacco smoking
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{DBS in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{DBS bar plot in LUSC}
+                    \end{figure}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-DoubleBase.SQC.Subtype.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{DBS bar plot by cancer stage in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{Indel in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{Indel bar plot in LUSC}
+                    \end{figure}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Absolute.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/SigProfiler/BWA-Bar/COSMIC-Indel.SQC.Subtype.Relative.pdf}
+                            \\
+                            \mbox{(a) Absolute} & \mbox{(b) Relative} \\
+                        \end{array}$
+                        \caption{Indel bar plot by cancer stage in LUSC}
+                    \end{figure}
+                \end{frame}
+
             \subsubsection{MSP \& signature}
+                \begin{frame}[allowframebreaks]
+                    \frametitle{MSP \& SBS in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS1.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/Primary-SBS1.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/All-SBS1.pdf}
+                            \\
+                            \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+                        \end{array}$
+                        \caption{MSP \& SBS1 in LUSC}
+                    \end{figure}
+
+                    \begin{block}{SBS1}
+                        \begin{itemize}
+                            \item Endogenous mutational process \cite{signature-01}.
+                            \item SBS1 generates G$>$T mismatches in double-stranded DNA.
+                            \item $\therefore$ Fail2 to detect \& remove these mismatches
+                        \end{itemize}
+                    \end{block}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS4.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/Primary-SBS4.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/All-SBS4.pdf}
+                            \\
+                            \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+                        \end{array}$
+                        \caption{MSP \& SBS4 in LUSC}
+                    \end{figure}
+
+                    \begin{block}{SBS4}
+                        \begin{itemize}
+                            \item Tobacco smoking \cite{signature-02}.
+                            \item Exposed to tobacco carcinogens such as benzopyrene.
+                        \end{itemize}
+                    \end{block}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/CIS+AIS-SBS5.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/Primary-SBS5.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-SBS/All-SBS5.pdf}
+                            \\
+                            \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+                        \end{array}$
+                        \caption{MSP \& SBS5 in LUSC}
+                    \end{figure}
+
+                    \begin{block}{SBS5}
+                        \begin{itemize}
+                            \item Unknown \cite{signature-02}.
+                            \item SBS5 increasing in many cancer types such as bladder cancer. \\
+                            $\because$ Tobacco smoking
+                        \end{itemize}
+                    \end{block}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{MSP \& DBS in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-DBS/CIS+AIS-DBS2.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-DBS/Primary-DBS2.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-DBS/All-DBS2.pdf}
+                            \\
+                            \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+                        \end{array}$
+                        \caption{MSP \& DBS2 in LUSC}
+                    \end{figure}
+
+                    \begin{block}{DBS2}
+                        \begin{itemize}
+                            \item Tobacco smoking \cite{signature-03}.
+                            \item Other endogenous \& exogeneous mutagens such as acetaldehyde
+                        \end{itemize}
+                    \end{block}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{MSP \& Indel in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-Indel/CIS+AIS-ID83A.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-Indel/Primary-ID83A.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/Mutation_Shared_Proportion/Signature/SigProfiler/BWA-SQC-Indel/All-ID83A.pdf}
+                            \\
+                            \mbox{(a) CIS} & \mbox{(b) Primary} & \mbox{(c) All} \\
+                        \end{array}$
+                        \caption{MSP \& ID83A in LUSC}
+                    \end{figure}
+
+                    \begin{block}{ID83A}
+                        \begin{itemize}
+                            \item Unknown
+                        \end{itemize}
+                    \end{block}
+                \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in mutational signature analysis}
+            \end{frame}
 
         \subsection{Differentially expressed gene (DEG) analysis}
+            \begin{frame}
+                \frametitle{DEG selection strategy}
+
+                \begin{block}{Fold change}
+                    $\log_2$ (Fold Change) $>$ 1 $\vee$ $\log_2$ (Fold Change) $<$ -1
+                \end{block}
+
+                \begin{block}{p-value}
+                    p-value $<$ 0.05
+                \end{block}
+
+                \begin{block}{Adjusted p-value}
+                    Padj $<$ 0.05
+                \end{block}
+            \end{frame}
+
+            \subsubsection{Cancer stage \& DEG}
+                \begin{frame}[allowframebreaks]
+                    \frametitle{DEG volcano plot in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal-CIS.volcano.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal-Primary.volcano.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.CIS-Primary.volcano.pdf}
+                            \\
+                            \mbox{(a) Normal-CIS} & \mbox{(b) Normal-Primary} & \mbox{(c) CIS-Primary} \\
+                        \end{array}$
+                        \caption{TPM volcano plot in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{DEG UpSet plot in LUSC}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Pair-Venn/STAR.TPM.SQC.venn.pdf}
+                        \caption{UpSet plot in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{Enriched pathways in LUSC}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal-CIS.Up.KEGG.pdf}
+                        \caption{Up-regulated pathways on Normal \& CIS}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal-CIS.Down.KEGG.pdf}
+                        \caption{Down-regulated pathways on Normal \& CIS}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal-Primary.Up.KEGG.pdf}
+                        \caption{Up-regulated pathways on Normal \& Primary}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal-Primary.Down.KEGG.pdf}
+                        \caption{Down-regulated pathways on Normal \& Primary}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{DEG violin plots in LUSC}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/DEG/Violin/STAR.TPM.SQC.violin/AFDN.pdf}
+                                \caption{AFDN in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{AFDN}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+                \end{frame}
+
             \subsubsection{MSP \& DEG}
+                \begin{frame}
+                    \frametitle{MSP \& DEG volcano plot in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Normal.MSP-Median.volcano.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.CIS.MSP-Median.volcano.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Volcano/STAR.TPM.SQC.Primary.MSP-Median.volcano.pdf}
+                            \\
+                            \mbox{(a) Normal} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                        \end{array}$
+                        \caption{MSP \& TPM volcano plots in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{MSP \& DEG heatmap plot in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{ccc}
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.TPM.SQC.Normal.MSP-Median.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.TPM.SQC.CIS.MSP-Median.pdf}
+                            &
+                            \includegraphics[width=0.3 \linewidth]{figures/DEG/Cluster/STAR.TPM.SQC.Primary.MSP-Median.pdf}
+                            \\
+                            \mbox{(a) Normal} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
+                        \end{array}$
+                        \caption{MSP \& TPM heatmap in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{MSP \& DEG UpSet plot in LUSC}
+
+                    \begin{figure}
+                        $\begin{array}{cc}
+                            \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.TPM.SQC.MSP-Median.Up.venn.pdf}
+                            &
+                            \includegraphics[width=0.4 \linewidth]{figures/DEG/Pair-Venn/STAR.TPM.SQC.MSP-Median.Down.venn.pdf}
+                            \\
+                            \mbox{(a) Up} & \mbox{(b) Down} \\
+                        \end{array}$
+                        \caption{MSP \& DEG UpSet plot in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{MSP \& enriched pathways in LUSC}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal.MSP-Median.Up.KEGG.pdf}
+                        \caption{Up-regulated pathways on MSP in normal}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Normal.MSP-Median.Down.KEGG.pdf}
+                        \caption{Down-regulated pathways on MSP in normal}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.CIS.MSP-Median.Up.KEGG.pdf}
+                        \caption{Up-regulated pathways on MSP in CIS}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.CIS.MSP-Median.Down.KEGG.pdf}
+                        \caption{Down-regulated pathways on MSP in CIS}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Primary.MSP-Median.Up.KEGG.pdf}
+                        \caption{Up-regulated pathways on MSP in primary}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.6 \linewidth]{figures/DEG/Enrichment/STAR.TPM.SQC.Primary.MSP-Median.Down.KEGG.pdf}
+                        \caption{Down-regulated pathways on MSP in primary}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{MSP \& DEG violin plots in LUSC}
+                \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in DEG analysis}
+            \end{frame}
 
         \subsection{Deconvolution analysis}
-            \subsubsection{Reference data by ...}
+            \subsubsection{Reference data by \protect\citeA{singlecell-01}}
+                \begin{frame}
+                    \frametitle{Reference single-cell data (GSE131907)}
 
-            \subsubsection{Reference data by ...}
+                    \begin{figure}
+                        \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_1.jpg}
+                        \caption{Comprehensive dissection and clustering of 208,506 single-cells from LUAD \cite{singlecell-01}}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{Cluster plot with cancer stage in LUSC}
+
+                    \begin{figure}
+                        \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.TPM.GSE131907.SQC.pdf}
+                        \caption{Cluster plot with cancer stage in LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{Violin plots with cancer stage in LUSC}
+
+                    \begin{columns}
+                        \begin{column}{0.4 \textwidth}
+                            \begin{figure}
+                                \includegraphics[width=\linewidth]{figures/BisqueRNA/violin/STAR.TPM.GSE131907.SQC/ActivatedDCs.pdf}
+                                \caption{Activated DCs in LUSC}
+                            \end{figure}
+                        \end{column}
+                        \begin{column}{0.55 \textwidth}
+                            \begin{block}{Activated DCs}
+                                \begin{itemize}
+                                    \item
+                                \end{itemize}
+                            \end{block}
+                        \end{column}
+                    \end{columns}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{Cluster plots with MSP in LUSC}
+
+                    \begin{figure}
+                        \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Normal.pdf}
+                        \caption{Cluster plot with MSP in normal of LUSC}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-CIS+AIS.pdf}
+                        \caption{Cluster plot with MSP in CIS of LUSC}
+                    \end{figure}
+
+                    \begin{figure}
+                        \includegraphics[width=0.9 \linewidth]{figures/BisqueRNA/clustermap/STAR.TPM.GSE131907.SQC.MSP-median/Mutation Shared Proportion-Primary.pdf}
+                        \caption{Cluster plot with MSP in primary of LUSC}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]
+                    \frametitle{Violin plots with MSP in LUSC}
+                \end{frame}
+
+            \subsubsection{Reference data by \protect\citeA{singlecell-02}}
+                \begin{frame}
+                    \frametitle{Reference single-cell data (GSE162498)}
+
+                    \begin{figure}
+                        \includegraphics[width=0.8 \linewidth]{figures/LungCancer/reference_2.png}
+                        \caption{Characterization of CD3$^+$ TILs in NSCLC \cite{singlecell-02}}
+                    \end{figure}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{Cluster plot with cancer stage in LUSC}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{Violin plots with cancer stage in LUSC}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{Cluster plots with MSP in LUSC}
+                \end{frame}
+
+                \begin{frame}
+                    \frametitle{Violin plots with MSP in LUSC}
+                \end{frame}
 
             \subsubsection{TIMER}
+                \begin{frame}
+                    \frametitle{Cluster plot with cancer stage in LUSC}
+                \end{frame}
+
+            \begin{frame}
+                \frametitle{Findings in deconvolution analysis}
+            \end{frame}
 
         \subsection{Microbial sequences analysis}
+            \begin{frame}
+                \frametitle{Findings in microbial sequences analysis}
+            \end{frame}
 
     \section{Discussion}
+        \begin{frame}
+            \frametitle{Field cancerization}
+        \end{frame}
 
     \section{References}
     \begin{frame}[allowframebreaks]
