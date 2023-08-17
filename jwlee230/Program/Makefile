@@ -6068,8 +6068,37 @@ step75: step75-SigProfiler step75-Violin-Subtype step75-Violin-Recurrence step75
 .PHONY: step75-SigProfiler step75-Violin-Subtype step75-Violin-Recurrence step75-Violin-Smoking step75-Bar-SQC step75-Bar-ADC step75-Bar-Subtype step75-Bar-Smoking step75-Bar-Recurrence step75
 
 # Step 76 (Mutation Shared Proportion & SigProfiler Signature score -- RNA-seq)
-Output/MutationSharedProportion_Signature-RNA/joint:
-	mkdir -p $@
+Output/RSEM/senescence.txt: | Output/RSEM
+	wget -O $@ "https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName=SAUL_SEN_MAYO&fileType=grp"
+
+Output/RSEM/Plots/Cluster/%.SQC.senescence.pdf: Python/draw_cluster_RSEM_geneset.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.ADC.senescence.pdf: Python/draw_cluster_RSEM_geneset.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.Normal.MSP-Median.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.Normal.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --median 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.Normal.MSP-Mean.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.Normal.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --mean 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.CIS.MSP-Median.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.CIS.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --median 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.CIS.MSP-Mean.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.CIS.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --mean 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.Primary.MSP-Median.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.Primary.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --median 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Cluster/%.SQC.Primary.MSP-Mean.senescence.pdf: Python/draw_clustermap_RSEM_MSP_geneset.py Output/RSEM/DEG/%.SQC.Primary.MSP-Median.tsv Output/MutationSharedProportion/BWA.tsv Output/RSEM/senescence.txt | Output/RSEM/Plots/Cluster build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --compare "Mutation Shared Proportion" --mean 1> $@.stdout 2> $@.stderr
+
+step76-cluster-stage: Output/RSEM/Plots/Cluster/STAR.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.ADC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.TPM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.TPM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.ADC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.SQC.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.ADC.senescence.pdf
+step76-cluster-MSP: Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Mean.senescence.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Mean.senescence.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Mean.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Mean.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Mean.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Median.senescence.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Mean.senescence.pdf
+step76: step76-cluster-stage step76-cluster-MSP
+.PHONY: step76-cluster-stage step76-cluster-MSP step76
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
