@@ -123,34 +123,35 @@ if __name__ == "__main__":
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.starmap(run, itertools.product(step00.sharing_columns, sorted(gene_set)))))
 
-    stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
     gene = "All markers"
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        stage_order = list(filter(lambda x: all([(x in set(input_data.loc[(input_data[MSP] == compare), "Stage"])) for compare in order]), step00.long_sample_type_list))
 
-    compare_list = list()
-    for s1, s2 in itertools.combinations(stage_order, r=2):
-        stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == s1), gene], input_data.loc[(input_data["Stage"] == s2), gene])
-        if p < 0.05:
-            compare_list.append((s1, s2))
+        compare_list = list()
+        for (c1, s1), (c2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_order] + [((compare, a), (compare, b)) for a, b in itertools.combinations(stage_order, r=2) for compare in order]:
+            stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == s1) & (input_data[MSP] == c1), gene], input_data.loc[(input_data["Stage"] == s2) & (input_data[MSP] == c2), gene])
+            if p < 0.05:
+                compare_list.append(((c1, s1), (c2, s2)))
 
-    try:
-        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
-    except ValueError:
-        _, p = 0., 1.0
+        try:
+            stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage) & (input_data[MSP] == compare), gene] for compare in order for stage in stage_order])
+        except ValueError:
+            _, p = 0., 1.0
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=input_data, x="Stage", order=stage_order, palette=step00.stage_color_code, y=gene, cut=1, linewidth=5, ax=ax)
-    if compare_list:
-        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=input_data, x=MSP, order=order, y=gene, hue="Stage", hue_order=stage_order, palette=step00.stage_color_code, cut=1, linewidth=5, ax=ax)
+        if compare_list:
+            statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x=MSP, order=order, y=gene, hue="Stage", hue_order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel(f"{gene} expression")
-    matplotlib.pyplot.title(f"{gene}: K.W. p={p:.3f}")
-    matplotlib.pyplot.tight_layout()
+        matplotlib.pyplot.ylabel(f"{gene} expression")
+        matplotlib.pyplot.title(f"{gene}: K.W. p={p:.3f}")
+        matplotlib.pyplot.tight_layout()
 
-    fig_name = f"{gene}.pdf"
-    fig.savefig(fig_name)
-    matplotlib.pyplot.close(fig)
-    figures.append(fig_name)
+        fig_name = f"{MSP}_{gene}.pdf"
+        fig.savefig(fig_name)
+        matplotlib.pyplot.close(fig)
+        figures.append(fig_name)
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(figures):
