@@ -106,6 +106,7 @@ if __name__ == "__main__":
     gene_set &= set(input_data.columns)
     input_data = input_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index))), sorted(gene_set)]
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
+    input_data["All markers"] = list(map(lambda x: sum(input_data.loc[x, sorted(gene_set)]), list(input_data.index)))
     print(input_data)
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
@@ -121,6 +122,35 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(args.cpus) as pool:
         figures = list(filter(None, pool.starmap(run, itertools.product(step00.sharing_columns, sorted(gene_set)))))
+
+    stage_order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
+    gene = "All markers"
+
+    compare_list = list()
+    for s1, s2 in itertools.combinations(stage_order, r=2):
+        stat, p = scipy.stats.mannwhitneyu(input_data.loc[(input_data["Stage"] == s1), gene], input_data.loc[(input_data["Stage"] == s2), gene])
+        if p < 0.05:
+            compare_list.append((s1, s2))
+
+    try:
+        stat, p = scipy.stats.kruskal(*[input_data.loc[(input_data["Stage"] == stage), gene] for stage in stage_order])
+    except ValueError:
+        _, p = 0., 1.0
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+    seaborn.violinplot(data=input_data, x="Stage", order=stage_order, palette=step00.stage_color_code, y=gene, cut=1, linewidth=5, ax=ax)
+    if compare_list:
+        statannotations.Annotator.Annotator(ax, compare_list, data=input_data, x="Stage", y=gene, order=stage_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+
+    matplotlib.pyplot.ylabel(f"{gene} expression")
+    matplotlib.pyplot.title(f"{gene}: K.W. p={p:.3f}")
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"{gene}.pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+    figures.append(fig_name)
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(figures):
