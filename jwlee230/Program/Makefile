@@ -3,8 +3,8 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
-MEMS = 100
+CPUS = 20
+MEMS = 400
 PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
@@ -6067,7 +6067,9 @@ step75-Bar-Recurrence: Output/SigProfiler-RNA/STAR-Bar/COSMIC-SingleBase.SQC.Rec
 step75: step75-SigProfiler step75-Violin-Subtype step75-Violin-Recurrence step75-Violin-Smoking step75-Bar-SQC step75-Bar-ADC step75-Bar-Subtype step75-Bar-Smoking step75-Bar-Recurrence
 .PHONY: step75-SigProfiler step75-Violin-Subtype step75-Violin-Recurrence step75-Violin-Smoking step75-Bar-SQC step75-Bar-ADC step75-Bar-Subtype step75-Bar-Smoking step75-Bar-Recurrence step75
 
-# Step 76 ()
+# Step 76 (Mutation Shared Proportion & SigProfiler Signature score -- RNA-seq)
+Output/MutationSharedProportion_Signature-RNA/joint:
+	mkdir -p $@
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
