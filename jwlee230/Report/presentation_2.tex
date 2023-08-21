@@ -236,10 +236,10 @@
         \begin{frame}[allowframebreaks]
             \frametitle{Study subjects}
 
-            \begin{block}{WES \& WTS}
+            \begin{block}{WES \& RNA-seq}
                 \begin{itemize}
                     \item WES: sample n=289
-                    \item WTS: sample n=166
+                    \item RNA-seq: sample n=166
                 \end{itemize}
             \end{block}
 
@@ -268,7 +268,8 @@
 
             \begin{table}
                 \caption{Number of WES samples}
-                \input{tables/WES_samples/WES_samples.tex}
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/WES_samples/WES_samples.tex}}
             \end{table}
         \end{frame}
 
@@ -276,8 +277,9 @@
             \frametitle{RNA-seq data composition}
 
             \begin{table}
-                \caption{Number of WTS samples}
-                \input{tables/WTS_samples/WTS_samples.tex}
+                \caption{Number of RNA-seq samples}
+                \resizebox{!}{0.3 \textheight}
+                {\input{tables/WTS_samples/WTS_samples.tex}}
             \end{table}
         \end{frame}
 
@@ -477,7 +479,7 @@
                         \item NOTCH1
                         \item RB1
                         \item RUNX1T1
-                        \item TP53
+                        \item LRP1B
                     \end{enumerate}
                 \end{block}
 
@@ -524,11 +526,12 @@
                     \end{itemize}
                 \end{block}
 
-                \begin{block}{TP53}
+                \begin{block}{LRP1B}
                     \begin{itemize}
-                        \item Tumor protein P53
-                        \item TP53 mutation is associated with better response \& longer survival under immune-checkpoint inhibitor treatment in NSCLC \cite{TP53-01}
-                        \item TP53 interacts with human lung cancer microbiome \cite{TP53-02}
+                        \item LDL receptor-related protein 1B
+                        \item LRP1B inactivated in NSCLC \cite{LRP1B-01}. \\
+                            $\therefore$ LRP1B may play an important role in tumorigenesis of NSCLC.
+                        \item LRP1B \& FAT3 are biomarker to predict immunotherapy of NSCLC \cite{LRP1B-02}.
                     \end{itemize}
                 \end{block}
             \end{frame}
@@ -571,7 +574,7 @@
             \end{frame}
 
             \begin{frame}[allowframebreaks]
-                \frametitle{Arm-level CNV plot in LUSC}
+                \frametitle{Arm-level CNV analysis in LUSC}
 
                 \begin{figure}
                     \includegraphics[width=0.7 \linewidth]{figures/Sequenza/BWA-simple-SQC.pdf}
@@ -778,7 +781,7 @@
             \end{frame}
 
             \begin{frame}[allowframebreaks]
-                \frametitle{Peak-level CNV plot in LUSC}
+                \frametitle{Peak-level CNV analysis in LUSC}
 
                 \begin{figure}
                     $\begin{array}{cccc}
@@ -802,8 +805,54 @@
 
                         \mbox{(a) Dysplasia} & \mbox{(b) CIS} & \mbox{(c) Precancer} & \mbox{(d) Primary} \\
                     \end{array}$
-                    \caption{Peak-level CNV plot in LUSC}
+                    \caption{Peak-level CNV plots in LUSC}
                 \end{figure}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.pdf}
+                        \\
+                        \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+                    \end{array}$
+                    \caption{UpSet plot among peaks in LUSC}
+                \end{figure}
+
+                \begin{table}
+                    \caption{Amplification peaks in LUSC}
+                    \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+                    {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.tex}}
+                \end{table}
+
+                \begin{table}
+                    \caption{Deletion peaks in LUSC}
+                    \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+                    {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.tex}}
+                \end{table}
+
+                \begin{figure}
+                    $\begin{array}{cc}
+                        \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.genes.pdf}
+                        &
+                        \includegraphics[width=0.4 \linewidth]{figures/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.genes.pdf}
+                        \\
+                        \mbox{(a) Amplification} & \mbox{(b) Deletion} \\
+                    \end{array}$
+                    \caption{UpSet plot among genes in LUSC}
+                \end{figure}
+
+                \begin{table}
+                    \caption{Amplification genes in LUSC}
+                    \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+                    {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Amplification.genes.tex}}
+                \end{table}
+
+                \begin{table}
+                    \caption{Deletion genes in LUSC}
+                    \resizebox{!}{\ifdimcomp{\height}{<}{0.35 \textheight}{\height}{0.35 \textheight}}
+                    {\input{tables/Gistic/BWA-CNVkit/BWA-CNVkit.SQC.Deletion.genes.tex}}
+                \end{table}
             \end{frame}
 
             \subsubsection{MSP \& CNV}
@@ -834,7 +883,6 @@
                             &
                             \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Ploidy/CopyNumber.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
                             \\
-
                             \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
                         \end{array}$
                         \caption{Scatter plot for MSP \& CNV ploidy}
@@ -857,7 +905,6 @@
                             &
                             \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Region/Region.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
                             \\
-
                             \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
                         \end{array}$
                         \caption{Scatter plot for MSP \& CNV region}
@@ -880,7 +927,6 @@
                             &
                             \includegraphics[width=0.3 \linewidth]{figures/MutationSharedProportion_CNV/Segment/Segment.BWA.Sequenza.SQC.median/Joint_Primary_Mutation Shared Proportion.pdf}
                             \\
-
                             \mbox{(a) All} & \mbox{(b) CIS} & \mbox{(c) Primary} \\
                         \end{array}$
                         \caption{Scatter plot for MSP \& CNV segment}
@@ -895,7 +941,7 @@
             \begin{frame}
                 \frametitle{Findings in CNV analysis}
 
-                \begin{block}{CNV \& Cancer progression}
+                \begin{block}{CNV \& cancer progression}
                     \begin{itemize}
                         \item CNV $\Rightarrow$ Gene amplification, gain, loss, \& deletion \\
                             $\Rightarrow$ Activity of various signaling pathways $\Rightarrow$ Cancer progression \cite{copynumber-01, copynumber-02}.
@@ -1689,7 +1735,7 @@
                                 \begin{itemize}
                                     \item CD9 molecule
                                     \item Integral membrane protein associated with integrins \\
-                                    $\Rightarrow$ CD9 regulates tumor metastasis \cite{CD9-01, CD9-02}.
+                                        $\Rightarrow$ CD9 regulates tumor metastasis \cite{CD9-01, CD9-02}.
                                     \item CD9 plays a role in drug-resistant state of breast cancer \cite{CD9-03}.
                                     \item CD9 promotes pancreatic cancer cell aggressiveness \cite{CD9-04}.
                                 \end{itemize}
