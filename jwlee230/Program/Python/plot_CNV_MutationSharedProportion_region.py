@@ -35,6 +35,10 @@ def get_chromosome_data_gain(sample: str) -> int:
     return sum(tmp_data["end"]) - sum(tmp_data["start"]) + tmp_data.shape[0]
 
 
+def get_middle(values):
+    return (min(values) + max(values)) / 2
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -195,13 +199,26 @@ if __name__ == "__main__":
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region"])
 
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
-
         figures.append(f"Joint_All_{MSP}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, ax=ax)
+
+        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.ylabel("Number of somatic CNV region (bp)")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_All_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
 
     for stage, MSP in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
         tmp_data = output_data.loc[(output_data["Stage"] == stage)]
@@ -209,12 +226,23 @@ if __name__ == "__main__":
         r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Region"])
 
         g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region", color=palette[stage], height=24, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
-
         figures.append(f"Joint_{stage}_{MSP}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=tmp_data, x=MSP, y="Region", color=palette[stage], fit_reg=True, scatter=True, ax=ax)
+
+        matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.ylabel("Number of somatic CNV region (bp)")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_{stage}_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
