@@ -3721,11 +3721,9 @@ Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-Indel.relative.tar: 
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step44-BWA-SQC: Output/MutationSharedProportion_Signature/joint/BWA-SQC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-Indel.relative.tar
-step44-BWA-ADC: Output/MutationSharedProportion_Signature/joint/BWA-ADC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-Indel.relative.tar
 step44-Bowtie2-SQC: Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-Indel.relative.tar
-step44-Bowtie2-ADC: Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-Indel.relative.tar
-step44: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC
-.PHONY: step44-BWA-SQC step44-BWA-ADC step44-Bowtie2-SQC step44-Bowtie2-ADC step44
+step44: step44-BWA-SQC step44-Bowtie2-SQC
+.PHONY: step44-BWA-SQC step44-Bowtie2-SQC step44
 
 # Step 45 (Clinical Values & Mutational Signature score)
 Output/Clinical_vs_Signature:
@@ -4453,11 +4451,9 @@ Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-deconstructSigs.rela
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step55-BWA-SQC: Output/MutationSharedProportion_Signature/joint/BWA-SQC-deconstructSigs.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-deconstructSigs.relative.tar
-step55-BWA-ADC: Output/MutationSharedProportion_Signature/joint/BWA-ADC-deconstructSigs.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-ADC-deconstructSigs.relative.tar
 step55-Bowtie2-SQC: Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-deconstructSigs.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-deconstructSigs.relative.tar
-step55-Bowtie2-ADC: Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-deconstructSigs.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-deconstructSigs.relative.tar
-step55: step55-BWA-SQC step55-BWA-ADC step55-Bowtie2-SQC step55-Bowtie2-ADC
-.PHONY: step55-BWA-SQC step55-BWA-ADC step55-Bowtie2-SQC step55-Bowtie2-ADC step55
+step55: step55-BWA-SQC step55-Bowtie2-SQC
+.PHONY: step55-BWA-SQC step55-Bowtie2-SQC step55
 
 # Step 56 (Mutation Shared Proportion & Gene)
 Output/MutationSharedProportion_Gene:

@@ -20,40 +20,87 @@ def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
 
-def run(stage: str, signature: str, column: str) -> str:
+def get_middle(values):
+    return (min(values) + max(values)) / 2
+
+
+def joint(stage: str, signature: str, column: str) -> str:
     tmp_data = signature_data.loc[(signature_data["Stage"] == stage), [column, signature]]
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[column])
+    r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y=column, kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
-    g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
-    g.set_axis_labels("{0} proportion in {1}".format(signature, stage), column)
+    g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=24, ratio=6, color=step00.stage_color_code[stage])
+    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    g.set_axis_labels(column, f"{signature} in {stage}")
 
-    fig_name = f"{stage}-{column}-{signature}.pdf"
+    fig_name = f"Joint-{stage}-{column}-{signature}.pdf"
     g.savefig(fig_name)
     matplotlib.pyplot.close(g.fig)
 
     return fig_name
 
 
-def run_all(signature: str, column: str) -> str:
-    tmp_data = signature_data.loc[:, [column, signature]]
+def reg(stage: str, signature: str, column: str) -> str:
+    tmp_data = signature_data.loc[(signature_data["Stage"] == stage), [column, signature]]
+    if tmp_data.shape[0] < 3:
+        return ""
 
+    r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, ax=ax)
+
+    matplotlib.pyplot.ylabel(f"{signature} in {stage}")
+    matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"Scatter-{stage}-{column}-{signature}.pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
+
+    return fig_name
+
+
+def joint_all(signature: str, column: str) -> str:
+    tmp_data = signature_data.loc[:, [column, signature]]
     if tmp_data.shape[0] < 3:
         return ""
 
     r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[column])
 
-    g = seaborn.jointplot(data=tmp_data, x=signature, y=column, kind="reg", height=24, ratio=6)
-    g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+    g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=24, ratio=6)
+    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
-    g.set_axis_labels("{0} proportion".format(signature), column)
+    g.set_axis_labels(column, f"{signature}")
 
-    fig_name = f"All-{column}-{signature}.pdf"
+    fig_name = f"Joint-All-{column}-{signature}.pdf"
     g.savefig(fig_name)
     matplotlib.pyplot.close(g.fig)
+
+    return fig_name
+
+
+def reg_all(signature: str, column: str) -> str:
+    tmp_data = signature_data.loc[:, [column, signature]]
+    if tmp_data.shape[0] < 3:
+        return ""
+
+    r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, ax=ax)
+
+    matplotlib.pyplot.ylabel(f"{signature}")
+    matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"Scatter-All-{column}-{signature}.pdf"
+    fig.savefig(fig_name)
+    matplotlib.pyplot.close(fig)
 
     return fig_name
 
@@ -118,8 +165,10 @@ if __name__ == "__main__":
     figures = list()
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures += pool.starmap(run, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns))
-        figures += pool.starmap(run_all, itertools.product(signature_list, step00.sharing_columns))
+        figures += pool.starmap(joint, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns))
+        figures += pool.starmap(reg, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns))
+        figures += pool.starmap(joint_all, itertools.product(signature_list, step00.sharing_columns))
+        figures += pool.starmap(reg_all, itertools.product(signature_list, step00.sharing_columns))
 
     figures = list(filter(None, figures))
 
