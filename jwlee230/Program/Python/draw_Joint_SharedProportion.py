@@ -12,7 +12,11 @@ import pandas
 import tqdm
 import step00
 
-survival_survivals = ["Recurrence-Free Survival", "Overall Survival"]
+survivals = ["Recurrence-Free Survival", "Overall Survival"]
+
+
+def get_middle(values):
+    return (min(values) + max(values)) / 2
 
 
 if __name__ == "__main__":
@@ -50,16 +54,30 @@ if __name__ == "__main__":
 
     figures = list()
 
-    for MSP, survival in tqdm.tqdm(list(itertools.product(step00.sharing_columns, survival_survivals))):
+    for MSP, survival in tqdm.tqdm(list(itertools.product(step00.sharing_columns, survivals))):
         clinical_data[survival] = list(map(int, clinical_data[survival]))
 
         r, p = scipy.stats.pearsonr(clinical_data[MSP], clinical_data[survival])
 
         g = seaborn.jointplot(data=clinical_data, x=MSP, y=survival, kind="reg", height=24, dropna=True)
-        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g.set_axis_labels(MSP, f"{survival} (days)")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
-        figures.append(f"{MSP}_{survival}.pdf")
+        figures.append(f"Joint_{MSP}_{survival}.pdf")
         g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, ax=ax)
+
+        matplotlib.pyplot.ylabel(f"{survival} (days)")
+        matplotlib.pyplot.text(get_middle(clinical_data[MSP]), get_middle(clinical_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_{MSP}_{survival}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):

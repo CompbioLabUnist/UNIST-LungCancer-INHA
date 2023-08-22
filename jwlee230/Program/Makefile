@@ -5330,24 +5330,16 @@ step61: step61-BWA step61-Bowtie2
 Output/Clinical_vs_Joint-Plot:
 	mkdir -p $@
 
-Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+Output/Clinical_vs_Joint-Plot/%-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/%.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_Joint-Plot
+Output/Clinical_vs_Joint-Plot/%-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/%.tsv | build.log Output/Clinical_vs_Joint-Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_Joint_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_Joint-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
-
-step62-BWA-SQC: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar
-step62-BWA-ADC: Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar
-step62-Bowtie2-SQC: Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar
-step62-Bowtie2-ADC: Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
-step62: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC
-.PHONY: step62-BWA-SQC step62-BWA-ADC step62-Bowtie2-SQC step62-Bowtie2-ADC step62
+step62-BWA: Output/Clinical_vs_Joint-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/BWA-ADC-SharedProportion.tar
+step62-Bowtie2: Output/Clinical_vs_Joint-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_Joint-Plot/Bowtie2-ADC-SharedProportion.tar
+step62: step62-BWA step62-Bowtie2
+.PHONY: step62-BWA step62-Bowtie2 step62
 
 # Step 63 (Helmsman)
 Output/Helmsman/BWA Output/Helmsman/Bowtie2:
