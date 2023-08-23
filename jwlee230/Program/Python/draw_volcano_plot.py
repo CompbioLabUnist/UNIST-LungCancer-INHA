@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     up_gene = DEG_data.loc[(DEG_data["log2FoldChange"] >= numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
     down_gene = DEG_data.loc[(DEG_data["log2FoldChange"] <= -1 * numpy.log2(args.fold)) & (DEG_data["padj"] < args.padj) & (DEG_data["pvalue"] < args.padj), ["log2FoldChange", "-log(Padj)"]]
-    NS_gene = DEG_data.loc[(DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold)) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
+    NS_gene = DEG_data.loc[((DEG_data["log2FoldChange"] < numpy.log2(args.fold)) & (DEG_data["log2FoldChange"] > -1 * numpy.log2(args.fold))) | (DEG_data["padj"] >= args.padj), ["log2FoldChange", "-log(Padj)"]]
 
     texts = list()
 
@@ -44,18 +44,19 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
     matplotlib.pyplot.scatter(NS_gene["log2FoldChange"], NS_gene["-log(Padj)"], color="tab:gray")
     matplotlib.pyplot.scatter(up_gene["log2FoldChange"], up_gene["-log(Padj)"], color="tab:red")
     matplotlib.pyplot.scatter(down_gene["log2FoldChange"], down_gene["-log(Padj)"], color="tab:blue")
 
     matplotlib.pyplot.axhline(y=-1 * numpy.log10(args.padj), linestyle="--", color="black")
-    matplotlib.pyplot.text(x=0, y=-1 * numpy.log10(args.padj), s="Padj={0:.2f}".format(args.padj), horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small")
+    matplotlib.pyplot.text(x=0, y=-1 * numpy.log10(args.padj), s=f"Padj={args.padj:.2f}", horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small")
 
     matplotlib.pyplot.axvline(x=numpy.log2(args.fold), linestyle="--", color="black")
-    matplotlib.pyplot.text(x=numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s="log2(FC)={0:.1f}".format(numpy.log2(args.fold)), rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small")
+    matplotlib.pyplot.text(x=numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s=f"log2(FC)={numpy.log2(args.fold):.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small")
 
     matplotlib.pyplot.axvline(x=-1 * numpy.log2(args.fold), linestyle="--", color="black")
-    matplotlib.pyplot.text(x=-1 * numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s="log2(FC)={0:.1f}".format(-1 * numpy.log2(args.fold)), rotation="vertical", horizontalalignment="right", verticalalignment="bottom", fontsize="xx-small")
+    matplotlib.pyplot.text(x=-1 * numpy.log2(args.fold), y=-1 * numpy.log10(args.padj), s=f"log2(FC)={-1 * numpy.log2(args.fold):.1f}", rotation="vertical", horizontalalignment="right", verticalalignment="bottom", fontsize="xx-small")
 
     for index, d in tqdm.tqdm(up_gene.iloc[:args.annotation, :].iterrows()):
         texts.append(matplotlib.pyplot.text(s=index, x=d["log2FoldChange"], y=d["-log(Padj)"], color="tab:red", fontsize="large"))
@@ -64,10 +65,13 @@ if __name__ == "__main__":
 
     adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
 
+    limit = numpy.ceil(max(abs(DEG_data["log2FoldChange"])))
+
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlabel("Normal-like← log2(FoldChange) →Primary-like")
     matplotlib.pyplot.ylabel("-log10(P.adj.)")
     matplotlib.pyplot.title("Up: {0:d} & Down: {1:d}".format(len(up_gene), len(down_gene)))
+    matplotlib.pyplot.xlim(-1 * limit, limit)
     if matplotlib.pyplot.ylim()[1] < 2:
         matplotlib.pyplot.ylim(top=2)
     matplotlib.pyplot.tight_layout()
