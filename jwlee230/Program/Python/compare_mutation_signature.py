@@ -51,7 +51,7 @@ def reg(stage: str, signature: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, ax=ax)
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.stage_color_code[stage], ax=ax)
 
     matplotlib.pyplot.ylabel(f"{signature} in {stage}")
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
@@ -69,10 +69,10 @@ def joint_all(signature: str, column: str) -> str:
     if tmp_data.shape[0] < 3:
         return ""
 
-    r, p = scipy.stats.pearsonr(tmp_data[signature], tmp_data[column])
+    r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
     g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=24, ratio=6)
-    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels(column, f"{signature}")
 
