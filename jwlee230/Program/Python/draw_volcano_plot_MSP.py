@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input DEG-MSP TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.4)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
 
     args = parser.parse_args()
 
@@ -69,13 +69,13 @@ if __name__ == "__main__":
         texts = list()
 
         for index, d in up_gene.iloc[:5, :].iterrows():
-            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="large", bbox={"alpha": 0.3, "color": "white"}))
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
         for index, d in down_gene.iloc[:5, :].iterrows():
-            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="large", bbox={"alpha": 0.3, "color": "white"}))
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
 
         adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
 
-        matplotlib.pyplot.title(f"{stage}: {len(down_gene)} down & {len(up_gene)} up")
+        matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.xlabel("Pearson correlation r")
         matplotlib.pyplot.ylabel("log10(abs(slope))")
@@ -111,18 +111,18 @@ if __name__ == "__main__":
         matplotlib.pyplot.text(x=args.r, y=numpy.log10(args.slope), s=f"r={args.r:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.axvline(x=-1 * args.r, linestyle="--", color="black")
-        matplotlib.pyplot.text(x=-1 * args.r, y=numpy.log10(args.slope), s=f"r={-1 * args.r:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.text(x=-1 * args.r, y=numpy.log10(args.slope), s=f"r={-1 * args.r:.1f}", rotation="vertical", horizontalalignment="right", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
 
         texts = list()
 
         for index, d in up_gene.iloc[:5, :].iterrows():
-            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="large", bbox={"alpha": 0.3, "color": "white"}))
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
         for index, d in down_gene.iloc[:5, :].iterrows():
-            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="large", bbox={"alpha": 0.3, "color": "white"}))
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
 
         adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
 
-        matplotlib.pyplot.title(f"{stage}: {len(down_gene)} down & {len(up_gene)} up")
+        matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.xlabel("Pearson correlation r")
         matplotlib.pyplot.ylabel("log10(abs(slope))")

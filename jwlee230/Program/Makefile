@@ -3,9 +3,9 @@ DATE := $(shell date "+%y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 20
-MEMS = 400
-PARALLEL = 5
+CPUS = 10
+MEMS = 100
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -1260,7 +1260,7 @@ Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Plots/Volcano build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Violin/%.ADC.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
