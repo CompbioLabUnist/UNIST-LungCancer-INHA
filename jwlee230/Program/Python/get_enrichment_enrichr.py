@@ -2,8 +2,8 @@
 get_enrichment_enrichr.py: get enrichment information with Enrichr
 """
 import argparse
-import time
 import json
+import time
 import matplotlib
 import matplotlib.pyplot
 import numpy
@@ -22,7 +22,7 @@ def get_response(url, payload):
             response = requests.get(url)
 
         if not response.ok:
-            print("Response is not Ok!! {0}!!".format(response.status_code))
+            print(f"Response is not Ok!! {response.status_code}!!")
             time.sleep(5)
         else:
             data = json.loads(response.text)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         gene_set_data = get_response(step00.pathway_addlist_url, {"list": (None, "\n".join(genes)), "description": (None, args.output)})
         print(gene_set_data)
 
-        raw_data = get_response("{0}?userListId={1}&backgroundType={2}".format(step00.pathway_enrichment_url, gene_set_data["userListId"], args.DB), None)
+        raw_data = get_response(f"{step00.pathway_enrichment_url}?userListId={gene_set_data['userListId']}&backgroundType={args.DB}", None)
         enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=step00.pathway_wanted_columns)
         enrichment_data = enrichment_data.loc[(enrichment_data["Adjusted p-value"] < args.padj)]
         enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + "({0})".format(len(x))), enrichment_data["Overlapping genes"]))
@@ -101,7 +101,7 @@ if __name__ == "__main__":
             ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color="tab:cyan")
 
         for index, row in tqdm.tqdm(drawing_data.iterrows()):
-            matplotlib.pyplot.text(0, index, "{0}: {1}".format(row["Term name"], row["Overlapping genes..."]), color="k", horizontalalignment="left", verticalalignment="center")
+            matplotlib.pyplot.text(0, index, f"{row['Term name']}: {row['Overlapping genes...']}", color="k", horizontalalignment="left", verticalalignment="center")
 
         matplotlib.pyplot.yticks([])
         matplotlib.pyplot.xlabel("-log10(Padj)")
@@ -111,12 +111,12 @@ if __name__ == "__main__":
         ax.invert_yaxis()
 
     matplotlib.pyplot.tight_layout()
-    fig.savefig(args.output + ".pdf")
+    fig.savefig(f"{args.output}.pdf")
     matplotlib.pyplot.close(fig)
 
-    enrichment_data.loc[:, step00.pathway_wanted_columns].to_csv(args.output + ".tsv", sep="\t", index=False)
+    enrichment_data.loc[:, step00.pathway_wanted_columns].to_csv(f"{args.output}.tsv", sep="\t", index=False)
     rows = enrichment_data.shape[0]
     enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
     if rows > 3:
-        enrichment_data.columns = ["Term name ({0})".format(rows), "Overlapping genes...", "Adjusted p-value"]
-    enrichment_data.to_latex(args.output + ".tex", index=False, float_format="%.2e")
+        enrichment_data.columns = [f"Term name ({rows})", "Overlapping genes...", "Adjusted p-value"]
+    enrichment_data.to_latex(f"{args.output}.tex", index=False, float_format="%.2e")

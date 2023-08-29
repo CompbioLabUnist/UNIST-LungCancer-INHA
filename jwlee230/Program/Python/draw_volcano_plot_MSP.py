@@ -24,7 +24,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.input.endswith(".tsv"):
-        raise ValueError("Input must end with.TSV!!")
+        raise ValueError("Input must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif not (0 < args.r < 1):
