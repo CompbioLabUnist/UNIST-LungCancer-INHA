@@ -4,7 +4,7 @@ RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
-MEMS = 150
+MEMS = 100
 PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
@@ -1571,8 +1571,8 @@ step21-plot: $(addprefix Output/PyClone/BWA-Plots/,$(addsuffix .CCF.pdf,$(filter
 step21: step21-preprocess step21-pyclone step21-plot
 .PHONY: step21-preprocess step21-pyclone step21-plot step21
 
-# Step 22 (Run CIBERSORTx)
-Output/CIBERSORTx Output/CIBERSORTx/Tcell Output/CIBERSORTx/clustermap Output/CIBERSORTx/heatmap Output/CIBERSORTx/violin:
+# Step 22 (CIBERSORTx)
+Output/CIBERSORTx Output/CIBERSORTx/Tcell Output/CIBERSORTx/clustermap Output/CIBERSORTx/heatmap Output/CIBERSORTx/violin Output/CIBERSORTx/bar Output/CIBERSORTx/scatter:
 	mkdir -p $@
 
 Output/CIBERSORTx/GSE131907_signature.tsv: Python/make_signature_cibersort.py $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_NORMALIZED_MATRIX_TXT) | build.log
@@ -1611,6 +1611,12 @@ Output/CIBERSORTx/violin/%.SQC.MSP-median.tar: Python/draw_violin_plot_deconvolu
 
 Output/CIBERSORTx/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/violin
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/CIBERSORTx/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt Output/MutationSharedProportion/BWA.tsv | build.log Output/CIBERSORTx/scatter
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/CIBERSORTx/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/CIBERSORTx/%/CIBERSORTxGEP_NA_Weights.txt $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -1674,8 +1680,10 @@ step22-Tcell: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.pdf Output/CIBERSORT
 step22-Tcell-Recurrence: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.ADC.Recurrence.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.ADC.Recurrence.pdf
 step22-Tcell-Smoking: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.ADC.Smoking.pdf Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.ADC.Smoking.pdf
 step22-Tcell-Smoking: Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/CIBERSORTx/Tcell/STAR.FPKM.GSE131907.SQC.MSP-mean.tar
-step22: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking
-.PHONY: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking step22
+step22-Bar-MSP: Output/CIBERSORTx/bar/STAR.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/STAR.GSE162498.SQC.MSP.tar Output/CIBERSORTx/bar/STAR.TPM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/STAR.TPM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/bar/STAR.FPKM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/STAR.FPKM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.GSE162498.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/bar/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step22-Scatter-MSP: Output/CIBERSORTx/scatter/STAR.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/STAR.GSE162498.SQC.MSP.tar Output/CIBERSORTx/scatter/STAR.TPM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/STAR.TPM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/scatter/STAR.FPKM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/STAR.FPKM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.GSE162498.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/CIBERSORTx/scatter/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step22: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking step22-Bar-MSP step22-Scatter-MSP
+.PHONY: step22-CIBERSORTx step22-heatmap step22-violin step22-violin-Recurrence step22-violin-Smoking step22-violin-MSP step22-cluster step22-cluster-Recurrence step22-cluster-Smoking step22-cluster-MSP step22-Tcell step22-Tcell-Recurrence step22-Tcell-Smoking step22-Tcell-Smoking step22-Bar-MSP step22-Scatter-MSP step22
 
 # Step 23 (VAF plot)
 Output/VAF Output/VAF-tSNE:
@@ -1834,7 +1842,7 @@ step27: $(addprefix Output/STAR-Fusion/,$(addsuffix /star-fusion.fusion_predicti
 .PHONY: step27
 
 # Step 28 (MuSiC)
-Output/MuSiC Output/MuSiC/Tcell Output/MuSiC/clustermap Output/MuSiC/heatmap Output/MuSiC/violin:
+Output/MuSiC Output/MuSiC/Tcell Output/MuSiC/clustermap Output/MuSiC/heatmap Output/MuSiC/violin Output/MuSiC/bar Output/MuSiC/scatter:
 	mkdir -p $@
 
 Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/RSEM/DEG/%.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | build.log Output/MuSiC
@@ -1872,6 +1880,12 @@ Output/MuSiC/violin/%.SQC.MSP-median.tar: Python/draw_violin_plot_deconvolution_
 
 Output/MuSiC/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MSP.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/violin
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/scatter
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MuSiC/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/clustermap
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -1935,8 +1949,10 @@ step28-Tcell: Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.pdf Output/MuSiC/Tcell/Bo
 step28-Tcell-Recurrence: Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/STAR.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.SQC.Recurrence.pdf Output/MuSiC/Tcell/Bowtie2.GSE131907.ADC.Recurrence.pdf Output/MuSiC/Tcell/STAR.GSE131907.ADC.Recurrence.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.ADC.Recurrence.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.ADC.Recurrence.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.ADC.Recurrence.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.ADC.Recurrence.pdf
 step28-Tcell-Smoking: Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/STAR.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.SQC.Smoking.pdf Output/MuSiC/Tcell/Bowtie2.GSE131907.ADC.Smoking.pdf Output/MuSiC/Tcell/STAR.GSE131907.ADC.Smoking.pdf Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.ADC.Smoking.pdf Output/MuSiC/Tcell/STAR.TPM.GSE131907.ADC.Smoking.pdf Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.ADC.Smoking.pdf Output/MuSiC/Tcell/STAR.FPKM.GSE131907.ADC.Smoking.pdf
 step28-Tcell-Smoking: Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/MuSiC/Tcell/STAR.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/STAR.GSE131907.SQC.MSP-mean.tar Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/MuSiC/Tcell/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/MuSiC/Tcell/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/MuSiC/Tcell/STAR.FPKM.GSE131907.SQC.MSP-mean.tar
-step28: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step28-violin-Smoking step28-violin-MSP step28-cluster step28-cluster-Recurrence step28-cluster-Smoking step28-cluster-MSP step28-Tcell step28-Tcell-Recurrence step28-Tcell-Smoking step28-Tcell-Smoking
-.PHONY: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step28-violin-Smoking step28-violin-MSP step28-cluster step28-cluster-Recurrence step28-cluster-Smoking step28-cluster-MSP step28-Tcell step28-Tcell-Recurrence step28-Tcell-Smoking step28-Tcell-Smoking step28
+step28-Bar-MSP: Output/MuSiC/bar/STAR.GSE131907.SQC.MSP.tar Output/MuSiC/bar/STAR.GSE162498.SQC.MSP.tar Output/MuSiC/bar/STAR.TPM.GSE131907.SQC.MSP.tar Output/MuSiC/bar/STAR.TPM.GSE162498.SQC.MSP.tar Output/MuSiC/bar/STAR.FPKM.GSE131907.SQC.MSP.tar Output/MuSiC/bar/STAR.FPKM.GSE162498.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.GSE131907.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.GSE162498.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/MuSiC/bar/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step28-Scatter-MSP: Output/MuSiC/scatter/STAR.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/STAR.GSE162498.SQC.MSP.tar Output/MuSiC/scatter/STAR.TPM.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/STAR.TPM.GSE162498.SQC.MSP.tar Output/MuSiC/scatter/STAR.FPKM.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/STAR.FPKM.GSE162498.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.GSE162498.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/MuSiC/scatter/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step28: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step28-violin-Smoking step28-violin-MSP step28-cluster step28-cluster-Recurrence step28-cluster-Smoking step28-cluster-MSP step28-Tcell step28-Tcell-Recurrence step28-Tcell-Smoking step28-Tcell-Smoking step28-Bar-MSP step28-Scatter-MSP
+.PHONY: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step28-violin-Smoking step28-violin-MSP step28-cluster step28-cluster-Recurrence step28-cluster-Smoking step28-cluster-MSP step28-Tcell step28-Tcell-Recurrence step28-Tcell-Smoking step28-Tcell-Smoking step28-Bar-MSP step28-Scatter-MSP step28
 
 # Step 29 (BisqueRNA)
 Output/BisqueRNA Output/BisqueRNA/Tcell Output/BisqueRNA/clustermap Output/BisqueRNA/heatmap Output/BisqueRNA/violin Output/BisqueRNA/bar Output/BisqueRNA/scatter:
@@ -2052,7 +2068,7 @@ step29: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence s
 .PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence step29-violin-Smoking step29-violin-MSP step29-cluster step29-cluster-Recurrence step29-cluster-Smoking step29-cluster-MSP step29-Tcell step29-Tcell-Recurrence step29-Tcell-Smoking step29-Tcell-Smoking step29-Bar-MSP step29-Scatter-MSP step29
 
 # Step 30 (SCDC)
-Output/SCDC Output/SCDC/Tcell Output/SCDC/clustermap Output/SCDC/heatmap Output/SCDC/violin:
+Output/SCDC Output/SCDC/Tcell Output/SCDC/clustermap Output/SCDC/heatmap Output/SCDC/violin Output/SCDC/bar Output/SCDC/scatter:
 	mkdir -p $@
 
 Output/SCDC/%.GSE131907.tsv: R/run_SCDC.R Output/RSEM/DEG/%.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/SCDC build.log
@@ -2090,6 +2106,12 @@ Output/SCDC/violin/%.SQC.MSP-median.tar: Python/draw_violin_plot_deconvolution_M
 
 Output/SCDC/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MSP.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/violin
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/scatter
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/SCDC/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/SCDC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/SCDC/clustermap
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -2153,8 +2175,10 @@ step30-Tcell: Output/SCDC/Tcell/Bowtie2.GSE131907.SQC.pdf Output/SCDC/Tcell/Bowt
 step30-Tcell-Recurrence: Output/SCDC/Tcell/Bowtie2.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/STAR.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/STAR.TPM.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/STAR.FPKM.GSE131907.SQC.Recurrence.pdf Output/SCDC/Tcell/Bowtie2.GSE131907.ADC.Recurrence.pdf Output/SCDC/Tcell/STAR.GSE131907.ADC.Recurrence.pdf Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.ADC.Recurrence.pdf Output/SCDC/Tcell/STAR.TPM.GSE131907.ADC.Recurrence.pdf Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.ADC.Recurrence.pdf Output/SCDC/Tcell/STAR.FPKM.GSE131907.ADC.Recurrence.pdf
 step30-Tcell-Smoking: Output/SCDC/Tcell/Bowtie2.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/STAR.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/STAR.TPM.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/STAR.FPKM.GSE131907.SQC.Smoking.pdf Output/SCDC/Tcell/Bowtie2.GSE131907.ADC.Smoking.pdf Output/SCDC/Tcell/STAR.GSE131907.ADC.Smoking.pdf Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.ADC.Smoking.pdf Output/SCDC/Tcell/STAR.TPM.GSE131907.ADC.Smoking.pdf Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.ADC.Smoking.pdf Output/SCDC/Tcell/STAR.FPKM.GSE131907.ADC.Smoking.pdf
 step30-Tcell-Smoking: Output/SCDC/Tcell/Bowtie2.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/SCDC/Tcell/STAR.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/STAR.GSE131907.SQC.MSP-mean.tar Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/SCDC/Tcell/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/SCDC/Tcell/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/SCDC/Tcell/STAR.FPKM.GSE131907.SQC.MSP-mean.tar
-step30: step30-SCDC step30-heatmap step30-violin step30-violin-Recurrence step30-violin-Smoking step30-violin-MSP step30-cluster step30-cluster-Recurrence step30-cluster-Smoking step30-cluster-MSP step30-Tcell step30-Tcell-Recurrence step30-Tcell-Smoking step30-Tcell-Smoking
-.PHONY: step30-SCDC step30-heatmap step30-violin step30-violin-Recurrence step30-violin-Smoking step30-violin-MSP step30-cluster step30-cluster-Recurrence step30-cluster-Smoking step30-cluster-MSP step30-Tcell step30-Tcell-Recurrence step30-Tcell-Smoking step30-Tcell-Smoking step30
+step30-Bar-MSP: Output/SCDC/bar/STAR.GSE131907.SQC.MSP.tar Output/SCDC/bar/STAR.GSE162498.SQC.MSP.tar Output/SCDC/bar/STAR.TPM.GSE131907.SQC.MSP.tar Output/SCDC/bar/STAR.TPM.GSE162498.SQC.MSP.tar Output/SCDC/bar/STAR.FPKM.GSE131907.SQC.MSP.tar Output/SCDC/bar/STAR.FPKM.GSE162498.SQC.MSP.tar Output/SCDC/bar/Bowtie2.GSE131907.SQC.MSP.tar Output/SCDC/bar/Bowtie2.GSE162498.SQC.MSP.tar Output/SCDC/bar/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/SCDC/bar/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/SCDC/bar/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/SCDC/bar/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step30-Scatter-MSP: Output/SCDC/scatter/STAR.GSE131907.SQC.MSP.tar Output/SCDC/scatter/STAR.GSE162498.SQC.MSP.tar Output/SCDC/scatter/STAR.TPM.GSE131907.SQC.MSP.tar Output/SCDC/scatter/STAR.TPM.GSE162498.SQC.MSP.tar Output/SCDC/scatter/STAR.FPKM.GSE131907.SQC.MSP.tar Output/SCDC/scatter/STAR.FPKM.GSE162498.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.GSE131907.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.GSE162498.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/SCDC/scatter/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step30: step30-SCDC step30-heatmap step30-violin step30-violin-Recurrence step30-violin-Smoking step30-violin-MSP step30-cluster step30-cluster-Recurrence step30-cluster-Smoking step30-cluster-MSP step30-Tcell step30-Tcell-Recurrence step30-Tcell-Smoking step30-Tcell-Smoking step30-Bar-MSP step30-Scatter-MSP
+.PHONY: step30-SCDC step30-heatmap step30-violin step30-violin-Recurrence step30-violin-Smoking step30-violin-MSP step30-cluster step30-cluster-Recurrence step30-cluster-Smoking step30-cluster-MSP step30-Tcell step30-Tcell-Recurrence step30-Tcell-Smoking step30-Tcell-Smoking step30-Bar-MSP step30-Scatter-MSP step30
 
 # Step 31 (TIDE)
 Output/TIDE:
