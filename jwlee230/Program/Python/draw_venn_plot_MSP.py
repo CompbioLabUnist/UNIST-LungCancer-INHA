@@ -65,8 +65,10 @@ if __name__ == "__main__":
 
         fig = matplotlib.pyplot.figure(figsize=(10 * len(venn_data) + 10, 24))
 
-        if len(venn_data):
+        try:
             upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+        except IndexError:
+            pass
 
         figures.append(f"{MSP}.pdf")
         fig.savefig(figures[-1], bbox_inches="tight")
