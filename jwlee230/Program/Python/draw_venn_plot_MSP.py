@@ -65,7 +65,8 @@ if __name__ == "__main__":
 
         fig = matplotlib.pyplot.figure(figsize=(10 * len(venn_data) + 10, 24))
 
-        upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
+        if len(venn_data):
+            upsetplot.plot(upsetplot.from_contents(venn_data), fig=fig, show_counts="%d", show_percentages=True, element_size=None)
 
         figures.append(f"{MSP}.pdf")
         fig.savefig(figures[-1], bbox_inches="tight")
