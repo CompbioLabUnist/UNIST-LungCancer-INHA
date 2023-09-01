@@ -1939,7 +1939,7 @@ step28: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step2
 .PHONY: step28-MuSiC step28-heatmap step28-violin step28-violin-Recurrence step28-violin-Smoking step28-violin-MSP step28-cluster step28-cluster-Recurrence step28-cluster-Smoking step28-cluster-MSP step28-Tcell step28-Tcell-Recurrence step28-Tcell-Smoking step28-Tcell-Smoking step28
 
 # Step 29 (BisqueRNA)
-Output/BisqueRNA Output/BisqueRNA/Tcell Output/BisqueRNA/clustermap Output/BisqueRNA/heatmap Output/BisqueRNA/violin Output/BisqueRNA/bar:
+Output/BisqueRNA Output/BisqueRNA/Tcell Output/BisqueRNA/clustermap Output/BisqueRNA/heatmap Output/BisqueRNA/violin Output/BisqueRNA/bar Output/BisqueRNA/scatter:
 	mkdir -p $@
 
 Output/BisqueRNA/%.GSE131907.tsv: R/run_BisqueRNA.R Output/RSEM/DEG/%.tsv $(LUNG_GSE131907_ANNOTATION_TXT) $(LUNG_GSE131907_RAW_MATRIX_RDS) | Output/BisqueRNA build.log
@@ -1980,6 +1980,9 @@ Output/BisqueRNA/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolutio
 
 Output/BisqueRNA/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/BisqueRNA/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/BisqueRNA/bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/BisqueRNA/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/BisqueRNA/scatter
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/BisqueRNA/clustermap/%.SQC.pdf: Python/draw_clustermap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/clustermap
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -2044,8 +2047,9 @@ step29-Tcell-Recurrence: Output/BisqueRNA/Tcell/Bowtie2.GSE131907.SQC.Recurrence
 step29-Tcell-Smoking: Output/BisqueRNA/Tcell/Bowtie2.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.SQC.Smoking.pdf Output/BisqueRNA/Tcell/Bowtie2.GSE131907.ADC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.GSE131907.ADC.Smoking.pdf Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.ADC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.ADC.Smoking.pdf Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.ADC.Smoking.pdf Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.ADC.Smoking.pdf
 step29-Tcell-Smoking: Output/BisqueRNA/Tcell/Bowtie2.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/Bowtie2.GSE131907.SQC.MSP-mean.tar Output/BisqueRNA/Tcell/STAR.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/STAR.GSE131907.SQC.MSP-mean.tar Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/Bowtie2.TPM.GSE131907.SQC.MSP-mean.tar Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/STAR.TPM.GSE131907.SQC.MSP-mean.tar Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/Bowtie2.FPKM.GSE131907.SQC.MSP-mean.tar Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.SQC.MSP-median.tar Output/BisqueRNA/Tcell/STAR.FPKM.GSE131907.SQC.MSP-mean.tar
 step29-Bar-MSP: Output/BisqueRNA/bar/STAR.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/STAR.GSE162498.SQC.MSP.tar Output/BisqueRNA/bar/STAR.TPM.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/STAR.TPM.GSE162498.SQC.MSP.tar Output/BisqueRNA/bar/STAR.FPKM.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/STAR.FPKM.GSE162498.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.GSE162498.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/BisqueRNA/bar/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
-step29: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence step29-violin-Smoking step29-violin-MSP step29-cluster step29-cluster-Recurrence step29-cluster-Smoking step29-cluster-MSP step29-Tcell step29-Tcell-Recurrence step29-Tcell-Smoking step29-Tcell-Smoking step29-Bar-MSP
-.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence step29-violin-Smoking step29-violin-MSP step29-cluster step29-cluster-Recurrence step29-cluster-Smoking step29-cluster-MSP step29-Tcell step29-Tcell-Recurrence step29-Tcell-Smoking step29-Tcell-Smoking step29-Bar-MSP step29
+step29-Scatter-MSP: Output/BisqueRNA/scatter/STAR.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/STAR.GSE162498.SQC.MSP.tar Output/BisqueRNA/scatter/STAR.TPM.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/STAR.TPM.GSE162498.SQC.MSP.tar Output/BisqueRNA/scatter/STAR.FPKM.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/STAR.FPKM.GSE162498.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.GSE162498.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.TPM.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.TPM.GSE162498.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.FPKM.GSE131907.SQC.MSP.tar Output/BisqueRNA/scatter/Bowtie2.FPKM.GSE162498.SQC.MSP.tar
+step29: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence step29-violin-Smoking step29-violin-MSP step29-cluster step29-cluster-Recurrence step29-cluster-Smoking step29-cluster-MSP step29-Tcell step29-Tcell-Recurrence step29-Tcell-Smoking step29-Tcell-Smoking step29-Bar-MSP step29-Scatter-MSP
+.PHONY: step29-BisqueRNA step29-heatmap step29-violin step29-violin-Recurrence step29-violin-Smoking step29-violin-MSP step29-cluster step29-cluster-Recurrence step29-cluster-Smoking step29-cluster-MSP step29-Tcell step29-Tcell-Recurrence step29-Tcell-Smoking step29-Tcell-Smoking step29-Bar-MSP step29-Scatter-MSP step29
 
 # Step 30 (SCDC)
 Output/SCDC Output/SCDC/Tcell Output/SCDC/clustermap Output/SCDC/heatmap Output/SCDC/violin:
