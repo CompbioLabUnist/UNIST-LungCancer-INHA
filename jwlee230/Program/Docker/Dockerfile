@@ -130,13 +130,14 @@ ADD Tools/MiXCR.zip /Tools/
 RUN cd /Tools && unzip MiXCR.zip
 ENV PATH=/Tools/mixcr-3.0.13:$PATH
 
-# RTCR
-# ADD Tools/RTCR.zip /Tools/
-# RUN cd /Tools && unzip RTCR.zip && cd uubram-RTCR-5835928 && python2 setup.py install
+# Bedops
+ADD Tools/Bedops.tar.bz2 /Tools/
+RUN cp /Tools/bin/* /usr/local/bin
 
-# Helmsman
-# ADD Tools/helmsman.tar.gz /Tools/
-# RUN cd /Tools/helmsman-1.5.3 && conda env create -n helmsman -f env.yml
+# iREAD
+ADD Tools/iRead.zip /Tools/
+RUN cd /Tools && unzip iRead.zip && cd iread-0.8.9 && chmod +x * && ln -s /root/anaconda2/bin/python2 /usr/bin/python2 && cpanm --notest Parallel::ForkManager
+ENV PATH=/Tools/iread-0.8.9:$PATH
 
 VOLUME /Output
 VOLUME /Data

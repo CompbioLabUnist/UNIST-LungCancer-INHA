@@ -199,6 +199,14 @@ Docker/Tools/mobster.tar.gz: | Docker/Tools
 	wget "https://github.com/jyhehir/mobster/archive/refs/tags/v0.2.4.1.tar.gz" -O $@
 TOOLS += Docker/Tools/mobster.tar.gz
 
+Docker/Tools/Bedops.tar.bz2: | Docker/Tools
+	wget "https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2" -O $@
+TOOLS += Docker/Tools/Bedops.tar.bz2
+
+Docker/Tools/iRead.zip: | Docker/Tools
+	wget "https://github.com/genemine/iread/archive/refs/tags/v0.8.9.zip" -O $@
+TOOLS += Docker/Tools/iRead.zip
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
