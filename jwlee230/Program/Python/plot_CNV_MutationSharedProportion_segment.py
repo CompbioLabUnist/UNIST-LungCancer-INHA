@@ -100,10 +100,13 @@ if __name__ == "__main__":
         output_data["Segment-Gain"] = pool.map(get_chromosome_data_gain, output_data["Sample"])
     print(output_data)
 
-    for MSP in step00.sharing_columns:
+    stage_list = list(filter(lambda x: output_data.loc[(output_data["Stage"] == x)].shape[0] > 3, step00.long_sample_type_list))
+    for stage, MSP in itertools.product(stage_list, step00.sharing_columns):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
-        print(f"min. {MSP}", output_data.loc[(output_data["Segment"] == min(output_data["Segment"])) & (output_data[MSP] == min(output_data[MSP])), "Patient"])
-        print(f"max. {MSP}", output_data.loc[(output_data["Segment"] == max(output_data["Segment"])) & (output_data[MSP] == max(output_data[MSP])), "Patient"])
+        tmp_data = output_data.loc[(output_data["Stage"] == stage)]
+        print(f"min. {stage} & {MSP}", tmp_data.loc[(tmp_data["Segment"] == min(tmp_data["Segment"]))].sort_values(MSP).iloc[0, 1])
+        print(f"max. {stage} & {MSP}", tmp_data.loc[(tmp_data["Segment"] == max(tmp_data["Segment"]))].sort_values(MSP, ascending=False).iloc[0, 1])
+        del output_data[MSP]
 
     sample_list = sorted(set(output_data["Sample"]), key=step00.sorting_by_type)
     print(sample_list)
