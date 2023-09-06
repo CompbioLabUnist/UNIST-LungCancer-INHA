@@ -75,6 +75,11 @@ if __name__ == "__main__":
         output_data["Stage"] = pool.map(step00.get_long_sample_type, output_data["Sample"])
         output_data["Ploidy"] = list(map(lambda x: input_data.loc[x, "Ploidy"], output_data["Sample"]))
 
+    for MSP in step00.sharing_columns:
+        output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
+        print(f"min. {MSP}", output_data.loc[(output_data["Ploidy"] == min(output_data["Ploidy"])) & (output_data[MSP] == min(output_data[MSP])), "Patient"])
+        print(f"max. {MSP}", output_data.loc[(output_data["Ploidy"] == max(output_data["Ploidy"])) & (output_data[MSP] == max(output_data[MSP])), "Patient"])
+
     sample_list = sorted(set(output_data["Sample"]), key=step00.sorting_by_type)
     print(sample_list)
 
@@ -115,7 +120,7 @@ if __name__ == "__main__":
         if compare_list:
             statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        matplotlib.pyplot.title(f"Kruskal-Wallis p={p:.3f}")
+        matplotlib.pyplot.title(f"K.W. p={p:.3f}")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
