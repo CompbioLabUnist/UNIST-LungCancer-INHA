@@ -123,7 +123,7 @@ RUN cd /Tools && git clone https://github.com/jyhehir/mobster && cd mobster && g
 # Gistic
 ADD Tools/Gistic.tar.gz /Tools/
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
-RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig && unlink /Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64/libcurl.so.4
+RUN cp /Tools/MCR_Installer/MCRInstaller.zip /usr && cd /usr && unzip MCRInstaller.zip && ./install -mode silent -agreeToLicense yes -destinationFolder /Tools/MATLAB_Compiler_Runtime && echo -e "/opt/matlab/R2021b/bin/glnxa64\n/opt/matlab/R2021b/sys/os/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/runtime/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64\n/Tools/MATLAB_Compiler_Runtime/v83/sys/os/glnxa64" > /etc/ld.so.conf.d/matlab.conf && ldconfig && unlink /Tools/MATLAB_Compiler_Runtime/v83/bin/glnxa64/libcurl.so.4 && ln -s /Tools/gistic2 /usr/bin
 
 # MiXCR
 ADD Tools/MiXCR.zip /Tools/
@@ -132,15 +132,14 @@ ENV PATH=/Tools/mixcr-3.0.13:$PATH
 
 # Bedops
 ADD Tools/Bedops.tar.bz2 /Tools/
-RUN cp /Tools/bin/* /usr/local/bin
+ENV PATH=/Tools/bin:$PATH
 
 # iREAD
 ADD Tools/iRead.zip /Tools/
-RUN cd /Tools && unzip iRead.zip && cd iread-0.8.9 && chmod +x * && ln -s /root/anaconda2/bin/python2 /usr/bin/python2 && cpanm --notest Parallel::ForkManager
+RUN cd /Tools && unzip iRead.zip && cd iread-0.8.9 && chmod +x * && ln -s /root/anaconda2/bin/python2 /usr/bin/python2 && cpanm --with-recommends --notest Parallel::ForkManager
 ENV PATH=/Tools/iread-0.8.9:$PATH
 
 VOLUME /Output
 VOLUME /Data
-VOLUME /Python
 
 CMD ["/bin/bash"]

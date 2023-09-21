@@ -39,6 +39,7 @@ formulaic==0.2.4
 future==0.18.3
 GEOparse==2.0.3
 gtfparse==1.2.1
+gtftools==0.9.0
 h5py==3.9.0
 hdmedians==0.14.2
 humanfriendly==10.0
