@@ -1,5 +1,5 @@
 # Variables
-DATE := $(shell date "+%y%m%d")
+DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
@@ -6166,7 +6166,30 @@ step76-violin-MSP: Output/RSEM/Plots/Violin/STAR.SQC.MSP-Median.senescence.tar O
 step76: step76-cluster-stage step76-cluster-MSP step76-violin-stage step76-violin-MSP
 .PHONY: step76-cluster-stage step76-cluster-MSP step76-violin-stage step76-violin-MSP step76
 
-# Step 77 ()
+# Step 77 (iRead)
+Output/iREAD Output/iREAD/STAR Output/iREAD/Bowtie2:
+	mkdir -p $@
+
+Output/iREAD/gencode.v38.intron.bed: Bash/select_intron_gtf.bash $(GENCODE_GTF) | build.log Output/iREAD
+	$(DOCKER) $(BASH) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/iREAD/STAR/%.total_reads.txt: Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bam | Output/iREAD/STAR build.log
+	$(DOCKER) samtools flagstat --threads $(CPUS) --output-fmt "tsv" $^ | head -n 1 | awk -F'\t' '{print $$1;}' > $@
+
+Output/iREAD/Bowtie2/%.total_reads.txt: Output/RSEM/Bowtie2/%.genome.Sort.MarkDuplicate.Split.BQSR.bam | Output/iREAD/Bowtie2 build.log
+	$(DOCKER) samtools flagstat --threads $(CPUS) --output-fmt "tsv" $^ | head -n 1 | awk -F'\t' '{print $$1;}' > $@
+
+Output/iREAD/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.ir.txt: Output/iREAD/gencode.v38.intron.bed Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bam Output/iREAD/STAR/%.total_reads.txt | build.log
+	$(DOCKER) iread.py --total_reads $(shell cat $(filter %.txt,$^)) --output_folder $(addprefix /,$(@D)) --n_cores $(CPUS) --threads $(CPUS) --mem $(MEMS) $(addprefix /,$(filter %.bam,$^)) $(addprefix /,$(filter %.bed,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/iREAD/Bowtie2/%.genome.Sort.MarkDuplicate.Split.BQSR.ir.txt: Output/iREAD/gencode.v38.intron.bed Output/RSEM/Bowtie2/%.genome.Sort.MarkDuplicate.Split.BQSR.bam Output/iREAD/Bowtie2/%.total_reads.txt | build.log
+	$(DOCKER) iread.py --total_reads $(shell cat $(filter %.txt,$^)) --output_folder $(addprefix /,$(@D)) --n_cores $(CPUS) --threads $(CPUS) --mem $(MEMS) $(addprefix /,$(filter %.bam,$^)) $(addprefix /,$(filter %.bed,$^)) 1> $@.stdout 2> $@.stderr
+
+step77-reference: Output/iREAD/gencode.v38.intron.bed
+step77-STAR: $(addprefix Output/iREAD/STAR/,$(addsuffix .total_reads.txt,$(WTS_ID))) $(addprefix Output/iREAD/STAR/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.ir.txt,$(WTS_ID)))
+step77-Bowtie2: $(addprefix Output/iREAD/Bowtie2/,$(addsuffix .total_reads.txt,$(WTS_ID))) $(addprefix Output/iREAD/Bowtie2/,$(addsuffix .genome.Sort.MarkDuplicate.Split.BQSR.ir.txt,$(WTS_ID)))
+step77: step77-reference step77-STAR step77-Bowtie2
+.PHONY: step77-reference step77-STAR step77-Bowtie2 step77
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
