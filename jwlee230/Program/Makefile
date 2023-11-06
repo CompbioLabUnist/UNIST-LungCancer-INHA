@@ -5408,11 +5408,11 @@ Output/Helmsman/BWA Output/Helmsman/Bowtie2:
 	mkdir -p $@
 
 Output/Helmsman/BWA/%/subtype_count_matrix_spectra.txt Output/Helmsman/BWA/%/subtype_count_matrix.txt: $(REFERENCE_FASTA) Output/Mutect2/BWA/%.BWA.PASS.maf | Output/Helmsman/BWA build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@)
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(HELMSMAN) --cpus $(CPUS) --mode "maf" --seed 12345 --verbose --input $(addprefix /,$(filter %.maf,$^)) --fastafile $(addprefix /,$(filter %.fasta,$^)) --impute --projectdir $(@D) 1> $(@D).stdout 2> $(@D).stderr
 
 Output/Helmsman/Bowtie2/%/subtype_count_matrix_spectra.txt Output/Helmsman/Bowtie2/%/subtype_count_matrix.txt: $(REFERENCE_FASTA) Output/Mutect2/Bowtie2/%.Bowtie2.PASS.maf | Output/Helmsman/Bowtie2 build.log
-	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@)
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir -p $(@D)
 	$(DOCKER) $(HELMSMAN) --cpus $(CPUS) --mode "maf" --seed 12345 --verbose --input $(addprefix /,$(filter %.maf,$^)) --fastafile $(addprefix /,$(filter %.fasta,$^)) --impute --projectdir $(@D) 1> $(@D).stdout 2> $(@D).stderr
 
 step63-BWA: $(addprefix Output/Helmsman/BWA/,$(addsuffix /subtype_count_matrix_spectra.txt,$(WES_TUMOR_ID)))
