@@ -36,10 +36,10 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]) in patients, args.input))
-
+    args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)) in patients, args.input))
     args.input.sort()
+    print(args.input)
 
     with open(args.output, "w", newline="") as f:
         writer = csv.writer(f, delimiter="\t")
-        writer.writerows([(i, i.split("/")[-1].split(".")[0]) for i in args.input])
+        writer.writerows([(i, step00.get_id(i)) for i in args.input])
