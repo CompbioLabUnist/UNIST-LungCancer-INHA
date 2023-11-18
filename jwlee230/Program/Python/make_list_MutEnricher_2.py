@@ -40,8 +40,8 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    # args.input = list(filter(lambda x: (step00.get_patient(step00.get_id(x)) in patients) and (step00.get_long_sample_type(step00.get_id(x)) == "Primary"), args.input))
-    args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)) in patients, args.input))
+    args.input = list(filter(lambda x: (step00.get_patient(step00.get_id(x)) in patients) and (step00.get_long_sample_type(step00.get_id(x)) == "Primary"), args.input))
+    # args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)) in patients, args.input))
     args.input.sort()
     print(args.input)
 
