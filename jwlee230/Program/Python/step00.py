@@ -24,7 +24,7 @@ simple_stage_list = ("Normal", "Precancer", "Primary")
 stage_color_code = {"Normal": "cyan", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "silver"}
 stage_linestyle = {"Normal": "-", "Dysplasia": ":", "AAH": ":", "CIS+AIS": "-.", "MIA": "--", "Primary": "-"}
 
-MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval", "gene_pval"]
+MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval"]
 
 nonsynonymous_column = "Variant_Classification"
 nonsynonymous_mutations = {"Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Missense_Mutation", "Nonsense_Mutation", "Splice_Site", "Translation_Start_Site", "Nonstop_Mutation"}

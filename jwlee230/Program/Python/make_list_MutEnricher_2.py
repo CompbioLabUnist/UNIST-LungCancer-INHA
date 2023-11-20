@@ -12,6 +12,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinical data CSV file", type=str)
     parser.add_argument("output", help="Output TSV file", type=str)
     parser.add_argument("--patient", help="List of patients to select", type=str, nargs="+")
+    parser.add_argument("--stage", choices=step00.long_sample_type_list + ["Precancer", "All"], default="All")
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -40,8 +41,14 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(patients)
 
-    args.input = list(filter(lambda x: (step00.get_patient(step00.get_id(x)) in patients) and (step00.get_long_sample_type(step00.get_id(x)) == "Primary"), args.input))
-    # args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)) in patients, args.input))
+    if args.stage == "All":
+        args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)) in patients, args.input))
+    elif args.stage == "Precancer":
+        args.input = list(filter(lambda x: (step00.get_patient(step00.get_id(x)) in patients) and (step00.get_long_sample_type(step00.get_id(x)) not in {"Normal", "Primary"}), args.input))
+    elif args.stage in step00.long_sample_type_list:
+        args.input = list(filter(lambda x: (step00.get_patient(step00.get_id(x)) in patients) and (step00.get_long_sample_type(step00.get_id(x)) == args.stage), args.input))
+    else:
+        raise Exception("Something went wrong!!")
     args.input.sort()
     print(args.input)
 
