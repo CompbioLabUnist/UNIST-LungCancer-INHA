@@ -746,11 +746,29 @@ Output/MutEnricher/BWA/%.vcf.gz.tbi: Output/MutEnricher/BWA/%.vcf.gz | build.log
 Output/MutEnricher/BWA/SQC.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/MutEnricher/BWA/SQC-Primary.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --SQC --stage "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/SQC-Precancer.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --SQC --stage "Precancer" 1> $@.stdout 2> $@.stderr
+
 Output/MutEnricher/BWA/SQC-24.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn45' 'cn48' 'cn52' 'cn54' 'cn55' 'cn56' 'cn64' 'cn65' 'cn67' 'cn68' 'cn70' 'cn73' 'cn78' 'cn75' 'cn79' --SQC 1> $@.stdout 2> $@.stderr
 
+Output/MutEnricher/BWA/SQC-24-Primary.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn45' 'cn48' 'cn52' 'cn54' 'cn55' 'cn56' 'cn64' 'cn65' 'cn67' 'cn68' 'cn70' 'cn73' 'cn78' 'cn75' 'cn79' --SQC --stage "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/SQC-24-Precancer.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn45' 'cn48' 'cn52' 'cn54' 'cn55' 'cn56' 'cn64' 'cn65' 'cn67' 'cn68' 'cn70' 'cn73' 'cn78' 'cn75' 'cn79' --SQC --stage "Precancer" 1> $@.stdout 2> $@.stderr
+
 Output/MutEnricher/BWA/SQC-40.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '58' '63' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn41' 'cn42' 'cn45' 'cn48' 'cn49' 'cn50' 'cn51' 'cn52' 'cn53' 'cn54' 'cn55' 'cn56' 'cn60' 'cn61' 'cn63' 'cn64' 'cn65' 'cn66' 'cn67' 'cn68' 'cn69' 'cn70' 'cn71' 'cn73' 'cn74' 'cn75' 'cn76' 'cn78' 'cn79' --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/SQC-40-Primary.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '58' '63' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn41' 'cn42' 'cn45' 'cn48' 'cn49' 'cn50' 'cn51' 'cn52' 'cn53' 'cn54' 'cn55' 'cn56' 'cn60' 'cn61' 'cn63' 'cn64' 'cn65' 'cn66' 'cn67' 'cn68' 'cn69' 'cn70' 'cn71' 'cn73' 'cn74' 'cn75' 'cn76' 'cn78' 'cn79' --SQC --stage "Primary" 1> $@.stdout 2> $@.stderr
+
+Output/MutEnricher/BWA/SQC-40-Precancer.tsv: Python/make_list_MutEnricher_2.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --patient '8' '12' '58' '63' '64' 'cn2' 'cn13' 'cn15' 'cn16' 'cn21' 'cn35' 'cn41' 'cn42' 'cn45' 'cn48' 'cn49' 'cn50' 'cn51' 'cn52' 'cn53' 'cn54' 'cn55' 'cn56' 'cn60' 'cn61' 'cn63' 'cn64' 'cn65' 'cn66' 'cn67' 'cn68' 'cn69' 'cn70' 'cn71' 'cn73' 'cn74' 'cn75' 'cn76' 'cn78' 'cn79' --SQC --stage "Precancer" 1> $@.stdout 2> $@.stderr
 
 Output/MutEnricher/BWA/ADC.tsv: Python/make_list_MutEnricher.py $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz,$(WES_TUMOR_ID))) $(addprefix Output/MutEnricher/BWA/,$(addsuffix .vcf.gz.tbi,$(WES_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$(filter %.py,$^) $(filter %.vcf.gz,$^) $(filter %.csv,$^) $@) --ADC 1> $@.stdout 2> $@.stderr
