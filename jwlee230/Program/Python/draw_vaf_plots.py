@@ -11,6 +11,7 @@ from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
 import pandas
+import tqdm
 import step00
 
 sample_dict: typing.Dict[str, typing.Dict[str, typing.List[str]]] = dict()
@@ -18,8 +19,8 @@ gene_set = set()
 
 
 def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
-    first_name = first_sample.split("/")[-1].split(".")[0]
-    second_name = second_sample.split("/")[-1].split(".")[0]
+    first_name = step00.get_id(first_sample)
+    second_name = step00.get_id(second_sample)
 
     first_data = pandas.read_csv(first_sample, sep="\t", comment="#", low_memory=False)
     second_data = pandas.read_csv(second_sample, sep="\t", comment="#", low_memory=False)
@@ -40,12 +41,10 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
     merged_data["gene_census"] = list(map(lambda x: x[6] in gene_set, list(merged_data.index)))
     merged_data["mutation"] = list(map(lambda x: x[7] in step00.nonsynonymous_mutations, list(merged_data.index)))
 
-    print("{0} vs {1}: {2}".format(first_name, second_name, merged_data.shape))
-
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(24, 24))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     texts = list()
 
@@ -70,17 +69,18 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.xlim(-0.1, 1.1)
     matplotlib.pyplot.ylim(-0.1, 1.1)
-    matplotlib.pyplot.xlabel("VAF of {0} ({1})".format(first_name, step00.get_long_sample_type(first_name)))
-    matplotlib.pyplot.ylabel("VAF of {0} ({1})".format(second_name, step00.get_long_sample_type(second_name)))
-    matplotlib.pyplot.title("{0} vs. {1}".format(first_name, second_name))
+    matplotlib.pyplot.xlabel(f"VAF of {first_name} ({step00.get_long_sample_type(first_name)})")
+    matplotlib.pyplot.ylabel(f"VAF of {second_name} ({step00.get_long_sample_type(second_name)})")
+    matplotlib.pyplot.title(f"{first_name} vs. {second_name}")
     matplotlib.pyplot.legend(loc="upper right")
+    matplotlib.pyplot.tight_layout()
     adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
 
-    figure_name = "{0}+{1}.pdf".format(first_name, second_name)
+    figure_name = f"{first_name}+{second_name}.pdf"
     fig.savefig(figure_name)
     matplotlib.pyplot.close(fig)
 
-    tsv_name = "{0}+{1}.tsv".format(first_name, second_name)
+    tsv_name = f"{first_name}+{second_name}.tsv"
     merged_data.to_csv(tsv_name, sep="\t", header=True, index=True)
 
     return [figure_name, tsv_name]
@@ -124,12 +124,12 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     print(patients)
-    args.input = list(filter(lambda x: step00.get_patient(x.split("/")[-1].split(".")[0]), args.input))
+    args.input = list(filter(lambda x: step00.get_patient(step00.get_id(x)), args.input))
 
     gene_data = pandas.read_csv(args.gene)
     gene_set = set(gene_data["Gene Symbol"])
 
-    for input_file in args.input:
+    for input_file in tqdm.tqdm(args.input):
         cleared_input_file = input_file.split("/")[-1].split(".")[0]
         patient = step00.get_patient(cleared_input_file)
         stage = step00.get_long_sample_type(cleared_input_file)
@@ -144,18 +144,17 @@ if __name__ == "__main__":
     pprint.pprint(sample_dict)
 
     compare_list = list()
-    for patient in sample_dict:
+    for patient in tqdm.tqdm(sample_dict):
         for first_type, second_type in itertools.combinations(step00.long_sample_type_list, 2):
             if (first_type not in sample_dict[patient]) or (second_type not in sample_dict[patient]):
                 continue
             compare_list += list(itertools.product(sample_dict[patient][first_type], sample_dict[patient][second_type]))
-
     print(len(compare_list))
+    pprint.pprint(compare_list)
 
     with multiprocessing.Pool(args.cpus) as pool:
         files = sorted(itertools.chain.from_iterable(pool.starmap(draw_plot, compare_list)))
 
     with tarfile.open(args.output, "w") as tar:
-        for f in sorted(files):
-            print("Compressing:", f)
+        for f in tqdm.tqdm(files):
             tar.add(f, arcname=f)
