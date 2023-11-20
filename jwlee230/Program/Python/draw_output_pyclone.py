@@ -126,7 +126,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.title(f"{first_name} vs. {second_name}")
     matplotlib.pyplot.legend(loc=loc)
     matplotlib.pyplot.tight_layout()
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.small)
 
     fig.savefig(args.output)
     matplotlib.pyplot.close(fig)

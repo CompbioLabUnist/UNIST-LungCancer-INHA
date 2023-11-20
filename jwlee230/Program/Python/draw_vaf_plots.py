@@ -74,7 +74,7 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
     matplotlib.pyplot.title(f"{first_name} vs. {second_name}")
     matplotlib.pyplot.legend(loc="upper right")
     matplotlib.pyplot.tight_layout()
-    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.big)
+    adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 0.5}, ax=ax, lim=step00.small)
 
     figure_name = f"{first_name}+{second_name}.pdf"
     fig.savefig(figure_name)
