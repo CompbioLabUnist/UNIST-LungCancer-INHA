@@ -5,7 +5,7 @@ LABEL maintainer="jwlee230@unist.ac.kr"
 
 # apt install & update
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 51716619E084DAB9 && add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync git-lfs libncurses5 cabextract libgeos-dev libsqlite3-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libcairo2-dev && wget "https://www.freedesktop.org/software/fontconfig/webfonts/webfonts.tar.gz" && tar -zxvf webfonts.tar.gz && cd msfonts && cabextract *.exe && mkdir -p ~/.local/share/fonts && cp *.ttf *.TTF ~/.local/share/fonts/
+RUN apt-get update && apt-get upgrade -y && apt-get install -y software-properties-common && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 089EBE08314DF160 51716619E084DAB9 && add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' && apt-get update && apt-get upgrade -y && apt-get install -y make gcc g++ zlib1g-dev libbz2-dev liblzma-dev autoconf libncurses5-dev unzip openjdk-8-jdk r-base r-base-core r-recommended r-base-dev libfontconfig1 libssl-dev openssl libffi-dev tabix libcurl4-openssl-dev curl perl cpanminus git libpng-dev libmysqlclient-dev libxml2-dev cmake libboost-all-dev gcc-7 g++-7 gfortran-7 wget libdb-dev rsync git-lfs libncurses5 libgeos-dev libsqlite3-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libcairo2-dev && mkdir -p /root/.local/share/fonts && wget 'https://raw.githubusercontent.com/matomo-org/travis-scripts/master/fonts/Arial.ttf' -O /root/.local/share/fonts/Arial.ttf
 
 # TOOL directory
 RUN mkdir /Tools
@@ -139,7 +139,10 @@ ADD Tools/iRead.zip /Tools/
 RUN cd /Tools && unzip iRead.zip && cd iread-0.8.9 && chmod +x * && ln -s /root/anaconda2/bin/python2 /usr/bin/python2 && cpanm --with-recommends --notest Parallel::ForkManager
 ENV PATH=/Tools/iread-0.8.9:$PATH
 
+# Purge
+RUN cd /Tools && rm -v *.zip
+
+RUN cd /Tools
 VOLUME /Output
-VOLUME /Data
 
 CMD ["/bin/bash"]
