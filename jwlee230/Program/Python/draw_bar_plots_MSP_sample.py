@@ -42,7 +42,7 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.7)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.6)
     parser.add_argument("--slope", help="Slope threshold", type=float, default=100)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
