@@ -561,7 +561,7 @@ Output/Sequenza/%-precancer-ADC.tar: Python/aggregate_CNV_precancer.py Output/Se
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) Output/Sequenza/BWA.sample.tsv Output/Sequenza/Bowtie2.sample.tsv
 step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/BWA-stage-SQC.pdf Output/Sequenza/BWA-stage-ADC.pdf Output/Sequenza/Bowtie2-stage-SQC.pdf Output/Sequenza/Bowtie2-stage-ADC.pdf
 step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.pdf
-step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf Output/Sequenza/BWA-precancer-SQC.tar Output/Sequenza/Bowtie2-precancer-SQC.tar
+step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf Output/Sequenza/BWA-precancer-SQC.tar Output/Sequenza/BWA-precancer-ADC.tar Output/Sequenza/Bowtie2-precancer-SQC.tar Output/Sequenza/Bowtie2-precancer-ADC.tar
 step13-genome-Clinical: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.pdf
 step13-simple-Clinical: Output/Sequenza/BWA-simple-SQC.Recurrence.pdf Output/Sequenza/BWA-simple-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf Output/Sequenza/BWA-simple-SQC.Smoking.pdf Output/Sequenza/BWA-simple-ADC.Smoking.pdf Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf
 step13-violin: Output/Sequenza/BWA-violin-SQC.pdf Output/Sequenza/BWA-violin-ADC.pdf Output/Sequenza/Bowtie2-violin-SQC.pdf Output/Sequenza/Bowtie2-violin-ADC.pdf
@@ -1928,6 +1928,12 @@ Output/MuSiC/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MS
 Output/MuSiC/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/MuSiC/bar/%.SQC.precancer.tar: Python/draw_bar_plot_deconvolution_precancer.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MuSiC/bar/%.ADC.precancer.tar: Python/draw_bar_plot_deconvolution_precancer.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
+
 Output/MuSiC/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/MuSiC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/MuSiC/scatter
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -2159,6 +2165,12 @@ Output/SCDC/violin/%.SQC.MSP-mean.tar: Python/draw_violin_plot_deconvolution_MSP
 
 Output/SCDC/bar/%.SQC.MSP.tar: Python/draw_bar_plot_deconvolution_MSP.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/bar/%.SQC.precancer.tar: Python/draw_bar_plot_deconvolution_precancer.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/SCDC/bar/%.ADC.precancer.tar: Python/draw_bar_plot_deconvolution_precancer.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC 1> $@.stdout 2> $@.stderr
 
 Output/SCDC/scatter/%.SQC.MSP.tar: Python/draw_joint_plot_deconvolution_MSP.py Output/SCDC/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/SCDC/scatter
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -2932,7 +2944,7 @@ step37-BWA: $(addprefix Output/PureCN/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.B
 step37-Bowtie2: $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR_coverage.txt.gz,$(WES_ID))) Output/PureCN/Bowtie2/Normal_coverages.list Output/PureCN/Bowtie2/normalDB_hg38.rds $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .csv,$(WES_REAL_TUMOR_ID))) $(addprefix Output/PureCN/Bowtie2/,$(addsuffix .seg.tsv,$(WES_REAL_TUMOR_ID))) Output/PureCN/Bowtie2.sample.tsv Output/PureCN/Bowtie2.segment.tsv
 step37-default: Output/PureCN/BWA-PureCN-SQC.pdf Output/PureCN/BWA-PureCN-ADC.pdf Output/PureCN/Bowtie2-PureCN-SQC.pdf Output/PureCN/Bowtie2-PureCN-ADC.pdf Output/PureCN/BWA-stage-SQC.pdf Output/PureCN/BWA-stage-ADC.pdf Output/PureCN/Bowtie2-stage-SQC.pdf Output/PureCN/Bowtie2-stage-ADC.pdf
 step37-genome: Output/PureCN/BWA-genome-SQC.pdf Output/PureCN/BWA-genome-ADC.pdf Output/PureCN/Bowtie2-genome-SQC.pdf Output/PureCN/Bowtie2-genome-ADC.pdf Output/PureCN/BWA-genome-SQC.patient.pdf Output/PureCN/BWA-genome-ADC.patient.pdf Output/PureCN/Bowtie2-genome-SQC.patient.pdf Output/PureCN/Bowtie2-genome-ADC.patient.pdf
-step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf Output/PureCN/BWA-precancer-SQC.tar Output/PureCN/Bowtie2-precancer-SQC.tar
+step37-simple: Output/PureCN/BWA-simple-SQC.pdf Output/PureCN/BWA-simple-ADC.pdf Output/PureCN/Bowtie2-simple-SQC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf Output/PureCN/Bowtie2-simple-ADC.pdf Output/PureCN/BWA-precancer-SQC.tar Output/PureCN/BWA-precancer-ADC.tar Output/PureCN/Bowtie2-precancer-SQC.tar Output/PureCN/Bowtie2-precancer-ADC.tar
 step37-genome-clinical: Output/PureCN/BWA-genome-SQC.Recurrence.pdf Output/PureCN/BWA-genome-ADC.Recurrence.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.pdf Output/PureCN/BWA-genome-SQC.Smoking.pdf Output/PureCN/BWA-genome-ADC.Smoking.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.pdf Output/PureCN/BWA-genome-SQC.Recurrence.patient.pdf Output/PureCN/BWA-genome-ADC.Recurrence.patient.pdf Output/PureCN/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/PureCN/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/PureCN/BWA-genome-SQC.Smoking.patient.pdf Output/PureCN/BWA-genome-ADC.Smoking.patient.pdf Output/PureCN/Bowtie2-genome-SQC.Smoking.patient.pdf Output/PureCN/Bowtie2-genome-ADC.Smoking.patient.pdf
 step37-simple-clinical: Output/PureCN/BWA-simple-SQC.Recurrence.pdf Output/PureCN/BWA-simple-ADC.Recurrence.pdf Output/PureCN/Bowtie2-simple-SQC.Recurrence.pdf Output/PureCN/Bowtie2-simple-ADC.Recurrence.pdf Output/PureCN/BWA-simple-SQC.Smoking.pdf Output/PureCN/BWA-simple-ADC.Smoking.pdf Output/PureCN/Bowtie2-simple-SQC.Smoking.pdf Output/PureCN/Bowtie2-simple-ADC.Smoking.pdf
 step37-violin: Output/PureCN/BWA-violin-SQC.pdf Output/PureCN/BWA-violin-ADC.pdf Output/PureCN/Bowtie2-violin-SQC.pdf Output/PureCN/Bowtie2-violin-ADC.pdf
@@ -3061,7 +3073,7 @@ step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Referenc
 step39-CNVkit: $(addprefix Output/CNVkit/BWA/,$(addsuffix .BWA.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID))) $(addprefix Output/CNVkit/Bowtie2/,$(addsuffix .Bowtie2.Sort.MarkDuplicate.BQSR.cnr,$(WES_REAL_TUMOR_ID)))
 step39-genome: Output/CNVkit/BWA-genome-SQC.pdf Output/CNVkit/BWA-genome-ADC.pdf Output/CNVkit/Bowtie2-genome-SQC.pdf Output/CNVkit/Bowtie2-genome-ADC.pdf Output/CNVkit/BWA-genome-SQC.patient.pdf Output/CNVkit/BWA-genome-ADC.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.patient.pdf
 step39-genome-clinical: Output/CNVkit/BWA-genome-SQC.Recurrence.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.pdf Output/CNVkit/BWA-genome-SQC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-ADC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/CNVkit/BWA-genome-SQC.Smoking.pdf Output/CNVkit/BWA-genome-ADC.Smoking.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.pdf Output/CNVkit/BWA-genome-SQC.Smoking.patient.pdf Output/CNVkit/BWA-genome-ADC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-SQC.Smoking.patient.pdf Output/CNVkit/Bowtie2-genome-ADC.Smoking.patient.pdf
-step39-simple: Output/CNVkit/BWA-simple-SQC.pdf Output/CNVkit/BWA-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-SQC.pdf Output/CNVkit/Bowtie2-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-ADC.pdf Output/CNVkit/BWA-precancer-SQC.tar Output/CNVkit/Bowtie2-precancer-SQC.tar
+step39-simple: Output/CNVkit/BWA-simple-SQC.pdf Output/CNVkit/BWA-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-SQC.pdf Output/CNVkit/Bowtie2-simple-ADC.pdf Output/CNVkit/Bowtie2-simple-ADC.pdf Output/CNVkit/BWA-precancer-SQC.tar Output/CNVkit/BWA-precancer-ADC.tar Output/CNVkit/Bowtie2-precancer-SQC.tar Output/CNVkit/Bowtie2-precancer-ADC.tar
 step39-violin: Output/CNVkit/BWA-violin-SQC.pdf Output/CNVkit/BWA-violin-ADC.pdf Output/CNVkit/Bowtie2-violin-SQC.pdf Output/CNVkit/Bowtie2-violin-ADC.pdf
 step39-violin-clinical: Output/CNVkit/BWA-violin-SQC.Recurrence.pdf Output/CNVkit/BWA-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/Bowtie2-violin-ADC.Recurrence.pdf Output/CNVkit/BWA-violin-SQC.Smoking.pdf Output/CNVkit/BWA-violin-ADC.Smoking.pdf Output/CNVkit/Bowtie2-violin-SQC.Smoking.pdf Output/CNVkit/Bowtie2-violin-ADC.Smoking.pdf
 step39-chromosome: Output/CNVkit/BWA-chromosome-SQC.tar Output/CNVkit/BWA-chromosome-ADC.tar Output/CNVkit/Bowtie2-chromosome-SQC.tar Output/CNVkit/Bowtie2-chromosome-ADC.tar
@@ -5703,31 +5715,13 @@ step70: step70-Sequenza step70-PureCN step70-CNVkit
 Output/MutationSharedProportion_Count:
 	mkdir -p $@
 
-Output/MutationSharedProportion_Count/BWA-SQC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_Count/BWA-SQC.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Count/BWA-SQC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_Count/Bowtie2-SQC.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Count/BWA-ADC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Count/BWA-ADC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Count/Bowtie2-SQC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Count/Bowtie2-SQC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Count/Bowtie2-ADC.median.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Count/Bowtie2-ADC.mean.tar: Python/draw_joint_MutationSharedProportion_Count.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/MutationSharedProportion_Count
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-step71: Output/MutationSharedProportion_Count/BWA-SQC.median.tar Output/MutationSharedProportion_Count/BWA-SQC.mean.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.median.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.mean.tar
+step71: Output/MutationSharedProportion_Count/BWA-SQC.tar Output/MutationSharedProportion_Count/Bowtie2-SQC.tar
 .PHONY: step71
 
 # Step 72 (Mutation Shared Proportion vs. Gene Expression)
