@@ -123,7 +123,10 @@ if __name__ == "__main__":
             axs[i].set_xlabel(chromosome[3:])
             axs[i].grid(True)
 
-        matplotlib.pyplot.title(f"{precancer_sample} vs. {step00.get_paired_primary(precancer_sample)}")
+            if i == 0:
+                axs[i].set_ylabel("Copy number")
+
+        matplotlib.pyplot.suptitle(f"{precancer_sample} vs. {step00.get_paired_primary(precancer_sample)}")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"{precancer_sample}.pdf")
