@@ -1,5 +1,5 @@
 """
-aggregate_CNV_simple.py: Aggregate CNV results as simple view
+aggregate_CNV_precancer.py: Aggregate CNV results as precancer vs. primary
 """
 import argparse
 import multiprocessing
