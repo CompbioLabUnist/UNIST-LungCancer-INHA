@@ -23,7 +23,10 @@ def get_middle(values):
 
 
 def reg(stage, MSP, cell):
-    drawing_data = input_data.loc[(input_data["Stage"] == stage)]
+    if stage == "All":
+        drawing_data = input_data.copy()
+    else:
+        drawing_data = input_data.loc[(input_data["Stage"] == stage)]
 
     if drawing_data.empty:
         return ""
@@ -37,7 +40,7 @@ def reg(stage, MSP, cell):
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=drawing_data, x=MSP, y=cell, color=step00.stage_color_code[stage], ax=ax)
+    seaborn.regplot(data=drawing_data, x=MSP, y=cell, color="tab:blue" if stage == "All" else step00.stage_color_code[stage], ax=ax)
     matplotlib.pyplot.text(x=get_middle(drawing_data[MSP]), y=get_middle(drawing_data[cell]), s=f"r={r:.3f}, slope={slope:.3f}", horizontalalignment="center", verticalalignment="center", fontsize="small", bbox={"alpha": 0.3, "color": "white"})
 
     matplotlib.pyplot.tight_layout()
@@ -53,7 +56,10 @@ def reg(stage, MSP, cell):
 
 
 def joint(stage, MSP, cell):
-    drawing_data = input_data.loc[(input_data["Stage"] == stage)]
+    if stage == "All":
+        drawing_data = input_data.copy()
+    else:
+        drawing_data = input_data.loc[(input_data["Stage"] == stage)]
 
     if drawing_data.empty:
         return ""
@@ -65,7 +71,7 @@ def joint(stage, MSP, cell):
     if p >= 0.05:
         return ""
 
-    g = seaborn.jointplot(data=drawing_data, x=MSP, y=cell, color=step00.stage_color_code[stage], kind="reg", height=24, ratio=5)
+    g = seaborn.jointplot(data=drawing_data, x=MSP, y=cell, color="tab:blue" if stage == "All" else step00.stage_color_code[stage], kind="reg", height=24, ratio=5)
     g.fig.text(0.5, 0.5, f"r={r:.3f}, slope={slope:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
     cell_name = cell
@@ -129,8 +135,8 @@ if __name__ == "__main__":
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = list(pool.starmap(reg, list(itertools.product(step00.long_sample_type_list, step00.sharing_columns, cells))))
-        figures += list(pool.starmap(joint, list(itertools.product(step00.long_sample_type_list, step00.sharing_columns, cells))))
+        figures = list(pool.starmap(reg, list(itertools.product(step00.long_sample_type_list + ["All"], step00.sharing_columns, cells))))
+        figures += list(pool.starmap(joint, list(itertools.product(step00.long_sample_type_list + ["All"], step00.sharing_columns, cells))))
 
     figures = list(filter(None, figures))
 

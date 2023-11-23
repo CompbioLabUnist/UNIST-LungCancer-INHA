@@ -1,8 +1,8 @@
 """
-plot_signature_bar.py: Plot signature in bar graph
+plot_signature_bar.py: Plot signature in bar graph comparing precancer vs. primary
 """
 import argparse
-import itertools
+import tarfile
 import matplotlib
 import matplotlib.colors
 import matplotlib.pyplot
@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
     parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
-    parser.add_argument("output", help="Output PDF file", type=str)
+    parser.add_argument("output", help="Output TAR file", type=str)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
     if not args.clinical.endswith(".csv"):
         raise ValueError("Clinical data must end with .CSV!!")
-    elif not args.output.endswith(".pdf"):
-        raise ValueError("Output must end with .PDF!!")
+    elif not args.output.endswith(".tar"):
+        raise ValueError("Output must end with .TAR!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col="Samples")
     signatures = list(input_data.columns)
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(sorted(patients))
 
-    input_data = input_data.loc[sorted(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index)), key=step00.sorting_by_type), :]
+    input_data = input_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index))), :]
     signatures = list(input_data.columns)
     input_data["Total"] = input_data.sum(axis="columns")
     print(input_data)
@@ -65,30 +65,39 @@ if __name__ == "__main__":
         input_data = input_data.loc[:, signatures]
     else:
         raise Exception("Something went wrong!!")
-
-    input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     print(input_data)
+
+    samples = list(input_data.index)
+    precancer_samples = list(filter(lambda x: (step00.get_paired_primary(x) in samples) and (step00.get_long_sample_type(x) != "Primary"), samples))
+    print(precancer_samples)
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+    figures = list()
+    for precancer_sample in tqdm.tqdm(precancer_samples):
+        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
 
-    for j, (column, color) in tqdm.tqdm(list(enumerate(zip(signatures, itertools.cycle(matplotlib.colors.TABLEAU_COLORS))))):
-        matplotlib.pyplot.bar(range(input_data.shape[0]), list(input_data.loc[:, column]), bottom=input_data.iloc[:, :j].sum(axis="columns"), color=color, edgecolor=color, label=column)
+        matplotlib.pyplot.bar(range(len(signatures)), list(input_data.loc[precancer_sample, signatures]), align="edge", width=-0.4, color=step00.get_color_by_type(precancer_sample), label=step00.get_long_sample_type(precancer_sample))
+        matplotlib.pyplot.bar(range(len(signatures)), list(input_data.loc[step00.get_paired_primary(precancer_sample), signatures]), align="edge", width=0.4, color=step00.stage_color_code["Primary"], label="Primary")
 
-    if args.absolute:
-        matplotlib.pyplot.ylabel("Counts")
-    elif args.relative:
-        matplotlib.pyplot.ylabel("Proportion")
-    else:
-        raise Exception("Something went wrong!!")
+        if args.absolute:
+            matplotlib.pyplot.ylabel("Counts")
+        elif args.relative:
+            matplotlib.pyplot.ylabel("Proportion")
+        else:
+            raise Exception("Something went wrong!!")
 
-    matplotlib.pyplot.xlabel(f"{input_data.shape[0]} Samples")
-    matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.grid(True)
-    matplotlib.pyplot.legend()
-    matplotlib.pyplot.tight_layout()
+        matplotlib.pyplot.xlabel(f"Signature in {step00.get_patient(precancer_sample)}")
+        matplotlib.pyplot.xticks(range(len(signatures)), signatures, rotation="vertical")
+        matplotlib.pyplot.grid(True)
+        matplotlib.pyplot.legend()
+        matplotlib.pyplot.tight_layout()
 
-    fig.savefig(args.output)
-    matplotlib.pyplot.close(fig)
+        figures.append(f"{precancer_sample}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    with tarfile.open(args.output, "w") as tar:
+        for figure in tqdm.tqdm(figures):
+            tar.add(figure)
