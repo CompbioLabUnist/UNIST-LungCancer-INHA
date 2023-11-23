@@ -238,7 +238,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step63 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -551,6 +551,12 @@ Output/Sequenza/%-gene-SQC.Smoking.tar: Python/aggregate_CNV_violin_gene_clinica
 
 Output/Sequenza/%-gene-ADC.Smoking.tar: Python/aggregate_CNV_violin_gene_clinical.py Output/Sequenza/%.segment.tsv $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --compare "Smoking" "Never" "Ever" 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/%-precancer-SQC.tar: Python/aggregate_CNV_precancer.py Output/Sequenza/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Sequenza/%-precancer-ADC.tar: Python/aggregate_CNV_precancer.py Output/Sequenza/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) Output/Sequenza/BWA.sample.tsv Output/Sequenza/Bowtie2.sample.tsv
 step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/BWA-stage-SQC.pdf Output/Sequenza/BWA-stage-ADC.pdf Output/Sequenza/Bowtie2-stage-SQC.pdf Output/Sequenza/Bowtie2-stage-ADC.pdf
