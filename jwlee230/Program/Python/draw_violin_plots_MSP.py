@@ -56,7 +56,7 @@ def run(MSP: str, gene: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Input TPM TSV file", type=str)
+    parser.add_argument("input", help="Input expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("cgc", help="CGC CSV files", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)

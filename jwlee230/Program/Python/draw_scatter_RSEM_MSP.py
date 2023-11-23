@@ -89,7 +89,7 @@ if __name__ == "__main__":
         raise ValueError("r-value must be in (0, 1)!!")
     elif args.slope <= 0:
         raise ValueError("Slope must be positive!!")
-    elif args.cpus <= 1:
+    elif args.cpus < 1:
         raise ValueError("Number of CPUs must be positive!!")
 
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
