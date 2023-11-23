@@ -63,6 +63,7 @@ if __name__ == "__main__":
     figures = list()
     for stage, MSP in tqdm.tqdm(list(itertools.product(step00.long_sample_type_list, step00.sharing_columns))):
         drawing_data = input_data.loc[(input_data["Stage"] == stage)].sort_values(MSP)
+        MSP_list = list(drawing_data[MSP])
 
         if drawing_data.empty:
             continue
@@ -76,10 +77,11 @@ if __name__ == "__main__":
             for j, cell in enumerate(cells):
                 labeling = (i == 0) and (j < 5)
                 matplotlib.pyplot.bar(x=i, height=drawing_data.iloc[i, j], bottom=sum(drawing_data.iloc[i, :j]), color=cell_palette[cell], label=cell if labeling else None, edgecolor=None, linewidth=0)
+        matplotlib.pyplot.plot(range(len(drawing_data)), MSP_list, marker="*", markersize=40, color="k", linestyle="--", linewidth=10, label=MSP)
 
         matplotlib.pyplot.xticks([])
         matplotlib.pyplot.xlabel(f"{len(drawing_data)} {stage} samples ordered by {MSP}")
-        matplotlib.pyplot.ylabel("Cell type proportions")
+        matplotlib.pyplot.ylabel(f"{len(cells)} cell type proportions")
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.legend(loc="upper right", fontsize="xx-small")
