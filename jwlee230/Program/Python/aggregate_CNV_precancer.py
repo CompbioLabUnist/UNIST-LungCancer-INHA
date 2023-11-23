@@ -121,6 +121,7 @@ if __name__ == "__main__":
             axs[i].scatter(range(len(chromosome_data.columns)), chromosome_data.loc[step00.get_paired_primary(precancer_sample), :], s=100, c=step00.stage_color_code["Primary"])
             axs[i].set_xticks([])
             axs[i].set_xlabel(chromosome[3:])
+            axs[i].grid(True)
 
         matplotlib.pyplot.title(f"{precancer_sample} vs. {step00.get_paired_primary(precancer_sample)}")
         matplotlib.pyplot.tight_layout()
