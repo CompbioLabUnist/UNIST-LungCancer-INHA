@@ -18,6 +18,10 @@ def read_maf(filename: str) -> pandas.DataFrame:
     return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
 
+def get_middle(array: list) -> float:
+    return (min(array) + max(array)) / 2.0
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -29,10 +33,6 @@ if __name__ == "__main__":
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group_subtype.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
-
-    group_strategy = parser.add_mutually_exclusive_group(required=True)
-    group_strategy.add_argument("--median", help="Median division", action="store_true", default=False)
-    group_strategy.add_argument("--mean", help="Mean division", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -84,18 +84,37 @@ if __name__ == "__main__":
 
     figures = list()
     for stage, column in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
-        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage])
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
         drawing_data[stage] = list(map(int, drawing_data[stage]))
 
         r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
 
-        g = seaborn.jointplot(data=drawing_data, x=column, y=stage, kind="reg", height=24, dropna=True, color=step00.stage_color_code[stage])
-        g.fig.text(0.5, 0.75, "r={0:.3f}, p={1:.3f}".format(r, p), color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"}, fontfamily="monospace")
+        g = seaborn.jointplot(data=drawing_data, x=column, y=stage, kind="reg", height=18, dropna=True, color=step00.stage_color_code[stage])
+        g.fig.text(0.5, 0.75, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(column, f"Mutation Count ({stage})")
 
-        figures.append(f"{stage}_{column}.pdf")
+        figures.append(f"Joint_{stage}_{column}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
+
+    for stage, column in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
+        drawing_data[stage] = list(map(int, drawing_data[stage]))
+
+        r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=drawing_data, x=column, y=stage, scatter=True, fit_reg=True, color=step00.stage_color_code[stage], ax=ax)
+        matplotlib.pyplot.text(get_middle(drawing_data[column]), get_middle(drawing_data[stage]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel(column)
+        matplotlib.pyplot.ylabel(f"Mutation Count ({stage})")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_{stage}_{column}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
