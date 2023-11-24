@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -3101,10 +3101,10 @@ Output/CNVkit/%-chromosome-SQC.tar: Python/aggregate_CNV_chromosome.py Output/CN
 Output/CNVkit/%-chromosome-ADC.tar: Python/aggregate_CNV_chromosome.py Output/CNVkit/%.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) $(GENE_CENCUS_ONE_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-Output/CNVkit/%-precancer-SQC.tar: Python/aggregate_CNV_precancer.py Output/CNVkit/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/CNVkit/%-precancer-SQC.tar: Python/aggregate_CNV_precancer.py Output/CNVkit/%.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/CNVkit/%-precancer-ADC.tar: Python/aggregate_CNV_precancer.py Output/CNVkit/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
+Output/CNVkit/%-precancer-ADC.tar: Python/aggregate_CNV_precancer.py Output/CNVkit/%.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
 step39-Reference: Output/CNVkit/BWA/Reference.tsv Output/CNVkit/Bowtie2/Reference.tsv
