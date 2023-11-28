@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 15
+PARALLEL = 8
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -661,8 +661,14 @@ Output/MutationSharedProportion/Violin.BWA.SQC.tar: Python/draw_violin_MutationC
 Output/MutationSharedProportion/Joint.BWA.SQC.tar: Python/draw_joint_MutationCount_MutationSharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
 
-step14-BWA: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID)))
-step14-Bowtie2: $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID)))
+Output/Mutect2/BWA.tsv: Python/merge_maf.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Mutect2/Bowtie2.tsv: Python/merge_maf.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step14-BWA: $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/Mutect2/BWA.tsv
+step14-Bowtie2: $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.filter.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.vcf,$(WES_TUMOR_ID))) $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/Mutect2/Bowtie2.tsv
 step14-histogram: Output/Mutect2/BWA-SQC.histogram.pdf Output/Mutect2/BWA-ADC.histogram.pdf Output/Mutect2/Bowtie2-SQC.histogram.pdf Output/Mutect2/Bowtie2-ADC.histogram.pdf
 step14-heatmap: Output/Mutect2/BWA-SQC.heatmap.pdf Output/Mutect2/BWA-ADC.heatmap.pdf Output/Mutect2/Bowtie2-SQC.heatmap.pdf Output/Mutect2/Bowtie2-ADC.heatmap.pdf
 step14-clustermap: Output/Mutect2/BWA-SQC.clustermap.pdf Output/Mutect2/BWA-ADC.clustermap.pdf Output/Mutect2/Bowtie2-SQC.clustermap.pdf Output/Mutect2/Bowtie2-ADC.clustermap.pdf
