@@ -35,5 +35,4 @@ if __name__ == "__main__":
         output_data["Matched_Norm_Sample_Barcode"] = list(map(step00.get_id, output_data["Matched_Norm_Sample_Barcode"]))
 
     output_data = output_data[["Hugo_Symbol", "Entrez_Gene_Id", "Chromosome", "Start_Position", "End_Position", "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2", "Tumor_Sample_Barcode", "Matched_Norm_Sample_Barcode", "Match_Norm_Seq_Allele1", "Match_Norm_Seq_Allele2"]]
-    print(output_data)
     output_data.to_csv(args.output, sep="\t", index=False)
