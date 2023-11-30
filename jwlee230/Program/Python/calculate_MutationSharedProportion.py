@@ -46,41 +46,65 @@ if __name__ == "__main__":
         mutect_data["Stage"] = pool.map(step00.get_long_sample_type, mutect_data["Tumor_Sample_Barcode"])
     print(mutect_data)
 
-    clinical_data[step00.sharing_columns[0]] = None
-    clinical_data[step00.sharing_columns[2]] = None
-    clinical_data[step00.sharing_columns[4]] = None
-    clinical_data[step00.sharing_columns[6]] = None
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        clinical_data[MSP] = None
+        clinical_data[f"{MSP}-sample"] = None
+
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient) & (mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+        primary_set = set(patient_data.loc[(patient_data["Stage"] == "Primary"), step00.sharing_strategy].itertuples(index=False, name=None))
+        precancer_list = list(mutect_data.loc[(mutect_data["Patient"] == patient) & ~(mutect_data["Stage"].isin({"Primary"})), "Tumor_Sample_Barcode"])
 
-        if ("Primary" not in stage_set) or (len(stage_set) < 2):
+        if (not precancer_list) or (not primary_set):
             continue
 
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, step00.sharing_columns[0]] = len(primary_set & precancer_set) / len(primary_set)
-        clinical_data.loc[patient, step00.sharing_columns[2]] = len(primary_set & precancer_set) / len(precancer_set | primary_set)
-        clinical_data.loc[patient, step00.sharing_columns[4]] = len(primary_set & precancer_set)
-        clinical_data.loc[patient, step00.sharing_columns[6]] = len(primary_set & precancer_set) / (len(primary_set) * step00.big / step00.WES_length)
+        for precancer in precancer_list:
+            precancer_set = set(patient_data.loc[(patient_data["Tumor_Sample_Barcode"] == precancer), step00.sharing_strategy].itertuples(index=False, name=None))
+            intersection = len(primary_set & precancer_set)
 
-    clinical_data[step00.sharing_columns[1]] = None
-    clinical_data[step00.sharing_columns[3]] = None
-    clinical_data[step00.sharing_columns[5]] = None
-    clinical_data[step00.sharing_columns[7]] = None
+            if (clinical_data.loc[patient, step00.sharing_columns[0]] is None) or (clinical_data.loc[patient, step00.sharing_columns[0]] < intersection / len(primary_set)):
+                clinical_data.loc[patient, step00.sharing_columns[0]] = intersection / len(primary_set)
+                clinical_data.loc[patient, step00.sharing_columns[0] + "-sample"] = precancer
+
+            if (clinical_data.loc[patient, step00.sharing_columns[2]] is None) or (clinical_data.loc[patient, step00.sharing_columns[2]] < intersection / len(precancer_set | primary_set)):
+                clinical_data.loc[patient, step00.sharing_columns[2]] = intersection / len(precancer_set | primary_set)
+                clinical_data.loc[patient, step00.sharing_columns[2] + "-sample"] = precancer
+
+            if (clinical_data.loc[patient, step00.sharing_columns[4]] is None) or (clinical_data.loc[patient, step00.sharing_columns[4]] < intersection):
+                clinical_data.loc[patient, step00.sharing_columns[4]] = intersection
+                clinical_data.loc[patient, step00.sharing_columns[4] + "-sample"] = precancer
+
+            if (clinical_data.loc[patient, step00.sharing_columns[6]] is None) or (clinical_data.loc[patient, step00.sharing_columns[6]] < intersection / (len(primary_set) * step00.big / step00.WES_length)):
+                clinical_data.loc[patient, step00.sharing_columns[6]] = intersection / (len(primary_set) * step00.big / step00.WES_length)
+                clinical_data.loc[patient, step00.sharing_columns[6] + "-sample"] = precancer
+
     for patient in tqdm.tqdm(patients):
         patient_data = mutect_data.loc[(mutect_data["Patient"] == patient)]
-        stage_set = list(filter(lambda x: x in set(patient_data["Stage"]), step00.long_sample_type_list))
+        precancer_list = list(mutect_data.loc[(mutect_data["Patient"] == patient) & ~(mutect_data["Stage"].isin({"Primary"})), "Tumor_Sample_Barcode"])
+        primary_set = set(patient_data.loc[(patient_data["Stage"] == "Primary"), step00.sharing_strategy].itertuples(index=False, name=None))
 
-        if ("Primary" not in stage_set) or (len(stage_set) < 2):
+        if (not precancer_list) or (not primary_set):
             continue
 
-        primary_set = set(patient_data.loc[patient_data["Stage"] == "Primary", step00.sharing_strategy].itertuples(index=False, name=None))
-        precancer_set = set(patient_data.loc[patient_data["Stage"] == stage_set[-2], step00.sharing_strategy].itertuples(index=False, name=None))
-        clinical_data.loc[patient, step00.sharing_columns[1]] = len(primary_set & precancer_set) / len(primary_set)
-        clinical_data.loc[patient, step00.sharing_columns[3]] = len(primary_set & precancer_set) / len(precancer_set | primary_set)
-        clinical_data.loc[patient, step00.sharing_columns[5]] = len(primary_set & precancer_set)
-        clinical_data.loc[patient, step00.sharing_columns[7]] = len(primary_set & precancer_set) / (len(primary_set) * step00.big / step00.WES_length)
+        for precancer in precancer_list:
+            precancer_set = set(patient_data.loc[(patient_data["Tumor_Sample_Barcode"] == precancer), step00.sharing_strategy].itertuples(index=False, name=None))
+            intersection = len(primary_set & precancer_set)
+
+        if (clinical_data.loc[patient, step00.sharing_columns[1]] is None) or (clinical_data.loc[patient, step00.sharing_columns[1]] < intersection / len(primary_set)):
+            clinical_data.loc[patient, step00.sharing_columns[1]] = len(primary_set & precancer_set) / len(primary_set)
+            clinical_data.loc[patient, step00.sharing_columns[1] + "-sample"] = precancer
+
+        if (clinical_data.loc[patient, step00.sharing_columns[3]] is None) or (clinical_data.loc[patient, step00.sharing_columns[3]] < intersection / len(precancer_set | primary_set)):
+            clinical_data.loc[patient, step00.sharing_columns[3]] = intersection / len(precancer_set | primary_set)
+            clinical_data.loc[patient, step00.sharing_columns[3] + "-sample"] = precancer
+
+        if (clinical_data.loc[patient, step00.sharing_columns[5]] is None) or (clinical_data.loc[patient, step00.sharing_columns[5]] < intersection):
+            clinical_data.loc[patient, step00.sharing_columns[5]] = intersection
+            clinical_data.loc[patient, step00.sharing_columns[5] + "-sample"] = precancer
+
+        if (clinical_data.loc[patient, step00.sharing_columns[7]] is None) or (clinical_data.loc[patient, step00.sharing_columns[7]] < intersection / (len(primary_set) * step00.big / step00.WES_length)):
+            clinical_data.loc[patient, step00.sharing_columns[7]] = intersection / (len(primary_set) * step00.big / step00.WES_length)
+            clinical_data.loc[patient, step00.sharing_columns[7] + "-sample"] = precancer
 
     clinical_data.dropna(subset=step00.sharing_columns, inplace=True)
     for column in tqdm.tqdm(step00.sharing_columns):
@@ -88,6 +112,13 @@ if __name__ == "__main__":
     print(clinical_data)
 
     for column in step00.sharing_columns:
-        print(column, f"{numpy.min(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.mean(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.median(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}", f"{numpy.max(clinical_data.loc[(clinical_data['Histology'] == 'SQC'), column]):.3f}")
+        minimum = numpy.min(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column])
+        lower_bound = numpy.quantile(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column], 0.1)
+        mean = numpy.mean(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column])
+        median = numpy.median(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column])
+        higher_bound = numpy.quantile(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column], 0.9)
+        maximum = numpy.max(clinical_data.loc[(clinical_data["Histology"] == "SQC"), column])
+
+        print(column, ":", f"min={minimum:.3f}", f"lower={lower_bound:.3f}", f"mean={mean:.3f}", f"median={median:.3f}", f"higher={higher_bound:.3f}", f"max={maximum:.3f}")
 
     clinical_data.to_csv(args.output, sep="\t")
