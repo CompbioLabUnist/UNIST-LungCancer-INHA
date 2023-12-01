@@ -53,10 +53,6 @@ if __name__ == "__main__":
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
 
-    group_strategy = parser.add_mutually_exclusive_group(required=True)
-    group_strategy.add_argument("--median", help="Median division", action="store_true", default=False)
-    group_strategy.add_argument("--mean", help="Mean division", action="store_true", default=False)
-
     args = parser.parse_args()
 
     if not args.input.endswith(".tsv"):
@@ -69,6 +65,8 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.threshold < 1):
         raise ValueError("Threshold must be (0, 1)")
+    elif not (0.0 < args.percentage < 0.5):
+        raise ValueError("Percentage must be (0.0, 0.5)!!")
 
     watching = args.watching
     threshold = args.threshold
@@ -87,6 +85,9 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     input_data = input_data.loc[(input_data["Patient"].isin(patients))]
     print(input_data)
+
+    clinical_data = clinical_data.loc[list(filter(lambda x: x in patients, list(clinical_data.index)))]
+    print(clinical_data)
 
     sample_list = sorted(set(input_data["Sample"]), key=step00.sorting_by_type)
     print(sample_list)
@@ -119,34 +120,32 @@ if __name__ == "__main__":
     MSP_order = ["Lower", "Higher"]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
-        if args.median:
-            cutting = numpy.median(clinical_data[MSP])
-        elif args.mean:
-            cutting = numpy.mean(clinical_data[MSP])
-        else:
-            raise Exception("Something went wrong!!")
+        lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1 - args.percentage)
 
-        output_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] < cutting) else "Higher", output_data["Patient"]))
+        drawing_data = output_data.copy()
+        drawing_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] <= lower_bound) else ("Higher" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
+        drawing_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", drawing_data["Stage"]))
+        drawing_data = drawing_data.loc[(drawing_data[MSP].isin(MSP_order))]
 
-        stage_list = list(filter(lambda x: all([(x in set(output_data.loc[(output_data[MSP] == x1), "Stage"])) for x1 in MSP_order]), step00.long_sample_type_list))
-        palette = dict([(stage, step00.stage_color_code[stage]) for stage in stage_list])
+        stage_list = ["Precancer", "Primary"]
+        palette = {"Precancer": "tab:pink", "Primary": "gray"}
 
         compare_list = list()
         for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
-            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment"])
+            stat, p = scipy.stats.mannwhitneyu(drawing_data.loc[(drawing_data[MSP] == x1) & (drawing_data["Stage"] == s1), "Segment"], drawing_data.loc[(drawing_data[MSP] == x2) & (drawing_data["Stage"] == s2), "Segment"])
             if p < 0.05:
                 compare_list.append(((x1, s1), (x2, s2)))
 
         try:
-            stat, p = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Segment"] for x, s in itertools.product(MSP_order, stage_list)])
+            stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data[MSP] == x) & (drawing_data["Stage"] == s), "Segment"] for x, s in itertools.product(MSP_order, stage_list)])
         except ValueError:
             p = 1.0
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(20, 18))
 
-        seaborn.violinplot(data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
+        seaborn.violinplot(data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=ax)
         if compare_list:
-            statannotations.Annotator.Annotator(ax, compare_list, data=output_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.title(f"K.W. p={p:.3f}")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
@@ -160,33 +159,33 @@ if __name__ == "__main__":
 
         compare_list = list()
         for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
-            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment-Loss"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment-Loss"])
+            stat, p = scipy.stats.mannwhitneyu(drawing_data.loc[(drawing_data[MSP] == x1) & (drawing_data["Stage"] == s1), "Segment-Loss"], drawing_data.loc[(drawing_data[MSP] == x2) & (drawing_data["Stage"] == s2), "Segment-Loss"])
             if p < 0.05:
                 compare_list.append(((x1, s1), (x2, s2)))
 
         try:
-            stat, p_loss = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Segment-Loss"] for x, s in itertools.product(MSP_order, stage_list)])
+            stat, p_loss = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data[MSP] == x) & (drawing_data["Stage"] == s), "Segment-Loss"] for x, s in itertools.product(MSP_order, stage_list)])
         except ValueError:
             p_loss = 1.0
 
-        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
+        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[0])
         if compare_list:
-            statannotations.Annotator.Annotator(axs[0], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(axs[0], compare_list, data=drawing_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         compare_list = list()
         for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
-            stat, p = scipy.stats.mannwhitneyu(output_data.loc[(output_data[MSP] == x1) & (output_data["Stage"] == s1), "Segment-Gain"], output_data.loc[(output_data[MSP] == x2) & (output_data["Stage"] == s2), "Segment-Gain"])
+            stat, p = scipy.stats.mannwhitneyu(drawing_data.loc[(drawing_data[MSP] == x1) & (drawing_data["Stage"] == s1), "Segment-Gain"], drawing_data.loc[(drawing_data[MSP] == x2) & (drawing_data["Stage"] == s2), "Segment-Gain"])
             if p < 0.05:
                 compare_list.append(((x1, s1), (x2, s2)))
 
         try:
-            stat, p_gain = scipy.stats.kruskal(*[output_data.loc[(output_data[MSP] == x) & (output_data["Stage"] == s), "Segment-Gain"] for x, s in itertools.product(MSP_order, stage_list)])
+            stat, p_gain = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data[MSP] == x) & (drawing_data["Stage"] == s), "Segment-Gain"] for x, s in itertools.product(MSP_order, stage_list)])
         except ValueError:
             p_gain = 1.0
 
-        seaborn.violinplot(data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
+        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, ax=axs[1])
         if compare_list:
-            statannotations.Annotator.Annotator(axs[1], compare_list, data=output_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(axs[1], compare_list, data=drawing_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         axs[0].set_title(f"CNV Loss: K.W. p={p_loss:.3f}")
         axs[1].set_title(f"CNV Gain: K.W. p={p_gain:.3f}")
@@ -197,8 +196,6 @@ if __name__ == "__main__":
         figures.append(f"Violin_LossGain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
-
-        del output_data[MSP]
 
     stage_list = list(filter(lambda x: output_data.loc[(output_data["Stage"] == x)].shape[0] > 3, step00.long_sample_type_list))
     palette = dict([(stage, step00.stage_color_code[stage]) for stage in stage_list])
@@ -310,6 +307,92 @@ if __name__ == "__main__":
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain segment (count)")
         matplotlib.pyplot.tight_layout()
         figures.append(f"Scatter_{stage}-Gain_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    stage_list = ["Precancer", "Primary"]
+    palette = {"Precancer": "tab:pink", "Primary": "gray"}
+
+    output_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", output_data["Stage"]))
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV segment (count)")
+        figures.append(f"Joint_Precancer_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Loss"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV-Loss segment (count)")
+        figures.append(f"Joint_Precancer-Loss_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Gain"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV-Gain segment (count)")
+        figures.append(f"Joint_Precancer-Gain_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+    output_data = output_data.loc[(output_data["Stage"] == "Precancer")]
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV segment (count)")
+        figures.append(f"Joint_PrecancerOnly_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+        seaborn.regplot(data=output_data, x=MSP, y="Segment", fit_reg=True, scatter=True, color="tab:pink", ax=ax)
+        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
+        matplotlib.pyplot.tight_layout()
+        figures.append(f"Scatter_PrecancerOnly_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Loss"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Loss", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV-Loss segment (count)")
+        figures.append(f"Joint_PrecancerOnly-Loss_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+        seaborn.regplot(data=output_data, x=MSP, y="Segment-Loss", fit_reg=True, scatter=True, color="tab:pink", ax=ax)
+        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.ylabel("Number of somatic CNV-Loss segment (count)")
+        matplotlib.pyplot.tight_layout()
+        figures.append(f"Scatter_PrecancerOnly-Loss_{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Gain"])
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Gain", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(MSP, "Number of somatic CNV-Gain segment (count)")
+        figures.append(f"Joint_PrecancerOnly-Gain_{MSP}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+        seaborn.regplot(data=output_data, x=MSP, y="Segment-Gain", fit_reg=True, scatter=True, color="tab:pink", ax=ax)
+        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.ylabel("Number of somatic CNV-Gain segment (count)")
+        matplotlib.pyplot.tight_layout()
+        figures.append(f"Scatter_PrecancerOnly-Gain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 

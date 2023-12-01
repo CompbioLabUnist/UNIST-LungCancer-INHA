@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 8
+PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -5653,111 +5653,39 @@ step69: Output/MutationSharedProportion_Exact/BWA-SQC.Median.tar Output/Mutation
 Output/MutationSharedProportion_CNV:
 	mkdir -p $@
 
-Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.SQC.median.tar: Python/plot_CNV_MutationSharedProportion.py Output/Sequenza/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion.py Output/Sequenza/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.ADC.median.tar: Python/plot_CNV_MutationSharedProportion.py Output/Sequenza/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion.py Output/Sequenza/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) ---cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.SQC.tar: Python/plot_CNV_MutationSharedProportion.py Output/Sequenza/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/MutationSharedProportion_CNV/CopyNumber.%.Sequenza.SQC-MSP.tar: Python/aggregate_CNV_MutationSharedProportion_precancer.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC 1> $@.stdout 2>$@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.Sequenza.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Region.%.Sequenza.SQC.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.Sequenza.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Segment.%.Sequenza.SQC.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.Sequenza.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Region.%.Sequenza.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.Sequenza.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.Sequenza.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.Sequenza.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.Sequenza.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.SQC.median.tar: Python/plot_CNV_MutationSharedProportion.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.ADC.median.tar: Python/plot_CNV_MutationSharedProportion.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) ---cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.SQC.tar: Python/plot_CNV_MutationSharedProportion.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/MutationSharedProportion_CNV/CopyNumber.%.PureCN.SQC-MSP.tar: Python/aggregate_CNV_MutationSharedProportion_precancer.py Output/PureCN/%.sample.tsv Output/MutationSharedProportion/%.tsv $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC 1> $@.stdout 2>$@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.PureCN.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Region.%.PureCN.SQC.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.PureCN.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Segment.%.PureCN.SQC.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.PureCN.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Region.%.CNVkit.SQC.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Region.%.PureCN.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_CNV/Segment.%.CNVkit.SQC.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_CNV/Segment.%.PureCN.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.PureCN.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.PureCN.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.PureCN.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "seg.mean" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Region.%.CNVkit.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Region.%.CNVkit.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Region.%.CNVkit.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Region.%.CNVkit.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_region.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.CNVkit.SQC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.CNVkit.SQC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.CNVkit.ADC.median.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_CNV/Segment.%.CNVkit.ADC.mean.tar: Python/plot_CNV_MutationSharedProportion_segment.py Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv | Output/MutationSharedProportion_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "log2" --cpus $(CPUS) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-step70-Sequenza: Output/MutationSharedProportion_CNV/CopyNumber.BWA.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.Sequenza.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.Sequenza.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.BWA.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/Region.BWA.Sequenza.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.BWA.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.BWA.Sequenza.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.Sequenza.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.Sequenza.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.Sequenza.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.Sequenza.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.Sequenza.SQC.mean.tar
-step70-PureCN: Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.BWA.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/Region.BWA.PureCN.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.BWA.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.BWA.PureCN.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.PureCN.SQC.mean.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.PureCN.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.PureCN.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.PureCN.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.PureCN.SQC.mean.tar
-step70-CNVkit: Output/MutationSharedProportion_CNV/Region.BWA.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Region.BWA.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.BWA.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.BWA.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.CNVkit.SQC.mean.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.CNVkit.SQC.median.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.CNVkit.SQC.mean.tar
+step70-Sequenza: Output/MutationSharedProportion_CNV/CopyNumber.BWA.Sequenza.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.Sequenza.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.BWA.Sequenza.SQC.tar Output/MutationSharedProportion_CNV/Segment.BWA.Sequenza.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.Sequenza.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.Sequenza.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.Sequenza.SQC.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.Sequenza.SQC.tar
+step70-PureCN: Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.BWA.PureCN.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.BWA.PureCN.SQC.tar Output/MutationSharedProportion_CNV/Segment.BWA.PureCN.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.PureCN.SQC.tar Output/MutationSharedProportion_CNV/CopyNumber.Bowtie2.PureCN.SQC-MSP.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.PureCN.SQC.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.PureCN.SQC.tar
+step70-CNVkit: Output/MutationSharedProportion_CNV/Region.BWA.CNVkit.SQC.tar Output/MutationSharedProportion_CNV/Segment.BWA.CNVkit.SQC.tar Output/MutationSharedProportion_CNV/Region.Bowtie2.CNVkit.SQC.tar Output/MutationSharedProportion_CNV/Segment.Bowtie2.CNVkit.SQC.tar
 step70: step70-Sequenza step70-PureCN step70-CNVkit
 .PHONY: step70-Sequenza step70-PureCN step70-CNVkit step70
 
