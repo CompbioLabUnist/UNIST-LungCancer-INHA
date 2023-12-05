@@ -7,6 +7,7 @@ import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
+import numpy
 import scipy.stats
 import seaborn
 import pandas
@@ -76,6 +77,8 @@ if __name__ == "__main__":
 
     for input_data in tqdm.tqdm(args.input):
         clinical_data.loc[step00.get_patient(input_data), step00.get_long_sample_type(input_data)] = mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == step00.get_id(input_data))].shape[0]
+    clinical_data["Precancer"] = numpy.sum(clinical_data[stage_list[:-1]], axis=1)
+    clinical_data["All"] = numpy.sum(clinical_data[stage_list], axis=1)
     print(clinical_data)
 
     matplotlib.use("Agg")
@@ -113,6 +116,74 @@ if __name__ == "__main__":
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Scatter_{stage}_{column}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    stage = "Precancer"
+    for column in tqdm.tqdm(step00.sharing_columns):
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
+        drawing_data[stage] = list(map(int, drawing_data[stage]))
+
+        r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
+
+        g = seaborn.jointplot(data=drawing_data, x=column, y=stage, kind="reg", height=18, dropna=True, color="tab:pink")
+        g.fig.text(0.5, 0.75, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(column, f"Mutation Count ({stage})")
+
+        figures.append(f"Joint_Precancer_{column}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+    for column in tqdm.tqdm(step00.sharing_columns):
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
+        drawing_data[stage] = list(map(int, drawing_data[stage]))
+
+        r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=drawing_data, x=column, y=stage, scatter=True, fit_reg=True, color="tab:pink", ax=ax)
+        matplotlib.pyplot.text(get_middle(drawing_data[column]), get_middle(drawing_data[stage]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel(column)
+        matplotlib.pyplot.ylabel(f"Mutation Count ({stage})")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_Precancer_{column}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    stage = "All"
+    for column in tqdm.tqdm(step00.sharing_columns):
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
+        drawing_data[stage] = list(map(int, drawing_data[stage]))
+
+        r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
+
+        g = seaborn.jointplot(data=drawing_data, x=column, y=stage, kind="reg", height=18, dropna=True, color="tab:blue")
+        g.fig.text(0.5, 0.75, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        g.set_axis_labels(column, f"Mutation Count ({stage})")
+
+        figures.append(f"Joint_All_{column}.pdf")
+        g.savefig(figures[-1])
+        matplotlib.pyplot.close(g.fig)
+
+    for column in tqdm.tqdm(step00.sharing_columns):
+        drawing_data = clinical_data.dropna(axis="index", subset=[column, stage]).copy()
+        drawing_data[stage] = list(map(int, drawing_data[stage]))
+
+        r, p = scipy.stats.pearsonr(drawing_data[column], drawing_data[stage])
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.regplot(data=drawing_data, x=column, y=stage, scatter=True, fit_reg=True, color="tab:blue", ax=ax)
+        matplotlib.pyplot.text(get_middle(drawing_data[column]), get_middle(drawing_data[stage]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel(column)
+        matplotlib.pyplot.ylabel(f"Mutation Count ({stage})")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Scatter_All_{column}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
