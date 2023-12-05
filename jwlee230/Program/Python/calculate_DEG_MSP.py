@@ -23,6 +23,15 @@ def correlation_stage(stage: str, MSP: str, gene: str) -> typing.Tuple[float, fl
     return scipy.stats.linregress(tmp_data[MSP], tmp_data[gene])
 
 
+def correlation_precancer(MSP: str, gene: str) -> typing.Tuple[float, float, float, float, float, float]:
+    tmp_data = input_data.loc[~(input_data["Stage"].isin({"Normal", "Primary"})), [MSP, gene]]
+    if tmp_data.shape[0] < 3:
+        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
+    elif (numpy.std(tmp_data[MSP]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
+        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
+    return scipy.stats.linregress(tmp_data[MSP], tmp_data[gene])
+
+
 def correlation_all(MSP: str, gene: str) -> typing.Tuple[float, float, float, float, float, float]:
     tmp_data = input_data.loc[:, [MSP, gene]]
     if tmp_data.shape[0] < 3:
@@ -77,7 +86,7 @@ if __name__ == "__main__":
         input_data[column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), column], list(input_data.index)))
     print(input_data)
 
-    stages = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list)) + ["All"]
+    stages = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list)) + ["Precancer", "All"]
     columns = ["slope", "intercept", "r", "p", "stderr", "intercept_stderr"]
 
     output_data = pandas.DataFrame(index=genes)
@@ -85,6 +94,8 @@ if __name__ == "__main__":
         for MSP, stage in tqdm.tqdm(list(itertools.product(step00.sharing_columns, stages))):
             if stage == "All":
                 output_data = output_data.join(pandas.DataFrame(pool.starmap(correlation_all, [(MSP, gene) for gene in genes]), index=genes, columns=[f"{stage}-{MSP}-{column}" for column in columns]))
+            elif stage == "Precancer":
+                output_data = output_data.join(pandas.DataFrame(pool.starmap(correlation_precancer, [(MSP, gene) for gene in genes]), index=genes, columns=[f"{stage}-{MSP}-{column}" for column in columns]))
             else:
                 output_data = output_data.join(pandas.DataFrame(pool.starmap(correlation_stage, [(stage, MSP, gene) for gene in genes]), index=genes, columns=[f"{stage}-{MSP}-{column}" for column in columns]))
 
