@@ -5,7 +5,7 @@ IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
 CPUS = 10
 MEMS = 100
-PARALLEL = 10
+PARALLEL = 15
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -3811,24 +3811,6 @@ Output/MutationSharedProportion_Signature/joint/BWA-SQC-DBS.relative.tar: Python
 Output/MutationSharedProportion_Signature/joint/BWA-SQC-Indel.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-SBS.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-DBS.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-Indel.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-SBS.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-DBS.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/BWA-ADC-Indel.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/BWA.tsv Output/SigProfiler/BWA/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
 Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-SBS.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -3846,24 +3828,6 @@ Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-DBS.relative.tar: Py
 
 Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-Indel.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-SBS.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-DBS.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-Indel.absolute.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-SBS.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_SBS96_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-DBS.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_DBS78_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Signature/joint/Bowtie2-ADC-Indel.relative.tar: Python/compare_mutation_signature.py Output/MutationSharedProportion/Bowtie2.tsv Output/SigProfiler/Bowtie2/COSMIC_ID83_Activities_refit.txt | build.log Output/MutationSharedProportion_Signature/joint
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step44-BWA-SQC: Output/MutationSharedProportion_Signature/joint/BWA-SQC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/BWA-SQC-Indel.relative.tar
 step44-Bowtie2-SQC: Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-SBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-DBS.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-Indel.absolute.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-SBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-DBS.relative.tar Output/MutationSharedProportion_Signature/joint/Bowtie2-SQC-Indel.relative.tar
