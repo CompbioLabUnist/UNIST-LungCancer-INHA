@@ -59,11 +59,11 @@ def draw_plot(first_sample: str, second_sample: str) -> typing.List[str]:
 
     for index, d in data.iterrows():
         if (d["first_VAF"] > 0.6) and (d["second_VAF"] == 0.0):
-            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], f"{index[6]}: {index[8]}", fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
         elif (d["first_VAF"] == 0.0) and (d["second_VAF"] > 0.6):
-            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], f"{index[6]}: {index[8]}", fontsize="xx-small", bbox={"color": "white", "alpha": 0.5}))
         elif (d["first_VAF"] > 0.0) and (d["second_VAF"] > 0.0):
-            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], "{0}: {1}".format(index[6], index[8]), fontsize="small", bbox={"color": "white", "alpha": 0.5}))
+            texts.append(matplotlib.pyplot.text(d["first_VAF"], d["second_VAF"], f"{index[6]}: {index[8]}", fontsize="small", bbox={"color": "white", "alpha": 0.5}))
 
     matplotlib.pyplot.axline((0, 0), (1, 1), linestyle="--", color="black", alpha=0.3)
     matplotlib.pyplot.grid(True)
