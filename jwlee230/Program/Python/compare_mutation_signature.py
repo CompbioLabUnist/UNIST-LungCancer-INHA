@@ -98,7 +98,7 @@ def reg_precancer(signature: str, column: str) -> str:
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
 
-    fig_name = f"Scatter-All-{column}-{signature}.pdf"
+    fig_name = f"Scatter-Precancer-{column}-{signature}.pdf"
     fig.savefig(fig_name)
     matplotlib.pyplot.close(fig)
 
