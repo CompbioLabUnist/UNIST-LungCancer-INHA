@@ -385,7 +385,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (bp)")
         matplotlib.pyplot.tight_layout()
-        figures.append(f"Scatter_PrecancerONly-Gain_{MSP}.pdf")
+        figures.append(f"Scatter_PrecancerOnly-Gain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
