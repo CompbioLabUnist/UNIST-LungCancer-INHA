@@ -2484,41 +2484,11 @@ Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Absolute.pdf: Python/plot_signature_ba
 Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Relative.pdf: Python/plot_signature_bar.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
 
-Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+Output/SigProfiler/%-Bar/COSMIC.SQC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
 
-Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
+Output/SigProfiler/%-Bar/COSMIC.SQC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-DoubleBase.SQC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-Indel.SQC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-SingleBase.ADC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-DoubleBase.ADC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --absolute 1> $@.stdout 2> $@.stderr
-
-Output/SigProfiler/%-Bar/COSMIC-Indel.ADC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_ID83_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --relative 1> $@.stdout 2> $@.stderr
 
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr

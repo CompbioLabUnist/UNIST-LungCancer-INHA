@@ -2,11 +2,15 @@
 plot_signature_bar.py: Plot signature in bar graph comparing precancer vs. primary
 """
 import argparse
+import itertools
 import tarfile
 import matplotlib
 import matplotlib.colors
 import matplotlib.pyplot
+import numpy
 import pandas
+import seaborn
+import statannotations.Annotator
 import tqdm
 import step00
 
@@ -14,9 +18,10 @@ import step00
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str)
-    parser.add_argument("clinical", help="Clinical data data CSV file", type=str)
+    parser.add_argument("input", help="Signature TSV file (not necessarily TSV)", type=str, nargs="+")
+    parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -28,73 +33,74 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.clinical.endswith(".csv"):
-        raise ValueError("Clinical data must end with .CSV!!")
+    if not args.clinical.endswith(".tsv"):
+        raise ValueError("Clinical data must end with .TSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
+    elif not (0.0 < args.percentage < 0.5):
+        raise ValueError("Percentage must be (0.0, 0.5)!!")
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col="Samples")
+    input_data = pandas.DataFrame()
+    for input_file in tqdm.tqdm(args.input):
+        d = pandas.read_csv(input_file, sep="\t", index_col=0)
+        if args.relative:
+            for index in list(d.index):
+                d.loc[index, :] = d.loc[index, :] / sum(d.loc[index, :])
+        input_data = input_data.join(d, how="outer")
     signatures = list(input_data.columns)
     print(input_data)
 
-    clinical_data = step00.get_clinical_data(args.clinical)
+    clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
 
     if args.SQC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        clinical_data = clinical_data.loc[(clinical_data["Histology"] == "SQC")]
     elif args.ADC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        clinical_data = clinical_data.loc[(clinical_data["Histology"] == "ADC")]
     else:
         raise Exception("Something went wrong!!")
+    patients = set(clinical_data.index)
     print(sorted(patients))
 
     input_data = input_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(input_data.index))), :]
-    signatures = list(input_data.columns)
-    input_data["Total"] = input_data.sum(axis="columns")
-    print(input_data)
-    print(signatures)
-
-    if args.absolute:
-        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
-        input_data.sort_values(by="Total", kind="stable", ascending=False, inplace=True)
-        input_data = input_data.loc[:, signatures]
-    elif args.relative:
-        for index in tqdm.tqdm(list(input_data.index)):
-            input_data.loc[index, :] = input_data.loc[index, :] / input_data.loc[index, "Total"]
-        input_data.sort_values(by=sorted(signatures, key=lambda x: sum(input_data.loc[:, x]), reverse=True), ascending=False, inplace=True)
-        input_data = input_data.loc[:, signatures]
-    else:
-        raise Exception("Something went wrong!!")
     print(input_data)
 
     samples = list(input_data.index)
     precancer_samples = list(filter(lambda x: (step00.get_paired_primary(x) in samples) and (step00.get_long_sample_type(x) != "Primary"), samples))
     print(precancer_samples)
 
+    output_data = pandas.DataFrame([(signature, sample, input_data.loc[sample, signature]) for signature, sample in tqdm.tqdm(list(itertools.product(signatures, samples)))], columns=["Signature", "Sample", "Value"])
+    output_data["PRE/PRI"] = list(map(lambda x: "Primary" if step00.get_long_sample_type(x) == "Primary" else "Precancer", output_data["Sample"]))
+    print(output_data)
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for precancer_sample in tqdm.tqdm(precancer_samples):
-        fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
-        matplotlib.pyplot.bar(range(len(signatures)), list(input_data.loc[precancer_sample, signatures]), align="edge", width=-0.4, color=step00.get_color_by_type(precancer_sample), label=step00.get_long_sample_type(precancer_sample))
-        matplotlib.pyplot.bar(range(len(signatures)), list(input_data.loc[step00.get_paired_primary(precancer_sample), signatures]), align="edge", width=0.4, color=step00.stage_color_code["Primary"], label="Primary")
+        lower_precancer_list = list(clinical_data.loc[(clinical_data[MSP] <= lower_bound), f"{MSP}-sample"])
+        higher_precancer_list = list(clinical_data.loc[(clinical_data[MSP] >= higher_bound), f"{MSP}-sample"])
 
-        if args.absolute:
-            matplotlib.pyplot.ylabel("Counts")
-        elif args.relative:
-            matplotlib.pyplot.ylabel("Proportion")
-        else:
-            raise Exception("Something went wrong!!")
+        lower_primary_list = list(map(step00.get_paired_primary, lower_precancer_list))
+        higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
-        matplotlib.pyplot.xlabel(f"Signature in {step00.get_patient(precancer_sample)}")
-        matplotlib.pyplot.xticks(range(len(signatures)), signatures, rotation="vertical")
-        matplotlib.pyplot.grid(True)
-        matplotlib.pyplot.legend()
+        fig, axs = matplotlib.pyplot.subplots(figsize=(64, 36), nrows=2)
+
+        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[0])
+        statannotations.Annotator.Annotator(axs[0], [((signature, "Precancer"), (signature, "Primary")) for signature in signatures], data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+
+        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[1])
+        statannotations.Annotator.Annotator(axs[1], [((signature, "Precancer"), (signature, "Primary")) for signature in signatures], data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+
+        axs[0].set_xlabel("")
+        axs[1].set_xlabel("")
+
         matplotlib.pyplot.tight_layout()
 
-        figures.append(f"{precancer_sample}.pdf")
+        figures.append(f"{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
