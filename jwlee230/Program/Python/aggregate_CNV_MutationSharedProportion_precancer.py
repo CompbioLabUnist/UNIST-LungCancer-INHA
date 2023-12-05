@@ -127,8 +127,8 @@ if __name__ == "__main__":
                 for sample in lower_precancer_list + lower_primary_list:
                     chromosome_data.loc[sample, :] = pool.starmap(get_chromosome_data, [(sample, chromosome, step * step00.big, (step + 1) * step00.big) for step in list(chromosome_data.columns)])
 
-            axs[0][i].scatter(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[lower_precancer_list, :], axis=0), s=100, c="tab:pink")
-            axs[0][i].scatter(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[lower_primary_list, :], axis=0), s=100, c="gray")
+            axs[0][i].errorbar(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[lower_primary_list, :], axis=0), yerr=numpy.std(chromosome_data.loc[lower_primary_list, :], axis=0), fmt="none", ecolor="gray", elinewidth=0.1)
+            axs[0][i].errorbar(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[lower_precancer_list, :], axis=0), yerr=numpy.std(chromosome_data.loc[lower_precancer_list, :], axis=0) / 2, fmt="none", ecolor="tab:pink", elinewidth=0.1)
 
             axs[0][i].set_xticks([])
             axs[0][i].set_xlabel(chromosome[3:])
@@ -144,8 +144,8 @@ if __name__ == "__main__":
                 for sample in higher_precancer_list + higher_primary_list:
                     chromosome_data.loc[sample, :] = pool.starmap(get_chromosome_data, [(sample, chromosome, step * step00.big, (step + 1) * step00.big) for step in list(chromosome_data.columns)])
 
-            axs[1][i].scatter(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[higher_precancer_list, :], axis=0), s=100, c="tab:pink")
-            axs[1][i].scatter(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[higher_primary_list, :], axis=0), s=100, c="gray")
+            axs[1][i].errorbar(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[higher_primary_list, :], axis=0), yerr=numpy.std(chromosome_data.loc[higher_primary_list, :], axis=0), fmt="none", ecolor="gray", elinewidth=0.1)
+            axs[1][i].errorbar(range(len(chromosome_data.columns)), numpy.mean(chromosome_data.loc[higher_precancer_list, :], axis=0), yerr=numpy.std(chromosome_data.loc[higher_precancer_list, :], axis=0) / 2, fmt="none", ecolor="tab:pink", elinewidth=0.1)
 
             axs[1][i].set_xticks([])
             axs[1][i].set_xlabel(chromosome[3:])
@@ -160,8 +160,8 @@ if __name__ == "__main__":
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
-        print(MSP, f"{lower_bound:.3f}", lower_precancer_list)
-        print(MSP, f"{higher_bound:.3f}", higher_precancer_list)
+        print(MSP, "Lower", f"{lower_bound:.3f}", sorted(lower_precancer_list))
+        print(MSP, "High", f"{higher_bound:.3f}", sorted(higher_precancer_list))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
