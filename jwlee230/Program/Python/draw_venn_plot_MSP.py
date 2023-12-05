@@ -18,8 +18,8 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
 
     args = parser.parse_args()
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     figures = list()
     for MSP in tqdm.tqdm(step00.sharing_columns):
         venn_data = dict()
-        for stage in ["CIS+AIS", "Primary"]:
+        for stage in ["CIS+AIS", "Precancer", "Primary", "All"]:
             if f"{stage}-{MSP}-log10(abs(slope))" not in set(input_data.columns):
                 continue
 

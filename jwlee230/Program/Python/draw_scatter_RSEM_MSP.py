@@ -24,6 +24,9 @@ def scatter(stage, MSP, gene):
     if stage == "All":
         tmp_data = expression_data
         color = "blue"
+    elif stage == "Precancer":
+        tmp_data = expression_data[~(expression_data["Stage"].isin({"Normal", "Primary"}))]
+        color = "tab:pink"
     else:
         tmp_data = expression_data[(expression_data["Stage"] == stage)]
         color = step00.stage_color_code[stage]
@@ -48,6 +51,9 @@ def joint(stage, MSP, gene):
     if stage == "All":
         tmp_data = expression_data
         color = "blue"
+    elif stage == "Precancer":
+        tmp_data = expression_data[~(expression_data["Stage"].isin({"Normal", "Primary"}))]
+        color = "tab:pink"
     else:
         tmp_data = expression_data[(expression_data["Stage"] == stage)]
         color = step00.stage_color_code[stage]
@@ -71,8 +77,8 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.6)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=100)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -106,7 +112,7 @@ if __name__ == "__main__":
         expression_data[column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), column], list(expression_data.index)))
     print(expression_data)
 
-    stages = step00.long_sample_type_list + ["All"]
+    stages = step00.long_sample_type_list + ["Precancer", "All"]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -114,7 +120,7 @@ if __name__ == "__main__":
 
     figures = list()
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns))):
+        for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:1]))):
             if f"{stage}-{MSP}-log10(abs(slope))" not in set(input_data.columns):
                 continue
 

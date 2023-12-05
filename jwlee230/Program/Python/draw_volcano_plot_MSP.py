@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input DEG-MSP TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
 
     args = parser.parse_args()
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
-    stages = step00.long_sample_type_list + ["All"]
+    stages = step00.long_sample_type_list + ["Precancer", "All"]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.xlabel("Pearson correlation r")
-        matplotlib.pyplot.ylabel("log10(abs(slope))")
+        matplotlib.pyplot.ylabel("log10(|slope|)")
         matplotlib.pyplot.xlim(-1, 1)
         matplotlib.pyplot.tight_layout()
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.xlabel("Pearson correlation r")
-        matplotlib.pyplot.ylabel("log10(abs(slope))")
+        matplotlib.pyplot.ylabel("log10(|slope|)")
         matplotlib.pyplot.xlim(-1, 1)
         matplotlib.pyplot.tight_layout()
 
