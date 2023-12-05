@@ -199,7 +199,7 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
         figures.append(f"Joint_All_{MSP}.pdf")
@@ -216,7 +216,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Loss"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (bp)")
         figures.append(f"Joint_All-Loss_{MSP}.pdf")
@@ -233,7 +233,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Gain"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (bp)")
         figures.append(f"Joint_All-Gain_{MSP}.pdf")
@@ -253,7 +253,7 @@ if __name__ == "__main__":
         tmp_data = output_data.loc[(output_data["Stage"] == stage)]
 
         r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Region"])
-        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region", color=palette[stage], height=24, ratio=5, kind="reg")
+        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region", color=palette[stage], height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
         figures.append(f"Joint_{stage}_{MSP}.pdf")
@@ -270,7 +270,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Region-Loss"])
-        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Loss", color=palette[stage], height=24, ratio=5, kind="reg")
+        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Loss", color=palette[stage], height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (bp)")
         figures.append(f"Joint_{stage}-Loss_{MSP}.pdf")
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Region-Gain"])
-        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Gain", color=palette[stage], height=24, ratio=5, kind="reg")
+        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Gain", color=palette[stage], height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (bp)")
         figures.append(f"Joint_{stage}-Gain_{MSP}.pdf")
@@ -311,7 +311,7 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
         figures.append(f"Joint_Precancer_{MSP}.pdf")
@@ -319,7 +319,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Loss"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (bp)")
         figures.append(f"Joint_Precancer-Loss_{MSP}.pdf")
@@ -327,7 +327,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Gain"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (bp)")
         figures.append(f"Joint_Precancer-Gain_{MSP}.pdf")
@@ -339,7 +339,7 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region", color="tab:pink", height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (bp)")
         figures.append(f"Joint_PrecancerOnly_{MSP}.pdf")
@@ -356,7 +356,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Loss"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", color="tab:pink", height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (bp)")
         figures.append(f"Joint_PrecancerOnly-Loss_{MSP}.pdf")
@@ -373,7 +373,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Region-Gain"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", color="tab:pink", height=24, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", color="tab:pink", height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (bp)")
         figures.append(f"Joint_PrecancerOnly-Gain_{MSP}.pdf")
