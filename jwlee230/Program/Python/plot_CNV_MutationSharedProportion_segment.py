@@ -347,7 +347,7 @@ if __name__ == "__main__":
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment", color="tab:pink", height=18, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment", color="tab:pink", height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV segment (count)")
         figures.append(f"Joint_PrecancerOnly_{MSP}.pdf")
@@ -364,7 +364,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Loss"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Loss", color="tab:pink", height=18, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Loss", color="tab:pink", height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss segment (count)")
         figures.append(f"Joint_PrecancerOnly-Loss_{MSP}.pdf")
@@ -381,7 +381,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
         r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Segment-Gain"])
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Gain", color="tab:pink", height=18, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Segment-Gain", color="tab:pink", height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain segment (count)")
         figures.append(f"Joint_PrecancerOnly-Gain_{MSP}.pdf")
