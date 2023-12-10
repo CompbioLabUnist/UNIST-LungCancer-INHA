@@ -58,11 +58,60 @@ if __name__ == "__main__":
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     for MSP in tqdm.tqdm(step00.sharing_columns):
         input_data[MSP] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], list(input_data.index)))
+        input_data[f"{MSP}-sample"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), f"{MSP}-sample"], list(input_data.index)))
     print(input_data)
 
     figures = list()
+    for MSP in tqdm.tqdm(step00.sharing_columns):
+        input_data = input_data.sort_values(MSP, ascending=False)
+
+        precancer_list = sorted(list(filter(lambda x: (x in set(input_data.index)) and (step00.get_paired_primary(x) in set(input_data.index)), set(input_data[f"{MSP}-sample"]))), key=lambda x: input_data.loc[x, MSP], reverse=True)
+        primary_list = list(map(step00.get_paired_primary, precancer_list))
+
+        cells = sorted(cells, key=lambda x: numpy.mean(input_data.loc[precancer_list + primary_list, x]), reverse=True)
+        drawing_data = input_data.loc[precancer_list + primary_list, cells]
+
+        fig, axs = matplotlib.pyplot.subplots(figsize=(32 * 2, 18), ncols=2, sharey="all")
+
+        for i, index in enumerate(precancer_list):
+            for j, cell in enumerate(cells):
+                labeling = (i == 0) and (j < 5)
+                axs[0].bar(x=i, height=drawing_data.iloc[i, j], bottom=sum(drawing_data.iloc[i, :j]), color=cell_palette[cell], label=cell if labeling else None, edgecolor=None, linewidth=0)
+
+        tmp_ax = axs[0].twinx()
+        tmp_ax.plot(range(len(precancer_list)), input_data.loc[precancer_list, MSP], marker="*", markersize=40, color="k", linestyle="--", linewidth=10)
+        tmp_ax.set_ylabel(MSP)
+
+        for i, index in enumerate(primary_list):
+            for j, cell in enumerate(cells):
+                labeling = (i == 0) and (j < 5)
+                axs[1].bar(x=i, height=drawing_data.iloc[len(precancer_list) + i, j], bottom=sum(drawing_data.iloc[len(precancer_list) + i, :j]), color=cell_palette[cell], label=cell if labeling else None, edgecolor=None, linewidth=0)
+
+        tmp_ax = axs[1].twinx()
+        tmp_ax.plot(range(len(precancer_list)), input_data.loc[precancer_list, MSP], marker="*", markersize=40, color="k", linestyle="--", linewidth=10)
+        tmp_ax.set_ylabel(MSP)
+
+        axs[0].set_xticks(range(len(precancer_list)), precancer_list, rotation="vertical")
+        axs[1].set_xticks(range(len(primary_list)), primary_list, rotation="vertical")
+        axs[0].set_xlabel(f"{len(precancer_list)} precancer samples")
+        axs[1].set_xlabel(f"{len(primary_list)} primary samples")
+        axs[0].set_ylabel(f"{len(cells)} cell type proportions")
+        axs[1].set_ylabel(f"{len(cells)} cell type proportions")
+        axs[0].set_ylim(0, 1)
+        axs[1].set_ylim(0, 1)
+        axs[0].grid(True)
+        axs[1].grid(True)
+        axs[0].legend(loc="upper right", fontsize="xx-small")
+        axs[1].legend(loc="upper right", fontsize="xx-small")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Precancer-{MSP}.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
     for stage, MSP in tqdm.tqdm(list(itertools.product(step00.long_sample_type_list, step00.sharing_columns))):
         drawing_data = input_data.loc[(input_data["Stage"] == stage)].sort_values(MSP, ascending=False)
+        sample_list = list(drawing_data.index)
         MSP_list = list(drawing_data[MSP])
 
         if drawing_data.empty:
@@ -77,14 +126,18 @@ if __name__ == "__main__":
             for j, cell in enumerate(cells):
                 labeling = (i == 0) and (j < 5)
                 matplotlib.pyplot.bar(x=i, height=drawing_data.iloc[i, j], bottom=sum(drawing_data.iloc[i, :j]), color=cell_palette[cell], label=cell if labeling else None, edgecolor=None, linewidth=0)
-        matplotlib.pyplot.plot(range(len(drawing_data)), MSP_list, marker="*", markersize=20, color="k", linestyle="--", linewidth=10, label=MSP)
 
-        matplotlib.pyplot.xticks([])
+        matplotlib.pyplot.xticks(range(len(sample_list)), sample_list, rotation="vertical")
         matplotlib.pyplot.xlabel(f"{len(drawing_data)} {stage} samples")
         matplotlib.pyplot.ylabel(f"{len(cells)} cell type proportions")
         matplotlib.pyplot.ylim(0, 1)
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.legend(loc="upper right", fontsize="xx-small")
+
+        tmp_ax = ax.twinx()
+        tmp_ax.plot(range(len(drawing_data)), MSP_list, marker="*", markersize=40, color="k", linestyle="--", linewidth=10)
+        tmp_ax.set_ylabel(MSP)
+
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"{stage}-{MSP}.pdf")
