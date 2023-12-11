@@ -23,7 +23,7 @@ def get_middle(values):
 def scatter(stage, MSP, gene):
     if stage == "All":
         tmp_data = expression_data
-        color = "blue"
+        color = "tab:blue"
     elif stage == "Precancer":
         tmp_data = expression_data[~(expression_data["Stage"].isin({"Normal", "Primary"}))]
         color = "tab:pink"
@@ -50,7 +50,7 @@ def scatter(stage, MSP, gene):
 def joint(stage, MSP, gene):
     if stage == "All":
         tmp_data = expression_data
-        color = "blue"
+        color = "tab:blue"
     elif stage == "Precancer":
         tmp_data = expression_data[~(expression_data["Stage"].isin({"Normal", "Primary"}))]
         color = "tab:pink"

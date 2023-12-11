@@ -51,7 +51,7 @@ def run(gene: str, MSP: str) -> str:
         selected_data = data.loc[(data[MSP] == "Lower") & (data["Patient"] == patient), ["Stage"] + step00.sharing_strategy]
         mutation_set = set(selected_data.loc[(selected_data["Stage"] == stage_list[0]), step00.sharing_strategy].itertuples(index=False, name=None)) & set(selected_data.loc[(selected_data["Stage"] == stage_list[1]), step00.sharing_strategy].itertuples(index=False, name=None))
         for mutation in mutation_set:
-            matplotlib.pyplot.axvline(numpy.mean(mutation[1:3]), ymin=0, ymax=0.5, linestyle=":", color="blue", alpha=0.3, zorder=0)
+            matplotlib.pyplot.axvline(numpy.mean(mutation[1:3]), ymin=0, ymax=0.5, linestyle=":", color="tab:blue", alpha=0.3, zorder=0)
 
         selected_data = data.loc[(data[MSP] == "Higher") & (data["Patient"] == patient)]
         mutation_set = set(selected_data.loc[(selected_data["Stage"] == stage_list[0]), step00.sharing_strategy].itertuples(index=False, name=None)) & set(selected_data.loc[(selected_data["Stage"] == stage_list[1]), step00.sharing_strategy].itertuples(index=False, name=None))
