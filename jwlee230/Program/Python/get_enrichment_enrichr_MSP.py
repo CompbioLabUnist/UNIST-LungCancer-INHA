@@ -40,7 +40,7 @@ def run(file_name, genes, color):
         raw_data = get_response(f"{step00.pathway_enrichment_url}?userListId={gene_set_data['userListId']}&backgroundType={args.DB}", None)
         enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=step00.pathway_wanted_columns)
         enrichment_data = enrichment_data.loc[(enrichment_data["Adjusted p-value"] < args.padj)]
-        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + "({0})".format(len(x))), enrichment_data["Overlapping genes"]))
+        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + f"({len(x)})"), enrichment_data["Overlapping genes"]))
         enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
     else:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns)
@@ -60,14 +60,14 @@ def run(file_name, genes, color):
         rows = enrichment_data.shape[0]
         drawing_data = enrichment_data.iloc[:10, :]
 
-        ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(Padj)"], color=color)
+        ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(P)"], color=color)
 
         for index, row in drawing_data.iterrows():
             matplotlib.pyplot.text(0, index, f"{row['Term name']}: {row['Overlapping genes...']}", color="k", horizontalalignment="left", verticalalignment="center")
 
         matplotlib.pyplot.yticks([])
         matplotlib.pyplot.xlabel("-log10(Padj)")
-        matplotlib.pyplot.ylabel("{0} pathways".format(rows))
+        matplotlib.pyplot.ylabel(f"{rows} pathways")
         matplotlib.pyplot.ylim(-1, 10)
         matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black", alpha=0.5)
         ax.invert_yaxis()
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
-    stages = step00.long_sample_type_list + ["All"]
+    stages = step00.long_sample_type_list + ["Precancer", "All"]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)

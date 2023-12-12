@@ -79,6 +79,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
     parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
+
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -120,7 +121,7 @@ if __name__ == "__main__":
 
     figures = list()
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:1]))):
+        for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns))):
             if f"{stage}-{MSP}-log10(abs(slope))" not in set(input_data.columns):
                 continue
 
