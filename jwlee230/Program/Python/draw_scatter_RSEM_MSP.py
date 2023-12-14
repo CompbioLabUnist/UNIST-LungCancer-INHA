@@ -61,7 +61,7 @@ def joint(stage, MSP, gene):
     r = input_data.loc[gene, f"{stage}-{MSP}-r"]
     slope = input_data.loc[gene, f"{stage}-{MSP}-slope"] if (r > 0) else (-1 * input_data.loc[gene, f"{stage}-{MSP}-slope"])
 
-    g = seaborn.jointplot(data=tmp_data, x=MSP, y=gene, color=color, kind="reg", height=24, ratio=5)
+    g = seaborn.jointplot(data=tmp_data, x=MSP, y=gene, color=color, kind="reg", height=18, ratio=5)
     g.fig.text(0.5, 0.5, f"r={r:.3f}, slope={slope:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
     fig_name = f"Joint-{stage}-{MSP}-{gene}.pdf"
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
 
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 

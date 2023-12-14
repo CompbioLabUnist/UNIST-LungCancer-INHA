@@ -77,9 +77,9 @@ def run(file_name, genes, color):
     fig.savefig(tmp_files[-1])
     matplotlib.pyplot.close(fig)
 
-    """
     tmp_files.append(f"{file_name}.tsv")
     enrichment_data.loc[:, step00.pathway_wanted_columns].to_csv(tmp_files[-1], sep="\t", index=False)
+    """
     rows = enrichment_data.shape[0]
     enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
     if rows > 3:
