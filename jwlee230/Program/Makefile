@@ -3,9 +3,9 @@ DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
-MEMS = 100
-PARALLEL = 15
+CPUS = 30
+MEMS = 300
+PARALLEL = 5
 PWD := $(shell pwd)
 TOOLS =
 DOCKER = docker run --rm $(ENV_OPTS) $(VOLUME_OPTS) $(RUN_OPTS) $(IMAGE_NAME)
@@ -60,8 +60,8 @@ LUNG_GSE131907_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_
 LUNG_GSE162498_11_TUMORS_RDS = Data/Lung_SingleCell/GSE162498/GSE162498_NSCLC_CD3_11tumors.Rds
 LUNG_GSE179994_ANNOTATION_TXT = Data/Lung_SingleCell/GSE179994/GSE179994_all.scTCR.tsv
 LUNG_GSE179994_MATRIX_RDS = Data/Lung_SingleCell/GSE179994/GSE179994_all.Tcell.rawCounts.rds
-KNOWN_GENE_GTF_GZ = $(KNOWN_GENE_GTF).gz
 KNOWN_GENE_GTF = Data/hg38.gtf
+KNOWN_GENE_GTF_GZ = $(KNOWN_GENE_GTF).gz
 ARRIBA_STAR_DIR = Tools/arriba_v2.1.0/STAR_index_hg38_RefSeq_hg38
 ARRIBA_DATABASE_DIR = Tools/arriba_v2.1.0/database
 ARRIBA_BLACKLIST_TSV = $(ARRIBA_DATABASE_DIR)/blacklist_hg38_GRCh38_v2.1.0.tsv.gz
@@ -5104,7 +5104,7 @@ Output/MutationSharedProportion/WTS-Bowtie2.tsv: Python/calculate_MutationShared
 # step59-Bowtie2: Output/WTS/Bowtie2/Reference/Bowtie2.1.bt2 $(addprefix Output/WTS/Bowtie2/,$(addsuffix .sam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.dm-tmp.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.bai,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.table,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
 step59-Bowtie2: $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bam,$(WTS_ID))) $(addprefix Output/WTS/Bowtie2/,$(addsuffix .Sort.MarkDuplicate.SplitNCigarReads.BQSR.bai,$(WTS_ID)))
 step59-PON: $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_NORMAL_ID))) $(addprefix Output/PanelOfNormal/WTS-Bowtie2/,$(addsuffix .PASS.vcf.idx,$(WTS_NORMAL_ID))) Output/PanelOfNormal/WTS-Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.WTS-Bowtie2.vcf.gz
-step59-Mutect2: $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-Bowtie2-SQC.venn.tar Output/Mutect2/WTS-Bowtie2-ADC.venn.tar Output/MutationSharedProportion/WTS-Bowtie2.tsv
+step59-Mutect2: $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .filter.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.vcf,$(WTS_TUMOR_ID))) $(addprefix Output/Mutect2/WTS-Bowtie2/,$(addsuffix .PASS.maf,$(WTS_TUMOR_ID))) Output/Mutect2/WTS-Bowtie2-SQC.venn.tar Output/Mutect2/WTS-Bowtie2-ADC.venn.tar
 step59: step59-Bowtie2 step59-PON step59-Mutect2
 .PHONY: step59-Bowtie2 step59-PON step59-Mutect2 step59
 
