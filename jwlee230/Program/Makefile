@@ -6215,6 +6215,19 @@ step78-SQC-volcano: Output/GeneSet/Volcano/STAR.SQC.KEGG_OXIDATIVE_PHOSPHORYLATI
 step78: step78-geneset step78-SQC-stage step78-ADC-stage step78-SQC-MSP step78-SQC-volcano
 .PHONY: step78-geneset step78-SQC-stage step78-ADC-stage step78-SQC-MSP step78-SQC-volcano step78
 
+# Step 79 (Clinical characteristics)
+Output/Clinical:
+	mkdir -p $@
+
+Output/Clinical/BWA-SQC.tar: Python/get_clinical.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/Clinical/Bowtie2-SQC.tar: Python/get_clinical.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
+
+step79: Output/Clinical/BWA-SQC.tar Output/Clinical/Bowtie2-SQC.tar
+.PHONY: step79
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
