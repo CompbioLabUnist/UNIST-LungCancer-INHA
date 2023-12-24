@@ -12,7 +12,7 @@ import pandas
 import tqdm
 import step00
 
-survivals = ["Recurrence-Free Survival", "Overall Survival"]
+survivals = ["Recurrence-Free Survival", "Overall Survival", "Pack-Year"]
 
 
 def get_middle(values):
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
         seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, ax=ax)
 
-        matplotlib.pyplot.ylabel(f"{survival} (days)")
+        matplotlib.pyplot.ylabel(survival)
         matplotlib.pyplot.text(get_middle(clinical_data[MSP]), get_middle(clinical_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.tight_layout()
 
