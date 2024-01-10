@@ -45,7 +45,7 @@ def run(file_name, genes, color):
     else:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(64, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     if enrichment_data.empty:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(step00.pathway_wanted_columns))])
@@ -56,20 +56,17 @@ def run(file_name, genes, color):
     else:
         enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
+        enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
 
         rows = enrichment_data.shape[0]
-        drawing_data = enrichment_data.iloc[:10, :]
 
-        ax.barh(range(drawing_data.shape[0]), drawing_data["-log10(P)"], color=color)
+        seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief")
 
-        for index, row in drawing_data.iterrows():
-            matplotlib.pyplot.text(0, index, f"{row['Term name']}: {row['Overlapping genes...']}", color="k", horizontalalignment="left", verticalalignment="center")
-
-        matplotlib.pyplot.yticks([])
+        matplotlib.pyplot.grid(True)
+        matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
         matplotlib.pyplot.xlabel("-log10(Padj)")
         matplotlib.pyplot.ylabel(f"{rows} pathways")
         matplotlib.pyplot.ylim(-1, 10)
-        matplotlib.pyplot.axvline(x=-1 * numpy.log10(args.padj), linestyle="--", color="black", alpha=0.5)
         ax.invert_yaxis()
 
     matplotlib.pyplot.tight_layout()
