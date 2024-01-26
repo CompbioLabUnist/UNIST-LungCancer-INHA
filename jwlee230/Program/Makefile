@@ -1473,10 +1473,19 @@ Output/RSEM/Enrichment/%.SQC-Primary.Both.Down.GO.tsv Output/RSEM/Enrichment/%.S
 Output/RSEM/Enrichment/%.KEGG.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Enrichment/%.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Enrichment/%.MSigDB.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Enrichment/%.Pre-only.MSigDB.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Enrichment/%.GO.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "GO_Molecular_Function_2021" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Enrichment/%.Pre-only.GO.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "GO_Molecular_Function_2021" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Scatter/%.SQC.tar: Python/draw_scatter_RSEM_MSP.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
