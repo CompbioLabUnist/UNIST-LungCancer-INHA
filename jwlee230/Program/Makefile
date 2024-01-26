@@ -6240,6 +6240,13 @@ Output/Clinical/Bowtie2-SQC.tar: Python/get_clinical.py $(addprefix Output/Mutec
 step79: Output/Clinical/BWA-SQC.tar Output/Clinical/Bowtie2-SQC.tar
 .PHONY: step79
 
+# Step 80 (Shared mutation)
+Output/SharedMutation:
+	mkdir -p $@
+
+Output/SharedMutation/BWA.tsv: Python/count_SharedMutation.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/SharedMutation
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
