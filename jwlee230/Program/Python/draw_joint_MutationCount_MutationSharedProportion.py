@@ -54,7 +54,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
+    clinical_data: pandas.DataFrame = step00.get_clinical_data(args.clinical)
     if args.SQC:
         clinical_data = clinical_data.loc[(clinical_data["Histology"] == "SQC")]
     elif args.ADC:

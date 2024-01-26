@@ -39,7 +39,7 @@ def run(MSP: str, gene: str) -> str:
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, innter="box", linewidth=5, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))], data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+    statannotations.Annotator.Annotator(ax, [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))], data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel(f"{gene} expression")
     matplotlib.pyplot.tight_layout()
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.5)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=10)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
     parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
@@ -113,8 +113,9 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     genes = set()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
-        genes |= set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & ((input_data[f"Precancer-{MSP}-r"] > args.r) | (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r)))].index)
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
+        genes |= set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index)
+        genes |= set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index)
     print(len(genes), sorted(genes))
 
     figures = list()
