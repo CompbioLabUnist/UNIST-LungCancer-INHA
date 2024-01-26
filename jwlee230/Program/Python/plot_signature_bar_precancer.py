@@ -78,7 +78,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP, signature in tqdm.tqdm(list(itertools.product(step00.sharing_columns, signatures))):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
         lower_precancer_list = list(clinical_data.loc[(clinical_data[MSP] <= lower_bound), f"{MSP}-sample"])
@@ -87,20 +87,22 @@ if __name__ == "__main__":
         lower_primary_list = list(map(step00.get_paired_primary, lower_precancer_list))
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
-        fig, axs = matplotlib.pyplot.subplots(figsize=(64, 36), nrows=2)
+        fig, axs = matplotlib.pyplot.subplots(figsize=(18, 36), nrows=2)
 
-        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[0])
-        statannotations.Annotator.Annotator(axs[0], [((signature, "Precancer"), (signature, "Primary")) for signature in signatures], data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[0])
+        statannotations.Annotator.Annotator(axs[0], [((signature, "Precancer"), (signature, "Primary"))], data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[1])
-        statannotations.Annotator.Annotator(axs[1], [((signature, "Precancer"), (signature, "Primary")) for signature in signatures], data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=signatures, hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[1])
+        statannotations.Annotator.Annotator(axs[1], [((signature, "Precancer"), (signature, "Primary"))], data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         axs[0].set_xlabel("")
+        axs[0].set_ylabel(f"{signature} in MSP-lower")
         axs[1].set_xlabel("")
+        axs[1].set_ylabel(f"{signature} in MSP-higher")
 
         matplotlib.pyplot.tight_layout()
 
-        figures.append(f"{MSP}.pdf")
+        figures.append(f"{MSP}_{signature}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
