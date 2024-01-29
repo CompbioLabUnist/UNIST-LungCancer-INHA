@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
         raw_output_data += list(map(lambda x: x + (precancer_sample, primary_sample, patient), list(precancer_set & primary_set)))
 
-    output_data = pandas.DataFrame(raw_output_data, columns=["Hugo_Symbol"] + step00.sharing_strategy + [step00.nonsynonymous_column, "Precancer", "Primary", "Patient"]).sort_values(["Hugo_Symbol", "Start_Position", "End_Position"], ignore_index=True)
+    output_data = pandas.DataFrame(raw_output_data, columns=["Hugo_Symbol"] + step00.sharing_strategy + [step00.nonsynonymous_column, "Precancer", "Primary", "Patient"]).sort_values(["Start_Position", "End_Position"]).sort_values("Chromosome", key=lambda x: x.apply(lambda y: (step00.chromosome_list.index(y), y) if (y in step00.chromosome_list) else (len(step00.chromosome_list), y)), ignore_index=True, kind="mergesort")
     output_data.index.name = "Index"
     print(output_data)
     output_data.to_csv(args.output, sep="\t", index=True)
