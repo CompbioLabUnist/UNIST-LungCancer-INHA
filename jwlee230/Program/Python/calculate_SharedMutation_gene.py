@@ -59,7 +59,6 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Shared mutation information TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data w/ Mutation Shared Proportion TSV file", type=str)
-    parser.add_argument("cgc", help="CGC gene list CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
@@ -75,8 +74,6 @@ if __name__ == "__main__":
         raise ValueError("Input must end with .TSV!!")
     elif not args.clinical.endswith(".tsv"):
         raise ValueError("Clinical must end with .TSV!!")
-    elif not args.cgc.endswith(".csv"):
-        raise ValueError("CGC must end with .CSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
@@ -99,10 +96,6 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     print(len(patients), sorted(patients))
-
-    cgc_data = pandas.read_csv(args.cgc, index_col=0)
-    cgc_gene = set(cgc_data.index)
-    print(cgc_data)
 
     input_data = input_data.loc[(input_data["Patient"].isin(patients))]
     print(input_data)
