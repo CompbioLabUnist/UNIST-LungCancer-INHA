@@ -164,7 +164,7 @@ if __name__ == "__main__":
     print(stage_list)
 
     files: typing.List[str] = list()
-    for MSP, stage in tqdm.tqdm(list(itertools.product(step00.sharing_columns[:1], stage_list))):
+    for MSP, stage in tqdm.tqdm(list(itertools.product(step00.sharing_columns, stage_list))):
         if "SYN" in MSP:
             data = mutect_data.loc[(mutect_data["Stage"] == stage)]
         else:
