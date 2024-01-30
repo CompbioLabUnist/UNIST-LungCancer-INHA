@@ -79,7 +79,6 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
     parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
-
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     args = parser.parse_args()
@@ -113,7 +112,7 @@ if __name__ == "__main__":
         expression_data[column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), column], list(expression_data.index)))
     print(expression_data)
 
-    stages = step00.long_sample_type_list + ["Precancer", "All"]
+    stages = ["Precancer", "Primary"]
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -125,7 +124,7 @@ if __name__ == "__main__":
             if f"{stage}-{MSP}-log10(abs(slope))" not in set(input_data.columns):
                 continue
 
-            genes = list(input_data.loc[(input_data[f"{stage}-{MSP}-slope"] > args.slope) & ((input_data[f"{stage}-{MSP}-r"] > args.r) | (input_data[f"{stage}-{MSP}-r"] < (-1 * args.r)))].index)
+            genes = list(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & ((input_data[f"Precancer-{MSP}-r"] > args.r) | (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r)))].index)
 
             figures += list(pool.starmap(scatter, [(stage, MSP, gene) for gene in genes]))
             figures += list(pool.starmap(joint, [(stage, MSP, gene) for gene in genes]))
