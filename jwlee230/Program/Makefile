@@ -6250,13 +6250,27 @@ Output/SharedMutation/BWA.tsv: Python/count_SharedMutation.py $(addprefix Output
 Output/SharedMutation/Bowtie2.tsv: Python/count_SharedMutation.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/SharedMutation
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/SharedMutation/%.SQC.gene.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log
+Output/SharedMutation/%.SQC.gene.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step80: Output/SharedMutation/BWA.tsv Output/SharedMutation/Bowtie2.tsv Output/SharedMutation/BWA.SQC.gene.tar Output/SharedMutation/Bowtie2.SQC.gene.tar
 .PHONY: step80
 
 # Step 81 (Shared mutation & CNV)
+Output/SharedMutation_CNV:
+	mkdir -p $@
+
+Output/SharedMutation_CNV/%.SQC.Sequenza.tar: Python/plot_SharedMutation_CNV.py Output/SharedMutation/%.tsv Output/Sequenza/%.segment.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/SharedMutation_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/SharedMutation_CNV/%.SQC.PureCN.tar: Python/plot_SharedMutation_CNV.py Output/SharedMutation/%.tsv Output/PureCN/%.segment.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/SharedMutation_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/SharedMutation_CNV/%.SQC.CNVkit.tar: Python/plot_SharedMutation_CNV.py Output/SharedMutation/%.tsv Output/CNVkit/%.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/SharedMutation_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "log2" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step81: Output/SharedMutation_CNV/BWA.SQC.Sequenza.tar Output/SharedMutation_CNV/BWA.SQC.PureCN.tar Output/SharedMutation_CNV/BWA.SQC.CNVkit.tar Output/SharedMutation_CNV/Bowtie2.SQC.Sequenza.tar Output/SharedMutation_CNV/Bowtie2.SQC.PureCN.tar Output/SharedMutation_CNV/Bowtie2.SQC.CNVkit.tar
+.PHONY: step81
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
