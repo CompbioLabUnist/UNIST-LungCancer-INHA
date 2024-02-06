@@ -4,6 +4,7 @@ get_enrichment_enrichr_MSP_2.py: get enrichment information with Enrichr between
 import argparse
 import json
 import tarfile
+import typing
 import time
 import matplotlib
 import matplotlib.pyplot
@@ -30,7 +31,7 @@ def get_response(url, payload):
             return data
 
 
-def run(file_name, genes, color):
+def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]:
     tmp_files = list()
 
     if genes:
@@ -121,26 +122,26 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     files = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
-        primary_NS_data = input_data.loc[((input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) | (input_data[f"{primary_stage}-{MSP}-r"] > args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)]
-        selected_data = input_data.loc[primary_NS_data.index, :]
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
+        primary_up_gene_set = set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index)
+        primary_down_gene_set = set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index)
 
-        genes = list(selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_up_gene_set)
         files += run(f"{precancer_stage}-{MSP}-MT-Up", genes, "tab:pink")
 
-        genes = list(selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_down_gene_set)
         files += run(f"{precancer_stage}-{MSP}-MT-Down", genes, "tab:cyan")
 
     input_data = input_data.loc[list(filter(lambda x: not x.startswith("MT-"), list(input_data.index)))]
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
-        primary_NS_data = input_data.loc[((input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) | (input_data[f"{primary_stage}-{MSP}-r"] > args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)]
-        selected_data = input_data.loc[primary_NS_data.index, :]
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
+        primary_up_gene_set = set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index)
+        primary_down_gene_set = set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index)
 
-        genes = list(selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_up_gene_set)
         files += run(f"{precancer_stage}-{MSP}-noMT-Up", genes, "tab:pink")
 
-        genes = list(selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_down_gene_set)
         files += run(f"{precancer_stage}-{MSP}-noMT-Down", genes, "tab:cyan")
 
     with tarfile.open(args.output, "w") as tar:

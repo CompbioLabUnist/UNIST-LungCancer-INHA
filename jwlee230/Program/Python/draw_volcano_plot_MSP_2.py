@@ -44,12 +44,12 @@ if __name__ == "__main__":
     for MSP in tqdm.tqdm(step00.sharing_columns):
         input_data.sort_values(by=f"{precancer_stage}-{MSP}-importance", ascending=False, inplace=True)
 
-        PRI_NS_gene = input_data.loc[(((-1 * args.r) < input_data[f"{primary_stage}-{MSP}-r"]) & (input_data[f"{primary_stage}-{MSP}-r"] < args.r)) | (input_data[f"{primary_stage}-{MSP}-slope"] <= args.slope)]
-        selected_data = input_data.loc[PRI_NS_gene.index, :]
+        PRI_NOTup_data = input_data.loc[~((input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope))]
+        PRI_NOTdown_data = input_data.loc[~((input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope))]
 
-        up_gene = selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)]
-        down_gene = selected_data.loc[(selected_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (selected_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)]
-        NS_gene = selected_data.loc[(((-1 * args.r) < selected_data[f"{precancer_stage}-{MSP}-r"]) & (selected_data[f"{precancer_stage}-{MSP}-r"] < args.r)) | (selected_data[f"{precancer_stage}-{MSP}-slope"] <= args.slope)]
+        up_gene = PRI_NOTup_data.loc[(PRI_NOTup_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (PRI_NOTup_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)]
+        down_gene = PRI_NOTdown_data.loc[(PRI_NOTdown_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (PRI_NOTdown_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)]
+        NS_gene = input_data.loc[(((-1 * args.r) < input_data[f"{precancer_stage}-{MSP}-r"]) & (input_data[f"{precancer_stage}-{MSP}-r"] < args.r)) | (input_data[f"{precancer_stage}-{MSP}-slope"] <= args.slope)]
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
