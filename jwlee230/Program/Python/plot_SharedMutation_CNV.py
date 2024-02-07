@@ -89,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("--watching", help="Watching column name", type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)

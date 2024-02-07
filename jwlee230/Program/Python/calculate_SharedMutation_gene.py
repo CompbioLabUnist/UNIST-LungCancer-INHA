@@ -59,9 +59,10 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Shared mutation information TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data w/ Mutation Shared Proportion TSV file", type=str)
+    parser.add_argument("cgc", help="CGC gene CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -74,6 +75,8 @@ if __name__ == "__main__":
         raise ValueError("Input must end with .TSV!!")
     elif not args.clinical.endswith(".tsv"):
         raise ValueError("Clinical must end with .TSV!!")
+    elif not args.cgc.endswith(".csv"):
+        raise ValueError("CGC must end with .CSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
@@ -103,7 +106,10 @@ if __name__ == "__main__":
     filtered_data = input_data.loc[(input_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(filtered_data)
 
-    gene_list = sorted(set(input_data["Hugo_Symbol"]))
+    CGC_data = pandas.read_csv(args.cgc, index_col=0)
+    print(CGC_data)
+
+    gene_list = sorted(set(input_data["Hugo_Symbol"]) & set(CGC_data.index))
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
@@ -143,15 +149,15 @@ if __name__ == "__main__":
         exact_test_data = exact_test_data.loc[(exact_test_data > (-1 * numpy.log10(args.p))).all(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
         heatmap_data = heatmap_data.loc[exact_test_data.index, :]
 
-        fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(24, 24), gridspec_kw={"width_ratios": [lower_patients_length + 5, len(exact_test_data.columns) + 5, higher_patients_length + 5]})
+        fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(24 * 3, 24), gridspec_kw={"width_ratios": [lower_patients_length + 5, len(exact_test_data.columns) + 5, higher_patients_length + 5]})
 
         seaborn.heatmap(data=heatmap_data.loc[:, lower_precancer_list], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=lower_patients, yticklabels=True, fmt="d", annot=True, ax=axs[0])
-        axs[0].set_xlabel("Lower")
+        axs[0].set_xlabel("MSP-Lower")
 
         seaborn.heatmap(data=exact_test_data, cmap="Reds", vmin=0, center=-1 * numpy.log10(args.p), cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
         seaborn.heatmap(data=heatmap_data.loc[:, higher_precancer_list], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=higher_patients, yticklabels=True, fmt="d", annot=True, ax=axs[2])
-        axs[2].set_xlabel("Higher")
+        axs[2].set_xlabel("MSP-Higher")
 
         matplotlib.pyplot.tight_layout()
         figures.append(f"{MSP}.pdf")

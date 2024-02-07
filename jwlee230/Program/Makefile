@@ -6250,7 +6250,7 @@ Output/SharedMutation/BWA.tsv: Python/count_SharedMutation.py $(addprefix Output
 Output/SharedMutation/Bowtie2.tsv: Python/count_SharedMutation.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/SharedMutation
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/SharedMutation/%.SQC.gene.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv | build.log
+Output/SharedMutation/%.SQC.gene.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step80: Output/SharedMutation/BWA.tsv Output/SharedMutation/Bowtie2.tsv Output/SharedMutation/BWA.SQC.gene.tar Output/SharedMutation/Bowtie2.SQC.gene.tar
