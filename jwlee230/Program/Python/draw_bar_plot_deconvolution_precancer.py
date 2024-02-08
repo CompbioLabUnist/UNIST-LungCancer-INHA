@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Deconvolution result TSV file (not necessarily TSV)", type=str)
     parser.add_argument("clinical", help="Clinical data w/ Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -90,9 +90,9 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=drawing_data, x=MSP, y="Proportion", order=["Lower", "Higher"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
-
         statannotations.Annotator.Annotator(ax, [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))], data=drawing_data, x=MSP, y="Proportion", order=["Lower", "Higher"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
+        matplotlib.pyplot.ylabel(f"{cell} proportion")
         matplotlib.pyplot.tight_layout()
 
         cell_name = cell[:]

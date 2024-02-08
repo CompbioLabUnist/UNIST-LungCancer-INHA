@@ -13,6 +13,7 @@ chromosome_full_list = chromosome_list + ["chrX"]
 big = 10 ** 6
 small = 10 ** 3
 WES_length = 36995809
+epsilon = 2.220446049250313e-16
 
 matplotlib_parameters = {"font.size": 50, "axes.labelsize": 50, "axes.titlesize": 75, "xtick.labelsize": 50, "ytick.labelsize": 50, "font.family": "Arial", "legend.fontsize": 30, "legend.title_fontsize": 30, "figure.dpi": 200, "pdf.fonttype": 42, "ps.fonttype": 42}
 

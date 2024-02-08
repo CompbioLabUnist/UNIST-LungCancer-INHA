@@ -124,7 +124,11 @@ if __name__ == "__main__":
             if f"{stage}-{MSP}-log10(abs(slope))" not in set(input_data.columns):
                 continue
 
-            genes = list(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & ((input_data[f"Precancer-{MSP}-r"] > args.r) | (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r)))].index)
+            NS_genes = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] <= args.slope) & (input_data[f"Primary-{MSP}-p"] >= 0.9)].index)
+
+            genes = list()
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) & NS_genes)
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) & NS_genes)
 
             figures += list(pool.starmap(scatter, [(stage, MSP, gene) for gene in genes]))
             figures += list(pool.starmap(joint, [(stage, MSP, gene) for gene in genes]))

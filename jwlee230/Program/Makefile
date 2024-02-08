@@ -238,7 +238,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78
+latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -1102,6 +1102,9 @@ Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%
 Output/RSEM/DEG/%.SQC.DEG.MSP.tsv: Python/calculate_DEG_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/%.SQC.DEG.MSP-ratio.tsv: Python/calculate_DEG_MSP-ratio.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG-List/%.Up.tex Output/RSEM/DEG-List/%.Up.tsv: Python/select_DEGs.py Output/RSEM/DEG/%.DEG.tsv | Output/RSEM/DEG-List build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $@)) --up 1> $@.stdout 2> $@.stderr
 
@@ -1314,6 +1317,9 @@ Output/RSEM/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_MSP.py Output/RSEM
 Output/RSEM/Plots/Volcano/%.MSP-PRE.tar: Python/draw_volcano_plot_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Plots/Volcano build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/Volcano/%.MSP-ratio.tar: Python/draw_volcano_plot_MSP-ratio.py Output/RSEM/DEG/%.DEG.MSP-ratio.tsv | Output/RSEM/Plots/Volcano build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/Violin/%.ADC.violin.tar: Python/draw_violin_plots.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
@@ -1489,6 +1495,9 @@ Output/RSEM/Enrichment/%.Pre-only.GO.tar: Python/get_enrichment_enrichr_MSP_2.py
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "GO_Molecular_Function_2021" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Scatter/%.SQC.tar: Python/draw_scatter_RSEM_MSP.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Scatter/%.SQC-ratio.tar: Python/draw_scatter_RSEM_MSP-ratio.py Output/RSEM/DEG/%.SQC.DEG.MSP-ratio.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Bar/%.SQC.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log

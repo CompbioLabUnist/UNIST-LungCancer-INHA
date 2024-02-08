@@ -2,13 +2,13 @@
 draw_bar_plots_MSP_sample.py: draw bar plots upon DEG with MSP with precancer vs. primary
 """
 import argparse
-import itertools
 import multiprocessing
 import tarfile
 import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
@@ -36,6 +36,14 @@ def run(MSP: str, gene: str) -> str:
 
     output_data = pandas.DataFrame(raw_output_data, columns=["Sample", "Lower/Higher", "PRE/PRI", "Expression"])
 
+    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Precancer"), "Expression"])[1]
+    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+
+    if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
+        return ""
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, innter="box", linewidth=5, cut=1, ax=ax)
@@ -60,7 +68,7 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
     parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
@@ -112,15 +120,16 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    genes = set()
-    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
-        genes |= set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index)
-        genes |= set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index)
-    print(len(genes), sorted(genes))
-
     figures = list()
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = list(pool.starmap(run, itertools.product(step00.sharing_columns, sorted(genes))))
+        for MSP in tqdm.tqdm(step00.sharing_columns):
+            NS_genes = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] <= args.slope) & ((input_data[f"Primary-{MSP}-r"] >= (-1 * args.r)) & (input_data[f"Primary-{MSP}-r"] <= args.r))].index)
+
+            genes = list()
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) & NS_genes)
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) & NS_genes)
+
+            figures += list(filter(None, pool.starmap(run, [(MSP, gene) for gene in genes])))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(figures):
