@@ -66,8 +66,8 @@ if __name__ == "__main__":
     parser.add_argument("expression", help="Expression TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.4)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=7.5)
     parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
@@ -123,11 +123,12 @@ if __name__ == "__main__":
     figures = list()
     with multiprocessing.Pool(args.cpus) as pool:
         for MSP in tqdm.tqdm(step00.sharing_columns):
-            NS_genes = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] <= args.slope) & ((input_data[f"Primary-{MSP}-r"] >= (-1 * args.r)) & (input_data[f"Primary-{MSP}-r"] <= args.r))].index)
+            primary_POS_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] > args.r)])
+            primary_NEG_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] < (-1 * args.r))])
 
             genes = list()
-            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) & NS_genes)
-            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) & NS_genes)
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
+            genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
 
             figures += list(filter(None, pool.starmap(run, [(MSP, gene) for gene in genes])))
 

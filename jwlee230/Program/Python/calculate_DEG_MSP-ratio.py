@@ -18,9 +18,9 @@ def correlation(MSP: str, gene: str):
     primary_list = list(map(step00.get_paired_primary, precancer_list))
 
     MSP_list = input_data.loc[precancer_list, MSP]
-    precancer = numpy.array(input_data.loc[precancer_list, gene])
-    primary = numpy.array(input_data.loc[primary_list, gene])
-    ratio_list = numpy.divide(precancer, primary, where=(primary > 0))
+    precancer = numpy.array(input_data.loc[precancer_list, gene]) + step00.epsilon
+    primary = numpy.array(input_data.loc[primary_list, gene]) + step00.epsilon
+    ratio_list = numpy.divide(precancer, primary)
 
     r = scipy.stats.linregress(MSP_list, ratio_list)
     return list(r) + [r.intercept_stderr]

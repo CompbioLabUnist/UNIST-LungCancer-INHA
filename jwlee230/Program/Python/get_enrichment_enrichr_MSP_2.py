@@ -58,15 +58,12 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
         enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
 
-        rows = enrichment_data.shape[0]
-
         seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief")
 
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
         matplotlib.pyplot.xlabel("-log10(Padj)")
-        matplotlib.pyplot.ylabel(f"{rows} pathways")
-        matplotlib.pyplot.ylim(-1, 10)
+        matplotlib.pyplot.ylabel(f"{enrichment_data.shape[0]} pathways")
         ax.invert_yaxis()
 
     matplotlib.pyplot.tight_layout()
@@ -94,8 +91,8 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Input DEG-MSP TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--DB", help="Database name", choices=step00.pathway_gene_set_library, required=True)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.4)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=7.5)
     parser.add_argument("--padj", help="P-value threshold", type=float, default=0.05)
 
     args = parser.parse_args()
@@ -123,23 +120,19 @@ if __name__ == "__main__":
 
     files = list()
     for MSP in tqdm.tqdm(step00.sharing_columns):
-        primary_NS_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] <= args.slope) & ((input_data[f"Primary-{MSP}-r"] >= (-1 * args.r)) & (input_data[f"Primary-{MSP}-r"] <= args.r))].index)
-
-        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) & primary_NS_gene_set)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-MT-Up", genes, "tab:pink")
 
-        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_NS_gene_set)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-MT-Down", genes, "tab:cyan")
 
     input_data = input_data.loc[list(filter(lambda x: not x.startswith("MT-"), list(input_data.index)))]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
-        primary_NS_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] <= args.slope) & ((input_data[f"Primary-{MSP}-r"] >= (-1 * args.r)) & (input_data[f"Primary-{MSP}-r"] <= args.r))].index)
-
-        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) & primary_NS_gene_set)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-noMT-Up", genes, "tab:pink")
 
-        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - primary_NS_gene_set)
+        genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] < (-1 * args.r)) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-noMT-Down", genes, "tab:cyan")
 
     with tarfile.open(args.output, "w") as tar:

@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     parser.add_argument("input", help="Input DEG-MSP TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
-    parser.add_argument("--r", help="r-value threshold", type=float, default=0.3)
-    parser.add_argument("--slope", help="Slope threshold", type=float, default=5)
+    parser.add_argument("--r", help="r-value threshold", type=float, default=0.4)
+    parser.add_argument("--slope", help="Slope threshold", type=float, default=7.5)
 
     args = parser.parse_args()
 
