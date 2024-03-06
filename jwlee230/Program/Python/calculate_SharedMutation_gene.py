@@ -93,11 +93,12 @@ if __name__ == "__main__":
     print(clinical_data)
 
     if args.SQC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "SQC")].index)
+        clinical_data = clinical_data.loc[(clinical_data["Histology"] == "SQC")]
     elif args.ADC:
-        patients = set(clinical_data.loc[(clinical_data["Histology"] == "ADC")].index)
+        clinical_data = clinical_data.loc[(clinical_data["Histology"] == "ADC")]
     else:
         raise Exception("Something went wrong!!")
+    patients = set(clinical_data.index)
     print(len(patients), sorted(patients))
 
     input_data = input_data.loc[(input_data["Patient"].isin(patients))]
@@ -109,7 +110,8 @@ if __name__ == "__main__":
     CGC_data = pandas.read_csv(args.cgc, index_col=0)
     print(CGC_data)
 
-    gene_list = sorted(set(input_data["Hugo_Symbol"]) & set(CGC_data.index))
+    # gene_list = sorted(set(input_data["Hugo_Symbol"]) & set(CGC_data.index))
+    gene_list = sorted(set(input_data["Hugo_Symbol"]))
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
@@ -117,7 +119,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
         clinical_data = clinical_data.sort_values(MSP)
 
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
@@ -146,7 +148,7 @@ if __name__ == "__main__":
             for derivation in tqdm.tqdm(list(exact_test_data.columns), leave=False):
                 exact_test_data[derivation] = -1 * numpy.log10(numpy.array(pool.starmap(query_exact, [(gene, derivation) for gene in list(exact_test_data.index)])))
 
-        exact_test_data = exact_test_data.loc[(exact_test_data > (-1 * numpy.log10(args.p))).all(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
+        exact_test_data = exact_test_data.loc[(exact_test_data["Fisher"] > (-1 * numpy.log10(args.p)))].sort_values(by="Fisher", kind="stable", ascending=False)
         heatmap_data = heatmap_data.loc[exact_test_data.index, :]
 
         fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(24 * 3, 24), gridspec_kw={"width_ratios": [lower_patients_length + 5, len(exact_test_data.columns) + 5, higher_patients_length + 5]})
