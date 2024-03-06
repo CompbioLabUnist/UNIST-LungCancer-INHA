@@ -2,6 +2,7 @@
 draw_bar_plots_MSP_sample.py: draw bar plots upon DEG with MSP with precancer vs. primary
 """
 import argparse
+import itertools
 import multiprocessing
 import tarfile
 import matplotlib
@@ -25,12 +26,18 @@ def run(MSP: str, gene: str) -> str:
 
     lower_precancer_list = list(filter(lambda x: x in expression_samples, list(clinical_data.loc[(clinical_data[MSP] <= lower_bound), f"{MSP}-sample"])))
     higher_precancer_list = list(filter(lambda x: x in expression_samples, list(clinical_data.loc[(clinical_data[MSP] >= higher_bound), f"{MSP}-sample"])))
+
+    lower_normal_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_normal, lower_precancer_list))))
+    higher_normal_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_normal, higher_precancer_list))))
+
     lower_primary_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_primary, lower_precancer_list))))
     higher_primary_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_primary, higher_precancer_list))))
 
     raw_output_data = list()
+    raw_output_data += [(sample, "Lower", "Normal", expression_data.loc[sample, gene]) for sample in lower_normal_list]
     raw_output_data += [(sample, "Lower", "Precancer", expression_data.loc[sample, gene]) for sample in lower_precancer_list]
     raw_output_data += [(sample, "Lower", "Primary", expression_data.loc[sample, gene]) for sample in lower_primary_list]
+    raw_output_data += [(sample, "Higher", "Normal", expression_data.loc[sample, gene]) for sample in higher_normal_list]
     raw_output_data += [(sample, "Higher", "Precancer", expression_data.loc[sample, gene]) for sample in higher_precancer_list]
     raw_output_data += [(sample, "Higher", "Primary", expression_data.loc[sample, gene]) for sample in higher_primary_list]
 
@@ -44,12 +51,17 @@ def run(MSP: str, gene: str) -> str:
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
         return ""
 
+    print("Lower:", sorted(lower_precancer_list))
+    print("Higher:", sorted(higher_precancer_list))
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, innter="box", linewidth=5, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))], data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Normal", "Precancer", "Primary"], palette={"Normal": "cyan", "Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+    statannotations.Annotator.Annotator(ax, [(("Lower", "Normal"), ("Lower", "Precancer")), (("Higher", "Normal"), ("Higher", "Precancer"))] + list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["Lower", "Higher"], ["Precancer", "Primary"]), r=2))), data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Normal", "Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.ylabel(f"{gene} expression")
+    matplotlib.pyplot.ylabel("Gene expression")
+    matplotlib.pyplot.title(gene)
+    matplotlib.pyplot.legend(loc="upper left")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"{MSP}-{gene}.pdf"
@@ -107,7 +119,7 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     patients = set(clinical_data.index)
-    print(sorted(patients))
+    print(len(patients), sorted(patients))
 
     expression_data = pandas.read_csv(args.expression, sep="\t", index_col=0).T
     expression_data = expression_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(expression_data.index))), :]
@@ -122,7 +134,7 @@ if __name__ == "__main__":
 
     figures = list()
     with multiprocessing.Pool(args.cpus) as pool:
-        for MSP in tqdm.tqdm(step00.sharing_columns):
+        for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
             primary_POS_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] > args.r)])
             primary_NEG_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] < (-1 * args.r))])
 

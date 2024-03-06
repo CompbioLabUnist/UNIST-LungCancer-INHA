@@ -231,6 +231,12 @@ stop:
 	docker rm $(CONTAINER_NAME)
 .PHONY: stop
 
+test:
+.PHONY: test
+
+clean:
+.PHONY: clean
+
 # Slurm
 run: | log Output build.log
 	echo -e "#!/bin/bash\nmake -j $(PARALLEL) -C $(PWD) latest" > tmp.sh

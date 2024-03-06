@@ -46,7 +46,7 @@ if __name__ == "__main__":
     else:
         raise Exception("Something went wrong!!")
     patients = set(clinical_data.index)
-    print(len(patients))
+    print(len(patients), sorted(patients))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
