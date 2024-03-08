@@ -87,18 +87,16 @@ if __name__ == "__main__":
         lower_primary_list = list(map(step00.get_paired_primary, lower_precancer_list))
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
-        fig, axs = matplotlib.pyplot.subplots(figsize=(18, 36), nrows=2)
+        drawing_data = output_data.loc[(output_data["Signature"] == signature) & (output_data["Sample"].isin(lower_precancer_list + lower_primary_list + higher_precancer_list + higher_primary_list))].copy()
+        drawing_data["MSP"] = list(map(lambda x: "MSP-L" if (x in lower_precancer_list + lower_primary_list) else "MSP-H", drawing_data["Sample"]))
 
-        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[0])
-        statannotations.Annotator.Annotator(axs[0], [((signature, "Precancer"), (signature, "Primary"))], data=output_data.loc[(output_data["Sample"].isin(lower_precancer_list + lower_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        fig, ax = matplotlib.pyplot.subplots(figsize=(36, 18))
 
-        seaborn.violinplot(data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=axs[1])
-        statannotations.Annotator.Annotator(axs[1], [((signature, "Precancer"), (signature, "Primary"))], data=output_data.loc[(output_data["Sample"].isin(higher_precancer_list + higher_primary_list))], x="Signature", y="Value", hue="PRE/PRI", order=[signature], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+        statannotations.Annotator.Annotator(ax, [(("MSP-L", "Precancer"), ("MSP-L", "Primary")), (("MSP-H", "Precancer"), ("MSP-H", "Primary")), (("MSP-L", "Precancer"), ("MSP-H", "Precancer")), (("MSP-L", "Primary"), ("MSP-H", "Primary"))], data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        axs[0].set_xlabel("")
-        axs[0].set_ylabel(f"{signature} in MSP-lower")
-        axs[1].set_xlabel("")
-        axs[1].set_ylabel(f"{signature} in MSP-higher")
+        ax.set_xlabel("MSP")
+        ax.set_ylabel(f"{signature}")
 
         matplotlib.pyplot.tight_layout()
 

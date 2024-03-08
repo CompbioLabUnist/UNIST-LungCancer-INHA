@@ -146,6 +146,33 @@ def reg_all(signature: str, column: str) -> str:
     return fig_name
 
 
+def lm(signature: str, column: str) -> str:
+    tmp_data = signature_data.loc[:, [column, signature, "Stage"]]
+    tmp_data["Stage"] = list(map(lambda x: x if (x in {"Normal", "Primary"}) else "Precancer", tmp_data["Stage"]))
+    if tmp_data.shape[0] < 3:
+        return ""
+
+    stages = ["Precancer", "Primary"]
+    text = ""
+    for stage in stages:
+        if tmp_data.loc[(tmp_data["Stage"] == stage), column].shape[0] < 3:
+            continue
+
+        r, p = scipy.stats.pearsonr(tmp_data.loc[(tmp_data["Stage"] == stage), column], tmp_data.loc[(tmp_data["Stage"] == stage), signature])
+        text += f"{stage}: r={r:.3f}, p={p:.3f}\n"
+    text = text.strip()
+
+    g = seaborn.lmplot(data=tmp_data, x=column, y=signature, hue="Stage", hue_order=stages, palette={"Precancer": "tab:pink", "Primary": "gray"}, height=18, aspect=1, legend=True, legend_out=False, scatter=True, fit_reg=True)
+    g.fig.text(0.5, 0.5, text, color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    g.set_axis_labels(column, f"{signature}")
+
+    fig_name = f"lm-All-{column}-{signature}.pdf"
+    g.savefig(fig_name)
+    matplotlib.pyplot.close(g.fig)
+
+    return fig_name
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -212,6 +239,7 @@ if __name__ == "__main__":
         figures += pool.starmap(reg_precancer, itertools.product(signature_list, step00.sharing_columns))
         figures += pool.starmap(joint_all, itertools.product(signature_list, step00.sharing_columns))
         figures += pool.starmap(reg_all, itertools.product(signature_list, step00.sharing_columns))
+        figures += pool.starmap(lm, itertools.product(signature_list, step00.sharing_columns))
 
     figures = list(filter(None, figures))
 
