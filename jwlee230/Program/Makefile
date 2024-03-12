@@ -207,6 +207,10 @@ Docker/Tools/iRead.zip: | Docker/Tools
 	wget "https://github.com/genemine/iread/archive/refs/tags/v0.8.9.zip" -O $@
 TOOLS += Docker/Tools/iRead.zip
 
+Docker/Tools/BeadArrayFiles.tar.gz: | Docker/Tools
+	wget "https://github.com/Illumina/BeadArrayFiles/archive/refs/tags/1.3.4.tar.gz" -O $@
+TOOLS += Docker/Tools/BeadArrayFiles.tar.gz
+
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
