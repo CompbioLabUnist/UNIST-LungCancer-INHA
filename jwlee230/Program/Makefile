@@ -6291,6 +6291,16 @@ Output/SharedMutation_CNV/%.SQC.CNVkit.tar: Python/plot_SharedMutation_CNV.py Ou
 step81: Output/SharedMutation_CNV/BWA.SQC.Sequenza.tar Output/SharedMutation_CNV/BWA.SQC.PureCN.tar Output/SharedMutation_CNV/BWA.SQC.CNVkit.tar Output/SharedMutation_CNV/Bowtie2.SQC.Sequenza.tar Output/SharedMutation_CNV/Bowtie2.SQC.PureCN.tar Output/SharedMutation_CNV/Bowtie2.SQC.CNVkit.tar
 .PHONY: step81
 
+# Step 82 (Gene expression & K-M plot)
+Output/Gene_Clinical_KM:
+	mkdir -p $@
+
+Output/Gene_Clinical_KM/%.SQC.MSP.tar: Python/draw_KM_DEG.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/Gene_Clinical_KM build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step82: Output/Gene_Clinical_KM/STAR.SQC.MSP.tar Output/Gene_Clinical_KM/STAR.TPM.SQC.MSP.tar Output/Gene_Clinical_KM/STAR.FPKM.SQC.MSP.tar Output/Gene_Clinical_KM/Bowtie2.SQC.MSP.tar Output/Gene_Clinical_KM/Bowtie2.TPM.SQC.MSP.tar Output/Gene_Clinical_KM/Bowtie2.FPKM.SQC.MSP.tar
+.PHONY: step82
+
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
 
