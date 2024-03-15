@@ -2,6 +2,7 @@
 plot_SharedMutation_CNV.py: plot shared mutation with CNV segment
 """
 import argparse
+import gtfparse
 import multiprocessing
 import tarfile
 import typing
@@ -16,7 +17,7 @@ import step00
 watching = ""
 input_data = pandas.DataFrame()
 CNV_data = pandas.DataFrame()
-CGC_data = pandas.DataFrame()
+gene_data = pandas.DataFrame()
 
 lower_precancer_list: typing.List[str] = list()
 higher_precancer_list: typing.List[str] = list()
@@ -24,12 +25,16 @@ lower_primary_list: typing.List[str] = list()
 higher_primary_list: typing.List[str] = list()
 
 
-def run(MSP: str, gene: str) -> typing.Optional[str]:
-    chromosome = CGC_data.loc[gene, "Chromosome"]
-    start = CGC_data.loc[gene, "Start position"]
-    end = CGC_data.loc[gene, "End position"]
+def read_maf(filename: str) -> pandas.DataFrame:
+    return pandas.read_csv(filename, sep="\t", comment="#", low_memory=False)
 
-    selected_input_data = input_data.loc[(input_data["Hugo_Symbol"] == gene) & (input_data["Precancer"].isin(lower_precancer_list + higher_precancer_list))]
+
+def run(MSP: str, gene: str) -> typing.Optional[str]:
+    chromosome = list(gene_data.loc[(gene_data["gene_id"] == gene), "seqname"])[0]
+    start = min(gene_data.loc[(gene_data["gene_id"] == gene), "start"])
+    end = max(gene_data.loc[(gene_data["gene_id"] == gene), "end"])
+
+    selected_input_data = input_data.loc[(input_data["Hugo_Symbol"] == gene) & (input_data["Tumor_Sample_Barcode"].isin(lower_precancer_list + lower_primary_list + higher_precancer_list + higher_primary_list))]
     if "SYN" not in MSP:
         selected_input_data = selected_input_data.loc[(selected_input_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
 
@@ -41,7 +46,7 @@ def run(MSP: str, gene: str) -> typing.Optional[str]:
     fig, axs = matplotlib.pyplot.subplots(figsize=(36, 18), nrows=2, sharex=True, sharey=True)
 
     for sample in lower_precancer_list:
-        shared_location_list = list(selected_input_data.loc[(selected_input_data["Precancer"] == sample), "Start_Position"])
+        shared_location_list = list(selected_input_data.loc[(selected_input_data["Tumor_Sample_Barcode"] == sample), "Start_Position"])
 
         for index, row in selected_CNV_data.loc[(selected_CNV_data["Sample"] == sample)].iterrows():
             axs[0].plot([row["start"], row["end"]], [row[watching], row[watching]], color="tab:pink", linewidth=10)
@@ -52,7 +57,7 @@ def run(MSP: str, gene: str) -> typing.Optional[str]:
             axs[0].plot([location for location in shared_location_list], [row[watching] for location in shared_location_list], "r*", markersize=40, zorder=step00.small)
 
     for sample in higher_precancer_list:
-        shared_location_list = list(selected_input_data.loc[(selected_input_data["Precancer"] == sample), "Start_Position"])
+        shared_location_list = list(selected_input_data.loc[(selected_input_data["Tumor_Sample_Barcode"] == sample), "Start_Position"])
 
         for index, row in selected_CNV_data.loc[(selected_CNV_data["Sample"] == sample)].iterrows():
             axs[1].plot([row["start"], row["end"]], [row[watching], row[watching]], color="tab:pink", linewidth=10)
@@ -81,10 +86,10 @@ def run(MSP: str, gene: str) -> typing.Optional[str]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("input", help="Input shared mutation information TSV file", type=str)
+    parser.add_argument("input", help="Mutect2 input .MAF files", type=str, nargs="+")
     parser.add_argument("CNV", help="CNV segment.tsv file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
-    parser.add_argument("cgc", help="CGC gene CSV file", type=str)
+    parser.add_argument("gene", help="Gene GTF file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--watching", help="Watching column name", type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
@@ -97,14 +102,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if not args.input.endswith(".tsv"):
-        raise ValueError("INPUT must end with .TSV!!")
+    if list(filter(lambda x: not x.endswith(".maf"), args.input)):
+        raise ValueError("INPUT must end with .MAF!!")
     elif not args.CNV.endswith(".tsv"):
         raise ValueError("CNV must end with .TSV!!")
     elif not args.clinical.endswith(".tsv"):
         raise ValueError("Clinical must end with .TSV!!")
-    elif not args.cgc.endswith(".csv"):
-        raise ValueError("CGC must end with .CSV!!")
+    elif not args.gene.endswith(".gtf"):
+        raise ValueError("Gene must end with .GTF!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
@@ -127,22 +132,23 @@ if __name__ == "__main__":
         raise Exception("Something went wrong!!")
     print(len(patients), patients)
 
-    input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
-    input_data = input_data.loc[(input_data["Patient"].isin(patients))]
+    args.input = list(filter(lambda x: step00.get_patient(x) in patients, args.input))
+
+    with multiprocessing.Pool(args.cpus) as pool:
+        input_data = pandas.concat(pool.map(read_maf, args.input), ignore_index=True, copy=False)
+        input_data["Tumor_Sample_Barcode"] = pool.map(step00.get_id, input_data["Tumor_Sample_Barcode"])
     print(input_data)
 
     CNV_data = pandas.read_csv(args.CNV, sep="\t", index_col=0)
     CNV_data = CNV_data.loc[(CNV_data["Patient"].isin(patients))]
     print(CNV_data)
 
-    CGC_data = pandas.read_csv(args.cgc, index_col=0)
-    CGC_data = CGC_data.loc[~(CGC_data["Genome Location"].str.contains(":-", regex=False))]
-    CGC_data["Chromosome"] = list(map(lambda x: "chr" + x[:x.find(":")], CGC_data["Genome Location"]))
-    CGC_data["Start position"] = list(map(lambda x: int(x[x.find(":") + 1:x.find("-")]), CGC_data["Genome Location"]))
-    CGC_data["End position"] = list(map(lambda x: int(x[x.find("-") + 1:]), CGC_data["Genome Location"]))
-    print(CGC_data)
+    gene_data = gtfparse.read_gtf(args.gene)
+    gene_data = gene_data.loc[(gene_data["feature"] == "exon")]
+    print(gene_data)
 
-    gene_list = sorted(set(input_data["Hugo_Symbol"]) & set(CGC_data.index))
+    # gene_list = sorted(set(input_data["Hugo_Symbol"]) & set(gene_data["gene_id"]))
+    gene_list = ["ELOB", "H2AC4", "KRI1", "MZT2B", "PRDX2", "PTGES3", "TJP2", "ZNF148", "MAPK8IP3"]
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")

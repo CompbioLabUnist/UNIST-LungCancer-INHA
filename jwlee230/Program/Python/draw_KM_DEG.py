@@ -111,6 +111,7 @@ if __name__ == "__main__":
 
     # gene_list = list(input_data.columns)
     gene_list = ["ELOB", "H2AC4", "KRI1", "MZT2B", "PRDX2", "PTGES3", "TJP2", "ZNF148", "MAPK8IP3"]
+    print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
