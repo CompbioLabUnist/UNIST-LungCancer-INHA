@@ -49,7 +49,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    g = seaborn.displot(input_data, x=args.column, kind="hist", stat="probability", kde=True, height=18, aspect=16 / 9)
+    g = seaborn.displot(input_data, x=args.column, kind="hist", stat="probability", kde=True, binwidth=0.05, height=18, aspect=1)
 
     g.tight_layout()
     g.savefig(args.output)

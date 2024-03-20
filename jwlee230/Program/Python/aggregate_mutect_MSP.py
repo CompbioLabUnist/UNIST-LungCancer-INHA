@@ -107,7 +107,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
         precancer_list = list(clinical_data[f"{MSP}-sample"])
         primary_list = list(map(step00.get_paired_primary, precancer_list))
 
