@@ -2,27 +2,26 @@
 plot_expression_CNV.py: plot gene expression & CNV
 """
 import argparse
-import gtfparse
+import itertools
 import multiprocessing
 import tarfile
 import typing
+import gtfparse
 import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
 import seaborn
+import statannotations.Annotator
 import tqdm
 import step00
 
 watching = ""
 CNV_data = pandas.DataFrame()
-DEG_data = pandas.DataFrame()
 gene_data = pandas.DataFrame()
 
 lower_precancer_list: typing.List[str] = list()
 higher_precancer_list: typing.List[str] = list()
-lower_primary_list: typing.List[str] = list()
-higher_primary_list: typing.List[str] = list()
 
 
 def query(sample: str, chromosome: str, start: int, end: int) -> float:
@@ -56,25 +55,26 @@ def query(sample: str, chromosome: str, start: int, end: int) -> float:
         return 1.0
 
 
-def run_precancer(gene: str) -> str:
+def run_precancer(sharing: str, gene: str) -> str:
     selected_gene_data = gene_data[(gene_data["gene_id"] == gene)]
     chromosome = list(selected_gene_data["seqname"])[0]
     start = min(selected_gene_data["start"])
     end = max(selected_gene_data["end"])
 
-    output_data = pandas.DataFrame(index=lower_precancer_list + higher_precancer_list)
-    output_data["Expression"] = DEG_data.loc[output_data.index, gene]
+    output_data = pandas.DataFrame(index=lower_precancer_list + higher_precancer_list + lower_primary_list + higher_primary_list)
     output_data["CNV"] = list(map(lambda x: query(x, chromosome, start, end), list(output_data.index)))
+    output_data["MSP"] = list(map(lambda x: "MSP-L" if (x in lower_precancer_list + lower_primary_list) else "MSP-H", list(output_data.index)))
+    output_data["PRE/PRI"] = list(map(lambda x: "Precancer" if (x in lower_precancer_list + higher_precancer_list) else "Primary", list(output_data.index)))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=output_data, x="CNV", y="Expression", scatter=True, fit_reg=True, color="tab:pink", ax=ax)
+    seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"{gene} in Precancer")
-    matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.title(f"{gene} CNV")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = f"{gene}-Precancer.pdf"
+    fig_name = f"{gene}-{sharing}.pdf"
     matplotlib.pyplot.savefig(fig_name)
     matplotlib.pyplot.close()
 
@@ -135,10 +135,6 @@ if __name__ == "__main__":
     CNV_data = CNV_data.loc[(CNV_data["Patient"].isin(patients))]
     print(CNV_data)
 
-    DEG_data = pandas.read_csv(args.DEG, sep="\t", index_col=0).T
-    DEG_data = DEG_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(DEG_data.index))), :]
-    print(DEG_data)
-
     gene_data = gtfparse.read_gtf(args.gene)
     gene_data = gene_data.loc[(gene_data["feature"] == "exon")]
     print(gene_data)
@@ -152,7 +148,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
         clinical_data = clinical_data.sort_values(MSP)
 
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
@@ -164,7 +160,7 @@ if __name__ == "__main__":
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
         with multiprocessing.Pool(processes=args.cpus) as pool:
-            figures += list(filter(None, list(pool.map(run_precancer, gene_list))))
+            figures += list(filter(None, list(pool.starmap(run_precancer, [(MSP, gene) for gene in gene_list]))))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):

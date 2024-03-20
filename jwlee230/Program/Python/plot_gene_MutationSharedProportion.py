@@ -82,14 +82,11 @@ if __name__ == "__main__":
     parser.add_argument("--cpus", help="CPUs to use", type=int, default=1)
     parser.add_argument("--threshold", help="Threshold to use", type=int, default=100)
     parser.add_argument("--p", help="P-value threshold", type=float, default=0.05)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
     group_subtype.add_argument("--ADC", help="Get ADC patient only", action="store_true", default=False)
-
-    group_strategy = parser.add_mutually_exclusive_group(required=True)
-    group_strategy.add_argument("--median", help="Median division", action="store_true", default=False)
-    group_strategy.add_argument("--mean", help="Mean division", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -107,6 +104,8 @@ if __name__ == "__main__":
         raise ValueError("Threshold must be greater than 50!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
+    elif not (0.0 < args.percentage < 0.5):
+        raise ValueError("Percentage must be (0.0, 0.5)!!")
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
@@ -145,18 +144,6 @@ if __name__ == "__main__":
     mutect_data = mutect_data.loc[(mutect_data["Hugo_Symbol"].isin(gene_list))]
     print(mutect_data)
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
-        if args.median:
-            cutting = numpy.median(clinical_data[MSP])
-        elif args.mean:
-            cutting = numpy.mean(clinical_data[MSP])
-        else:
-            raise Exception("Something went wrong!!")
-
-        selecting = set(clinical_data.loc[(clinical_data[MSP] <= cutting)].index)
-        mutect_data[MSP] = list(map(lambda x: "Lower" if (step00.get_patient(x) in selecting) else "Higher", mutect_data["Tumor_Sample_Barcode"]))
-    print(mutect_data)
-
     filtered_mutect_data = mutect_data[(mutect_data[step00.nonsynonymous_column].isin(step00.nonsynonymous_mutations))]
     print(filtered_mutect_data)
 
@@ -164,56 +151,55 @@ if __name__ == "__main__":
     print(stage_list)
 
     files: typing.List[str] = list()
-    for MSP, stage in tqdm.tqdm(list(itertools.product(step00.sharing_columns, stage_list))):
+    for MSP, stage in tqdm.tqdm(list(itertools.product(step00.sharing_columns, ["Precancer", "Primary"]))):
         if "SYN" in MSP:
-            data = mutect_data.loc[(mutect_data["Stage"] == stage)]
+            # data = mutect_data.copy()
+            continue
         else:
-            data = filtered_mutect_data.loc[(filtered_mutect_data["Stage"] == stage)]
+            data = filtered_mutect_data.copy()
 
-        if args.median:
-            cutting = numpy.median(clinical_data[MSP])
-        elif args.mean:
-            cutting = numpy.mean(clinical_data[MSP])
-        else:
-            raise Exception("Something went wrong!!")
+        clinical_data = clinical_data.sort_values(MSP)
 
-        lower_samples = sorted(set(data.loc[(data[MSP] == "Lower"), "Tumor_Sample_Barcode"]), key=lambda x: clinical_data.loc[step00.get_patient(x), MSP])
-        higher_samples = sorted(set(data.loc[(data[MSP] == "Higher"), "Tumor_Sample_Barcode"]), key=lambda x: clinical_data.loc[step00.get_patient(x), MSP])
+        lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
+
+        lower_samples = list(clinical_data.loc[(clinical_data[MSP] < lower_bound), f"{MSP}-sample"])
+        higher_samples = list(clinical_data.loc[(clinical_data[MSP] > higher_bound), f"{MSP}-sample"])
+
+        if stage == "Primary":
+            lower_samples = list(map(step00.get_paired_primary, lower_samples))
+            higher_samples = list(map(step00.get_paired_primary, higher_samples))
 
         if (not lower_samples) or (not higher_samples):
             continue
+
+        data = data.loc[(data["Tumor_Sample_Barcode"].isin(lower_samples + higher_samples))]
 
         mutation_set = collections.Counter(data[["Hugo_Symbol", "Tumor_Sample_Barcode"]].itertuples(index=False, name=None))
         gene_list = sorted(set(data["Hugo_Symbol"]))
 
         heatmap_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), len(lower_samples + higher_samples))), index=gene_list, columns=lower_samples + higher_samples, dtype=int)
         with multiprocessing.Pool(args.cpus) as pool:
-            for sample in tqdm.tqdm(list(heatmap_data.columns)):
+            for sample in tqdm.tqdm(list(heatmap_data.columns), leave=False):
                 heatmap_data.loc[:, sample] = pool.starmap(query_mutect, [(gene, sample) for gene in gene_list])
-        print(heatmap_data)
 
         mutation_data = pandas.DataFrame(index=gene_list, columns=lower_samples + higher_samples, dtype=str)
         with multiprocessing.Pool(args.cpus) as pool:
-            for sample in tqdm.tqdm(list(mutation_data.columns)):
+            for sample in tqdm.tqdm(list(mutation_data.columns), leave=False):
                 mutation_data.loc[:, sample] = pool.starmap(query_mutation, [(gene, sample) for gene in gene_list])
-        print(mutation_data)
 
         exact_test_data = pandas.DataFrame(data=numpy.zeros((len(gene_list), 4)), index=gene_list, columns=["Fisher", "Chi2", "Barnard", "Boschloo"], dtype=float)
         with multiprocessing.Pool(args.cpus) as pool:
-            for derivation in tqdm.tqdm(list(exact_test_data.columns)):
+            for derivation in tqdm.tqdm(list(exact_test_data.columns), leave=False):
                 exact_test_data.loc[:, derivation] = -1 * numpy.log10(numpy.array(pool.starmap(query_heatmap, [(gene, derivation) for gene in list(exact_test_data.index)])))
-        print(exact_test_data)
 
-        exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).any(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
+        exact_test_data = exact_test_data.loc[(exact_test_data > -1 * numpy.log10(args.p)).all(axis="columns")].sort_values(by="Fisher", kind="stable", ascending=False)
         heatmap_data = heatmap_data.loc[exact_test_data.index, :]
         mutation_data = mutation_data.loc[exact_test_data.index, :]
-        print(exact_test_data)
 
         mutation_data.columns = list(map(lambda x: f"{x}-Lower" if (x in lower_samples) else f"{x}-Higher", list(mutation_data.columns)))
         output_data = pandas.concat([exact_test_data, mutation_data], axis="columns", join="outer", verify_integrity=True)
         files.append(f"{stage}_{MSP}.tsv")
         output_data.to_csv(files[-1], sep="\t")
-        print(output_data)
 
         exact_test_data = exact_test_data.iloc[:args.threshold, :]
         heatmap_data = heatmap_data.loc[exact_test_data.index, :]
@@ -222,15 +208,15 @@ if __name__ == "__main__":
         fig, axs = matplotlib.pyplot.subplots(ncols=3, figsize=(len(lower_samples) + len(exact_test_data.columns) + len(higher_samples) + 15, exact_test_data.shape[0] + 5), gridspec_kw={"width_ratios": [len(lower_samples) + 5, len(exact_test_data.columns) + 5, len(higher_samples) + 5]})
 
         seaborn.heatmap(data=heatmap_data.loc[:, lower_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[0])
-        axs[0].set_xlabel(f"{MSP} - Lower")
+        axs[0].set_xlabel("MSP-L")
 
         seaborn.heatmap(data=exact_test_data, cmap="Reds", vmin=0, center=-1 * numpy.log10(args.p), cbar=True, xticklabels=True, yticklabels=True, ax=axs[1])
 
         seaborn.heatmap(data=heatmap_data.loc[:, higher_samples], vmin=0, vmax=heatmap_data.max().max(), cmap="gray", cbar=False, xticklabels=True, yticklabels=True, fmt="d", annot=True, ax=axs[2])
-        axs[2].set_xlabel(f"{MSP} - Higher")
+        axs[2].set_xlabel("MSP-H")
 
         matplotlib.pyplot.tight_layout()
-        files.append(f"{stage}_{MSP}.pdf")
+        files.append(f"{stage}-{MSP}.pdf")
         fig.savefig(files[-1])
         matplotlib.pyplot.close(fig)
 

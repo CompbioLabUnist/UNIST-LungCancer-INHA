@@ -5598,19 +5598,13 @@ step68: step68-BWA-SQC step68-Bowtie2-SQC
 Output/MutationSharedProportion_Exact:
 	mkdir -p $@
 
-Output/MutationSharedProportion_Exact/BWA-SQC.Median.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_Exact/BWA-SQC.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Exact/BWA-SQC.Mean.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
+Output/MutationSharedProportion_Exact/Bowtie2-SQC.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/MutationSharedProportion_Exact/Bowtie2-SQC.Median.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/MutationSharedProportion_Exact/Bowtie2-SQC.Mean.tar: Python/plot_gene_MutationSharedProportion.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/Bowtie2.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MutationSharedProportion_Exact
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-step69: Output/MutationSharedProportion_Exact/BWA-SQC.Median.tar Output/MutationSharedProportion_Exact/BWA-SQC.Mean.tar Output/MutationSharedProportion_Exact/Bowtie2-SQC.Median.tar Output/MutationSharedProportion_Exact/Bowtie2-SQC.Mean.tar
+step69: Output/MutationSharedProportion_Exact/BWA-SQC.tar Output/MutationSharedProportion_Exact/Bowtie2-SQC.tar
 .PHONY: step69
 
 # Step 70 (Copy Number Variation upon Mutation Shared Proportion)
@@ -6269,10 +6263,13 @@ Output/SharedMutation/BWA.tsv: Python/count_SharedMutation.py $(addprefix Output
 Output/SharedMutation/Bowtie2.tsv: Python/count_SharedMutation.py $(addprefix Output/Mutect2/Bowtie2/,$(addsuffix .Bowtie2.PASS.maf,$(WES_REAL_TUMOR_ID))) $(CLINICAL_DATA_CSV) | build.log Output/SharedMutation
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-Output/SharedMutation/%.SQC.gene.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv $(GENE_CENCUS_ONE_CSV) | build.log
+Output/SharedMutation/%.SQC.exact.tar: Python/calculate_SharedMutation_gene.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step80: Output/SharedMutation/BWA.tsv Output/SharedMutation/Bowtie2.tsv Output/SharedMutation/BWA.SQC.gene.tar Output/SharedMutation/Bowtie2.SQC.gene.tar
+Output/SharedMutation/%.SQC.bar.tar: Python/calculate_SharedMutation_bar.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+
+step80: Output/SharedMutation/BWA.tsv Output/SharedMutation/Bowtie2.tsv Output/SharedMutation/BWA.SQC.exact.tar Output/SharedMutation/Bowtie2.SQC.exact.tar
 .PHONY: step80
 
 # Step 81 (Shared mutation & CNV)
@@ -6305,11 +6302,17 @@ step82: Output/Gene_Clinical_KM/STAR.SQC.MSP.tar Output/Gene_Clinical_KM/STAR.TP
 Output/Gene_CNV:
 	mkdir -p $@
 
-Output/Gene_Clinical_KM/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/SharedMutation/BWA.tsv Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" 1> $@.stdout 2> $@.stderr
+
+Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" 1> $@.stdout 2> $@.stderr
 
 step83: Output/Gene_Clinical_KM/Sequenza.SQC.MSP.tar
 .PHONY: step83
+
+# Step 84 (MSP & Gene mutation)
+
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

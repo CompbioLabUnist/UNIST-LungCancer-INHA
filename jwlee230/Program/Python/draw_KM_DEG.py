@@ -1,32 +1,37 @@
 """
-draw_KM_DEG.py: Draw Kaplan-Meier plot with DEG
+draw_KM_DEG.py: Draw survival plot with DEG
 """
 import argparse
 import itertools
 import multiprocessing
 import tarfile
-import lifelines
-import lifelines.statistics
 import matplotlib
 import matplotlib.pyplot
-import numpy
+import scipy.stats
+import seaborn
 import pandas
 import tqdm
 import step00
 
 input_data = pandas.DataFrame()
 clinical_data = pandas.DataFrame()
-survival_columns = ["Recurrence-Free Survival", "Overall Survival"]
+survival_columns = ["Recurrence-Free Survival", "Overall Survival"][1:]
 
 
-def run(gene: str, sharing: str, stage: str, survival: str) -> str:
+def get_middle(values):
+    return (min(values) + max(values)) / 2
+
+
+def run_reg(gene: str, sharing: str, stage: str, survival: str) -> str:
     precancer_set = set(clinical_data[f"{sharing}-sample"])
     primary_set = set(map(step00.get_paired_primary, precancer_set))
 
     if stage == "Primary":
         drawing_data = input_data.loc[list(filter(lambda x: x in primary_set, list(input_data.index))), [gene]]
+        color = "gray"
     elif stage == "Precancer":
         drawing_data = input_data.loc[list(filter(lambda x: x in precancer_set, list(input_data.index))), [gene]]
+        color = "tab:pink"
     else:
         raise Exception("Something went wrong!!")
 
@@ -35,37 +40,50 @@ def run(gene: str, sharing: str, stage: str, survival: str) -> str:
 
     drawing_data[survival] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival], list(drawing_data.index)))
 
-    quantile = 0.25
-    lower_bound, higher_bound = numpy.quantile(drawing_data[gene], quantile), numpy.quantile(drawing_data[gene], 1.0 - quantile)
-
-    lower_data = drawing_data.loc[(drawing_data[gene] <= lower_bound), [gene, survival]]
-    higher_data = drawing_data.loc[(drawing_data[gene] >= higher_bound), [gene, survival]]
-
-    p_value = lifelines.statistics.logrank_test(lower_data[survival], higher_data[survival]).p_value
-    if p_value >= 0.05:
-        return ""
+    r, p = scipy.stats.pearsonr(drawing_data[gene], drawing_data[survival])
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    kmf = lifelines.KaplanMeierFitter()
+    seaborn.regplot(data=drawing_data, x=gene, y=survival, fit_reg=True, scatter=True, color=color, ax=ax)
 
-    kmf.fit(lower_data[survival], label=f"Lower {gene} expressed samples (n={len(lower_data)})")
-    kmf.plot(ax=ax, ci_show=False, c="tab:blue")
-
-    kmf.fit(higher_data[survival], label=f"Higher {gene} expressed sample (n={len(higher_data)})")
-    kmf.plot(ax=ax, ci_show=False, c="tab:red")
-
-    matplotlib.pyplot.text(max(drawing_data[survival]) / 2, 0.5, f"p={p_value:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
-
-    matplotlib.pyplot.xlabel(f"{survival} (Days)")
-    matplotlib.pyplot.ylabel("Survival Rate")
-    matplotlib.pyplot.title(f"{gene} in {stage}")
-    matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.text(get_middle(drawing_data[gene]), get_middle(drawing_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    matplotlib.pyplot.ylabel(f"{survival} (days)")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = f"{gene}_{sharing}_{stage}_{survival}.pdf"
+    fig_name = f"reg-{gene}-{sharing}-{stage}-{survival}.pdf"
     matplotlib.pyplot.savefig(fig_name)
     matplotlib.pyplot.close()
+
+    return fig_name
+
+
+def run_lm(gene: str, sharing: str, stage: str, survival: str) -> str:
+    precancer_set = set(clinical_data[f"{sharing}-sample"])
+    primary_set = set(map(step00.get_paired_primary, precancer_set))
+
+    if stage == "Primary":
+        drawing_data = input_data.loc[list(filter(lambda x: x in primary_set, list(input_data.index))), [gene]]
+        color = "gray"
+    elif stage == "Precancer":
+        drawing_data = input_data.loc[list(filter(lambda x: x in precancer_set, list(input_data.index))), [gene]]
+        color = "tab:pink"
+    else:
+        raise Exception("Something went wrong!!")
+
+    if drawing_data.empty:
+        return ""
+
+    drawing_data[survival] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival], list(drawing_data.index)))
+
+    r, p = scipy.stats.pearsonr(drawing_data[gene], drawing_data[survival])
+
+    g = seaborn.jointplot(data=drawing_data, x=gene, y=survival, kind="reg", height=24, ratio=5, dropna=True, color=color)
+    g.set_axis_labels(gene, f"{survival} (days)")
+    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+    fig_name = f"lm-{gene}-{sharing}-{stage}-{survival}.pdf"
+    g.savefig(fig_name)
+    matplotlib.pyplot.close(g.fig)
 
     return fig_name
 
@@ -115,9 +133,10 @@ if __name__ == "__main__":
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
-        figures = list(filter(None, pool.starmap(run, itertools.product(gene_list, step00.sharing_columns[:1], ["Precancer", "Primary"], survival_columns))))
+        figures = list(filter(None, pool.starmap(run_reg, itertools.product(gene_list, step00.sharing_columns[:1], ["Precancer", "Primary"][:1], survival_columns))))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
