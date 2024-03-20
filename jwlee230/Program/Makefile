@@ -3,7 +3,7 @@ DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 100
 MEMS = 200
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -6302,17 +6302,21 @@ step82: Output/Gene_Clinical_KM/STAR.SQC.MSP.tar Output/Gene_Clinical_KM/STAR.TP
 Output/Gene_CNV:
 	mkdir -p $@
 
-Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" 1> $@.stdout 2> $@.stderr
+Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS)
 
-Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" 1> $@.stdout 2> $@.stderr
+Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step83: Output/Gene_Clinical_KM/Sequenza.SQC.MSP.tar
 .PHONY: step83
 
 # Step 84 (MSP & Gene mutation)
+Output/MSP_Comut:
+	mkdir -p $@
 
+Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

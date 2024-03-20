@@ -3,7 +3,7 @@ plot_expression_CNV.py: plot gene expression & CNV
 """
 import argparse
 import itertools
-import multiprocessing
+import logging
 import tarfile
 import typing
 import gtfparse
@@ -11,9 +11,11 @@ import matplotlib
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy.stats
 import seaborn
 import statannotations.Annotator
 import tqdm
+import tqdm.contrib.concurrent
 import step00
 
 watching = ""
@@ -55,7 +57,9 @@ def query(sample: str, chromosome: str, start: int, end: int) -> float:
         return 1.0
 
 
-def run_precancer(sharing: str, gene: str) -> str:
+def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
+    sharing, gene = sharing_and_gene
+
     selected_gene_data = gene_data[(gene_data["gene_id"] == gene)]
     chromosome = list(selected_gene_data["seqname"])[0]
     start = min(selected_gene_data["start"])
@@ -66,12 +70,20 @@ def run_precancer(sharing: str, gene: str) -> str:
     output_data["MSP"] = list(map(lambda x: "MSP-L" if (x in lower_precancer_list + lower_primary_list) else "MSP-H", list(output_data.index)))
     output_data["PRE/PRI"] = list(map(lambda x: "Precancer" if (x in lower_precancer_list + higher_precancer_list) else "Primary", list(output_data.index)))
 
+    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
+    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"])[1]
+    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
+    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
+
+    if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
+        return ""
+
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"{gene} CNV")
+    matplotlib.pyplot.title(f"{gene}")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"{gene}-{sharing}.pdf"
@@ -82,12 +94,15 @@ def run_precancer(sharing: str, gene: str) -> str:
 
 
 if __name__ == "__main__":
+    logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("CNV", help="CNV segment.tsv file", type=str)
     parser.add_argument("DEG", help="DEG TSV file", type=str)
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("gene", help="Gene GTF file", type=str)
+    parser.add_argument("cgc", help="CGC CSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--watching", help="Watching column name", type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
@@ -108,6 +123,8 @@ if __name__ == "__main__":
         raise ValueError("Clinical must end with .TSV!!")
     elif not args.gene.endswith(".gtf"):
         raise ValueError("Gene must end with .GTF!!")
+    elif not args.cgc.endswith(".csv"):
+        raise ValueError("CGC must end with .CSV!!")
     elif not args.output.endswith(".tar"):
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
@@ -139,15 +156,18 @@ if __name__ == "__main__":
     gene_data = gene_data.loc[(gene_data["feature"] == "exon")]
     print(gene_data)
 
-    # gene_list = sorted(set(DEG_data.columns) & set(gene_data["gene_id"]))
-    gene_list = ["ELOB", "H2AC4", "KRI1", "MZT2B", "PRDX2", "PTGES3", "TJP2", "ZNF148", "MAPK8IP3"]
+    cgc_data = pandas.read_csv(args.cgc, index_col=0)
+    print(cgc_data)
+
+    gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
+    gene_list += ["ELOB", "H2AC4", "KRI1", "MZT2B", "PRDX2", "PTGES3", "TJP2", "ZNF148", "MAPK8IP3"]
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    figures = list()
+    figures: typing.List[str] = list()
     for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
         clinical_data = clinical_data.sort_values(MSP)
 
@@ -159,8 +179,7 @@ if __name__ == "__main__":
         lower_primary_list = list(map(step00.get_paired_primary, lower_precancer_list))
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
-        with multiprocessing.Pool(processes=args.cpus) as pool:
-            figures += list(filter(None, list(pool.starmap(run_precancer, [(MSP, gene) for gene in gene_list]))))
+        figures += list(filter(None, tqdm.contrib.concurrent.process_map(run_precancer, [(MSP, gene) for gene in gene_list], max_workers=args.cpus, chunksize=1)))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):
