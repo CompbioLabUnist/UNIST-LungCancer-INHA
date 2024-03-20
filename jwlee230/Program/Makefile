@@ -3,7 +3,7 @@ DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 100
+CPUS = 10
 MEMS = 200
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -1322,7 +1322,10 @@ Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Plots/Volcano build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+
+Output/RSEM/Plots/Volcano/%.correlation.MSP.tar: Python/draw_regression_plot_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/RSEM/Plots/Volcano
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.MSP-PRE.tar: Python/draw_volcano_plot_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Plots/Volcano build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
@@ -6267,7 +6270,7 @@ Output/SharedMutation/%.SQC.exact.tar: Python/calculate_SharedMutation_gene.py O
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/SharedMutation/%.SQC.bar.tar: Python/calculate_SharedMutation_bar.py Output/SharedMutation/%.tsv Output/MutationSharedProportion/%.tsv | build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step80: Output/SharedMutation/BWA.tsv Output/SharedMutation/Bowtie2.tsv Output/SharedMutation/BWA.SQC.exact.tar Output/SharedMutation/Bowtie2.SQC.exact.tar
 .PHONY: step80
@@ -6303,7 +6306,7 @@ Output/Gene_CNV:
 	mkdir -p $@
 
 Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -6316,10 +6319,17 @@ Output/MSP_Comut:
 	mkdir -p $@
 
 Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2. $@.stderr
 
 step84: Output/MSP_Comut/BWA-SQC.tar
 .PHONY: step84
+
+# Step 85 (MSP & CNV)
+Output/MSP_CNV:
+	mkdir -p $@
+
+Output/MSP_CNV/BWA-SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa

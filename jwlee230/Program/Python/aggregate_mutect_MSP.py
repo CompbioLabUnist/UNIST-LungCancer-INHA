@@ -6,7 +6,6 @@ import tarfile
 import multiprocessing
 from comut import comut
 import matplotlib
-import numpy
 import pandas
 import tqdm
 import step00

@@ -157,6 +157,8 @@ if __name__ == "__main__":
     print(gene_data)
 
     cgc_data = pandas.read_csv(args.cgc, index_col=0)
+    cgc_data = cgc_data.loc[~(cgc_data["Tumour Types(Somatic)"].isna())]
+    cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung", case=False))]
     print(cgc_data)
 
     gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))

@@ -27,32 +27,25 @@ def run(MSP: str, gene: str) -> str:
     lower_precancer_list = list(filter(lambda x: x in expression_samples, list(clinical_data.loc[(clinical_data[MSP] <= lower_bound), f"{MSP}-sample"])))
     higher_precancer_list = list(filter(lambda x: x in expression_samples, list(clinical_data.loc[(clinical_data[MSP] >= higher_bound), f"{MSP}-sample"])))
 
-    lower_normal_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_normal, lower_precancer_list))))
-    higher_normal_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_normal, higher_precancer_list))))
-
     lower_primary_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_primary, lower_precancer_list))))
     higher_primary_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_primary, higher_precancer_list))))
 
     raw_output_data = list()
-    raw_output_data += [(sample, "Lower", "Normal", expression_data.loc[sample, gene]) for sample in lower_normal_list]
-    raw_output_data += [(sample, "Lower", "Precancer", expression_data.loc[sample, gene]) for sample in lower_precancer_list]
-    raw_output_data += [(sample, "Lower", "Primary", expression_data.loc[sample, gene]) for sample in lower_primary_list]
-    raw_output_data += [(sample, "Higher", "Normal", expression_data.loc[sample, gene]) for sample in higher_normal_list]
-    raw_output_data += [(sample, "Higher", "Precancer", expression_data.loc[sample, gene]) for sample in higher_precancer_list]
-    raw_output_data += [(sample, "Higher", "Primary", expression_data.loc[sample, gene]) for sample in higher_primary_list]
+    raw_output_data += [(sample, "MSP-L", "Precancer", expression_data.loc[sample, gene]) for sample in lower_precancer_list]
+    raw_output_data += [(sample, "MSP-L", "Primary", expression_data.loc[sample, gene]) for sample in lower_primary_list]
+    raw_output_data += [(sample, "MSP-H", "Precancer", expression_data.loc[sample, gene]) for sample in higher_precancer_list]
+    raw_output_data += [(sample, "MSP-H", "Primary", expression_data.loc[sample, gene]) for sample in higher_primary_list]
 
-    output_data = pandas.DataFrame(raw_output_data, columns=["Sample", "Lower/Higher", "PRE/PRI", "Expression"])
+    output_data = pandas.DataFrame(raw_output_data, columns=["Sample", "MSP", "PRE/PRI", "Expression"])
 
-    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
-    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Precancer"), "Expression"])[1]
-    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
-    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["Lower/Higher"] == "Lower") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["Lower/Higher"] == "Higher") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"])[1]
+    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
 
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
         return ""
 
-    print("Lower-NML", len(lower_normal_list))
-    print("Higher-NML", len(higher_normal_list))
     print("Lower-PRE:", len(lower_precancer_list))
     print("Higher-PRE:", len(higher_precancer_list))
     print("Lower-PRI:", len(lower_primary_list))
@@ -60,8 +53,8 @@ def run(MSP: str, gene: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Normal", "Precancer", "Primary"], palette={"Normal": "cyan", "Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, [(("Lower", "Normal"), ("Lower", "Precancer")), (("Higher", "Normal"), ("Higher", "Precancer")), (("Lower", "Normal"), ("Higher", "Normal"))] + list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["Lower", "Higher"], ["Precancer", "Primary"]), r=2))), data=output_data, x="Lower/Higher", y="Expression", hue="PRE/PRI", order=["Lower", "Higher"], hue_order=["Normal", "Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.ylabel("Gene expression")
     matplotlib.pyplot.title(gene)
