@@ -3,7 +3,7 @@ DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
 IMAGE_NAME = lungcancer:latest
 SHELL := /bin/bash
-CPUS = 10
+CPUS = 100
 MEMS = 200
 PARALLEL = 10
 PWD := $(shell pwd)
@@ -6319,7 +6319,7 @@ Output/MSP_Comut:
 	mkdir -p $@
 
 Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2. $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
 
 step84: Output/MSP_Comut/BWA-SQC.tar
 .PHONY: step84
