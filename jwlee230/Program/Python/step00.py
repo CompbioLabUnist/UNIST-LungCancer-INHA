@@ -24,6 +24,7 @@ simple_stage_list = ("Normal", "Precancer", "Primary")
 
 stage_color_code = {"Normal": "cyan", "Dysplasia": "olive", "AAH": "orange", "CIS+AIS": "red", "MIA": "brown", "Primary": "gray"}
 stage_linestyle = {"Normal": "-", "Dysplasia": ":", "AAH": ":", "CIS+AIS": "-.", "MIA": "--", "Primary": "-"}
+precancer_color_code = {"Precancer": "tab:green", "Primary": "tab:purple"}
 
 MutEnricher_pval_columns = ["Fisher_FDR", "Fisher_pval"]
 
