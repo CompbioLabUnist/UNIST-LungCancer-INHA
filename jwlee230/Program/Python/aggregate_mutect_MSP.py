@@ -9,6 +9,7 @@ import matplotlib.patches
 import matplotlib.pyplot
 import numpy
 import pandas
+import scipy
 import tqdm
 import step00
 
@@ -83,12 +84,11 @@ if __name__ == "__main__":
     print(driver_data)
 
     for column in tqdm.tqdm(step00.MutEnricher_pval_columns):
+        continue
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
-
-    driver_data.sort_values(by="Fisher_pval", ascending=False, inplace=True)
     print(driver_data)
 
-    gene_list = list(driver_data["Gene"])
+    gene_list = sorted(driver_data["Gene"], key=lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x), "Tumor_Sample_Barcode"])))
     print("Gene:", len(gene_list))
 
     driver_data = driver_data.loc[(driver_data["Gene"].isin(gene_list))]
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
         precancer_list = sorted(clinical_data[f"{MSP}-sample"], key=lambda x: clinical_data.loc[step00.get_patient(x), MSP])
         primary_list = list(map(step00.get_paired_primary, precancer_list))
         patient_list = list(map(step00.get_patient, precancer_list))
@@ -124,10 +124,10 @@ if __name__ == "__main__":
         axs["MSP-bar"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H")
         axs["MSP-bar"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], MSP], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other")
         axs["MSP-bar"].set_xlabel("")
-        axs["MSP-bar"].set_ylabel("PSM")
+        axs["MSP-bar"].set_ylabel("PSM", fontsize="x-small")
         axs["MSP-bar"].set_xticks([])
-        axs["MSP-bar"].set_yticks([0.0, 0.25, 0.5], ["0.0", "0.25", "0.5"], fontsize="xx-small", rotation="vertical")
-        axs["MSP-bar"].legend(loc="upper left")
+        axs["MSP-bar"].set_yticks([0.0, 0.25, 0.5], ["0.00", "0.25", "0.50"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["MSP-bar"].legend(loc="upper left", fontsize="xx-small")
         axs["MSP-bar"].grid(True)
 
         TMB_precancer = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0] / step00.WES_length * step00.big, precancer_list))
@@ -135,23 +135,28 @@ if __name__ == "__main__":
         axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_precancer, width=-0.4, align="edge", color="tab:green", label="Precancer")
         axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_primary, width=0.4, align="edge", color="tab:purple", label="Primary")
         axs["TMB"].set_xticks([])
-        axs["TMB"].set_yticks([0.0, 0.5, 1.0, 1.5], ["0.0", "0.5", "1.0", "1.5"], fontsize="xx-small", rotation="vertical")
-        axs["TMB"].set_ylabel("TMB (#/Mb)")
+        axs["TMB"].set_yticks([0.0, 1.0, 2.0], ["0.0", "1.0", "2.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["TMB"].set_ylabel("TMB (#/Mb)", fontsize="x-small")
         axs["TMB"].set_xlim(axs["MSP-bar"].get_xlim())
         axs["TMB"].grid(True)
 
-        axs["TMB-legend"].legend(handles=[matplotlib.patches.Patch(color=value, label=key) for key, value in step00.precancer_color_code.items()], title="PRE/PRI", loc="center")
+        axs["TMB-legend"].legend(handles=[matplotlib.patches.Patch(color=value, label=key) for key, value in step00.precancer_color_code.items()], title="PRE/PRI", loc="center", fontsize="xx-small")
         axs["TMB-legend"].axis("off")
 
-        survival_column = "Overall Survival"
+        survival_column = "Recurrence-Free Survival"
         axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, label="PSM-L")
         axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H")
         axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other")
+
+        recurrence_column = "Recurrence"
+        recurrence_x_list = list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == 1, range(len(precancer_list))))
+        axs["Survival"].scatter(recurrence_x_list, [1000 for _ in recurrence_x_list], c="black", s=1000, marker="*", edgecolor=None, label="Recurrence")
+
         axs["Survival"].set_xticks([])
-        axs["Survival"].set_yticks([0, 2000, 4000], ["0", "2000", "4000"], fontsize="xx-small", rotation="vertical")
-        axs["Survival"].set_ylabel("OS (days)")
+        axs["Survival"].set_yticks([0, 2500, 5000], ["0", "2500", "5000"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["Survival"].set_ylabel("RFS (days)", fontsize="x-small")
         axs["Survival"].set_xlim(axs["MSP-bar"].get_xlim())
-        axs["Survival"].legend(loc="upper left")
+        axs["Survival"].legend(loc="upper left", fontsize="xx-small")
         axs["Survival"].grid(True)
 
         precancer_patch = None
@@ -168,9 +173,10 @@ if __name__ == "__main__":
                 if (not is_precancer) and (not is_primary):
                     continue
 
-                color_dict = {False: "none", True: "dimgray"}
+                color_dict = {False: "none", True: "silver"}
                 if is_shared:
-                    tmp = axs["Mutation"].plot(i, j, fillstyle="left", marker="o", markersize=30, markerfacecolor="tab:olive", markerfacecoloralt="tab:olive", markeredgecolor="tab:olive" if is_shared else "lightgray", markeredgewidth=2.0)
+                    shared_color = "seagreen"
+                    tmp = axs["Mutation"].plot(i, j, fillstyle="left", marker="o", markersize=30, markerfacecolor=shared_color, markerfacecoloralt=shared_color, markeredgecolor=shared_color, markeredgewidth=2.0)
                 else:
                     tmp = axs["Mutation"].plot(i, j, fillstyle="left", marker="o", markersize=30, markerfacecolor=color_dict[is_precancer], markerfacecoloralt=color_dict[is_primary], markeredgecolor="lightgray", markeredgewidth=2.0)
 
@@ -178,31 +184,42 @@ if __name__ == "__main__":
                     precancer_patch = tmp[0]
                 elif (primary_patch is None) and (not is_precancer) and (is_primary):
                     primary_patch = tmp[0]
-                elif (both_patch is None) and (is_precancer) and (is_primary):
+                elif (both_patch is None) and (is_precancer) and (is_primary) and (not is_shared):
                     both_patch = tmp[0]
                 elif (shared_patch is None) and (is_shared):
                     shared_patch = tmp[0]
 
-        axs["Mutation"].set_xticks(range(len(precancer_list)), patient_list, rotation="vertical")
-        axs["Mutation"].set_yticks(range(len(gene_list)), gene_list, fontsize="small")
+        axs["Mutation"].set_xticks(range(len(precancer_list)), patient_list, fontsize="x-small", rotation="vertical")
+        axs["Mutation"].set_yticks(range(len(gene_list)), gene_list, fontsize="x-small")
         axs["Mutation"].set_xlim(axs["MSP-bar"].get_xlim())
         axs["Mutation"].grid(True)
 
-        axs["Mutation-legend"].legend(handles=[precancer_patch, primary_patch, both_patch, shared_patch], labels=["Only Precancer", "Only Primary", "Both, not shared", "Shared"], title="Mutation notation", loc="center")
+        axs["Mutation-legend"].legend(handles=[precancer_patch, primary_patch, both_patch, shared_patch], labels=["Only Precancer", "Only Primary", "Both, not shared", "Shared"], title="Mutation notation", loc="center", fontsize="xx-small")
         axs["Mutation-legend"].axis("off")
 
         bar_list = list()
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=0.4, align="edge", color="tab:cyan", edgecolor=None, label="PSM-L"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=0.4, align="edge", color="tab:cyan", edgecolor=None, label="PSM-L (Not shared)"))
         bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=0.4, align="edge", color="tab:blue", edgecolor=None, label="PSM-L (Shared)"))
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_H_list), gene_list)), height=-0.4, align="edge", color="tab:pink", edgecolor=None, label="PSM-H"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_H_list), gene_list)), height=-0.4, align="edge", color="tab:pink", edgecolor=None, label="PSM-H (Not shared)"))
         bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=-0.4, align="edge", color="tab:red", edgecolor=None, label="PSM-H (Shared)"))
 
+        for i, gene in tqdm.tqdm(enumerate(gene_list), total=len(gene_list), leave=False):
+            shared_lower_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_L_list)), "Precancer"]))
+            shared_higher_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_H_list)), "Precancer"]))
+            p_value = scipy.stats.fisher_exact([[shared_lower_precancer, len(MSP_L_list) - shared_lower_precancer], [shared_higher_precancer, len(MSP_H_list) - shared_higher_precancer]])[1]
+
+            if (p_value >= 0.05):
+                continue
+
+            axs["Mutation-proportion"].text(0.5, i - 0.5, "*", fontsize="large", color="black", horizontalalignment="center", verticalalignment="center")
+
         axs["Mutation-proportion"].set_xlabel("Proportion")
+        axs["Mutation-proportion"].set_xticks([0.0, 0.25, 0.5, 0.75, 1.0], ["0.00", "0.25", "0.50", "0.75", "1.00"], fontsize="xx-small", rotation="vertical")
         axs["Mutation-proportion"].set_yticks([])
         axs["Mutation-proportion"].set_ylim(axs["Mutation"].get_ylim())
         axs["Mutation-proportion"].grid(True)
 
-        axs["Mutation-proportion-legend"].legend(handles=bar_list, title="Mutations in PRE", loc="center")
+        axs["Mutation-proportion-legend"].legend(handles=bar_list, title="Mutations in PRE", loc="center", fontsize="xx-small")
         axs["Mutation-proportion-legend"].axis("off")
 
         figures.append(f"{MSP}.pdf")
