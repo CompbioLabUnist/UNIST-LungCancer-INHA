@@ -58,7 +58,7 @@ if __name__ == "__main__":
     for MSP, survival in tqdm.tqdm(list(itertools.product(step00.sharing_columns, survivals))):
         clinical_data[survival] = list(map(int, clinical_data[survival]))
 
-        r, p = scipy.stats.pearsonr(clinical_data[MSP], clinical_data[survival])
+        r, p = scipy.stats.spearmanr(clinical_data[MSP], clinical_data[survival])
 
         g = seaborn.jointplot(data=clinical_data, x=MSP, y=survival, kind="reg", height=24, dropna=True)
         g.set_axis_labels(MSP, f"{survival} (days)")

@@ -22,6 +22,7 @@ watching = ""
 CNV_data = pandas.DataFrame()
 gene_data = pandas.DataFrame()
 
+precancer_list: typing.List[str] = list()
 lower_precancer_list: typing.List[str] = list()
 higher_precancer_list: typing.List[str] = list()
 
@@ -57,6 +58,50 @@ def query(sample: str, chromosome: str, start: int, end: int) -> float:
         return 1.0
 
 
+def get_middle(values):
+    return (min(values) + max(values)) / 2
+
+
+def run_reg(sharing_and_gene: typing.Tuple[str, str]) -> str:
+    sharing, gene = sharing_and_gene
+
+    selected_gene_data = gene_data[(gene_data["gene_id"] == gene)]
+    chromosome = list(selected_gene_data["seqname"])[0]
+    start = min(selected_gene_data["start"])
+    end = max(selected_gene_data["end"])
+
+    precancer_data = pandas.DataFrame(index=precancer_list)
+    precancer_data["CNV"] = list(map(lambda x: query(x, chromosome, start, end), list(precancer_data.index)))
+    precancer_data["MSP"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), sharing], list(precancer_data.index)))
+
+    precancer_r, precancer_p = scipy.stats.spearmanr(precancer_data["CNV"], precancer_data["MSP"])
+
+    primary_data = pandas.DataFrame(index=list(map(step00.get_paired_primary, precancer_list)))
+    primary_data["CNV"] = list(map(lambda x: query(x, chromosome, start, end), list(primary_data.index)))
+    primary_data["MSP"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), sharing], list(primary_data.index)))
+
+    primary_p = scipy.stats.spearmanr(primary_data["CNV"], primary_data["MSP"])[1]
+
+    if (precancer_p >= 0.05) or (primary_p < 0.05):
+        return ""
+
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+    seaborn.regplot(data=precancer_data, x="MSP", y="CNV", scatter=True, fit_reg=True, color="tab:pink", ax=ax)
+    matplotlib.pyplot.text(get_middle(precancer_data["MSP"]), get_middle(precancer_data["CNV"]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+    matplotlib.pyplot.xlabel(sharing)
+    matplotlib.pyplot.ylabel(watching)
+    matplotlib.pyplot.title(gene)
+    matplotlib.pyplot.tight_layout()
+
+    fig_name = f"reg-{sharing}-{gene}.pdf"
+    matplotlib.pyplot.savefig(fig_name)
+    matplotlib.pyplot.close()
+
+    return fig_name
+
+
 def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     sharing, gene = sharing_and_gene
 
@@ -75,7 +120,7 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
     p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
 
-    if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
+    if (p1 >= 0.01) or (p2 >= 0.01) or (p3 < 0.5) or (p4 < 0.5):
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
@@ -83,10 +128,13 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.title(f"{gene}")
+    matplotlib.pyplot.xlabel(sharing)
+    matplotlib.pyplot.ylabel(watching)
+    matplotlib.pyplot.title(gene)
+    matplotlib.pyplot.legend(loc="upper left")
     matplotlib.pyplot.tight_layout()
 
-    fig_name = f"{gene}-{sharing}.pdf"
+    fig_name = f"violin-{sharing}-{gene}.pdf"
     matplotlib.pyplot.savefig(fig_name)
     matplotlib.pyplot.close()
 
@@ -106,7 +154,6 @@ if __name__ == "__main__":
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--watching", help="Watching column name", type=str, required=True)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
-    parser.add_argument("--threshold", help="Threshold for gain/loss", type=float, default=0.2)
     parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -129,8 +176,6 @@ if __name__ == "__main__":
         raise ValueError("Output must end with .TAR!!")
     elif args.cpus < 1:
         raise ValueError("CPUs must be positive!!")
-    elif not (0 < args.threshold < 1):
-        raise ValueError("Threshold must be (0, 1)")
     elif not (0.0 < args.percentage < 0.5):
         raise ValueError("Percentage must be (0.0, 0.5)!!")
 
@@ -162,7 +207,8 @@ if __name__ == "__main__":
     print(cgc_data)
 
     gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
-    gene_list += ["ELOB", "H2AC4", "KRI1", "MZT2B", "PRDX2", "PTGES3", "TJP2", "ZNF148", "MAPK8IP3"]
+    # gene_list = sorted(set(gene_data["gene_id"]))
+    # gene_list = ["ATP5F1B", "ATP5MC1", "ATP5PF", "COX5A", "COX7B", "COX8A", "NDUFA1", "NDUFA13", "NDUFS5", "NDUFS6", "SDHA", "SDHD"]
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
@@ -170,11 +216,12 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures: typing.List[str] = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
+    for MSP in tqdm.tqdm(step00.sharing_columns[1:2]):
         clinical_data = clinical_data.sort_values(MSP)
 
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
+        precancer_list = list(clinical_data[f"{MSP}-sample"])
         lower_precancer_list = list(clinical_data.loc[(clinical_data[MSP] < lower_bound), f"{MSP}-sample"])
         higher_precancer_list = list(clinical_data.loc[(clinical_data[MSP] > higher_bound), f"{MSP}-sample"])
 
@@ -182,6 +229,7 @@ if __name__ == "__main__":
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
         figures += list(filter(None, tqdm.contrib.concurrent.process_map(run_precancer, [(MSP, gene) for gene in gene_list], max_workers=args.cpus, chunksize=1)))
+        figures += list(filter(None, tqdm.contrib.concurrent.process_map(run_reg, [(MSP, gene) for gene in gene_list], max_workers=args.cpus, chunksize=1)))
 
     with tarfile.open(args.output, "w") as tar:
         for figure in tqdm.tqdm(figures):

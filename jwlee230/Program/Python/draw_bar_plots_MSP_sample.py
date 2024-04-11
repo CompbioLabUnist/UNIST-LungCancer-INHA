@@ -46,16 +46,12 @@ def run(MSP: str, gene: str) -> str:
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
         return ""
 
-    print("Lower-PRE:", len(lower_precancer_list))
-    print("Higher-PRE:", len(higher_precancer_list))
-    print("Lower-PRI:", len(lower_primary_list))
-    print("Higher-PRI:", len(higher_primary_list))
-
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.violinplot(data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
+    matplotlib.pyplot.xlabel(MSP)
     matplotlib.pyplot.ylabel("Gene expression")
     matplotlib.pyplot.title(gene)
     matplotlib.pyplot.legend(loc="upper left")
@@ -131,7 +127,7 @@ if __name__ == "__main__":
 
     figures = list()
     with multiprocessing.Pool(args.cpus) as pool:
-        for MSP in tqdm.tqdm(step00.sharing_columns[:1]):
+        for MSP in tqdm.tqdm(step00.sharing_columns[1:2]):
             primary_POS_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] > args.r)])
             primary_NEG_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-slope"] > args.slope) & (input_data[f"Primary-{MSP}-r"] < (-1 * args.r))])
 

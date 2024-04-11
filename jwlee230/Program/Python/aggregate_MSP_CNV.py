@@ -50,7 +50,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     a.append(1.0)
     weights.append((end - tmp_start + 1) / length)
 
-    return numpy.log2(numpy.average(a=a, weights=weights))
+    return numpy.average(a=a, weights=weights)
 
 
 if __name__ == "__main__":
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    center = numpy.log2(2.0)
+    center = 2.0
     mapper = matplotlib.cm.ScalarMappable(norm=matplotlib.colors.CenteredNorm(vcenter=center), cmap=matplotlib.colormaps["coolwarm"])
     mapper.set_clim(vmin=-4, vmax=4)
     print("Min:", min(input_data[watching]))
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H"))
         bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], MSP], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other"))
         axs["MSP"].set_xlabel("")
-        axs["MSP"].set_ylabel("PSM")
+        axs["MSP"].set_ylabel("PSM", fontsize="x-small")
         axs["MSP"].set_xticks([])
         axs["MSP"].set_yticks([0.0, 0.25, 0.5], ["0.0", "0.25", "0.50"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["MSP"].grid(True)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
             for i, sample in enumerate(primary_list):
                 axs[chromosome].barh(y=list(chromosome_data.columns), width=[0.4 for _ in list(chromosome_data.columns)], left=i, height=1.0, align="edge", color=mapper.to_rgba(chromosome_data.loc[sample, :]), edgecolor=None, linewidth=0.0)
 
-            axs[chromosome].set_ylabel(chromosome[3:])
+            axs[chromosome].set_ylabel(chromosome[3:], fontsize="xx-small")
             axs[chromosome].invert_yaxis()
             axs[chromosome].set_xticks([])
             axs[chromosome].set_yticks([])
@@ -185,7 +185,7 @@ if __name__ == "__main__":
                 axs[f"{chromosome}-L"].tick_params(top=True, labeltop=True)
                 axs[f"{chromosome}-L"].tick_params(bottom=False, labelbottom=False)
                 axs[f"{chromosome}-L"].set_xticks([0.0, 0.5, 1.0], ["1.0", "0.5", "0.0"], fontsize="xx-small")
-                axs[f"{chromosome}-L"].set_xlabel("Gain", fontsize="x-small")
+                axs[f"{chromosome}-L"].set_title("Gain", fontsize="x-small")
             elif chromosome == chromosome_list[-1]:
                 axs[f"{chromosome}-L"].set_xticks([0.0, 0.5, 1.0], ["0.0", "0.5", "1.0"], fontsize="xx-small")
                 axs[f"{chromosome}-L"].set_xlabel("Loss", fontsize="x-small")
@@ -213,7 +213,7 @@ if __name__ == "__main__":
                 # cbar = fig.colorbar(mapper, ax=axs["CNV-legend"], orientation="horizontal", ticks=[1, 2, 3], location="top", extend="both")
                 # cbar.ax.set_xticklabels(["1", "2", "3"])
                 cbar = fig.colorbar(mapper, ax=axs["CNV-legend"], orientation="horizontal", location="top", extend="both")
-                cbar.ax.set_xlabel(f"log2({args.watching})")
+                cbar.ax.set_xlabel(args.watching)
                 axs["CNV-legend"].axis("off")
 
         figures.append(f"{MSP}.pdf")

@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
-        matplotlib.pyplot.xlabel("Pearson correlation r")
+        matplotlib.pyplot.xlabel("Correlation coefficient")
         matplotlib.pyplot.ylabel("log10(|slope|)")
         matplotlib.pyplot.xlim(-1, 1)
         matplotlib.pyplot.tight_layout()
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.title(f"Precancer: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
-        matplotlib.pyplot.xlabel("Pearson correlation r")
+        matplotlib.pyplot.xlabel("Correlation coefficient")
         matplotlib.pyplot.ylabel("log10(|slope|)")
         matplotlib.pyplot.xlim(-1, 1)
         matplotlib.pyplot.tight_layout()
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
         matplotlib.pyplot.grid(True)
-        matplotlib.pyplot.xlabel("Pearson correlation r")
+        matplotlib.pyplot.xlabel("Correlation r")
         matplotlib.pyplot.ylabel("log10(|slope|)")
         matplotlib.pyplot.xlim(-1, 1)
         matplotlib.pyplot.tight_layout()

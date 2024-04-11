@@ -58,12 +58,13 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
         enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
 
-        seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief")
+        seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief", edgecolor="black")
 
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
         matplotlib.pyplot.xlabel("-log10(Padj)")
         matplotlib.pyplot.ylabel(f"{enrichment_data.shape[0]} pathways")
+        matplotlib.pyplot.legend(loc="lower right")
         ax.invert_yaxis()
 
     matplotlib.pyplot.tight_layout()
