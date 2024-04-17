@@ -120,7 +120,7 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
     p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
 
-    if (p1 >= 0.01) or (p2 >= 0.01) or (p3 < 0.5) or (p4 < 0.5):
+    if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
@@ -208,7 +208,6 @@ if __name__ == "__main__":
 
     gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
     # gene_list = sorted(set(gene_data["gene_id"]))
-    # gene_list = ["ATP5F1B", "ATP5MC1", "ATP5PF", "COX5A", "COX7B", "COX8A", "NDUFA1", "NDUFA13", "NDUFS5", "NDUFS6", "SDHA", "SDHD"]
     print("Gene:", len(gene_list))
 
     matplotlib.use("Agg")
