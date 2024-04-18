@@ -39,6 +39,7 @@ if __name__ == "__main__":
 
     args.input.sort(key=step00.sorting)
     IDs = list(map(step00.get_id, args.input))
+    patient_set = set(map(step00.get_patient, args.input))
     print(IDs)
 
     with multiprocessing.Pool(processes=args.cpus) as pool:
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     matplotlib.pyplot.text(0, mean_value, f"Mean: {mean_value:.1f}", color="k", horizontalalignment="left", verticalalignment="baseline")
 
     matplotlib.pyplot.xticks([])
-    matplotlib.pyplot.xlabel("Total {0} samples from {1} Patients".format(len(list(map(step00.get_id, args.input))), len(sorted(set(list(map(step00.get_patient, args.input)))))))
+    matplotlib.pyplot.xlabel(f"Total {len(args.input)} samples from {len(patient_set)} patients")
     matplotlib.pyplot.ylabel("Depth")
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.tight_layout()
