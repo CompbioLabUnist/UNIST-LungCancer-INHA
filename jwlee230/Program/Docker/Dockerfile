@@ -143,6 +143,9 @@ ENV PATH=/Tools/iread-0.8.9:$PATH
 ADD Tools/BeadArrayFiles.tar.gz /Tools
 RUN cd /Tools/BeadArrayFiles-1.3.4 && python3 setup.py install
 
+# Musical
+RUN cd /Tools & git clone https://github.com/parklab/MuSiCal && cd MuSiCal && git checkout 85ae0a1a9cbd5daed7800f49b138b9bffa5070a2 && pip3 install .
+
 # Purge
 RUN cd /Tools && rm -v *.zip
 
