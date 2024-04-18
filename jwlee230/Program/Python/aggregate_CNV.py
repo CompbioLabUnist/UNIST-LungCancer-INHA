@@ -55,7 +55,7 @@ if __name__ == "__main__":
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
-    order = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list))
+    order = list(filter(lambda x: x in stage_set, step00.long_sample_type_list))
     g = seaborn.JointGrid(data=input_data, x="Cellularity", y="Ploidy", hue="Stage", hue_order=order, xlim=(-0.1, 1.1), height=24, ratio=5, palette=drawing_palette)
     g.plot_joint(seaborn.scatterplot, s=1000, legend="full")
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
