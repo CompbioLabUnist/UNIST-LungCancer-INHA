@@ -30,7 +30,7 @@ def scatter(MSP: str, gene: str) -> str:
     primary_p = input_data.loc[gene, f"Primary-{MSP}-p"]
 
     if (precancer_p >= 0.05) or (primary_p < 0.05):
-        return ""
+        pass
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -57,7 +57,7 @@ def joint(MSP: str, gene: str) -> str:
     primary_slope = input_data.loc[gene, f"Primary-{MSP}-slope"] if (primary_r > 0) else (-1 * input_data.loc[gene, f"Primary-{MSP}-slope"])
 
     if (precancer_p >= 0.05) or (primary_p < 0.05):
-        return ""
+        pass
 
     g = seaborn.jointplot(data=drawing_data, x=MSP, y=gene, hue="Stage", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, height=18, ratio=5)
     g.fig.text(0.5, 0.5, f"Precancer: r={precancer_r:.3f}, slope={precancer_slope:.1e}\nPrimary: r={primary_r:.3f}, slope={primary_slope:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
@@ -105,6 +105,7 @@ if __name__ == "__main__":
 
     expression_data = pandas.read_csv(args.expression, sep="\t", index_col=0).T
     expression_data = expression_data.loc[list(filter(lambda x: step00.get_patient(x) in patients, list(expression_data.index))), :]
+    gene_set = set(expression_data.columns)
     expression_data["Stage"] = list(map(lambda x: "Primary" if (step00.get_long_sample_type(x) == "Primary") else "Precancer", list(expression_data.index)))
     for column in tqdm.tqdm(step00.sharing_columns):
         expression_data[column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), column], list(expression_data.index)))
@@ -123,6 +124,7 @@ if __name__ == "__main__":
             genes = list()
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
+            genes = sorted({"HIF1A", "MALAT1", "MYCL", "BIRCG", "RAD21", "STRN", "ZNF479"} & gene_set)
 
             figures += list(pool.starmap(scatter, [(MSP, gene) for gene in genes]))
             figures += list(pool.starmap(joint, [(MSP, gene) for gene in genes]))
