@@ -1112,6 +1112,9 @@ Output/RSEM/DEG/%.DEG.tsv: R/run_DESeq.R Output/RSEM/DEG/%.tsv Output/RSEM/DEG/%
 Output/RSEM/DEG/%.SQC.DEG.MSP.tsv: Python/calculate_DEG_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv: Python/calculate_DEG_MSP-2.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/DEG/%.SQC.DEG.MSP-ratio.tsv: Python/calculate_DEG_MSP-ratio.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
@@ -1322,7 +1325,10 @@ Output/RSEM/Plots/Volcano/%.volcano.pdf: Python/draw_volcano_plot.py Output/RSEM
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Plots/Volcano build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Volcano/%.MSP-spearman.tar: Python/draw_volcano_plot_MSP.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Plots/Volcano build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.correlation.MSP.tar: Python/draw_regression_plot_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/RSEM/Plots/Volcano
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -1495,10 +1501,16 @@ Output/RSEM/Enrichment/%.KEGG.tar: Python/get_enrichment_enrichr_MSP.py Output/R
 Output/RSEM/Enrichment/%.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Enrichment/%.Spearman.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Enrichment/%.MSigDB.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.Pre-only.MSigDB.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Enrichment/%.Spearman.Pre-only.MSigDB.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.GO.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
@@ -1507,14 +1519,23 @@ Output/RSEM/Enrichment/%.GO.tar: Python/get_enrichment_enrichr_MSP.py Output/RSE
 Output/RSEM/Enrichment/%.Pre-only.GO.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "GO_Molecular_Function_2021" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Enrichment/%.Spearman.Pre-only.GO.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "GO_Molecular_Function_2021" 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/Scatter/%.SQC.tar: Python/draw_scatter_RSEM_MSP.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Scatter/%.SQC.spearman.tar: Python/draw_scatter_RSEM_MSP.py Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS)
 
 Output/RSEM/Plots/Scatter/%.SQC-ratio.tar: Python/draw_scatter_RSEM_MSP-ratio.py Output/RSEM/DEG/%.SQC.DEG.MSP-ratio.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Scatter build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Bar/%.SQC.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Bar/%.SQC.Spearman.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
 
 step19-cluster-stage: Output/RSEM/Plots/Cluster/Bowtie2.SQC.pdf Output/RSEM/Plots/Cluster/STAR.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.pdf Output/RSEM/Plots/Cluster/STAR.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.SQC.pdf Output/RSEM/Plots/Cluster/STAR.TPM.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.ADC.pdf Output/RSEM/Plots/Cluster/STAR.TPM.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.SQC.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.ADC.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC-SQC.pdf Output/RSEM/Plots/Cluster/STAR.ADC-SQC.pdf
 step19-cluster-MSP: Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.MSP-Mean.pdf
@@ -6305,20 +6326,20 @@ step82: Output/Gene_Clinical_KM/STAR.SQC.MSP.tar Output/Gene_Clinical_KM/STAR.TP
 Output/Gene_CNV:
 	mkdir -p $@
 
-Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "depth.ratio" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step83: Output/Gene_Clinical_KM/Sequenza.SQC.MSP.tar
+step83: Output/Gene_CNV/Sequenza.SQC.MSP.tar Output/Gene_CNV/PureCN.SQC.MSP.tar
 .PHONY: step83
 
 # Step 84 (MSP & Gene mutation)
 Output/MSP_Comut:
 	mkdir -p $@
 
-Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
+Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
 
 step84: Output/MSP_Comut/BWA-SQC.tar
@@ -6329,7 +6350,35 @@ Output/MSP_CNV:
 	mkdir -p $@
 
 Output/MSP_CNV/BWA-SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --SQC
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --cpus $(CPUS) --SQC
+
+step85: Output/MSP_CNV/BWA-SQC.tar
+.PHONY: step85
+
+# Step 86 (MSP & CNV - DEG)
+Output/CNV_DEG Output/CNV_DEG/DEG Output/CNV_DEG/Plots/Volcano Output/CNV_DEG/Plots/Enrichment:
+	mkdir -p $@
+
+Output/CNV_DEG/DEG/BWA-Sequenza.SQC.tsv.gz: Python/calculate_CNV_DEG.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/CNV_DEG/DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CNV_DEG/%.SQC.MSP.tsv: Python/calculate_CNV_DEG_correlation.py Output/CNV_DEG/DEG/%.SQC.tsv.gz Output/MutationSharedProportion/BWA.tsv | Output/CNV_DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CNV_DEG/%.SQC.MSP-spearman.tsv: Python/calculate_CNV_DEG_correlation-2.py Output/CNV_DEG/DEG/%.SQC.tsv.gz Output/MutationSharedProportion/BWA.tsv | Output/CNV_DEG build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/CNV_DEG/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_CNV_MSP.py Output/CNV_DEG/%.SQC.MSP.tsv | Output/CNV_DEG/Plots/Volcano build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/CNV_DEG/Plots/Volcano/%.MSP-spearman.tar: Python/draw_volcano_plot_CNV_MSP.py Output/CNV_DEG/%.SQC.MSP-spearman.tsv | Output/CNV_DEG/Plots/Volcano build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+
+Output/CNV_DEG/Plots/Enrichment/%.SQC.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/CNV_DEG/%.SQC.MSP.tsv | Output/CNV_DEG/Plots/Enrichment build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human"
+
+step86-gene: Output/CNV_DEG/DEG/BWA-Sequenza.SQC.tsv.gz Output/CNV_DEG/BWA-Sequenza.SQC.MSP.tsv Output/CNV_DEG/BWA-Sequenza.SQC.MSP-spearman.tsv
+step86-volcano: Output/CNV_DEG/Plots/Volcano/BWA-Sequenza.MSP.tar Output/CNV_DEG/Plots/Volcano/BWA-Sequenza.MSP-spearman.tar
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
