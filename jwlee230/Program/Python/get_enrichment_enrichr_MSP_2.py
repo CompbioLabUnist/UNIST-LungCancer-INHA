@@ -32,7 +32,7 @@ def get_response(url, payload):
 
 
 def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]:
-    tmp_files = list()
+    tmp_files: typing.List[str] = list()
 
     if genes:
         gene_set_data = get_response(step00.pathway_addlist_url, {"list": (None, "\n".join(genes)), "description": (None, args.output)})
@@ -40,24 +40,21 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         raw_data = get_response(f"{step00.pathway_enrichment_url}?userListId={gene_set_data['userListId']}&backgroundType={args.DB}", None)
         enrichment_data = pandas.DataFrame(raw_data[args.DB], columns=step00.pathway_wanted_columns)
         enrichment_data = enrichment_data.loc[(enrichment_data["Adjusted p-value"] < args.padj)]
-        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 4) else (",".join(x[:3] + ["..."]) + f"({len(x)})"), enrichment_data["Overlapping genes"]))
+        enrichment_data["Overlapping genes..."] = list(map(lambda x: ",".join(x) if (len(x) < 10 + 1) else (",".join(x[:10] + ["..."]) + f"({len(x)})"), enrichment_data["Overlapping genes"]))
         enrichment_data["Overlapping genes"] = list(map(lambda x: ",".join(x), enrichment_data["Overlapping genes"]))
+        enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
+        enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
+        enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
     else:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns)
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    if enrichment_data.empty:
-        enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns + ["Overlapping genes..."], index=[0], data=[["None"] + [""] * (len(step00.pathway_wanted_columns))])
-
+    if (enrichment_data.empty) or (len(enrichment_data) < 1):
         matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize="xx-large", color="k", horizontalalignment="center", verticalalignment="center")
         matplotlib.pyplot.xticks([])
         matplotlib.pyplot.yticks([])
     else:
-        enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
-        enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
-        enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
-
         seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief", edgecolor="black")
 
         matplotlib.pyplot.grid(True)
@@ -72,9 +69,33 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
     fig.savefig(tmp_files[-1])
     matplotlib.pyplot.close(fig)
 
+    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+
+    if (enrichment_data.empty) or (len(enrichment_data) < 1):
+        matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize="xx-large", color="k", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.xticks([])
+        matplotlib.pyplot.yticks([])
+    else:
+        matplotlib.pyplot.barh(y=enrichment_data["Rank"], width=enrichment_data["-log10(Padj)"], color=color)
+
+        for index, row in enrichment_data.iterrows():
+            matplotlib.pyplot.text(0, y=row["Rank"], s=row["Overlapping genes..."], fontsize="xx-small", horizontalalignment="left", verticalalignment="center")
+
+        matplotlib.pyplot.grid(True)
+        matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
+        matplotlib.pyplot.xlabel("-log10(Padj)")
+        matplotlib.pyplot.ylabel(f"{enrichment_data.shape[0]} pathways")
+        ax.invert_yaxis()
+
+    matplotlib.pyplot.tight_layout()
+    tmp_files.append(f"{file_name}_bar.pdf")
+    fig.savefig(tmp_files[-1])
+    matplotlib.pyplot.close(fig)
+
+    """
     tmp_files.append(f"{file_name}.tsv")
     enrichment_data.loc[:, step00.pathway_wanted_columns].to_csv(tmp_files[-1], sep="\t", index=False)
-    """
+
     rows = enrichment_data.shape[0]
     enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
     if rows > 3:
