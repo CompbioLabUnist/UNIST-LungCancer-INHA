@@ -34,22 +34,22 @@ def query(sample: str, chromosome: str, start: int, end: int) -> float:
 
     tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (CNV_data["start"] <= start) & (end <= CNV_data["end"]), :]
     for index, row in tmp_data.iterrows():
-        a.append(row[args.watching])
+        a.append(row[watching])
         weights.append(1)
 
     tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (start <= CNV_data["start"]) & (CNV_data["end"] <= end), :]
     for index, row in tmp_data.iterrows():
-        a.append(row[args.watching])
+        a.append(row[watching])
         weights.append((row["end"] - row["start"] + 1) / length)
 
     tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (CNV_data["start"] <= start) & (start <= CNV_data["end"]), :]
     for index, row in tmp_data.iterrows():
-        a.append(row[args.watching])
+        a.append(row[watching])
         weights.append((row["end"] - start + 1) / length)
 
     tmp_data = CNV_data.loc[(CNV_data["Sample"] == sample) & (CNV_data["chromosome"] == chromosome) & (CNV_data["start"] <= end) & (end <= CNV_data["end"]), :]
     for index, row in tmp_data.iterrows():
-        a.append(row[args.watching])
+        a.append(row[watching])
         weights.append((end - row["start"] + 1) / length)
 
     if a and weights:
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures: typing.List[str] = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns[1:2]):
+    for MSP in tqdm.tqdm(step00.sharing_columns):
         clinical_data = clinical_data.sort_values(MSP)
 
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
