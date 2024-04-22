@@ -14,31 +14,31 @@ import step00
 input_data = pandas.DataFrame()
 
 
-def correlation_stage(stage: str, MSP: str, gene: str) -> typing.Tuple[float, float, float, float, float, float]:
-    tmp_data = input_data.loc[(input_data["Stage"] == stage), [MSP, gene]]
+def correlation_stage(stage: str, sharing: str, gene: str) -> typing.Tuple[float, float, float, float, float]:
+    tmp_data = input_data.loc[(input_data["Stage"] == stage), [sharing, gene]]
     if tmp_data.shape[0] < 3:
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    elif (numpy.std(tmp_data[MSP]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    return scipy.stats.linregress(tmp_data[MSP], tmp_data[gene])
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    elif (numpy.std(tmp_data[sharing]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    return scipy.stats.linregress(tmp_data[sharing], tmp_data[gene])
 
 
-def correlation_precancer(MSP: str, gene: str) -> typing.Tuple[float, float, float, float, float, float]:
-    tmp_data = input_data.loc[~(input_data["Stage"].isin({"Normal", "Primary"})), [MSP, gene]]
+def correlation_precancer(sharing: str, gene: str) -> typing.Tuple[float, float, float, float, float]:
+    tmp_data = input_data.loc[~(input_data["Stage"].isin({"Normal", "Primary"})), [sharing, gene]]
     if tmp_data.shape[0] < 3:
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    elif (numpy.std(tmp_data[MSP]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    return scipy.stats.linregress(tmp_data[MSP], tmp_data[gene])
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    elif (numpy.std(tmp_data[sharing]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    return scipy.stats.linregress(tmp_data[sharing], tmp_data[gene])
 
 
-def correlation_all(MSP: str, gene: str) -> typing.Tuple[float, float, float, float, float, float]:
-    tmp_data = input_data.loc[:, [MSP, gene]]
+def correlation_all(sharing: str, gene: str) -> typing.Tuple[float, float, float, float, float]:
+    tmp_data = input_data.loc[:, [sharing, gene]]
     if tmp_data.shape[0] < 3:
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    elif (numpy.std(tmp_data[MSP]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
-        return 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
-    return scipy.stats.linregress(tmp_data[MSP], tmp_data[gene])
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    elif (numpy.std(tmp_data[sharing]) == 0.0) or (numpy.std(tmp_data[gene]) == 0.0):
+        return 0.0, 0.0, 0.0, 1.0, 0.0
+    return scipy.stats.linregress(tmp_data[sharing], tmp_data[gene])
 
 
 if __name__ == "__main__":
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.input.endswith(".tsv"):
-        raise ValueError("Input must end with.TSV!!")
+        raise ValueError("Input must end with .TSV!!")
     elif not args.clinical.endswith(".tsv"):
         raise ValueError("Clinical must end with .TSV!!")
     elif not args.output.endswith(".tsv"):
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     print(input_data)
 
     stages = list(filter(lambda x: x in set(input_data["Stage"]), step00.long_sample_type_list)) + ["Precancer", "All"]
-    columns = ["slope", "intercept", "r", "p", "stderr", "intercept_stderr"]
+    columns = ["slope", "intercept", "r", "p", "stderr"]
 
     output_data = pandas.DataFrame(index=genes)
     with multiprocessing.Pool(args.cpus) as pool:
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 output_data = output_data.join(pandas.DataFrame(pool.starmap(correlation_stage, [(stage, MSP, gene) for gene in genes]), index=genes, columns=[f"{stage}-{MSP}-{column}" for column in columns]))
 
             output_data[f"{stage}-{MSP}-slope"] = list(map(abs, output_data[f"{stage}-{MSP}-slope"]))
-            output_data[f"{stage}-{MSP}-log10(abs(slope))"] = list(map(lambda x: numpy.log10(x) if x != 0 else 0, output_data[f"{stage}-{MSP}-slope"]))
+            output_data[f"{stage}-{MSP}-log10(abs(slope))"] = list(map(lambda x: numpy.log10(x) if (x > step00.epsilon) else 0, output_data[f"{stage}-{MSP}-slope"]))
             output_data[f"{stage}-{MSP}-importance"] = list(map(lambda x: abs(x[0] * x[1]), zip(output_data[f"{stage}-{MSP}-r"], output_data[f"{stage}-{MSP}-slope"])))
 
     print(output_data)
