@@ -5,6 +5,7 @@ import argparse
 import itertools
 import json
 import tarfile
+import typing
 import time
 import matplotlib
 import matplotlib.pyplot
@@ -31,7 +32,7 @@ def get_response(url, payload):
             return data
 
 
-def run(file_name, genes, color):
+def run(file_name: str, genes: typing.List[str], color: str):
     tmp_files = list()
 
     if genes:
