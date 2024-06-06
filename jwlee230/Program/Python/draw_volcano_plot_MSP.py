@@ -53,9 +53,9 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        matplotlib.pyplot.scatter(NS_gene[f"{stage}-{MSP}-r"], NS_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:gray")
-        matplotlib.pyplot.scatter(up_gene[f"{stage}-{MSP}-r"], up_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red")
-        matplotlib.pyplot.scatter(down_gene[f"{stage}-{MSP}-r"], down_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue")
+        matplotlib.pyplot.scatter(NS_gene[f"{stage}-{MSP}-r"], NS_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:gray", rasterized=True)
+        matplotlib.pyplot.scatter(up_gene[f"{stage}-{MSP}-r"], up_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", rasterized=True)
+        matplotlib.pyplot.scatter(down_gene[f"{stage}-{MSP}-r"], down_gene[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", rasterized=True)
 
         matplotlib.pyplot.axhline(y=numpy.log10(args.slope), linestyle="--", color="black")
         matplotlib.pyplot.text(x=0, y=numpy.log10(args.slope), s=f"slope={args.slope:.1f}", horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
@@ -103,9 +103,9 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        matplotlib.pyplot.scatter(NS_gene[f"Precancer-{MSP}-r"], NS_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:gray")
-        matplotlib.pyplot.scatter(up_gene[f"Precancer-{MSP}-r"], up_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:red")
-        matplotlib.pyplot.scatter(down_gene[f"Precancer-{MSP}-r"], down_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:blue")
+        matplotlib.pyplot.scatter(NS_gene[f"Precancer-{MSP}-r"], NS_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:gray", rasterized=True)
+        matplotlib.pyplot.scatter(up_gene[f"Precancer-{MSP}-r"], up_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:red", rasterized=True)
+        matplotlib.pyplot.scatter(down_gene[f"Precancer-{MSP}-r"], down_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:blue", rasterized=True)
 
         matplotlib.pyplot.axhline(y=numpy.log10(args.slope), linestyle="--", color="black")
         matplotlib.pyplot.text(x=0, y=numpy.log10(args.slope), s=f"slope={args.slope:.1f}", horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
