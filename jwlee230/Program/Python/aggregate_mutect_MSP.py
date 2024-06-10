@@ -51,7 +51,7 @@ if __name__ == "__main__":
         raise ValueError("CPUs must be positive!!")
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
-    elif not (0.0 < args.percentage < 0.5):
+    elif not (0.0 < args.percentage <= 0.5):
         raise ValueError("Percentage must be (0, 0.5)")
 
     clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
