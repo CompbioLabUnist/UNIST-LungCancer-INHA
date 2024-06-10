@@ -6340,7 +6340,13 @@ Output/MSP_Comut:
 	mkdir -p $@
 
 Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MSP_Comut/BWA-SQC.33.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage '0.33' --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/MSP_Comut/BWA-SQC.45.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage '0.45' --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step84: Output/MSP_Comut/BWA-SQC.tar
 .PHONY: step84
@@ -6349,10 +6355,13 @@ step84: Output/MSP_Comut/BWA-SQC.tar
 Output/MSP_CNV:
 	mkdir -p $@
 
-Output/MSP_CNV/BWA-SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --cpus $(CPUS) --SQC
+Output/MSP_CNV/BWA-Sequenza.SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-step85: Output/MSP_CNV/BWA-SQC.tar
+Output/MSP_CNV/BWA-PureCN.SQC.tar: Python/aggregate_MSP_CNV.py Output/PureCN/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "C" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+step85: Output/MSP_CNV/BWA-Sequenza.SQC.tar Output/MSP_CNV/BWA-PureCN.SQC.tar
 .PHONY: step85
 
 # Step 86 (MSP & CNV - DEG)
@@ -6379,6 +6388,24 @@ Output/CNV_DEG/Plots/Enrichment/%.SQC.Pre-only.KEGG.tar: Python/get_enrichment_e
 
 step86-gene: Output/CNV_DEG/DEG/BWA-Sequenza.SQC.tsv.gz Output/CNV_DEG/BWA-Sequenza.SQC.MSP.tsv Output/CNV_DEG/BWA-Sequenza.SQC.MSP-spearman.tsv
 step86-volcano: Output/CNV_DEG/Plots/Volcano/BWA-Sequenza.MSP.tar Output/CNV_DEG/Plots/Volcano/BWA-Sequenza.MSP-spearman.tar
+step86: step86-gene step86-volcano
+.PHONY: step86-gene step86-volcano step86
+
+# Step 87 (MuSiCal)
+Output/MuSiCal:
+	mkdir -p $@
+
+Output/MuSiCal/%.SBS.W.tsv Output/MuSiCal/%.SBS.H.tsv: Python/run_musical.py Output/SigProfiler/%/SBS96/Samples.txt | Output/MuSiCal build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+
+Output/MuSiCal/%.DBS.W.tsv Output/MuSiCal/%.DBS.H.tsv: Python/run_musical.py Output/SigProfiler/%/DBS78/Samples.txt | Output/MuSiCal build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+
+Output/MuSiCal/%.Indel.W.tsv Output/MuSiCal/%.Indel.H.tsv: Python/run_musical.py Output/SigProfiler/%/IDD83/Samples.txt | Output/MuSiCal build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+
+step87: Output/MuSiCal/BWA.W.tsv
+.PHONY: step87
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
