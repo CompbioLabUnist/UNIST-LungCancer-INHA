@@ -2545,6 +2545,18 @@ Output/SigProfiler/%-Bar/COSMIC.SQC.Absolute.tar: Python/plot_signature_bar_prec
 Output/SigProfiler/%-Bar/COSMIC.SQC.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative 1> $@.stdout 2> $@.stderr
 
+Output/SigProfiler/%-Bar/COSMIC.SQC.33.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --percentage "0.33" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC.SQC.33.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --percentage "0.33" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC.SQC.45.Absolute.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute --percentage "0.45" 1> $@.stdout 2> $@.stderr
+
+Output/SigProfiler/%-Bar/COSMIC.SQC.45.Relative.tar: Python/plot_signature_bar_precancer.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/SigProfiler/%-Bar
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --relative --percentage "0.45" 1> $@.stdout 2> $@.stderr
+
 Output/SigProfiler/%-Bar/COSMIC-SingleBase.SQC.Subtype.Absolute.pdf: Python/plot_signature_bar_subtype.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt $(CLINICAL_DATA_CSV) | build.log Output/SigProfiler/%-Bar
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --absolute 1> $@.stdout 2> $@.stderr
 
