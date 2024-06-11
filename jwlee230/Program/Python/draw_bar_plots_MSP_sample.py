@@ -44,7 +44,7 @@ def run(MSP: str, gene: str) -> str:
     p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
 
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
-        pass
+        return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -135,7 +135,6 @@ if __name__ == "__main__":
             genes = list()
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
-            genes = sorted({"HIF1A", "MALAT1", "MYCL", "BIRCG", "RAD21", "STRN", "ZNF479"} & gene_set)
 
             figures += list(filter(None, pool.starmap(run, [(MSP, gene) for gene in genes])))
 

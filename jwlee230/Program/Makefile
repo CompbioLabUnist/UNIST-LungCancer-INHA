@@ -1534,8 +1534,20 @@ Output/RSEM/Plots/Scatter/%.SQC-ratio.tar: Python/draw_scatter_RSEM_MSP-ratio.py
 Output/RSEM/Plots/Bar/%.SQC.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/Bar/%.SQC.33.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Bar/%.SQC.45.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.45" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/RSEM/Plots/Bar/%.SQC.Spearman.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Bar/%.SQC.33.Spearman.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/RSEM/Plots/Bar/%.SQC.45.Spearman.tar: Python/draw_bar_plots_MSP_sample.py Output/RSEM/DEG/%.SQC.DEG.MSP-spearman.tsv Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Bar build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.45" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step19-cluster-stage: Output/RSEM/Plots/Cluster/Bowtie2.SQC.pdf Output/RSEM/Plots/Cluster/STAR.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC.pdf Output/RSEM/Plots/Cluster/STAR.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.SQC.pdf Output/RSEM/Plots/Cluster/STAR.TPM.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.TPM.ADC.pdf Output/RSEM/Plots/Cluster/STAR.TPM.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.SQC.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.SQC.pdf Output/RSEM/Plots/Cluster/Bowtie2.FPKM.ADC.pdf Output/RSEM/Plots/Cluster/STAR.FPKM.ADC.pdf Output/RSEM/Plots/Cluster/Bowtie2.ADC-SQC.pdf Output/RSEM/Plots/Cluster/STAR.ADC-SQC.pdf
 step19-cluster-MSP: Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Normal.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.CIS.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.Primary.MSP-Mean.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.MSP-Median.pdf Output/RSEM/Plots/Cluster/Bowtie2.SQC.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Normal.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.CIS.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.Primary.MSP-Mean.pdf Output/RSEM/Plots/Cluster/STAR.SQC.MSP-Median.pdf Output/RSEM/Plots/Cluster/STAR.SQC.MSP-Mean.pdf
