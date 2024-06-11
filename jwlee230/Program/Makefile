@@ -6329,6 +6329,12 @@ Output/Gene_CNV:
 Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
+Output/Gene_CNV/Sequenza.SQC.MSP.33.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Gene_CNV/Sequenza.SQC.MSP.45.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --percentage "0.45" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
 Output/Gene_CNV/PureCN.SQC.MSP.tar: Python/plot_expression_CNV.py Output/PureCN/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_ONE_CSV) | Output/Gene_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "seg.mean" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
@@ -6340,13 +6346,13 @@ Output/MSP_Comut:
 	mkdir -p $@
 
 Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
 
 Output/MSP_Comut/BWA-SQC.33.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage '0.33' --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MSP_Comut/BWA-SQC.45.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage '0.45' --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.45" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 step84: Output/MSP_Comut/BWA-SQC.tar
 .PHONY: step84
@@ -6357,6 +6363,12 @@ Output/MSP_CNV:
 
 Output/MSP_CNV/BWA-Sequenza.SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MSP_CNV/BWA-Sequenza.SQC.33.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --percentage "0.33" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
+Output/MSP_CNV/BWA-Sequenza.SQC.45.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --percentage "0.45" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
 Output/MSP_CNV/BWA-PureCN.SQC.tar: Python/aggregate_MSP_CNV.py Output/PureCN/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) | build.log Output/MSP_CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "C" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
