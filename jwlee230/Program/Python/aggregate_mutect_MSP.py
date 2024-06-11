@@ -83,10 +83,11 @@ if __name__ == "__main__":
     driver_data = driver_data.loc[(driver_data["Gene"].isin(set(mutect_data["Hugo_Symbol"]))) & (driver_data["Gene"].isin(set(cgc_data.index)))]
     print(driver_data)
 
+    """
     for column in tqdm.tqdm(step00.MutEnricher_pval_columns):
-        continue
         driver_data = driver_data.loc[(driver_data[column] < args.p)]
     print(driver_data)
+    """
 
     gene_list = sorted(driver_data["Gene"], key=lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x), "Tumor_Sample_Barcode"])))
     print("Gene:", len(gene_list))
@@ -204,9 +205,12 @@ if __name__ == "__main__":
         bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=-0.4, align="edge", color="tab:red", edgecolor=None, label="PSM-H (Shared)"))
 
         for i, gene in tqdm.tqdm(enumerate(gene_list), total=len(gene_list), leave=False):
-            shared_lower_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_L_list)), "Precancer"]))
-            shared_higher_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_H_list)), "Precancer"]))
-            p_value = scipy.stats.fisher_exact([[shared_lower_precancer, len(MSP_L_list) - shared_lower_precancer], [shared_higher_precancer, len(MSP_H_list) - shared_higher_precancer]])[1]
+            shared_lower_primary = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]))
+            not_shared_lower_primary = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]))
+            shared_higher_primary = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]))
+            not_shared_higher_primary = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]))
+
+            p_value = scipy.stats.fisher_exact([[shared_lower_primary, not_shared_lower_primary], [shared_higher_primary, not_shared_higher_primary]])[1]
 
             if (p_value >= 0.05):
                 continue
@@ -219,7 +223,7 @@ if __name__ == "__main__":
         axs["Mutation-proportion"].set_ylim(axs["Mutation"].get_ylim())
         axs["Mutation-proportion"].grid(True)
 
-        axs["Mutation-proportion-legend"].legend(handles=bar_list, title="Mutations in PRE", loc="center", fontsize="xx-small")
+        axs["Mutation-proportion-legend"].legend(handles=bar_list, title="Mutations in PRI", loc="center", fontsize="xx-small")
         axs["Mutation-proportion-legend"].axis("off")
 
         figures.append(f"{MSP}.pdf")
