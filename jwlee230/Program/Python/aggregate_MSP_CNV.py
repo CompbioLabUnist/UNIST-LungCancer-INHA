@@ -43,7 +43,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
 
     tmp_start = start
     for index, row in tmp_data.loc[(tmp_data["start"] <= end) & (tmp_data["end"] >= start)].iterrows():
-        a.append(1.0)
+        a.append(row[watching])
         weights.append((max(row["start"], start) - tmp_start + 1) / length)
         tmp_start = min(row["end"], end)
 
@@ -53,13 +53,24 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     return numpy.average(a=a, weights=weights)
 
 
-def color_mapper(cnv):
-    if cnv < 1.5:
-        return "royalblue"
-    elif cnv > 2.5:
-        return "crimson"
-    else:
+def color_mapper(precancer_cnv, primary_cnv):
+    loss_threshold = center * (1.0 - args.threshold)
+    gain_threshold = center * (1.0 + args.threshold)
+
+    if loss_threshold <= primary_cnv <= gain_threshold:
         return "darkgray"
+    elif primary_cnv < loss_threshold:
+        if precancer_cnv < loss_threshold:
+            return "royalblue"
+        else:
+            return "lightskyblue"
+    elif gain_threshold < primary_cnv:
+        if gain_threshold < precancer_cnv:
+            return "crimson"
+        else:
+            return "pink"
+    else:
+        raise ValueError("Something went wrong!!")
 
 
 if __name__ == "__main__":
@@ -136,7 +147,7 @@ if __name__ == "__main__":
         MSP_Q1 = numpy.quantile(clinical_data[MSP], args.percentage)
         MSP_Q3 = numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
-        mosaic = [["MSP", "MSP-legend", "MSP-legend"], ["Survival", ".", "."]] + [[chromosome, f"{chromosome}-L", f"{chromosome}-H"] for chromosome in chromosome_list]
+        mosaic = [["MSP", "CNV-legend", "CNV-legend"], ["Survival", "Legend", "Legend"]] + [[chromosome, f"{chromosome}-L", f"{chromosome}-H"] for chromosome in chromosome_list]
         fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 4), gridspec_kw={"height_ratios": [max(height_ratios), max(height_ratios)] + height_ratios, "width_ratios": [9.0, 0.5, 0.5], "wspace": 0.0, "hspace": 0.0}, layout="tight")
 
         MSP_Q_list = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= MSP_Q1) else ("PSM-H" if (clinical_data.loc[x, MSP] >= MSP_Q3) else "None"), patient_list))
@@ -144,9 +155,9 @@ if __name__ == "__main__":
         MSP_H_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-H", zip(MSP_Q_list, precancer_list)))))
 
         bar_list = list()
-        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, label="PSM-L"))
-        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H"))
-        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], MSP], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other"))
+        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, align="center", label="PSM-L"))
+        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, align="center", label="PSM-H"))
+        bar_list.append(axs["MSP"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], MSP], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, align="center", label="Other"))
 
         axs["MSP"].set_xlabel("")
         axs["MSP"].set_ylabel("PSM", fontsize="x-small")
@@ -154,13 +165,10 @@ if __name__ == "__main__":
         axs["MSP"].set_yticks([0.0, 0.25, 0.5], ["0.0", "0.25", "0.50"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["MSP"].grid(True)
 
-        axs["MSP-legend"].legend(handles=bar_list, title="PSM", loc="center")
-        axs["MSP-legend"].axis("off")
-
         survival_column = "Recurrence-Free Survival"
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, label="PSM-L")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, align="center", label="PSM-L")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, align="center", label="PSM-H")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, align="center", label="Other")
 
         recurrence_column = "Recurrence"
         recurrence_x_list = list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == 1, range(len(precancer_list))))
@@ -170,58 +178,57 @@ if __name__ == "__main__":
         axs["Survival"].set_yticks([0, 2500, 5000], ["0", "2500", "5000"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["Survival"].set_ylabel("RFS (days)", fontsize="x-small")
         axs["Survival"].set_xlim(axs["MSP"].get_xlim())
-        axs["Survival"].legend(loc="upper left", fontsize="xx-small")
+        axs["Survival"].set_ylim((0, 6000))
+        axs["Survival"].legend(loc="upper left", title="PSM", fontsize="xx-small")
         axs["Survival"].grid(True)
 
         for chromosome in tqdm.tqdm(chromosome_list, leave=False):
-            chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(precancer_list), size_data.loc[chromosome, "length"] // step00.big)), index=precancer_list, dtype=float)
+            chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(precancer_list) + len(primary_list), size_data.loc[chromosome, "length"] // step00.big)), index=precancer_list + primary_list, dtype=float)
+            color_data = pandas.DataFrame(index=patient_list, columns=range(size_data.loc[chromosome, "length"] // step00.big), dtype=str)
 
             with multiprocessing.Pool(args.cpus) as pool:
-                for sample in precancer_list:
+                for sample in precancer_list + primary_list:
                     chromosome_data.loc[sample, :] = pool.starmap(get_chromosome_data, [(sample, chromosome, step * step00.big, (step + 1) * step00.big) for step in list(chromosome_data.columns)])
 
-            for i, sample in enumerate(precancer_list):
-                axs[chromosome].barh(y=list(chromosome_data.columns), width=[0.8 for _ in list(chromosome_data.columns)], left=i, height=1.0, align="center", color=list(map(color_mapper, chromosome_data.loc[sample, :])), edgecolor=None, linewidth=0.0)
+                for patient, precancer_sample, primary_sample in zip(patient_list, precancer_list, primary_list):
+                    color_data.loc[patient, :] = pool.starmap(color_mapper, zip(chromosome_data.loc[precancer_sample, :], chromosome_data.loc[primary_sample, :]))
+
+            for i, patient in enumerate(patient_list):
+                axs[chromosome].barh(y=list(chromosome_data.columns), width=[0.8 for _ in list(chromosome_data.columns)], left=i - 0.4, height=1.0, align="center", color=color_data.loc[patient, :], edgecolor=None, linewidth=0.0)
 
             axs[chromosome].set_ylabel(chromosome[3:], fontsize="xx-small")
             axs[chromosome].invert_yaxis()
-            axs[chromosome].set_xticks([])
             axs[chromosome].set_yticks([])
             axs[chromosome].set_xlim(axs["MSP"].get_xlim())
+            axs[chromosome].grid(visible=True, axis="y")
+            if chromosome == chromosome_list[-1]:
+                axs[chromosome].set_xticks(range(len(precancer_list)), patient_list, fontsize="x-small", rotation="vertical")
 
-            axs[f"{chromosome}-L"].barh(y=list(chromosome_data.columns), width=[len(list(filter(lambda x: x <= (center * (1 - args.threshold)), chromosome_data.loc[MSP_L_list, location]))) / len(MSP_L_list) for location in list(chromosome_data.columns)], height=1.0, align="edge", color="tab:blue", edgecolor=None, linewidth=0.0)
-            axs[f"{chromosome}-L"].barh(y=list(chromosome_data.columns), width=[-1 * len(list(filter(lambda x: x >= (center * (1 + args.threshold)), chromosome_data.loc[MSP_L_list, location]))) / len(MSP_L_list) for location in list(chromosome_data.columns)], left=1.0, height=1.0, align="edge", color="tab:red", edgecolor=None, linewidth=0.0)
+            bar_list = list()
+            bar_list.append(axs[f"{chromosome}-L"].barh(y=list(color_data.columns), width=[len(list(filter(lambda x: x == "royalblue", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], left=0.0, height=0.4, align="center", color="tab:blue", edgecolor=None, linewidth=0.0, label="PSM-L (Shared)"))
+            bar_list.append(axs[f"{chromosome}-L"].barh(y=list(color_data.columns), width=[len(list(filter(lambda x: x == "lightskyblue", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], left=[len(list(filter(lambda x: x == "royalblue", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], height=0.4, align="center", color="tab:cyan", edgecolor=None, linewidth=0.0, label="PSM-L (Not shared)"))
+            bar_list.append(axs[f"{chromosome}-L"].barh(y=numpy.array(color_data.columns) + 0.4, width=[len(list(filter(lambda x: x == "royalblue", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], left=0.0, height=0.4, align="center", color="tab:red", edgecolor=None, linewidth=0.0, label="PSM-H (Shared)"))
+            bar_list.append(axs[f"{chromosome}-L"].barh(y=numpy.array(color_data.columns) + 0.4, width=[len(list(filter(lambda x: x == "lightskyblue", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], left=[len(list(filter(lambda x: x == "royalblue", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], height=0.4, align="center", color="tab:pink", edgecolor=None, linewidth=0.0, label="PSM-H (Not shared)"))
+
             axs[f"{chromosome}-L"].invert_yaxis()
+            axs[f"{chromosome}-L"].set_xticks([])
             axs[f"{chromosome}-L"].set_yticks([])
-            axs[f"{chromosome}-L"].set_xlim((0.0, 1.0))
+            if chromosome == chromosome_list[-1]:
+                axs[f"{chromosome}-L"].set_xlabel("CNV loss", fontsize="x-small")
 
-            if chromosome == chromosome_list[0]:
-                axs[f"{chromosome}-L"].tick_params(top=True, labeltop=True)
-                axs[f"{chromosome}-L"].tick_params(bottom=False, labelbottom=False)
-                axs[f"{chromosome}-L"].set_xticks([0.0, 0.5, 1.0], ["1.0", "0.5", "0.0"], fontsize="xx-small")
-                axs[f"{chromosome}-L"].set_title("Gain", fontsize="x-small")
-            elif chromosome == chromosome_list[-1]:
-                axs[f"{chromosome}-L"].set_xticks([0.0, 0.5, 1.0], ["0.0", "0.5", "1.0"], fontsize="xx-small")
-                axs[f"{chromosome}-L"].set_xlabel("Loss", fontsize="x-small")
-            else:
-                axs[f"{chromosome}-L"].set_xticks([])
+            axs[f"{chromosome}-H"].barh(y=list(color_data.columns), width=[len(list(filter(lambda x: x == "crimson", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], left=0.0, height=0.4, align="center", color="tab:blue", edgecolor=None, linewidth=0.0)
+            axs[f"{chromosome}-H"].barh(y=list(color_data.columns), width=[len(list(filter(lambda x: x == "pink", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], left=[len(list(filter(lambda x: x == "crimson", color_data.loc[list(map(step00.get_patient, MSP_L_list)), i]))) / len(MSP_L_list) for i in list(color_data.columns)], height=0.4, align="center", color="tab:cyan", edgecolor=None, linewidth=0.0)
+            axs[f"{chromosome}-H"].barh(y=numpy.array(color_data.columns) + 0.4, width=[len(list(filter(lambda x: x == "crimson", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], left=0.0, height=0.4, align="center", color="tab:red", edgecolor=None, linewidth=0.0)
+            axs[f"{chromosome}-H"].barh(y=numpy.array(color_data.columns) + 0.4, width=[len(list(filter(lambda x: x == "pink", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], left=[len(list(filter(lambda x: x == "crimson", color_data.loc[list(map(step00.get_patient, MSP_H_list)), i]))) / len(MSP_H_list) for i in list(color_data.columns)], height=0.4, align="center", color="tab:pink", edgecolor=None, linewidth=0.0)
 
-            axs[f"{chromosome}-H"].barh(y=list(chromosome_data.columns), width=[len(list(filter(lambda x: x <= (center * (1 - args.threshold)), chromosome_data.loc[MSP_H_list, location]))) / len(MSP_H_list) for location in list(chromosome_data.columns)], height=1.0, align="edge", color="tab:blue", edgecolor=None, linewidth=0.0)
-            axs[f"{chromosome}-H"].barh(y=list(chromosome_data.columns), width=[-1 * len(list(filter(lambda x: x >= (center * (1 + args.threshold)), chromosome_data.loc[MSP_H_list, location]))) / len(MSP_H_list) for location in list(chromosome_data.columns)], left=1.0, height=1.0, align="edge", color="tab:red", edgecolor=None, linewidth=0.0)
             axs[f"{chromosome}-H"].invert_yaxis()
+            axs[f"{chromosome}-H"].set_xticks([])
             axs[f"{chromosome}-H"].set_yticks([])
-            axs[f"{chromosome}-H"].set_xlim((0.0, 1.0))
+            if chromosome == chromosome_list[-1]:
+                axs[f"{chromosome}-H"].set_xlabel("CNV gain", fontsize="x-small")
 
-            if chromosome == chromosome_list[0]:
-                axs[f"{chromosome}-H"].tick_params(top=True, labeltop=True)
-                axs[f"{chromosome}-H"].tick_params(bottom=False, labelbottom=False)
-                axs[f"{chromosome}-H"].set_xticks([0.0, 0.5, 1.0], ["1.0", "0.5", "0.0"], fontsize="xx-small")
-                axs[f"{chromosome}-H"].set_title("Gain", fontsize="x-small")
-            elif chromosome == chromosome_list[-1]:
-                axs[f"{chromosome}-H"].set_xticks([0.0, 0.5, 1.0], ["0.0", "0.5", "1.0"], fontsize="xx-small")
-                axs[f"{chromosome}-H"].set_xlabel("Loss", fontsize="x-small")
-            else:
-                axs[f"{chromosome}-H"].set_xticks([])
+        axs["Legend"].legend(handles=bar_list, title="CNV in PRI", loc="center", fontsize="xx-small")
+        axs["Legend"].axis("off")
 
         figures.append(f"{MSP}-Precancer.pdf")
         fig.savefig(figures[-1])
