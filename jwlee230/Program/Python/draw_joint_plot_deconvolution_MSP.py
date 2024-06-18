@@ -27,8 +27,8 @@ def reg(stage, MSP, cell):
         drawing_data = input_data.copy()
         color = "tab:blue"
     elif stage == "Precancer":
-        drawing_data = input_data.loc[~(input_data["Stage"].isin({"Normal", "Primary"}))]
-        color = "tab:pink"
+        drawing_data = input_data.loc[list(filter(lambda x: x in set(input_data[f"{MSP}-sample"]), list(input_data.index))), :]
+        color = step00.precancer_color_code[stage]
     else:
         drawing_data = input_data.loc[(input_data["Stage"] == stage)]
         color = step00.stage_color_code[stage]
@@ -39,6 +39,7 @@ def reg(stage, MSP, cell):
         return ""
 
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
+    r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
     if p >= 0.05:
         return ""
@@ -65,8 +66,8 @@ def joint(stage, MSP, cell):
         drawing_data = input_data.copy()
         color = "tab:blue"
     elif stage == "Precancer":
-        drawing_data = input_data.loc[~(input_data["Stage"].isin({"Normal", "Primary"}))]
-        color = "tab:pink"
+        drawing_data = input_data.loc[list(filter(lambda x: x in set(input_data[f"{MSP}-sample"]), list(input_data.index))), :]
+        color = step00.precancer_color_code[stage]
     else:
         drawing_data = input_data.loc[(input_data["Stage"] == stage)]
         color = step00.stage_color_code[stage]
@@ -77,6 +78,7 @@ def joint(stage, MSP, cell):
         return ""
 
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
+    r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
     if p >= 0.05:
         return ""
@@ -142,6 +144,7 @@ if __name__ == "__main__":
     input_data["Stage"] = list(map(step00.get_long_sample_type, list(input_data.index)))
     for MSP in tqdm.tqdm(step00.sharing_columns):
         input_data[MSP] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), MSP], list(input_data.index)))
+        input_data[f"{MSP}-sample"] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), f"{MSP}-sample"], list(input_data.index)))
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
