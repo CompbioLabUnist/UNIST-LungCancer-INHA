@@ -41,7 +41,7 @@ def reg(stage, MSP, cell):
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
     r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
-    if p >= 0.05:
+    if (numpy.isnan(p)) or (p >= 0.05):
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
@@ -80,7 +80,7 @@ def joint(stage, MSP, cell):
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
     r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
-    if p >= 0.05:
+    if (numpy.isnan(p)) or (p >= 0.05):
         return ""
 
     g = seaborn.jointplot(data=drawing_data, x=MSP, y=cell, color=color, kind="reg", height=24, ratio=5)
