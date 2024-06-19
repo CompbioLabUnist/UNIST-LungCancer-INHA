@@ -1968,6 +1968,9 @@ Output/MuSiC/%.GSE131907.tsv: R/run_MuSiC.R Output/RSEM/DEG/%.tsv $(LUNG_GSE1319
 Output/MuSiC/%.GSE162498.tsv: R/run_MuSiC_2.R Output/RSEM/DEG/%.tsv $(LUNG_GSE162498_11_TUMORS_RDS) | build.log Output/MuSiC
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
+Output/MuSiC/%.GSE179994.tsv: R/run_MuSiC_3.R Output/RSEM/DEG/%.tsv $(LUNG_GSE179994_ANNOTATION_TXT) $(LUNG_GSE179994_MATRIX_RDS) | Output/MuSiC build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
 Output/MuSiC/heatmap/%.SQC.pdf: Python/draw_heatmap_deconvolution.py Output/MuSiC/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/MuSiC/heatmap
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
