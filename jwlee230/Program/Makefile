@@ -59,6 +59,8 @@ LUNG_GSE131907_NORMALIZED_MATRIX_RDS = Data/Lung_SingleCell/GSE131907/GSE131907_
 LUNG_GSE131907_NORMALIZED_MATRIX_TXT = Data/Lung_SingleCell/GSE131907/GSE131907_Lung_Cancer_normalized_log2TPM_matrix.txt
 LUNG_GSE162498_11_TUMORS_RDS = Data/Lung_SingleCell/GSE162498/GSE162498_NSCLC_CD3_11tumors.Rds
 LUNG_GSE179994_ANNOTATION_TXT = Data/Lung_SingleCell/GSE179994/annotation.txt
+LUNG_GSE179994_CD4_TXT = Data/Lung_SingleCell/GSE179994/CD4.txt
+LUNG_GSE179994_CD8_TXT = Data/Lung_SingleCell/GSE179994/CD8.txt
 LUNG_GSE179994_MATRIX_RDS = Data/Lung_SingleCell/GSE179994/GSE179994_all.Tcell.rawCounts.rds
 KNOWN_GENE_GTF = Data/hg38.gtf
 KNOWN_GENE_GTF_GZ = $(KNOWN_GENE_GTF).gz
@@ -2091,6 +2093,12 @@ Output/BisqueRNA/%.GSE162498.tsv: R/run_BisqueRNA_2.R Output/RSEM/DEG/%.tsv $(LU
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --reference $(addprefix /,$(filter %.Rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/BisqueRNA/%.GSE179994.tsv: R/run_BisqueRNA_3.R Output/RSEM/DEG/%.tsv $(LUNG_GSE179994_ANNOTATION_TXT) $(LUNG_GSE179994_MATRIX_RDS) | Output/BisqueRNA build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/%.GSE179994-CD4.tsv: R/run_BisqueRNA_3.R Output/RSEM/DEG/%.tsv $(LUNG_GSE179994_CD4_TXT) $(LUNG_GSE179994_MATRIX_RDS) | Output/BisqueRNA build.log
+	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
+
+Output/BisqueRNA/%.GSE179994-CD8.tsv: R/run_BisqueRNA_3.R Output/RSEM/DEG/%.tsv $(LUNG_GSE179994_CD8_TXT) $(LUNG_GSE179994_MATRIX_RDS) | Output/BisqueRNA build.log
 	$(DOCKER) $(R) $(addprefix /,$(filter %.R,$^)) --input $(addprefix /,$(filter %.tsv,$^)) --annotation $(addprefix /,$(filter %.txt,$^)) --reference $(addprefix /,$(filter %.rds,$^)) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
 Output/BisqueRNA/heatmap/%.SQC.pdf: Python/draw_heatmap_deconvolution.py Output/BisqueRNA/%.tsv $(CLINICAL_DATA_CSV) | build.log Output/BisqueRNA/heatmap
