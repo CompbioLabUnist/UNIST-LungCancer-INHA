@@ -6387,7 +6387,7 @@ Output/MSP_Comut:
 	mkdir -p $@
 
 Output/MSP_Comut/BWA-SQC.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MSP_Comut/BWA-SQC.33.tar: Python/aggregate_mutect_MSP.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.PASS.maf,$(WES_REAL_TUMOR_ID))) Output/MutEnricher/BWA/SQC-Precancer/MutEnricher_gene_hotspot_Fisher_enrichments.txt Output/MutationSharedProportion/BWA.tsv Output/SharedMutation/BWA.tsv $(GENE_CENCUS_ONE_CSV) | build.log Output/MSP_Comut
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr

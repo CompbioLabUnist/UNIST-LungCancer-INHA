@@ -115,7 +115,7 @@ if __name__ == "__main__":
         MSP_Q3 = numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
         mosaic = [["MSP-bar", "Mutation-legend"], ["TMB", "TMB-legend"], ["Survival", "Mutation-proportion-legend"], ["Mutation", "Mutation-proportion"]]
-        fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 4), gridspec_kw={"height_ratios": [1, 1, 1, 20], "width_ratios": [9, 1]}, layout="tight")
+        fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 2), gridspec_kw={"height_ratios": [1, 1, 1, 10], "width_ratios": [9, 1]}, layout="tight")
 
         MSP_Q_list = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= MSP_Q1) else ("PSM-H" if (clinical_data.loc[x, MSP] >= MSP_Q3) else "None"), patient_list))
         MSP_L_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-L", zip(MSP_Q_list, precancer_list)))))
@@ -145,12 +145,12 @@ if __name__ == "__main__":
         axs["TMB-legend"].axis("off")
 
         survival_column = "Recurrence-Free Survival"
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, label="PSM-L")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, label="PSM-H")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, label="Other")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None,)
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None)
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None)
 
         recurrence_column = "Recurrence"
-        recurrence_x_list = list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == 1, range(len(precancer_list))))
+        recurrence_x_list = list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == "1", range(len(patient_list))))
         axs["Survival"].scatter(recurrence_x_list, [1000 for _ in recurrence_x_list], c="black", s=1000, marker="*", edgecolor=None, label="Recurrence")
 
         axs["Survival"].set_xticks([])

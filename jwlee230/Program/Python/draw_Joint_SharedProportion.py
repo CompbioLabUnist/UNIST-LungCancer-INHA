@@ -54,7 +54,6 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-
     for MSP, survival in tqdm.tqdm(list(itertools.product(step00.sharing_columns, survivals))):
         clinical_data[survival] = list(map(int, clinical_data[survival]))
 
@@ -64,7 +63,7 @@ if __name__ == "__main__":
         g.set_axis_labels(MSP, f"{survival} (days)")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
-        figures.append(f"Joint_{MSP}_{survival}.pdf")
+        figures.append(f"Joint-{MSP}-{survival}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
 
@@ -76,7 +75,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.text(get_middle(clinical_data[MSP]), get_middle(clinical_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.tight_layout()
 
-        figures.append(f"Scatter_{MSP}_{survival}.pdf")
+        figures.append(f"Scatter-{MSP}-{survival}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
