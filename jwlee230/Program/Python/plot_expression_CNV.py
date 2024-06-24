@@ -87,7 +87,7 @@ def run_reg(sharing_and_gene: typing.Tuple[str, str]) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=precancer_data, x="MSP", y="CNV", scatter=True, fit_reg=True, color="tab:pink", ax=ax)
+    seaborn.regplot(data=precancer_data, x="MSP", y="CNV", scatter=True, fit_reg=True, color=step00.precancer_color_code["Precancer"], ax=ax)
     matplotlib.pyplot.text(get_middle(precancer_data["MSP"]), get_middle(precancer_data["CNV"]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
     matplotlib.pyplot.xlabel(sharing)
@@ -125,7 +125,7 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+    seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=1, ax=ax)
     statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
     matplotlib.pyplot.xlabel(sharing)
