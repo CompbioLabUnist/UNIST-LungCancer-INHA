@@ -61,7 +61,7 @@ if __name__ == "__main__":
     parser.add_argument("size", help="SIZE file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--watching", help="Watching column name", type=str, required=True)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
 
     group = parser.add_mutually_exclusive_group(required=True)
@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
         drawing_data = pandas.DataFrame(raw_drawing_data, columns=["Precancer", "Primary"])
         minimum, maximum = min(drawing_data.min()) - 0.1, max(drawing_data.max()) + 0.1
-        r, p = scipy.stats.pearsonr(drawing_data["Precancer"], drawing_data["Primary"])
+        r, p = scipy.stats.spearmanr(drawing_data["Precancer"], drawing_data["Primary"])
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
         drawing_data = pandas.DataFrame(raw_drawing_data, columns=["Precancer", "Primary"])
         minimum, maximum = min(drawing_data.min()) - 0.1, max(drawing_data.max()) + 0.1
-        r, p = scipy.stats.pearsonr(drawing_data["Precancer"], drawing_data["Primary"])
+        r, p = scipy.stats.spearmanr(drawing_data["Precancer"], drawing_data["Primary"])
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 

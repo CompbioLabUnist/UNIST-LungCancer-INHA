@@ -27,7 +27,7 @@ if __name__ == "__main__":
     parser.add_argument("clinical", help="Clinical data with Mutation Shared Proportion TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cpus", help="Number of CPUs to use", type=int, default=1)
-    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.1)
+    parser.add_argument("--percentage", help="Percentage of patients to include", type=float, default=0.25)
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -84,36 +84,23 @@ if __name__ == "__main__":
 
     figures = list()
     MSP_order = ["Lower", "Higher"]
+    compare_list = [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1 - args.percentage)
 
-        drawing_data = output_data.copy()
+        drawing_data = output_data.loc[(output_data["Sample"].isin(clinical_data[f"{MSP}-sample"])) | (output_data["Sample"].isin(list(map(step00.get_paired_primary, clinical_data[f"{MSP}-sample"]))))].copy()
         drawing_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] <= lower_bound) else ("Higher" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
         drawing_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", drawing_data["Stage"]))
         drawing_data = drawing_data.loc[(drawing_data[MSP].isin(MSP_order))]
 
         stage_list = ["Precancer", "Primary"]
-        palette = {"Precancer": "tab:pink", "Primary": "gray"}
-
-        compare_list = list()
-        for (x1, s1), (x2, s2) in [(("Lower", stage), ("Higher", stage)) for stage in stage_list] + [((x, a), (x, b)) for x in MSP_order for a, b in itertools.combinations(stage_list, r=2)]:
-            stat, p = scipy.stats.mannwhitneyu(drawing_data.loc[(drawing_data[MSP] == x1) & (drawing_data["Stage"] == s1), "Ploidy"], drawing_data.loc[(drawing_data[MSP] == x2) & (drawing_data["Stage"] == s2), "Ploidy"])
-            if p < 0.05:
-                compare_list.append(((x1, s1), (x2, s2)))
-
-        try:
-            stat, p = scipy.stats.kruskal(*[drawing_data.loc[(drawing_data[MSP] == x) & (drawing_data["Stage"] == s), "Ploidy"] for x, s in itertools.product(MSP_order, stage_list)])
-        except ValueError:
-            p = 1.0
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=palette, inner="box", cut=1, linewidth=5, ax=ax)
-        if compare_list:
-            statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
+        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        matplotlib.pyplot.title(f"K.W. p={p:.3f}")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
@@ -121,14 +108,13 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
     stage_list = list(filter(lambda x: output_data.loc[(output_data["Stage"] == x)].shape[0] > 3, step00.long_sample_type_list))
-    palette = dict([(stage, step00.stage_color_code[stage]) for stage in stage_list])
 
     output_data = output_data.loc[(output_data["Stage"].isin(stage_list))]
     for MSP in tqdm.tqdm(step00.sharing_columns):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
-        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Ploidy"])
+        r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Ploidy"])
 
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.stage_color_code, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         figures.append(f"Joint_All_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -148,9 +134,9 @@ if __name__ == "__main__":
     for stage, MSP in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
         tmp_data = output_data.loc[(output_data["Stage"] == stage)]
 
-        r, p = scipy.stats.pearsonr(tmp_data[MSP], tmp_data["Ploidy"])
+        r, p = scipy.stats.spearmanr(tmp_data[MSP], tmp_data["Ploidy"])
 
-        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Ploidy", color=palette[stage], height=18, ratio=5, kind="reg")
+        g = seaborn.jointplot(data=tmp_data, x=MSP, y="Ploidy", color=step00.stage_color_code[stage], height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         figures.append(f"Joint_{stage}_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -158,7 +144,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=tmp_data, x=MSP, y="Ploidy", color=palette[stage], fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=tmp_data, x=MSP, y="Ploidy", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, ax=ax)
 
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.tight_layout()
@@ -168,14 +154,13 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
     stage_list = ["Precancer", "Primary"]
-    palette = {"Precancer": "tab:pink", "Primary": "gray"}
 
     output_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", output_data["Stage"]))
     for MSP in tqdm.tqdm(step00.sharing_columns):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
-        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Ploidy"])
+        r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Ploidy"])
 
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", hue="Stage", hue_order=stage_list, palette=palette, height=18, ratio=5, kind="scatter")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, height=18, ratio=5, kind="scatter")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         figures.append(f"Joint_Precancer_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -183,9 +168,9 @@ if __name__ == "__main__":
 
     output_data = output_data.loc[(output_data["Stage"] == "Precancer")]
     for MSP in tqdm.tqdm(step00.sharing_columns):
-        r, p = scipy.stats.pearsonr(output_data[MSP], output_data["Ploidy"])
+        r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Ploidy"])
 
-        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", color="tab:pink", height=18, ratio=5, kind="reg")
+        g = seaborn.jointplot(data=output_data, x=MSP, y="Ploidy", color=step00.precancer_color_code["Precancer"], height=18, ratio=5, kind="reg")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         figures.append(f"Joint_PrecancerOnly_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -193,7 +178,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=output_data, x=MSP, y="Ploidy", color="tab:pink", fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Ploidy", color=step00.precancer_color_code["Precancer"], fit_reg=True, scatter=True, ax=ax)
 
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.tight_layout()
