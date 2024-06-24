@@ -52,7 +52,7 @@ if __name__ == "__main__":
     elif not (0 < args.p < 1):
         raise ValueError("P-values must be (0, 1)")
     elif not (0.0 < args.percentage <= 0.5):
-        raise ValueError("Percentage must be (0, 0.5)")
+        raise ValueError("Percentage must be (0, 0.5]")
 
     clinical_data = pandas.read_csv(args.clinical, sep="\t", index_col=0)
     print(clinical_data)
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     print(mutect_data)
 
     cgc_data = pandas.read_csv(args.cgc, index_col=0).dropna(axis="index", subset=["Tumour Types(Somatic)"])
-    cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung")) | (cgc_data["Tumour Types(Somatic)"].str.contains("NSCLC")) | (cgc_data["Tumour Types(Somatic)"].str.contains("ALL"))]
+    cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung|NSCLC|LUAD|LUSC|ALL"))]
     print(cgc_data)
 
     driver_data = pandas.read_csv(args.driver, sep="\t")
@@ -133,8 +133,8 @@ if __name__ == "__main__":
 
         TMB_precancer = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0] / step00.WES_length * step00.big, precancer_list))
         TMB_primary = list(map(lambda x: mutect_data.loc[(mutect_data["Tumor_Sample_Barcode"] == x)].shape[0] / step00.WES_length * step00.big, primary_list))
-        axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_precancer, width=-0.4, align="edge", color="tab:green", label="Precancer")
-        axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_primary, width=0.4, align="edge", color="tab:purple", label="Primary")
+        axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_precancer, width=-0.4, align="edge", color=step00.precancer_color_code["Precancer"], label="Precancer")
+        axs["TMB"].bar(x=range(len(precancer_list)), height=TMB_primary, width=0.4, align="edge", color=step00.precancer_color_code["Primary"], label="Primary")
         axs["TMB"].set_xticks([])
         axs["TMB"].set_yticks([0.0, 1.0, 2.0], ["0.0", "1.0", "2.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["TMB"].set_ylabel("TMB (#/Mb)", fontsize="x-small")
@@ -165,8 +165,11 @@ if __name__ == "__main__":
         both_patch = None
         shared_patch = None
 
+        drawing_gene_list = list(filter(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x), "Tumor_Sample_Barcode"])) >= 2, gene_list))
+        print("Gene:", len(drawing_gene_list))
+
         for i, precancer in tqdm.tqdm(enumerate(precancer_list), total=len(precancer_list), leave=False):
-            for j, gene in enumerate(gene_list):
+            for j, gene in enumerate(drawing_gene_list):
                 is_precancer = not mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"] == precancer)].empty
                 is_primary = not mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"] == step00.get_paired_primary(precancer))].empty
                 is_shared = not shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"] == precancer) & (shared_data["Primary"] == step00.get_paired_primary(precancer))].empty
@@ -191,7 +194,7 @@ if __name__ == "__main__":
                     shared_patch = tmp[0]
 
         axs["Mutation"].set_xticks(range(len(precancer_list)), patient_list, fontsize="x-small", rotation="vertical")
-        axs["Mutation"].set_yticks(range(len(gene_list)), gene_list, fontsize="x-small")
+        axs["Mutation"].set_yticks(range(len(drawing_gene_list)), drawing_gene_list, fontsize="x-small")
         axs["Mutation"].set_xlim(axs["MSP-bar"].get_xlim())
         axs["Mutation"].grid(True)
 
@@ -199,27 +202,27 @@ if __name__ == "__main__":
         axs["Mutation-legend"].axis("off")
 
         bar_list = list()
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=0.4, align="edge", color="tab:cyan", edgecolor=None, label="PSM-L (Not shared)"))
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=0.4, align="edge", color="tab:blue", edgecolor=None, label="PSM-L (Shared)"))
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_H_list), gene_list)), height=-0.4, align="edge", color="tab:pink", edgecolor=None, label="PSM-H (Not shared)"))
-        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), gene_list)), height=-0.4, align="edge", color="tab:red", edgecolor=None, label="PSM-H (Shared)"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(drawing_gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), drawing_gene_list)), height=0.4, align="edge", color="tab:cyan", edgecolor=None, label="PSM-L (Not shared)"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(drawing_gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_L_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), drawing_gene_list)), height=0.4, align="edge", color="tab:blue", edgecolor=None, label="PSM-L (Shared)"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(drawing_gene_list)), width=list(map(lambda x: len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == x) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_H_list), drawing_gene_list)), height=-0.4, align="edge", color="tab:pink", edgecolor=None, label="PSM-H (Not shared)"))
+        bar_list.append(axs["Mutation-proportion"].barh(y=range(len(drawing_gene_list)), width=list(map(lambda x: len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == x) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"])) / len(MSP_L_list), drawing_gene_list)), height=-0.4, align="edge", color="tab:red", edgecolor=None, label="PSM-H (Shared)"))
 
-        for i, gene in tqdm.tqdm(enumerate(gene_list), total=len(gene_list), leave=False):
-            shared_lower_primary = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]))
-            not_shared_lower_primary = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_L_list)))), "Tumor_Sample_Barcode"]))
-            shared_higher_primary = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]))
-            not_shared_higher_primary = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Primary"].isin(list(map(step00.get_paired_primary, MSP_H_list)))), "Tumor_Sample_Barcode"]))
+        for i, gene in tqdm.tqdm(enumerate(drawing_gene_list), total=len(drawing_gene_list), leave=False):
+            shared_lower_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_L_list)), "Tumor_Sample_Barcode"]))
+            not_shared_lower_precancer = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin( MSP_L_list)), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_L_list)), "Tumor_Sample_Barcode"]))
+            shared_higher_precancer = len(set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"]))
+            not_shared_higher_precancer = len(set(mutect_data.loc[(mutect_data["Hugo_Symbol"] == gene) & (mutect_data["Tumor_Sample_Barcode"].isin(MSP_H_list)), "Tumor_Sample_Barcode"]) - set(shared_data.loc[(shared_data["Hugo_Symbol"] == gene) & (shared_data["Precancer"].isin(MSP_H_list)), "Tumor_Sample_Barcode"]))
 
-            p_value = scipy.stats.fisher_exact([[shared_lower_primary, not_shared_lower_primary], [shared_higher_primary, not_shared_higher_primary]])[1]
+            p_value = scipy.stats.fisher_exact([[shared_lower_precancer, not_shared_lower_precancer], [shared_higher_precancer, not_shared_higher_precancer]])[1]
 
             if (p_value >= 0.05):
                 continue
 
-            axs["Mutation-proportion"].text(0.5, i - 0.5, "*", fontsize="large", color="black", horizontalalignment="center", verticalalignment="center")
+            axs["Mutation-proportion"].scatter(0.75, i, c="black", s=1000, marker="*", edgecolor=None)
 
-        axs["Mutation-proportion"].set_xlabel("Proportion")
+        axs["Mutation-proportion"].set_xlabel("Proportion in PRE", fontsize="x-small")
         axs["Mutation-proportion"].set_xticks([0.0, 0.25, 0.5, 0.75, 1.0], ["0.00", "0.25", "0.50", "0.75", "1.00"], fontsize="xx-small", rotation="vertical")
-        axs["Mutation-proportion"].set_yticks([])
+        axs["Mutation-proportion"].set_yticks(range(len(drawing_gene_list)), drawing_gene_list, fontsize="x-small")
         axs["Mutation-proportion"].set_ylim(axs["Mutation"].get_ylim())
         axs["Mutation-proportion"].grid(True)
 
