@@ -35,13 +35,15 @@ if __name__ == "__main__":
     input_data = pandas.read_csv(args.input, sep="\t", index_col=0)
     print(input_data)
 
-    stages = step00.long_sample_type_list + ["Precancer", "All"]
+    # stages = step00.long_sample_type_list + ["Precancer", "All"]
+    stages = ["Precancer", "Primary"]
+    limit = 10
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
 
     figures = list()
-    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns))):
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
         if f"{stage}-{MSP}-importance" not in set(input_data.columns):
             continue
 
@@ -68,9 +70,9 @@ if __name__ == "__main__":
 
         texts = list()
 
-        for index, d in up_gene.iloc[:5, :].iterrows():
+        for index, d in up_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
-        for index, d in down_gene.iloc[:5, :].iterrows():
+        for index, d in down_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
 
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
@@ -118,9 +120,9 @@ if __name__ == "__main__":
 
         texts = list()
 
-        for index, d in up_gene.iloc[:10, :].iterrows():
+        for index, d in up_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"Precancer-{MSP}-r"], y=d[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
-        for index, d in down_gene.iloc[:10, :].iterrows():
+        for index, d in down_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"Precancer-{MSP}-r"], y=d[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
 
         matplotlib.pyplot.title(f"Precancer: {len(down_gene)} neg. & {len(up_gene)} pos.")
@@ -138,7 +140,7 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[list(filter(lambda x: not x.startswith("MT-"), list(input_data.index)))]
 
-    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns))):
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
         if f"{stage}-{MSP}-importance" not in set(input_data.columns):
             continue
 
@@ -165,9 +167,9 @@ if __name__ == "__main__":
 
         texts = list()
 
-        for index, d in up_gene.iloc[:5, :].iterrows():
+        for index, d in up_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
-        for index, d in down_gene.iloc[:5, :].iterrows():
+        for index, d in down_gene.iloc[:limit, :].iterrows():
             texts.append(matplotlib.pyplot.text(s=index, x=d[f"{stage}-{MSP}-r"], y=d[f"{stage}-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
 
         matplotlib.pyplot.title(f"{stage}: {len(down_gene)} neg. & {len(up_gene)} pos.")
@@ -180,6 +182,56 @@ if __name__ == "__main__":
         adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
 
         figures.append(f"{stage}-{MSP}-noMT.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
+        if f"Precancer-{MSP}-importance" not in set(input_data.columns):
+            continue
+
+        input_data.sort_values(by=f"Precancer-{MSP}-importance", ascending=False, inplace=True)
+
+        primary_up_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-r"] > args.r) & (input_data[f"Primary-{MSP}-slope"] > args.slope)].index)
+        primary_down_gene_set = set(input_data.loc[(input_data[f"Primary-{MSP}-r"] < (-1 * args.r)) & (input_data[f"Primary-{MSP}-slope"] > args.slope)].index)
+
+        drawing_data = input_data.loc[list(filter(lambda x: x not in (primary_up_gene_set | primary_down_gene_set), list(input_data.index))), :]
+
+        up_gene = drawing_data.loc[(drawing_data[f"Precancer-{MSP}-r"] > args.r) & (drawing_data[f"Precancer-{MSP}-slope"] > args.slope)]
+        down_gene = drawing_data.loc[(drawing_data[f"Precancer-{MSP}-r"] < (-1 * args.r)) & (drawing_data[f"Precancer-{MSP}-slope"] > args.slope)]
+        NS_gene = drawing_data.loc[(((-1 * args.r) < drawing_data[f"Precancer-{MSP}-r"]) & (drawing_data[f"Precancer-{MSP}-r"] < args.r)) | (drawing_data[f"Precancer-{MSP}-slope"] <= args.slope)]
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        matplotlib.pyplot.scatter(NS_gene[f"Precancer-{MSP}-r"], NS_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:gray", rasterized=True)
+        matplotlib.pyplot.scatter(up_gene[f"Precancer-{MSP}-r"], up_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:red", rasterized=True)
+        matplotlib.pyplot.scatter(down_gene[f"Precancer-{MSP}-r"], down_gene[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:blue", rasterized=True)
+
+        matplotlib.pyplot.axhline(y=numpy.log10(args.slope), linestyle="--", color="black")
+        matplotlib.pyplot.text(x=0, y=numpy.log10(args.slope), s=f"slope={args.slope:.1f}", horizontalalignment="center", verticalalignment="baseline", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.axvline(x=args.r, linestyle="--", color="black")
+        matplotlib.pyplot.text(x=args.r, y=numpy.log10(args.slope), s=f"r={args.r:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.axvline(x=-1 * args.r, linestyle="--", color="black")
+        matplotlib.pyplot.text(x=-1 * args.r, y=numpy.log10(args.slope), s=f"r={-1 * args.r:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+
+        texts = list()
+
+        for index, d in up_gene.iloc[:limit, :].iterrows():
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"Precancer-{MSP}-r"], y=d[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:red", horizontalalignment="right", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
+        for index, d in down_gene.iloc[:limit, :].iterrows():
+            texts.append(matplotlib.pyplot.text(s=index, x=d[f"Precancer-{MSP}-r"], y=d[f"Precancer-{MSP}-log10(abs(slope))"], color="tab:blue", horizontalalignment="left", fontsize="medium", bbox={"alpha": 0.3, "color": "white"}))
+
+        matplotlib.pyplot.title(f"Precancer: {len(down_gene)} neg. & {len(up_gene)} pos.")
+        matplotlib.pyplot.grid(True)
+        matplotlib.pyplot.xlabel("Correlation coefficient")
+        matplotlib.pyplot.ylabel("log10(|slope|)")
+        matplotlib.pyplot.xlim(-1, 1)
+        matplotlib.pyplot.tight_layout()
+
+        adjust_text(texts, arrowprops={"arrowstyle": "-", "color": "k", "linewidth": 1, "alpha": 0.3}, ax=ax, lim=step00.small)
+
+        figures.append(f"PrecancerOnly-{MSP}-noMT.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 

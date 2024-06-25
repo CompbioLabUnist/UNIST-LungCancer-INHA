@@ -72,7 +72,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for MSP, cell in tqdm.tqdm(list(itertools.product(step00.sharing_columns, cells))):
+    for MSP, cell in tqdm.tqdm(list(itertools.product(step00.sharing_columns[:2], cells))):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
         lower_precancer_list = list(clinical_data.loc[(clinical_data[MSP] < lower_bound), f"{MSP}-sample"])
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x=MSP, y="Proportion", order=["Lower", "Higher"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+        seaborn.violinplot(data=drawing_data, x=MSP, y="Proportion", order=["Lower", "Higher"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=1, ax=ax)
         statannotations.Annotator.Annotator(ax, [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))], data=drawing_data, x=MSP, y="Proportion", order=["Lower", "Higher"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.ylabel(f"{cell} proportion")

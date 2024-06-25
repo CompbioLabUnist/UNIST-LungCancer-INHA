@@ -60,11 +60,13 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    for MSP, gene in tqdm.tqdm(list(itertools.product(step00.sharing_columns[:1], ["H2AC4"]))):
+    for MSP, gene in tqdm.tqdm(list(itertools.product(step00.sharing_columns[:2], ["MT-ATP6", "HSPB1"]))):
         precancer_list = list(filter(lambda x: x in sample_list, list(clinical_data[f"{MSP}-sample"])))
         tmp_data = input_data.loc[precancer_list, [gene, MSP]]
+        regression = list(scipy.stats.linregress(tmp_data[MSP], tmp_data[gene]))
+        regression[2:4] = scipy.stats.spearmanr(tmp_data[MSP], tmp_data[gene])
 
-        print(gene, scipy.stats.linregress(tmp_data[MSP], tmp_data[gene]))
+        print(gene, regression)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
