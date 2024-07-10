@@ -71,7 +71,7 @@ def joint_precancer(signature: str, column: str) -> str:
 
     r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
-    g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=18, ratio=6, color="tab:pink")
+    g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=18, ratio=6, color=step00.precancer_color_code["Precancer"])
     g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels(column, f"{signature} in Precancer")
@@ -92,7 +92,7 @@ def reg_precancer(signature: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color="tab:pink", ax=ax)
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], ax=ax)
 
     matplotlib.pyplot.ylabel(f"{signature} in Precancer")
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
@@ -162,7 +162,7 @@ def lm(signature: str, column: str) -> str:
         text += f"{stage}: r={r:.3f}, p={p:.3f}\n"
     text = text.strip()
 
-    g = seaborn.lmplot(data=tmp_data, x=column, y=signature, hue="Stage", hue_order=stages, palette={"Precancer": "tab:pink", "Primary": "gray"}, height=18, aspect=1, legend=True, legend_out=False, scatter=True, fit_reg=True)
+    g = seaborn.lmplot(data=tmp_data, x=column, y=signature, hue="Stage", hue_order=stages, palette=step00.precancer_color_code, height=18, aspect=1, legend=True, legend_out=False, scatter=True, fit_reg=True)
     g.fig.text(0.5, 0.5, text, color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.set_axis_labels(column, f"{signature}")
 

@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
+        seaborn.violinplot(data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=1, ax=ax)
         statannotations.Annotator.Annotator(ax, [(("MSP-L", "Precancer"), ("MSP-L", "Primary")), (("MSP-H", "Precancer"), ("MSP-H", "Primary")), (("MSP-L", "Precancer"), ("MSP-H", "Precancer")), (("MSP-L", "Primary"), ("MSP-H", "Primary"))], data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         ax.set_xlabel("MSP")
