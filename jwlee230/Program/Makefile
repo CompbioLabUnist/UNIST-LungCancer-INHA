@@ -6449,16 +6449,26 @@ Output/MuSiCal:
 	mkdir -p $@
 
 Output/MuSiCal/%.SBS.W.tsv Output/MuSiCal/%.SBS.H.tsv: Python/run_musical.py Output/SigProfiler/%/SBS96/Samples.txt | Output/MuSiCal build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MuSiCal/%.DBS.W.tsv Output/MuSiCal/%.DBS.H.tsv: Python/run_musical.py Output/SigProfiler/%/DBS78/Samples.txt | Output/MuSiCal build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
 Output/MuSiCal/%.Indel.W.tsv Output/MuSiCal/%.Indel.H.tsv: Python/run_musical.py Output/SigProfiler/%/IDD83/Samples.txt | Output/MuSiCal build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $(basename $(basename $@))) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step87: Output/MuSiCal/BWA.W.tsv
+step87: Output/MuSiCal/BWA.SBS.W.tsv Output/MuSiCal/BWA.DBS.W.tsv
 .PHONY: step87
+
+# Step 88 (MSP & Mutational signature)
+Output/MSP_Signature:
+	mkdir -p $@
+
+Output/MSP_Signature/%-SQC.tar: Python/aggregate_signature_MSP.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MSP_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+
+step88: Output/MSP_Signature/BWA-SQC.tar
+.PHONY: step88
 
 # Step ## (QAPA)
 # https://github.com/morrislab/qapa
