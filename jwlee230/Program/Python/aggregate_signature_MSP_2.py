@@ -1,5 +1,5 @@
 """
-aggregate_signature_MSP.py: Aggregate mutational signature with MSP
+aggregate_signature_MSP_2.py: Aggregate mutational signature with MSP (relative)
 """
 import argparse
 import tarfile
@@ -54,12 +54,16 @@ if __name__ == "__main__":
     SBS_list = list(SBS_data.columns)
     SBS_data["Patient"] = list(map(step00.get_patient, list(SBS_data.index)))
     SBS_data = SBS_data.loc[(SBS_data["Patient"].isin(patients))]
+    for index in tqdm.tqdm(list(SBS_data.index)):
+        SBS_data.loc[index, SBS_list] = SBS_data.loc[index, SBS_list] / sum(SBS_data.loc[index, SBS_list])
     print(SBS_data)
 
     DBS_data = pandas.read_csv(args.DBS, sep="\t", index_col=0)
     DBS_list = list(DBS_data.columns)
     DBS_data["Patient"] = list(map(step00.get_patient, list(DBS_data.index)))
     DBS_data = DBS_data.loc[(DBS_data["Patient"].isin(patients))]
+    for index in tqdm.tqdm(list(DBS_data.index)):
+        DBS_data.loc[index, DBS_list] = DBS_data.loc[index, DBS_list] / sum(DBS_data.loc[index, DBS_list])
     print(DBS_data)
 
     SBS_color_dict = dict(zip(SBS_list, matplotlib.colors.TABLEAU_COLORS))
@@ -113,16 +117,18 @@ if __name__ == "__main__":
         for i, signature in tqdm.tqdm(list(enumerate(SBS_list)), leave=False):
             axs["SBS-Precancer"].bar(x=range(len(precancer_list)), height=SBS_data.loc[precancer_list, :].iloc[:, i], bottom=SBS_data.loc[precancer_list, :].iloc[:, :i].sum(axis=1), color=SBS_color_dict[signature], edgecolor=None, linewidth=0, label=signature)
         axs["SBS-Precancer"].set_xticks(range(len(precancer_list)), ["" for _ in patient_list], fontsize="xx-small")
-        axs["SBS-Precancer"].set_yticks([0, 2000, 4000, 6000, 8000], ["0", "2000", "4000", "6000", "8000"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["SBS-Precancer"].set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["SBS-Precancer"].set_ylabel("SBS in Precancer", fontsize="small")
+        axs["SBS-Precancer"].set_ylim((0.0, 1.0))
         axs["SBS-Precancer"].grid(True)
         axs["SBS-Precancer"].legend(loc="upper right", fontsize="xx-small")
 
         for i, signature in tqdm.tqdm(list(enumerate(DBS_list)), leave=False):
             axs["DBS-Precancer"].bar(x=range(len(precancer_list)), height=DBS_data.loc[precancer_list, :].iloc[:, i], bottom=DBS_data.loc[precancer_list, :].iloc[:, :i].sum(axis=1), color=DBS_color_dict[signature], edgecolor=None, linewidth=0, label=signature)
         axs["DBS-Precancer"].set_xticks(range(len(precancer_list)), patient_list, fontsize="xx-small", rotation="vertical", horizontalalignment="center")
-        axs["DBS-Precancer"].set_yticks([0, 50, 100], ["0", "50", "100"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["DBS-Precancer"].set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["DBS-Precancer"].set_ylabel("DBS in Precancer", fontsize="small")
+        axs["DBS-Precancer"].set_ylim((0.0, 1.0))
         axs["DBS-Precancer"].grid(True)
         axs["DBS-Precancer"].legend(loc="upper right", fontsize="xx-small")
 

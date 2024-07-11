@@ -6465,9 +6465,12 @@ Output/MSP_Signature:
 	mkdir -p $@
 
 Output/MSP_Signature/%-SQC.tar: Python/aggregate_signature_MSP.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MSP_Signature
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS)
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step88: Output/MSP_Signature/BWA-SQC.tar
+Output/MSP_Signature/%-SQC.Relative.tar: Python/aggregate_signature_MSP_2.py Output/SigProfiler/%/COSMIC_SBS96_Activities_refit.txt Output/SigProfiler/%/COSMIC_DBS78_Activities_refit.txt Output/MutationSharedProportion/%.tsv | build.log Output/MSP_Signature
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step88: Output/MSP_Signature/BWA-SQC.tar Output/MSP_Signature/BWA-SQC.Relative.tar
 .PHONY: step88
 
 # Step ## (QAPA)
