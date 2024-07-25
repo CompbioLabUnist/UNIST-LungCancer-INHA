@@ -13,6 +13,7 @@ import step00
 
 input_data = pandas.DataFrame()
 clinical_data = pandas.DataFrame()
+threshold = 0.05
 
 
 def get_middle(values):
@@ -26,15 +27,14 @@ def scatter(MSP: str, gene: str) -> str:
     precancer_r = input_data.loc[gene, f"Precancer-{MSP}-r"]
     precancer_p = input_data.loc[gene, f"Precancer-{MSP}-p"]
 
-    primary_r = input_data.loc[gene, f"Primary-{MSP}-r"]
     primary_p = input_data.loc[gene, f"Primary-{MSP}-p"]
 
-    if (precancer_p >= 0.05) or (primary_p < 0.05):
-        pass
+    if (precancer_p >= threshold) or (primary_p < 0.05):
+        return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=drawing_data, x=MSP, y=gene, scatter=True, fit_reg=True, color="tab:pink", ax=ax)
+    seaborn.regplot(data=drawing_data, x=MSP, y=gene, scatter=True, fit_reg=True, color=step00.precancer_color_code["Precancer"], ax=ax)
     matplotlib.pyplot.text(get_middle(drawing_data[MSP]), get_middle(drawing_data[gene]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
 
@@ -50,17 +50,15 @@ def joint(MSP: str, gene: str) -> str:
 
     precancer_r = input_data.loc[gene, f"Precancer-{MSP}-r"]
     precancer_p = input_data.loc[gene, f"Precancer-{MSP}-p"]
-    precancer_slope = input_data.loc[gene, f"Precancer-{MSP}-slope"] if (precancer_r > 0) else (-1 * input_data.loc[gene, f"Precancer-{MSP}-slope"])
 
     primary_r = input_data.loc[gene, f"Primary-{MSP}-r"]
     primary_p = input_data.loc[gene, f"Primary-{MSP}-p"]
-    primary_slope = input_data.loc[gene, f"Primary-{MSP}-slope"] if (primary_r > 0) else (-1 * input_data.loc[gene, f"Primary-{MSP}-slope"])
 
-    if (precancer_p >= 0.05) or (primary_p < 0.05):
-        pass
+    if (precancer_p >= threshold) or (primary_p < 0.05):
+        return ""
 
-    g = seaborn.jointplot(data=drawing_data, x=MSP, y=gene, hue="Stage", hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, height=18, ratio=5)
-    g.fig.text(0.5, 0.5, f"Precancer: r={precancer_r:.3f}, slope={precancer_slope:.1e}\nPrimary: r={primary_r:.3f}, slope={primary_slope:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    g = seaborn.jointplot(data=drawing_data, x=MSP, y=gene, hue="Stage", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, height=18, ratio=5)
+    g.fig.text(0.5, 0.5, f"Precancer: r={precancer_r:.3f}, p={precancer_p:.3f}\nPrimary: r={primary_r:.3f}, p={primary_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
     fig_name = f"Joint-{MSP}-{gene}.pdf"
     g.savefig(fig_name)
@@ -124,7 +122,7 @@ if __name__ == "__main__":
             genes = list()
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
-            genes = sorted({"HIF1A", "MALAT1", "MYCL", "BIRCG", "RAD21", "STRN", "ZNF479"} & gene_set)
+            # genes = sorted({"HIF1A", "MALAT1", "MYCL", "BIRCG", "RAD21", "STRN", "ZNF479"} & gene_set)
 
             figures += list(pool.starmap(scatter, [(MSP, gene) for gene in genes]))
             figures += list(pool.starmap(joint, [(MSP, gene) for gene in genes]))
