@@ -92,7 +92,6 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
     fig.savefig(tmp_files[-1])
     matplotlib.pyplot.close(fig)
 
-    """
     tmp_files.append(f"{file_name}.tsv")
     enrichment_data.loc[:, step00.pathway_wanted_columns].to_csv(tmp_files[-1], sep="\t", index=False)
 
@@ -100,9 +99,9 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
     enrichment_data = enrichment_data.iloc[:3, :].loc[:, ["Term name", "Overlapping genes...", "Adjusted p-value"]]
     if rows > 3:
         enrichment_data.columns = [f"Term name ({rows})", "Overlapping genes...", "Adjusted p-value"]
+
     tmp_files.append(f"{file_name}.tex")
     enrichment_data.to_latex(tmp_files[-1], index=False, float_format="%.2e")
-    """
 
     return tmp_files
 
@@ -141,7 +140,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     files = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-MT-Up", genes, "tab:pink")
 
@@ -150,7 +149,7 @@ if __name__ == "__main__":
 
     input_data = input_data.loc[list(filter(lambda x: not x.startswith("MT-"), list(input_data.index)))]
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         genes = sorted(set(input_data.loc[(input_data[f"{precancer_stage}-{MSP}-r"] > args.r) & (input_data[f"{precancer_stage}-{MSP}-slope"] > args.slope)].index) - set(input_data.loc[(input_data[f"{primary_stage}-{MSP}-r"] > args.r) & (input_data[f"{primary_stage}-{MSP}-slope"] > args.slope)].index))
         files += run(f"{precancer_stage}-{MSP}-noMT-Up", genes, "tab:pink")
 
