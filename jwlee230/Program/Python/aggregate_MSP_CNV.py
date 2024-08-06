@@ -131,6 +131,11 @@ if __name__ == "__main__":
     centromere_data = pandas.read_csv(args.centromere, sep="\t")
     print(centromere_data)
 
+    centromere_dict = dict()
+    for chromosome in tqdm.tqdm(chromosome_list):
+        centromere_dict[chromosome] = (min(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromStart"]) + max(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromEnd"])) / (2 * step00.big)
+    print(centromere_dict)
+
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
@@ -197,6 +202,8 @@ if __name__ == "__main__":
                 centromere_start = min(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromStart"]) // step00.big
                 centromere_end = max(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromEnd"]) // step00.big + 1
                 color_data.loc[:, centromere_start:centromere_end] = "darkgray"
+
+            axs[chromosome].axhline(y=centromere_dict[chromosome], color="black", linewidth=5.0, linestyle="--")
 
             for i, patient in enumerate(patient_list):
                 axs[chromosome].barh(y=list(chromosome_data.columns), width=[0.8 for _ in list(chromosome_data.columns)], left=i - 0.4, height=1.0, align="center", color=color_data.loc[patient, :], edgecolor=None, linewidth=0.0)
