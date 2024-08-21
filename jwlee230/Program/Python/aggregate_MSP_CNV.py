@@ -2,6 +2,8 @@
 aggregate_MSP_CNV.py: Aggregate CNV results with MSP as genome view
 """
 import argparse
+import collections
+import itertools
 import multiprocessing
 import tarfile
 import matplotlib
@@ -50,6 +52,9 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     weights.append((end - tmp_start + 1) / length)
 
     return numpy.average(a=a, weights=weights)
+
+
+color_list = ["royalblue", "crimson", "lightskyblue", "pink", "darkgray",]
 
 
 def color_mapper(precancer_cnv, primary_cnv):
@@ -153,8 +158,8 @@ if __name__ == "__main__":
         MSP_Q1 = numpy.quantile(clinical_data[MSP], args.percentage)
         MSP_Q3 = numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
-        mosaic = [["MSP", "Legend"], ["Survival", "CNV-legend"]] + [[chromosome, "."] for chromosome in chromosome_list]
-        fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 3), gridspec_kw={"height_ratios": [max(height_ratios), max(height_ratios)] + height_ratios, "width_ratios": [9.0, 1.0], "wspace": 0.0, "hspace": 0.0}, layout="tight")
+        mosaic = [["MSP", "Legend"], ["Survival", "CNV-legend"], ["Accordance", "."]] + [[chromosome, "."] for chromosome in chromosome_list]
+        fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 3), gridspec_kw={"height_ratios": [max(height_ratios), max(height_ratios), max(height_ratios)] + height_ratios, "width_ratios": [9.0, 1.0], "wspace": 0.0, "hspace": 0.0}, layout="tight")
 
         MSP_Q_list = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= MSP_Q1) else ("PSM-H" if (clinical_data.loc[x, MSP] >= MSP_Q3) else "None"), patient_list))
         MSP_L_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-L", zip(MSP_Q_list, precancer_list)))))
@@ -188,6 +193,7 @@ if __name__ == "__main__":
         axs["Survival"].legend(loc="upper left", title="PSM", fontsize="xx-small")
         axs["Survival"].grid(True)
 
+        accordance_dict = {patient: collections.Counter() for patient in patient_list}
         for chromosome in tqdm.tqdm(chromosome_list, leave=False):
             chromosome_data = pandas.DataFrame(data=numpy.ones(shape=(len(precancer_list) + len(primary_list), size_data.loc[chromosome, "length"] // step00.big)), index=precancer_list + primary_list, dtype=float)
             color_data = pandas.DataFrame(index=patient_list, columns=range(size_data.loc[chromosome, "length"] // step00.big), dtype=str)
@@ -199,14 +205,11 @@ if __name__ == "__main__":
                 for patient, precancer_sample, primary_sample in zip(patient_list, precancer_list, primary_list):
                     color_data.loc[patient, :] = pool.starmap(color_mapper, zip(chromosome_data.loc[precancer_sample, :], chromosome_data.loc[primary_sample, :]))
 
-                centromere_start = min(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromStart"]) // step00.big
-                centromere_end = max(centromere_data.loc[(centromere_data["chrom"] == chromosome), "chromEnd"]) // step00.big + 1
-                color_data.loc[:, centromere_start:centromere_end] = "darkgray"
-
             axs[chromosome].axhline(y=centromere_dict[chromosome], color="black", linewidth=5.0, linestyle="--")
 
             for i, patient in enumerate(patient_list):
                 axs[chromosome].barh(y=list(chromosome_data.columns), width=[0.8 for _ in list(chromosome_data.columns)], left=i - 0.4, height=1.0, align="center", color=color_data.loc[patient, :], edgecolor=None, linewidth=0.0)
+                accordance_dict[patient].update(collections.Counter(color_data.loc[patient, :]))
 
             axs[chromosome].set_ylabel(chromosome[3:], fontsize="xx-small")
             axs[chromosome].invert_yaxis()
@@ -217,6 +220,22 @@ if __name__ == "__main__":
                 axs[chromosome].set_xticks(range(len(precancer_list)), patient_list, fontsize="x-small", rotation="vertical")
             else:
                 axs[chromosome].set_xticks(range(len(precancer_list)), ["" for _ in precancer_list])
+
+        accordance_data = pandas.DataFrame(numpy.zeros((len(patient_list), 5)), index=patient_list, columns=color_list, dtype=float)
+        for index, column in itertools.product(patient_list, color_list):
+            accordance_data.loc[index, column] += accordance_dict[index][column]
+        for index in patient_list:
+            accordance_data.loc[index, :] /= accordance_data.loc[index, :].sum()
+        accordance_data.columns = ["Loss (Both)", "Gain (Both)", "Loss (Only PRI)", "Gain (Only PRI)", "Neutral"]
+
+        for i, color in enumerate(color_list):
+            axs["Accordance"].bar(x=range(len(patient_list)), height=accordance_data.iloc[:, i], bottom=accordance_data.iloc[:, :i].sum(axis=1), align="center", color=color)
+
+        axs["Accordance"].set_ylabel("Accordance ratio", fontsize="x-small")
+        axs["Accordance"].set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0], ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["Accordance"].set_xlim(axs["MSP"].get_xlim())
+        axs["Accordance"].set_ylim((0.0, 1.0))
+        axs["Accordance"].grid(True)
 
         axs["Legend"].legend(handles=bar_list, title="PSM", loc="center", fontsize="xx-small")
         axs["Legend"].axis("off")
