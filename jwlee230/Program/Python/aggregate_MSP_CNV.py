@@ -232,7 +232,7 @@ if __name__ == "__main__":
             axs["Accordance"].bar(x=range(len(patient_list)), height=accordance_data.iloc[:, i], bottom=accordance_data.iloc[:, :i].sum(axis=1), align="center", color=color)
 
         axs["Accordance"].set_ylabel("Accordance ratio", fontsize="x-small")
-        axs["Accordance"].set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0], ["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["Accordance"].set_yticks([])
         axs["Accordance"].set_xlim(axs["MSP"].get_xlim())
         axs["Accordance"].set_ylim((0.0, 1.0))
         axs["Accordance"].grid(True)
