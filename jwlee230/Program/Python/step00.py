@@ -156,7 +156,7 @@ def get_clinical_data(filename: str) -> pandas.DataFrame:
     """
     get_clinical_data: get clinical data for select proper patients
     """
-    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1], verbose=True).dropna(axis="index", how="all")
+    return pandas.read_csv(filename, index_col="Serial_No", skiprows=[1], verbose=True).dropna(axis="index", how="all").replace({"Gender": {"1": "Male", "2": "Female"}, "Smoking-Detail": {"0": "Never", "1": "Current", "2": "Ex"}, "Vascular_invasion": {"0": "NO", "1": "YES"}, "lymphatic_invasion": {"0": "NO", "1": "YES"}, "Recurrence": {"1": "YES", "0": "NO"}})
 
 
 def aggregate_confusion_matrix(confusion_matrix: numpy.ndarray, derivation: str = "") -> float:

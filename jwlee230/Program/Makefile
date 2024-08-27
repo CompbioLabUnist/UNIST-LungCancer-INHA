@@ -6473,16 +6473,15 @@ Output/MSP_Signature/%-SQC.Relative.tar: Python/aggregate_signature_MSP_2.py Out
 step88: Output/MSP_Signature/BWA-SQC.tar Output/MSP_Signature/BWA-SQC.Relative.tar
 .PHONY: step88
 
-# Step ## (QAPA)
-# https://github.com/morrislab/qapa
+# Step 89 (Clinical table)
+Output/tableone:
+	mkdir -p $@
 
-# Step ## (Roar)
-# http://bioconductor.org/packages/release/bioc/html/roar.html
+Output/tableone/tableone.SQC.csv: Python/make_tableone.py $(CLINICAL_DATA_CSV) | Output/tableone build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-# Step ## (MesKit)
-# https://www.bioconductor.org/packages/release/bioc/html/MesKit.html
+Output/tableone/tableone.SQC-MSP.csv: Python/make_tableone_MSP.py $(CLINICAL_DATA_CSV) | Output/tableone build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-# Step ## (Spruce)
-# https://github.com/raphael-group/spruce/
-
-# Step ## (CRUST)
+step89: Output/tableone/tableone.SQC.csv Output/tableone/tableone.SQC-MSP.csv
+.PHONY: step89
