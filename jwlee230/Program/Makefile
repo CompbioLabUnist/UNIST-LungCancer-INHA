@@ -6485,3 +6485,29 @@ Output/tableone/tableone.SQC-MSP.csv: Python/make_tableone_MSP.py $(CLINICAL_DAT
 
 step89: Output/tableone/tableone.SQC.csv Output/tableone/tableone.SQC-MSP.csv
 .PHONY: step89
+
+# Step 90 (WES - Depth)
+Output/WESDepth/Plot:
+	mkdir -p $@
+
+Output/WESDepth/Plot/BWA.txt: Python/analysis_depth_2.py $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/WESDepth/Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/WESDepth/Plot/Bowtie2.txt: Python/analysis_depth_2.py $(addprefix Output/WESDepth/,$(addsuffix .Bowtie2.tsv,$(WES_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/WESDepth/Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step90: Output/WESDepth/Plot/BWA.txt Output/WESDepth/Plot/Bowtie2024-08-27T20:25:59+09002.txt
+.PHONY: step90
+
+# Step 91 (RNA-seq - Depth)
+Output/RNA-Depth Output/RNA-Depth/Plot:
+	mkdir -p $@
+
+Output/RNA-Depth/%.STAR.tsv: $(REFERENCE_FASTA) Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bam Output/RSEM/STAR/%.genome.Sort.MarkDuplicate.Split.BQSR.bai | Output/RNA-Depth build.log
+	$(DOCKER) samtools depth -H --reference $(addprefix /,$(filter %.fasta,$^)) -o $(addprefix /,$@) $(addprefix /,$(filter %.bam,$^)) 1> $@.stdout 2> $@.stderr
+
+Output/RNA-Depth/Plot/STAR.txt: Python/analysis_depth_2.py $(addprefix Output/RNA-Depth/,$(addsuffix .STAR.tsv,$(WTS_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/WESDepth/Plot
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step91: $(addprefix Output/RNA-Depth/,$(addsuffix .STAR.tsv,$(WTS_ID)))
+.PHONY: step91
