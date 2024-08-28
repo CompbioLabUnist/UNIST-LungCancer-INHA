@@ -6496,7 +6496,7 @@ Output/WESDepth/Plot/BWA.txt: Python/analysis_depth_2.py $(addprefix Output/WESD
 Output/WESDepth/Plot/Bowtie2.txt: Python/analysis_depth_2.py $(addprefix Output/WESDepth/,$(addsuffix .Bowtie2.tsv,$(WES_ID))) Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/WESDepth/Plot
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step90: Output/WESDepth/Plot/BWA.txt Output/WESDepth/Plot/Bowtie2024-08-27T20:25:59+09002.txt
+step90: Output/WESDepth/Plot/BWA.txt Output/WESDepth/Plot/Bowtie.txt
 .PHONY: step90
 
 # Step 91 (RNA-seq - Depth)
