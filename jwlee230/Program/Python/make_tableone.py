@@ -38,8 +38,8 @@ if __name__ == "__main__":
     continuous_columns = ["Age", "Pack-Year"]
     categorical_columns = ["Gender", "Smoking-Detail", "Stage", "Recurrence"]
     order = {"Gender": ["Male", "Female"], "Smoking-Detail": ["Never", "Ex", "Current"], "Stage": [1, 2, 3], "Recurrence": ["NO", "YES"]}
-    min_max = ["Age", "Pack-Year"]
+    nonnormal = ["Age", "Pack-Year"]
 
-    output_data = tableone.TableOne(clinical_data, columns=continuous_columns + categorical_columns, categorical=categorical_columns, order=order, min_max=min_max)
+    output_data = tableone.TableOne(clinical_data, columns=continuous_columns + categorical_columns, categorical=categorical_columns, order=order, nonnormal=nonnormal)
     print(output_data)
     output_data.to_csv(args.output)
