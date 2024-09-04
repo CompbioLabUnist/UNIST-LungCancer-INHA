@@ -35,7 +35,7 @@ if __name__ == "__main__":
     patients = set(clinical_data.index)
     print(patients)
 
-    continuous_columns = ["Age", "Pack-Year", "PSM"]
+    continuous_columns = ["PSM", "Age", "Pack-Year", "Recurrence-Free Survival", "Overall Survival"]
     categorical_columns = ["Gender", "Smoking-Detail", "Stage", "Recurrence"]
     order = {"Gender": ["Male", "Female"], "Smoking-Detail": ["Never", "Ex", "Current"], "Stage": [1, 2, 3], "Recurrence": ["NO", "YES"]}
     nonnormal = ["Age", "Pack-Year"]
