@@ -6399,7 +6399,7 @@ step84: Output/MSP_Comut/BWA-SQC.tar
 .PHONY: step84
 
 # Step 85 (MSP & CNV)
-Output/MSP_CNV:
+Output/MSP_CNV Output/MSP_CNV_2:
 	mkdir -p $@
 
 Output/MSP_CNV/BWA-Sequenza.SQC.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) $(REFERENCE_CENTROMERE) | build.log Output/MSP_CNV
@@ -6411,10 +6411,13 @@ Output/MSP_CNV/BWA-Sequenza.SQC.33.tar: Python/aggregate_MSP_CNV.py Output/Seque
 Output/MSP_CNV/BWA-Sequenza.SQC.45.tar: Python/aggregate_MSP_CNV.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) $(REFERENCE_CENTROMERE) | build.log Output/MSP_CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --percentage "0.45" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
+Output/MSP_CNV_2/BWA-Sequenza.SQC.tar: Python/aggregate_MSP_CNV_2.py Output/Sequenza/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) $(REFERENCE_CENTROMERE) | build.log Output/MSP_CNV_2
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "CNt" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
+
 Output/MSP_CNV/BWA-PureCN.SQC.tar: Python/aggregate_MSP_CNV.py Output/PureCN/BWA.segment.tsv Output/MutationSharedProportion/BWA.tsv $(REFERENCE_SIZE_TSV) $(REFERENCE_CENTROMERE) | build.log Output/MSP_CNV
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "C" --cpus $(CPUS) --SQC 1> $@.stdout 2> $@.stderr
 
-step85: Output/MSP_CNV/BWA-Sequenza.SQC.tar Output/MSP_CNV/BWA-PureCN.SQC.tar
+step85: Output/MSP_CNV/BWA-Sequenza.SQC.tar Output/MSP_CNV/BWA-PureCN.SQC.tar Output/MSP_CNV_2/BWA-Sequenza.SQC.tar
 .PHONY: step85
 
 # Step 86 (MSP & CNV - DEG)
