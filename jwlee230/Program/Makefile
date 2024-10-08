@@ -6514,3 +6514,13 @@ Output/RNA-Depth/Plot/STAR.txt: Python/analysis_depth_2.py $(addprefix Output/RN
 
 step91: $(addprefix Output/RNA-Depth/,$(addsuffix .STAR.tsv,$(WTS_ID)))
 .PHONY: step91
+
+# Step 92 (MSP & PON)
+Output/MSP_PON:
+	mkdir -p $@
+
+Output/MSP_PON/BWA-SQC.tar: Python/analysis_MSP_PON.py $(addprefix Output/Mutect2/BWA/,$(addsuffix .BWA.filter.vcf,$(WES_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv | build.log Output/MSP_PON
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+step92: Output/MSP_PON/BWA-SQC.tar
+.PHONY: step92
