@@ -4159,57 +4159,10 @@ Output/Clinical_vs_KM-Plot:
 	mkdir -p $@
 
 Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
 
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cutting --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cutting --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cutting --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/BWA.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cutting --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cutting --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --cutting --mean 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cutting --median 1> $@.stdout 2> $@.stderr
-
-Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.cutting.tar: Python/draw_KM_SharedProportion.py Output/MutationSharedProportion/Bowtie2.tsv | build.log Output/Clinical_vs_KM-Plot
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --ADC --cutting --mean 1> $@.stdout 2> $@.stderr
-
-step47-SQC: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.mean.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-SQC-SharedProportion.mean.cutting.tar
-step47-ADC: Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.tar Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.tar Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.cutting.tar Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.tar Output/Clinical_vs_KM-Plot/BWA-ADC-SharedProportion.mean.cutting.tar Output/Clinical_vs_KM-Plot/Bowtie2-ADC-SharedProportion.mean.cutting.tar
-step47: step47-SQC
-.PHONY: step47-SQC step47
+step47: Output/Clinical_vs_KM-Plot/BWA-SQC-SharedProportion.tar
+.PHONY: step47
 
 # Step 48 (TIMER 2.0)
 Output/TIMER Output/TIMER/Violin Output/TIMER/Clustermap Output/TIMER-CNV:
