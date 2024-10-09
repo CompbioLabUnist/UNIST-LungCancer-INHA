@@ -176,7 +176,7 @@ if __name__ == "__main__":
         for i, (quality, color) in tqdm.tqdm(list(enumerate(color_dict.items())), leave=False):
             axs["Proportion-PRI"].bar(x=range(len(primary_list)), height=primary_data.iloc[:, i], width=0.8, bottom=primary_data.iloc[:, :i].sum(axis=1), color=color, edgecolor=None, align="center", label=quality)
 
-        axs["Proportion-PRI"].set_xticks(range(len(patient_list)), patient_list, fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["Proportion-PRI"].set_xticks(range(len(patient_list)), patient_list, fontsize="xx-small", rotation="vertical")
         axs["Proportion-PRI"].set_yticks([0, 0.5, 1], ["0.0", "0.5", "1.0"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
         axs["Proportion-PRI"].set_xlim(axs["MSP-bar"].get_xlim())
         axs["Proportion-PRI"].set_ylabel("Mutation proportion in Primary", fontsize="x-small")
