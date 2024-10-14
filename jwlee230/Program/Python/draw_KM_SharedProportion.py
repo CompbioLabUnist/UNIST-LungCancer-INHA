@@ -72,18 +72,25 @@ if __name__ == "__main__":
         MSP_L_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-L", zip(MSP_Q_list, precancer_list)))))
         MSP_H_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-H", zip(MSP_Q_list, precancer_list)))))
 
+        if column == "Recurrence-Free Survival":
+            lower_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), "Recurrence"]))
+            higher_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), "Recurrence"]))
+        else:
+            lower_events = None
+            higher_events = None
+
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         kmf = lifelines.KaplanMeierFitter()
 
-        kmf.fit(clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), column], label=f"PSM-L ({len(MSP_L_list)} patients)")
+        kmf.fit(clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), column], event_observed=lower_events, label=f"PSM-L ({len(MSP_L_list)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:blue")
 
-        kmf.fit(clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column], label=f"PSM-H ({len(MSP_H_list)} patients)")
+        kmf.fit(clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column], event_observed=higher_events, label=f"PSM-H ({len(MSP_H_list)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
         p_value = lifelines.statistics.logrank_test(clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), column], clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column]).p_value
-        matplotlib.pyplot.text(max(clinical_data[column]) / 2, 0.8, f"p={p_value:.3f}", color="black", fontsize="small", horizontalalignment="center", verticalalignment="center")
+        matplotlib.pyplot.text(max(clinical_data[column]) / 2, 0.9, f"p={p_value:.3f}", color="black", fontsize="small", horizontalalignment="center", verticalalignment="center")
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
         matplotlib.pyplot.ylabel("Survival Rate")
