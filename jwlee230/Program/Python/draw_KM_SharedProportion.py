@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("input", help="Mutation Sharing Proportion input TSV file", type=str)
     parser.add_argument("output", help="Output TAR file", type=str)
     parser.add_argument("--cutting", help="Cutting follow-up up to 5 year", action="store_true", default=False)
-    parser.add_argument("--percentage", help="Percentage threshold", type=float, default=0.25)
+    parser.add_argument("--percentage", help="Percentage threshold", type=float, default=0.33)
 
     group_subtype = parser.add_mutually_exclusive_group(required=True)
     group_subtype.add_argument("--SQC", help="Get SQC patient only", action="store_true", default=False)
@@ -73,11 +73,11 @@ if __name__ == "__main__":
         MSP_H_list = list(map(lambda x: x[1], list(filter(lambda x: x[0] == "PSM-H", zip(MSP_Q_list, precancer_list)))))
 
         if column == "Recurrence-Free Survival":
-            lower_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), "Recurrence"]))
-            higher_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), "Recurrence"]))
+            lower_events = list(map(lambda x: (x[0] == "1") or (x[1] == "1"), clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), ["Death", "Recurrence"]].itertuples(index=False, name=None)))
+            higher_events = list(map(lambda x: (x[0] == "1") or (x[1] == "1"), clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), ["Death", "Recurrence"]].itertuples(index=False, name=None)))
         else:
-            lower_events = None
-            higher_events = None
+            lower_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), "Death"]))
+            higher_events = list(map(lambda x: x == "1", clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), "Death"]))
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         kmf.fit(clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column], event_observed=higher_events, label=f"PSM-H ({len(MSP_H_list)} patients)")
         kmf.plot(ax=ax, ci_show=False, c="tab:red")
 
-        p_value = lifelines.statistics.logrank_test(clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), column], clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column]).p_value
+        p_value = lifelines.statistics.logrank_test(clinical_data.loc[list(map(step00.get_patient, MSP_L_list)), column], clinical_data.loc[list(map(step00.get_patient, MSP_H_list)), column], event_observed_A=lower_events, event_observed_B=higher_events).p_value
         matplotlib.pyplot.text(max(clinical_data[column]) / 2, 0.9, f"p={p_value:.3f}", color="black", fontsize="small", horizontalalignment="center", verticalalignment="center")
 
         matplotlib.pyplot.xlabel(f"{column} (Days)")
