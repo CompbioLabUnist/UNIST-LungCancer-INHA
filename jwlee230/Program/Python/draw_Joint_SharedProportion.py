@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(clinical_data[MSP], clinical_data[survival])
 
-        g = seaborn.jointplot(data=clinical_data, x=MSP, y=survival, kind="reg", height=24, dropna=True)
+        g = seaborn.jointplot(data=clinical_data, x=MSP, y=survival, kind="reg", height=24, dropna=True, xlim=(-0.01, 0.40))
         g.set_axis_labels(MSP, f"{survival} (days)")
         g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, truncate=False, ax=ax)
 
         matplotlib.pyplot.ylabel(survival)
         matplotlib.pyplot.text(get_middle(clinical_data[MSP]), get_middle(clinical_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
