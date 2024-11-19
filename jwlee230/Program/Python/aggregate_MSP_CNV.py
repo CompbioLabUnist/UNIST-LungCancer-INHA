@@ -54,7 +54,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     return numpy.average(a=a, weights=weights)
 
 
-color_list = ["royalblue", "crimson", "lightskyblue", "pink", "darkgray",]
+color_list = ["royalblue", "crimson", "lightskyblue", "pink", "darkgray"]
 
 
 def color_mapper(precancer_cnv, primary_cnv):
