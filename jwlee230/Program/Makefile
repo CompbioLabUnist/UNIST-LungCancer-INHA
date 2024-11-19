@@ -6477,3 +6477,26 @@ Output/MSP_PON/BWA-SQC.tar: Python/analysis_MSP_PON.py $(addprefix Output/Mutect
 
 step92: Output/MSP_PON/BWA-SQC.tar
 .PHONY: step92
+
+# Step 93 (Gistic & MSP)
+Output/Gistic_MSP:
+	mkdir -p $@
+
+Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRE.tsv: Python/merge_sequenza_gistic_MSP.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(REFERENCE_BLACKLIST) | build.log Output/Gistic_MSP
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --down --threshold "25" --pre --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Gistic_MSP/BWA-sequenza.SQC.High-PRE.tsv: Python/merge_sequenza_gistic_MSP.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(REFERENCE_BLACKLIST) | build.log Output/Gistic_MSP
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --up --threshold "75" --pre --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRI.tsv: Python/merge_sequenza_gistic_MSP.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(REFERENCE_BLACKLIST) | build.log Output/Gistic_MSP
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --down --threshold "25" --pri --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Gistic_MSP/BWA-sequenza.SQC.High-PRI.tsv: Python/merge_sequenza_gistic_MSP.py $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_segments.txt,$(WES_REAL_TUMOR_ID))) Output/MutationSharedProportion/BWA.tsv $(REFERENCE_BLACKLIST) | build.log Output/Gistic_MSP
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --up --threshold "75" --pri --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+
+Output/Gistic_MSP/%/all_data_by_genes.txt Output/Gistic_MSP/%/all_thresholded.by_genes.txt Output/Gistic_MSP/%/focal_data_by_genes.txt Output/Gistic_MSP/%/amp_genes.conf_99.txt Output/Gistic_MSP/%/del_genes.conf_99.txt Output/Gistic_MSP/%/all_lesions.conf_99.txt: Output/Gistic/hg38.refgene.mat Output/Gistic_MSP/%.tsv | build.log
+	$(DOCKER) rm -rf $(addprefix /,$(@D)) && mkdir $(@D)
+	$(TOOLS_DOCKER) ./gistic2 -b $(addprefix /,$(@D)) -seg $(addprefix /,$(filter %.tsv,$^)) -refgene $(addprefix /,$(filter %.mat,$^)) -genegistic 1 -smallmem 0 -broad 1 -brlen 0.7 -conf 0.99 -armpeel 1 -savegene 1 -gcm mean -maxseg 2500 -ta 0.2 -td 0.2 -cap 1.5 -js 2 -rx 0 -v 10 1> $(@D).stdout 2> $(@D).stderr
+
+step93: Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRE.tsv Output/Gistic_MSP/BWA-sequenza.SQC.High-PRE.tsv Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRI.tsv Output/Gistic_MSP/BWA-sequenza.SQC.High-PRI.tsv Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRE/all_data_by_genes.txt Output/Gistic_MSP/BWA-sequenza.SQC.High-PRE/all_data_by_genes.txt Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRI/all_data_by_genes.txt Output/Gistic_MSP/BWA-sequenza.SQC.High-PRI/all_data_by_genes.txt
+.PHONY: step93
