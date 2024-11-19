@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=drawing_data, x=column, y=stage, scatter=True, fit_reg=True, color=step00.stage_color_code[stage], ax=ax)
+        seaborn.regplot(data=drawing_data, x=column, y=stage, scatter=True, fit_reg=True, color=step00.stage_color_code[stage], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(drawing_data[column]), get_middle(drawing_data[stage]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel(column)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=drawing_data, x=column, y=f"{column}-TMB", scatter=True, fit_reg=True, color=step00.precancer_color_code[stage], ax=ax)
+        seaborn.regplot(data=drawing_data, x=column, y=f"{column}-TMB", scatter=True, fit_reg=True, color=step00.precancer_color_code[stage], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(drawing_data[column]), get_middle(drawing_data[f"{column}-TMB"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel(column)
