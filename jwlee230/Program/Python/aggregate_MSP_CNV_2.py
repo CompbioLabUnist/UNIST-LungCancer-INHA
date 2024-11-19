@@ -3,7 +3,6 @@ aggregate_MSP_CNV_2.py: Aggregate CNV results with MSP as genome view
 """
 import argparse
 import collections
-import itertools
 import multiprocessing
 import tarfile
 import matplotlib
@@ -54,17 +53,19 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     return numpy.average(a=a, weights=weights)
 
 
-color_dict = {0: "navy", 1: "cyan", 2: "lightgray", 3: "gold", 4: "peru", 5: "sienna", 6: "saddlebrown", 7: "darkred", 8: "mediumvioletred", 9: "violet", 10: "mediumorchid", ">10": "thistle"}
+color_dict = {0: "navy", 1: "cyan", 2: "lightgray", 3: "wheat", 4: "orange", ">4": "darkred"}
 
 
 def color_mapper(cnv):
     if (cnv < 0):
         raise ValueError("CNV value must be non-negative!!")
 
-    if cnv > 10:
-        return color_dict[">10"]
+    cnv = round(cnv)
+
+    if cnv > 4:
+        return color_dict[">4"]
     else:
-        return color_dict[round(cnv)]
+        return color_dict[cnv]
 
 
 if __name__ == "__main__":
@@ -141,7 +142,7 @@ if __name__ == "__main__":
     print(collections.Counter(input_data[watching]).most_common())
 
     figures = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         precancer_list = sorted(clinical_data[f"{MSP}-sample"], key=lambda x: clinical_data.loc[step00.get_patient(x), MSP])
         primary_list = list(map(step00.get_paired_primary, precancer_list))
         patient_list = list(map(step00.get_patient, precancer_list))
@@ -149,7 +150,7 @@ if __name__ == "__main__":
         MSP_Q1 = numpy.quantile(clinical_data[MSP], args.percentage)
         MSP_Q3 = numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)
 
-        mosaic = [["MSP", "Legend"], ["Survival", "."]] + [[chromosome, "CNV-legend"] for chromosome in chromosome_list]
+        mosaic = [["MSP", "CNV-legend"], ["Survival", "CNV-legend"]] + [[chromosome, "."] for chromosome in chromosome_list]
         fig, axs = matplotlib.pyplot.subplot_mosaic(mosaic=mosaic, figsize=(18 * 3, 18 * 3), gridspec_kw={"height_ratios": [max(height_ratios), max(height_ratios)] + height_ratios, "width_ratios": [9.0, 1.0], "wspace": 0.0, "hspace": 0.0}, layout="tight")
 
         MSP_Q_list = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= MSP_Q1) else ("PSM-H" if (clinical_data.loc[x, MSP] >= MSP_Q3) else "None"), patient_list))
@@ -165,16 +166,16 @@ if __name__ == "__main__":
         axs["MSP"].set_ylabel("PSM", fontsize="x-small")
         axs["MSP"].set_xticks([])
         axs["MSP"].set_yticks([0.0, 0.25, 0.5], ["0.0", "0.25", "0.50"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
+        axs["MSP"].legend(loc="upper left", title="PSM", fontsize="xx-small")
         axs["MSP"].grid(True)
 
         survival_column = "Recurrence-Free Survival"
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, align="center", label="PSM-L")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, align="center", label="PSM-H")
-        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, align="center", label="Other")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-L", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_L_list)), width=0.8, color="tab:blue", edgecolor=None, align="center")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "PSM-H", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[step00.get_patient(x), survival_column], MSP_H_list)), width=0.8, color="tab:red", edgecolor=None, align="center")
+        axs["Survival"].bar(x=list(filter(lambda x: MSP_Q_list[x] == "None", range(len(precancer_list)))), height=list(map(lambda x: clinical_data.loc[x[1], survival_column], list(filter(lambda x: x[0] == "None", zip(MSP_Q_list, patient_list))))), width=0.8, color="tab:gray", edgecolor=None, align="center")
 
         recurrence_column = "Recurrence"
-        recurrence_x_list = list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == "1", range(len(patient_list))))
-        axs["Survival"].scatter(recurrence_x_list, [1000 for _ in recurrence_x_list], c="black", s=1000, marker="*", edgecolor=None, label="Recurrence")
+        axs["Survival"].scatter(list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == "1", range(len(patient_list)))), list(map(lambda y: clinical_data.loc[patient_list[y], survival_column] + 500, list(filter(lambda x: clinical_data.loc[patient_list[x], recurrence_column] == "1", range(len(patient_list)))))), c="black", s=900, marker="*", edgecolor=None, label="Recurrence")
 
         axs["Survival"].set_xticks([])
         axs["Survival"].set_yticks([0, 2500, 5000], ["0", "2500", "5000"], fontsize="xx-small", rotation="vertical", verticalalignment="center")
@@ -209,9 +210,6 @@ if __name__ == "__main__":
             else:
                 axs[chromosome].set_xticks(range(len(precancer_list)), ["" for _ in precancer_list])
 
-        axs["Legend"].legend(handles=bar_list, title="PSM", loc="center", fontsize="xx-small")
-        axs["Legend"].axis("off")
-
         axs["CNV-legend"].legend(handles=[matplotlib.patches.Patch(color=value, label=key) for key, value in color_dict.items()], title="Copy number", loc="center", fontsize="x-small")
         axs["CNV-legend"].axis("off")
 
@@ -219,7 +217,7 @@ if __name__ == "__main__":
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         precancer_list = sorted(clinical_data[f"{MSP}-sample"], key=lambda x: clinical_data.loc[step00.get_patient(x), MSP])
         primary_list = list(map(step00.get_paired_primary, precancer_list))
         patient_list = list(map(step00.get_patient, precancer_list))
