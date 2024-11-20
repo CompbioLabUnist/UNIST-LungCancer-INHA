@@ -83,14 +83,14 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    MSP_order = ["Lower", "Higher"]
-    compare_list = [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))]
+    MSP_order = ["PSM-L", "PSM-H"]
+    compare_list = [(("PSM-L", "Precancer"), ("PSM-L", "Primary")), (("PSM-H", "Precancer"), ("PSM-H", "Primary")), (("PSM-L", "Precancer"), ("PSM-H", "Precancer")), (("PSM-L", "Primary"), ("PSM-H", "Primary"))]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1 - args.percentage)
 
         drawing_data = output_data.loc[(output_data["Sample"].isin(clinical_data[f"{MSP}-sample"])) | (output_data["Sample"].isin(list(map(step00.get_paired_primary, clinical_data[f"{MSP}-sample"]))))].copy()
-        drawing_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] <= lower_bound) else ("Higher" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
+        drawing_data[MSP] = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= lower_bound) else ("PSM-H" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
         drawing_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", drawing_data["Stage"]))
         drawing_data = drawing_data.loc[(drawing_data[MSP].isin(MSP_order))]
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.tight_layout()
@@ -184,6 +184,7 @@ if __name__ == "__main__":
         seaborn.regplot(data=output_data, x=MSP, y="Ploidy", color=step00.precancer_color_code["Precancer"], fit_reg=True, scatter=True, truncate=False, ax=ax)
 
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Scatter_PrecancerOnly_{MSP}.pdf")

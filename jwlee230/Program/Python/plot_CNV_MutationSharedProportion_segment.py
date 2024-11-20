@@ -118,14 +118,14 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
-    MSP_order = ["Lower", "Higher"]
-    compare_list = [(("Lower", "Precancer"), ("Lower", "Primary")), (("Higher", "Precancer"), ("Higher", "Primary")), (("Lower", "Precancer"), ("Higher", "Precancer")), (("Lower", "Primary"), ("Higher", "Primary"))]
+    MSP_order = ["PSM-L", "PSM-H"]
+    compare_list = [(("PSM-L", "Precancer"), ("PSM-L", "Primary")), (("PSM-H", "Precancer"), ("PSM-H", "Primary")), (("PSM-L", "Precancer"), ("PSM-H", "Precancer")), (("PSM-L", "Primary"), ("PSM-H", "Primary"))]
 
     for MSP in tqdm.tqdm(step00.sharing_columns):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1 - args.percentage)
 
         drawing_data = output_data.loc[(output_data["Sample"].isin(clinical_data[f"{MSP}-sample"])) | (output_data["Sample"].isin(list(map(step00.get_paired_primary, clinical_data[f"{MSP}-sample"]))))].copy()
-        drawing_data[MSP] = list(map(lambda x: "Lower" if (clinical_data.loc[x, MSP] <= lower_bound) else ("Higher" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
+        drawing_data[MSP] = list(map(lambda x: "PSM-L" if (clinical_data.loc[x, MSP] <= lower_bound) else ("PSM-H" if (clinical_data.loc[x, MSP] >= higher_bound) else "NS"), drawing_data["Patient"]))
         drawing_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", drawing_data["Stage"]))
         drawing_data = drawing_data.loc[(drawing_data[MSP].isin(MSP_order))]
 
@@ -133,8 +133,8 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Segment", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
+        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
