@@ -169,7 +169,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -223,7 +223,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=tmp_data, x=MSP, y="Region", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=tmp_data, x=MSP, y="Region", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -240,7 +240,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=tmp_data, x=MSP, y="Region-Loss", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=tmp_data, x=MSP, y="Region-Loss", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -257,7 +257,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=tmp_data, x=MSP, y="Region-Gain", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, ax=ax)
+        seaborn.regplot(data=tmp_data, x=MSP, y="Region-Gain", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -308,7 +308,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -325,7 +325,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -342,7 +342,7 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
-        seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], ax=ax)
+        seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
         matplotlib.pyplot.tight_layout()
