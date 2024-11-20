@@ -53,7 +53,7 @@ def get_chromosome_data(sample: str, chromosome: str, start: int, end: int) -> f
     return numpy.average(a=a, weights=weights)
 
 
-color_dict = {0: "navy", 1: "deepskyblue", 2: "lightgray", 3: "wheat", 4: "orange", ">4": "darkred"}
+color_dict = {0: "navy", 1: "deepskyblue", 2: "lightgray", 3: "orange", 4: "chocolate", ">4": "darkred"}
 
 
 def color_mapper(cnv):
