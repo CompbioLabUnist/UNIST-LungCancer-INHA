@@ -99,7 +99,7 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
-        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.tight_layout()
