@@ -136,6 +136,7 @@ if __name__ == "__main__":
         seaborn.violinplot(data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0).apply_and_annotate()
 
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
 
@@ -153,6 +154,8 @@ if __name__ == "__main__":
 
         axs[0].set_title("CNV Loss")
         axs[1].set_title("CNV Gain")
+        axs[0].set_xlabel("")
+        axs[1].set_xlabel("")
         axs[0].set_ylabel("Number of somatic CNV segment (count)")
         axs[1].set_ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
@@ -177,10 +180,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_All_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -194,10 +201,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment-Loss", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_All-Loss_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -211,10 +222,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment-Gain", fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_All-Gain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -231,10 +246,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=tmp_data, x=MSP, y="Segment", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Segment"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_{stage}_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -248,10 +267,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=tmp_data, x=MSP, y="Segment-Loss", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Segment-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_{stage}-Loss_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -265,10 +288,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=tmp_data, x=MSP, y="Segment-Gain", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Segment-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_{stage}-Gain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -316,10 +343,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_PrecancerOnly_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -333,10 +364,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment-Loss", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_PrecancerOnly-Loss_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
@@ -350,10 +385,14 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(g.fig)
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
         seaborn.regplot(data=output_data, x=MSP, y="Segment-Gain", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Segment-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain segment (count)")
         matplotlib.pyplot.tight_layout()
+
         figures.append(f"Scatter_PrecancerOnly-Gain_{MSP}.pdf")
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)

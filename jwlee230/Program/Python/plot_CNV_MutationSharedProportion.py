@@ -101,6 +101,7 @@ if __name__ == "__main__":
         seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Ploidy", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["Lower", "Higher"], y="Ploidy", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
+        matplotlib.pyplot.xlabel("")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Violin_{MSP}.pdf")
@@ -125,6 +126,7 @@ if __name__ == "__main__":
         seaborn.regplot(data=output_data, x=MSP, y="Ploidy", fit_reg=True, scatter=True, color="tab:blue", truncate=False, ax=ax)
 
         matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Scatter_All_{MSP}.pdf")
@@ -147,6 +149,7 @@ if __name__ == "__main__":
         seaborn.regplot(data=tmp_data, x=MSP, y="Ploidy", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
 
         matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.tight_layout()
 
         figures.append(f"Scatter_{stage}_{MSP}.pdf")
