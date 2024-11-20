@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Segment", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, linewidth=5, ax=ax)
+        seaborn.violinplot(data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Segment", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=0, linewidth=5, ax=ax)
         statannotations.Annotator.Annotator(ax, compare_list, data=drawing_data, x=MSP, order=["PSM-L", "PSM-H"], y="Segment", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0).apply_and_annotate()
 
         matplotlib.pyplot.xlabel("")
@@ -146,10 +146,10 @@ if __name__ == "__main__":
 
         fig, axs = matplotlib.pyplot.subplots(figsize=(18 * 2, 18), ncols=2)
 
-        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, ax=axs[0])
+        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=0, ax=axs[0])
         statannotations.Annotator.Annotator(axs[0], compare_list, data=drawing_data, x=MSP, order=MSP_order, y="Segment-Loss", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=1, ax=axs[1])
+        seaborn.violinplot(data=drawing_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, inner="box", cut=0, ax=axs[1])
         statannotations.Annotator.Annotator(axs[1], compare_list, data=drawing_data, x=MSP, order=MSP_order, y="Segment-Gain", hue="Stage", hue_order=stage_list).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         axs[0].set_title("CNV Loss")
