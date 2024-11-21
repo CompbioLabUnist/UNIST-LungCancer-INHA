@@ -69,9 +69,10 @@ if __name__ == "__main__":
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, truncate=False, ax=ax)
+        seaborn.regplot(data=clinical_data, x=MSP, y=survival, fit_reg=True, scatter=True, truncate=False, truncate=False ax=ax)
 
-        matplotlib.pyplot.ylabel(survival)
+        matplotlib.pyplot.xlabel("PSM")
+        matplotlib.pyplot.ylabel(f"{survival} (Days)")
         matplotlib.pyplot.text(get_middle(clinical_data[MSP]), get_middle(clinical_data[survival]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.tight_layout()
 
