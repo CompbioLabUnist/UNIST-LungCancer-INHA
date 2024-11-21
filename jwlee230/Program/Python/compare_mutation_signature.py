@@ -51,8 +51,9 @@ def reg(stage: str, signature: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.stage_color_code[stage], ax=ax)
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.stage_color_code[stage], truncate=False, ax=ax)
 
+    matplotlib.pyplot.xlabel("PSM")
     matplotlib.pyplot.ylabel(f"{signature} in {stage}")
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
@@ -92,8 +93,9 @@ def reg_precancer(signature: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], ax=ax)
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
 
+    matplotlib.pyplot.xlabel("PSM")
     matplotlib.pyplot.ylabel(f"{signature} in Precancer")
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
@@ -133,8 +135,9 @@ def reg_all(signature: str, column: str) -> str:
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color="tab:blue", ax=ax)
+    seaborn.regplot(data=tmp_data, x=column, y=signature, fit_reg=True, scatter=True, color="tab:blue", truncate=False, ax=ax)
 
+    matplotlib.pyplot.xlabel("PSM")
     matplotlib.pyplot.ylabel(f"{signature}")
     matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()

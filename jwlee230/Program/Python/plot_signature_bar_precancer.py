@@ -88,14 +88,14 @@ if __name__ == "__main__":
         higher_primary_list = list(map(step00.get_paired_primary, higher_precancer_list))
 
         drawing_data = output_data.loc[(output_data["Signature"] == signature) & (output_data["Sample"].isin(lower_precancer_list + lower_primary_list + higher_precancer_list + higher_primary_list))].copy()
-        drawing_data["MSP"] = list(map(lambda x: "MSP-L" if (x in lower_precancer_list + lower_primary_list) else "MSP-H", drawing_data["Sample"]))
+        drawing_data["MSP"] = list(map(lambda x: "PSM-L" if (x in lower_precancer_list + lower_primary_list) else "PSM-H", drawing_data["Sample"]))
 
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-        seaborn.violinplot(data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=1, ax=ax)
-        statannotations.Annotator.Annotator(ax, [(("MSP-L", "Precancer"), ("MSP-L", "Primary")), (("MSP-H", "Precancer"), ("MSP-H", "Primary")), (("MSP-L", "Precancer"), ("MSP-H", "Precancer")), (("MSP-L", "Primary"), ("MSP-H", "Primary"))], data=drawing_data, x="MSP", y="Value", order=["MSP-L", "MSP-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+        seaborn.violinplot(data=drawing_data, x="MSP", y="Value", order=["PSM-L", "PSM-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=0, ax=ax)
+        statannotations.Annotator.Annotator(ax, [(("PSM-L", "Precancer"), ("PSM-L", "Primary")), (("PSM-H", "Precancer"), ("PSM-H", "Primary")), (("PSM-L", "Precancer"), ("PSM-H", "Precancer")), (("PSM-L", "Primary"), ("PSM-H", "Primary"))], data=drawing_data, x="MSP", y="Value", order=["PSM-L", "PSM-H"], hue="PRE/PRI", hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-        ax.set_xlabel("MSP")
+        ax.set_xlabel("")
         ax.set_ylabel(f"{signature}")
 
         matplotlib.pyplot.tight_layout()
