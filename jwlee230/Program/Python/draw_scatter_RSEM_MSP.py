@@ -30,12 +30,16 @@ def scatter(MSP: str, gene: str) -> str:
     primary_p = input_data.loc[gene, f"Primary-{MSP}-p"]
 
     if (precancer_p >= threshold) or (primary_p < 0.05):
-        return ""
+        pass
+        # return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.regplot(data=drawing_data, x=MSP, y=gene, scatter=True, fit_reg=True, color=step00.precancer_color_code["Precancer"], ax=ax)
-    matplotlib.pyplot.text(get_middle(drawing_data[MSP]), get_middle(drawing_data[gene]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    seaborn.regplot(data=drawing_data, x=MSP, y=gene, scatter=True, fit_reg=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
+
+    matplotlib.pyplot.text(get_middle(drawing_data[MSP]), get_middle(drawing_data[gene]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center")
+    matplotlib.pyplot.xlabel("PSM")
+    matplotlib.pyplot.ylabel(f"{gene} (TPM)")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"Scatter-{MSP}-{gene}.pdf"
@@ -55,7 +59,8 @@ def joint(MSP: str, gene: str) -> str:
     primary_p = input_data.loc[gene, f"Primary-{MSP}-p"]
 
     if (precancer_p >= threshold) or (primary_p < 0.05):
-        return ""
+        pass
+        # return ""
 
     g = seaborn.jointplot(data=drawing_data, x=MSP, y=gene, hue="Stage", hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, height=18, ratio=5)
     g.fig.text(0.5, 0.5, f"Precancer: r={precancer_r:.3f}, p={precancer_p:.3f}\nPrimary: r={primary_r:.3f}, p={primary_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
@@ -122,7 +127,7 @@ if __name__ == "__main__":
             genes = list()
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
-            # genes = sorted({"HIF1A", "MALAT1", "MYCL", "BIRCG", "RAD21", "STRN", "ZNF479"} & gene_set)
+            genes = ["CD4", "CCL5", "CD8A", "CD8B", "CD8B2", "STMN1", "DLG1", "SNAI2", "RRM2", "TIMMDC1", "ZNF148", "GPR89A"]
 
             figures += list(pool.starmap(scatter, [(MSP, gene) for gene in genes]))
             figures += list(pool.starmap(joint, [(MSP, gene) for gene in genes]))
