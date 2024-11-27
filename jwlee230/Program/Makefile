@@ -6503,3 +6503,10 @@ Output/Gistic_MSP/BWA-Sequenza.SQC.tar: Python/aggregate_MSP_gistic.py Output/Se
 
 step93: Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRE.tsv Output/Gistic_MSP/BWA-sequenza.SQC.High-PRE.tsv Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRI.tsv Output/Gistic_MSP/BWA-sequenza.SQC.High-PRI.tsv Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRE/all_lesions.conf_99.txt Output/Gistic_MSP/BWA-sequenza.SQC.High-PRE/all_lesions.conf_99.txt Output/Gistic_MSP/BWA-sequenza.SQC.Low-PRI/all_lesions.conf_99.txt Output/Gistic_MSP/BWA-sequenza.SQC.High-PRI/all_lesions.conf_99.txt Output/Gistic_MSP/BWA-Sequenza.SQC.tar
 .PHONY: step93
+
+# Step 94 (IHC)
+Output/IHC:
+	mkdir -p $@
+
+Output/IHC/check.tar: Python/draw_IHC.py Output/IHC/IHC.csv | Output/IHC build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
