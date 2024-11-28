@@ -31,28 +31,29 @@ def run(MSP: str, gene: str) -> str:
     higher_primary_list = list(filter(lambda x: x in expression_samples, list(map(step00.get_paired_primary, higher_precancer_list))))
 
     raw_output_data = list()
-    raw_output_data += [(sample, "MSP-L", "Precancer", expression_data.loc[sample, gene]) for sample in lower_precancer_list]
-    raw_output_data += [(sample, "MSP-L", "Primary", expression_data.loc[sample, gene]) for sample in lower_primary_list]
-    raw_output_data += [(sample, "MSP-H", "Precancer", expression_data.loc[sample, gene]) for sample in higher_precancer_list]
-    raw_output_data += [(sample, "MSP-H", "Primary", expression_data.loc[sample, gene]) for sample in higher_primary_list]
+    raw_output_data += [(sample, "PSM-L", "Precancer", expression_data.loc[sample, gene]) for sample in lower_precancer_list]
+    raw_output_data += [(sample, "PSM-L", "Primary", expression_data.loc[sample, gene]) for sample in lower_primary_list]
+    raw_output_data += [(sample, "PSM-H", "Precancer", expression_data.loc[sample, gene]) for sample in higher_precancer_list]
+    raw_output_data += [(sample, "PSM-H", "Primary", expression_data.loc[sample, gene]) for sample in higher_primary_list]
 
     output_data = pandas.DataFrame(raw_output_data, columns=["Sample", "MSP", "PRE/PRI", "Expression"])
 
-    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
-    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"])[1]
-    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
-    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p1 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "PSM-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "PSM-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p2 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "PSM-L") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "PSM-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"])[1]
+    p3 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "PSM-H") & (output_data["PRE/PRI"] == "Precancer"), "Expression"], output_data.loc[(output_data["MSP"] == "PSM-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
+    p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "PSM-L") & (output_data["PRE/PRI"] == "Primary"), "Expression"], output_data.loc[(output_data["MSP"] == "PSM-H") & (output_data["PRE/PRI"] == "Primary"), "Expression"])[1]
 
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
-        return ""
+        pass
+        # return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette={"Precancer": "tab:pink", "Primary": "gray"}, inner="box", linewidth=5, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["PSM-L", "PSM-H"], hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=0, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["PSM-L", "PSM-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="Expression", hue="PRE/PRI", order=["PSM-L", "PSM-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.xlabel(MSP)
-    matplotlib.pyplot.ylabel("Gene expression")
+    matplotlib.pyplot.xlabel("PSM")
+    matplotlib.pyplot.ylabel("TPM")
     matplotlib.pyplot.title(gene)
     matplotlib.pyplot.legend(loc="upper left")
     matplotlib.pyplot.tight_layout()
@@ -135,8 +136,11 @@ if __name__ == "__main__":
             genes = list()
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] > args.r)].index) - primary_POS_gene_set)
             genes += sorted(set(input_data.loc[(input_data[f"Precancer-{MSP}-slope"] > args.slope) & (input_data[f"Precancer-{MSP}-r"] < (-1 * args.r))].index) - primary_NEG_gene_set)
+            genes = ["CD4", "CCL5", "CD8A", "CD8B", "CD8B2", "STMN1", "DLG1", "SNAI2", "RRM2", "TIMMDC1", "ZNF148", "GPR89A"]
 
-            figures += list(filter(None, pool.starmap(run, [(MSP, gene) for gene in genes])))
+            figures += list(pool.starmap(run, [(MSP, gene) for gene in genes]))
+
+    figures = list(filter(None, figures))
 
     with tarfile.open(args.output, "w") as tar:
         for f in tqdm.tqdm(figures):

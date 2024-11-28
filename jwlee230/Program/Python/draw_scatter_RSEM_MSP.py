@@ -39,7 +39,7 @@ def scatter(MSP: str, gene: str) -> str:
 
     matplotlib.pyplot.text(get_middle(drawing_data[MSP]), get_middle(drawing_data[gene]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center")
     matplotlib.pyplot.xlabel("PSM")
-    matplotlib.pyplot.ylabel(f"{gene} (TPM)")
+    matplotlib.pyplot.ylabel("TPM")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"Scatter-{MSP}-{gene}.pdf"
