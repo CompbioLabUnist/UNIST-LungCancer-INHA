@@ -108,7 +108,7 @@ nvidia-nccl-cu12==2.20.5
 nvidia-nvjitlink-cu12==12.6.68
 nvidia-nvtx-cu11==11.7.91
 nvidia-nvtx-cu12==12.1.105
-opencv-python==4.5.3.56
+opencv-python==4.8.1.78
 openpyxl==3.1.2
 packaging==23.1
 palettable==3.3.3
