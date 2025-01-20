@@ -6509,4 +6509,4 @@ Output/IHC:
 	mkdir -p $@
 
 Output/IHC/check.tar: Python/draw_IHC.py Output/IHC/IHC.csv | Output/IHC build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
