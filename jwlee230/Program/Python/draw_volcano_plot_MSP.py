@@ -7,6 +7,7 @@ import tarfile
 from adjustText import adjust_text
 import matplotlib
 import matplotlib.pyplot
+import seaborn
 import numpy
 import pandas
 import tqdm
@@ -41,8 +42,31 @@ if __name__ == "__main__":
 
     matplotlib.use("Agg")
     matplotlib.rcParams.update(step00.matplotlib_parameters)
+    seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures = list()
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
+        if f"{stage}-{MSP}-importance" not in set(input_data.columns):
+            continue
+
+        total_length = len(input_data)
+        high_length = len(input_data.loc[(input_data[f"{stage}-{MSP}-slope"] > args.slope)])
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.histplot(data=input_data, x=f"{stage}-{MSP}-log10(abs(slope))", stat="count", kde=True, color=step00.precancer_color_code[stage], ax=ax)
+
+        matplotlib.pyplot.axvline(x=numpy.log10(args.slope), linestyle="--", color="black")
+        matplotlib.pyplot.text(x=numpy.log10(args.slope), y=0.0, s=f"slope={args.slope:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.title(f"{high_length}/{total_length} ({high_length / total_length * 100:.2f}%) genes")
+        matplotlib.pyplot.xlabel("log10(|slope|)")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Hist-{stage}-{MSP}-MT.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
+
     for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
         if f"{stage}-{MSP}-importance" not in set(input_data.columns):
             continue
@@ -139,6 +163,28 @@ if __name__ == "__main__":
         matplotlib.pyplot.close(fig)
 
     input_data = input_data.loc[list(filter(lambda x: not x.startswith("MT-"), list(input_data.index)))]
+
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
+        if f"{stage}-{MSP}-importance" not in set(input_data.columns):
+            continue
+
+        total_length = len(input_data)
+        high_length = len(input_data.loc[(input_data[f"{stage}-{MSP}-slope"] > args.slope)])
+
+        fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+
+        seaborn.histplot(data=input_data, x=f"{stage}-{MSP}-log10(abs(slope))", stat="count", kde=True, color=step00.precancer_color_code[stage], ax=ax)
+
+        matplotlib.pyplot.axvline(x=numpy.log10(args.slope), linestyle="--", color="black")
+        matplotlib.pyplot.text(x=numpy.log10(args.slope), y=0.0, s=f"slope={args.slope:.1f}", rotation="vertical", horizontalalignment="left", verticalalignment="bottom", fontsize="xx-small", bbox={"alpha": 0.3, "color": "white"})
+
+        matplotlib.pyplot.title(f"{high_length}/{total_length} ({high_length / total_length * 100:.2f}%) genes")
+        matplotlib.pyplot.xlabel("log10(|slope|)")
+        matplotlib.pyplot.tight_layout()
+
+        figures.append(f"Hist-{stage}-{MSP}-noMT.pdf")
+        fig.savefig(figures[-1])
+        matplotlib.pyplot.close(fig)
 
     for stage, MSP in tqdm.tqdm(list(itertools.product(stages, step00.sharing_columns[:2]))):
         if f"{stage}-{MSP}-importance" not in set(input_data.columns):
