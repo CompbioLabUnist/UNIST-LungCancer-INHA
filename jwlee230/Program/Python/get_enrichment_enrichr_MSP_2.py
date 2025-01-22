@@ -45,6 +45,9 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         enrichment_data["-log10(P)"] = -1 * numpy.log10(enrichment_data["P-value"])
         enrichment_data["-log10(Padj)"] = -1 * numpy.log10(enrichment_data["Adjusted p-value"])
         enrichment_data["Gene count"] = list(map(lambda x: len(x.split(",")), list(enrichment_data["Overlapping genes"])))
+
+        enrichment_data = enrichment_data.loc[~(enrichment_data["Term name"].str.endswith("disease"))]
+        enrichment_data["Rank"] = list(range(len(enrichment_data)))
     else:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns)
 
@@ -56,6 +59,7 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         matplotlib.pyplot.yticks([])
     else:
         seaborn.scatterplot(data=enrichment_data, x="-log10(Padj)", y="Rank", size="Gene count", sizes=(100, 1000), hue="Z-score", palette="Reds", legend="brief", edgecolor="black")
+        matplotlib.pyplot.axvline(x=-numpy.log10(0.05), color="black", linestyle="--")
 
         matplotlib.pyplot.grid(True)
         matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
@@ -77,6 +81,7 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         matplotlib.pyplot.yticks([])
     else:
         matplotlib.pyplot.barh(y=enrichment_data["Rank"], width=enrichment_data["-log10(Padj)"], color=color)
+        matplotlib.pyplot.axvline(x=-numpy.log10(0.05), color="black", linestyle="--")
 
         for index, row in enrichment_data.iterrows():
             matplotlib.pyplot.text(0, y=row["Rank"], s=row["Overlapping genes..."], fontsize="xx-small", horizontalalignment="left", verticalalignment="center")
