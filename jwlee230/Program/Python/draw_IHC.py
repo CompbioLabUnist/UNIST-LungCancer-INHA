@@ -110,9 +110,9 @@ if __name__ == "__main__":
 
         seaborn.swarmplot(data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order, palette=palette, dodge=True, size=40, ax=ax)
         if any(numpy.isnan(input_data[gene])):
-            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][1] == x[1][1], itertools.combinations(itertools.product(order, hue_order[1:]), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][1] == x[1][1], itertools.combinations(itertools.product(order, hue_order[1:]), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
         else:
-            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][1] == x[1][1], itertools.combinations(itertools.product(order, hue_order), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][1] == x[1][1], itertools.combinations(itertools.product(order, hue_order), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.ylabel(f"{gene} expression")
         matplotlib.pyplot.title(gene)
@@ -128,9 +128,9 @@ if __name__ == "__main__":
 
         seaborn.swarmplot(data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order, palette=palette, dodge=True, size=40, ax=ax)
         if any(numpy.isnan(input_data[gene])):
-            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][0] == x[1][0], itertools.combinations(itertools.product(order, hue_order[1:]), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order,).configure(test="Wilcoxon", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][0] == x[1][0], itertools.combinations(itertools.product(order, hue_order[1:]), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order,).configure(test="Wilcoxon", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
         else:
-            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][0] == x[1][0], itertools.combinations(itertools.product(order, hue_order), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order,).configure(test="Wilcoxon", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+            statannotations.Annotator.Annotator(ax, list(filter(lambda x: x[0][0] == x[1][0], itertools.combinations(itertools.product(order, hue_order), r=2))), data=input_data, x="Recurrence", order=order, y=gene, hue="Stage", hue_order=hue_order,).configure(test="Wilcoxon", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
         matplotlib.pyplot.ylabel(f"{gene} expression")
         matplotlib.pyplot.title(gene)
