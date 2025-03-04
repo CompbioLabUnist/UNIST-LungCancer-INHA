@@ -83,7 +83,8 @@ def run_reg(sharing_and_gene: typing.Tuple[str, str]) -> str:
     primary_p = scipy.stats.spearmanr(primary_data["CNV"], primary_data["MSP"])[1]
 
     if (precancer_p >= 0.05) or (primary_p < 0.05):
-        return ""
+        pass
+        # return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -121,15 +122,16 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
 
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
-        return ""
+        pass
+        # return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
-    seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=1, ax=ax)
-    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="simple", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
+    seaborn.violinplot(data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"], palette=step00.precancer_color_code, inner="box", linewidth=5, cut=0, ax=ax)
+    statannotations.Annotator.Annotator(ax, list(filter(lambda x: (x[0][0] == x[1][0]) or (x[0][1] == x[1][1]), itertools.combinations(itertools.product(["MSP-L", "MSP-H"], ["Precancer", "Primary"]), r=2))), data=output_data, x="MSP", y="CNV", hue="PRE/PRI", order=["MSP-L", "MSP-H"], hue_order=["Precancer", "Primary"]).configure(test="Mann-Whitney", text_format="star", loc="inside", verbose=0, comparisons_correction=None).apply_and_annotate()
 
-    matplotlib.pyplot.xlabel(sharing)
-    matplotlib.pyplot.ylabel(watching)
+    matplotlib.pyplot.xlabel("")
+    matplotlib.pyplot.ylabel(f"{gene} ({watching})")
     matplotlib.pyplot.title(gene)
     matplotlib.pyplot.legend(loc="upper left")
     matplotlib.pyplot.tight_layout()
@@ -206,7 +208,8 @@ if __name__ == "__main__":
     cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung", case=False))]
     print(cgc_data)
 
-    gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
+    gene_list = ["CCL5", "CD4", "RRM2", "STMN1", "TIMMDC1"]
+    # gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
     # gene_list = sorted(set(gene_data["gene_id"]))
     print("Gene:", len(gene_list))
 
@@ -215,7 +218,7 @@ if __name__ == "__main__":
     seaborn.set_theme(context="poster", style="whitegrid", rc=step00.matplotlib_parameters)
 
     figures: typing.List[str] = list()
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         clinical_data = clinical_data.sort_values(MSP)
 
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1.0 - args.percentage)

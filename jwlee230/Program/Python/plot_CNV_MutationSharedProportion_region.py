@@ -113,7 +113,7 @@ if __name__ == "__main__":
     MSP_order = ["PSM-L", "PSM-H"]
     compare_list = [(("PSM-L", "Precancer"), ("PSM-L", "Primary")), (("PSM-H", "Precancer"), ("PSM-H", "Primary")), (("PSM-L", "Precancer"), ("PSM-H", "Precancer")), (("PSM-L", "Primary"), ("PSM-H", "Primary"))]
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         lower_bound, higher_bound = numpy.quantile(clinical_data[MSP], args.percentage), numpy.quantile(clinical_data[MSP], 1 - args.percentage)
 
         drawing_data = output_data.loc[(output_data["Sample"].isin(clinical_data[f"{MSP}-sample"])) | (output_data["Sample"].isin(list(map(step00.get_paired_primary, clinical_data[f"{MSP}-sample"]))))].copy()
@@ -160,12 +160,15 @@ if __name__ == "__main__":
 
     output_data = output_data.loc[(output_data["Stage"].isin(stage_list))]
 
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=step00.stage_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (Gbp)")
         figures.append(f"Joint_All_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -174,7 +177,10 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
         seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, truncate=False, ax=ax)
 
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Ploidy"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
         matplotlib.pyplot.tight_layout()
@@ -185,7 +191,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Loss"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=step00.stage_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (Gbp)")
         figures.append(f"Joint_All-Loss_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -194,7 +203,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
@@ -206,7 +219,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Gain"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=step00.stage_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (Gbp)")
         figures.append(f"Joint_All-Gain_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -215,7 +231,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
@@ -225,12 +245,15 @@ if __name__ == "__main__":
         fig.savefig(figures[-1])
         matplotlib.pyplot.close(fig)
 
-    for stage, MSP in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns))):
+    for stage, MSP in tqdm.tqdm(list(itertools.product(stage_list, step00.sharing_columns[:2]))):
         tmp_data = output_data.loc[(output_data["Stage"] == stage)]
 
         r, p = scipy.stats.spearmanr(tmp_data[MSP], tmp_data["Region"])
         g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region", color=step00.stage_color_code[stage], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (Gbp)")
         figures.append(f"Joint_{stage}_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -239,7 +262,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=tmp_data, x=MSP, y="Region", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
@@ -251,7 +278,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(tmp_data[MSP], tmp_data["Region-Loss"])
         g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Loss", color=step00.stage_color_code[stage], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (Gbp)")
         figures.append(f"Joint_{stage}-Loss_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -260,7 +290,10 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=tmp_data, x=MSP, y="Region-Loss", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Loss"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
@@ -272,7 +305,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(tmp_data[MSP], tmp_data["Region-Gain"])
         g = seaborn.jointplot(data=tmp_data, x=MSP, y="Region-Gain", color=step00.stage_color_code[stage], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (Gbp)")
         figures.append(f"Joint_{stage}-Gain_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -281,7 +317,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=tmp_data, x=MSP, y="Region-Gain", color=step00.stage_color_code[stage], fit_reg=True, scatter=True, truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Gain"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(tmp_data[MSP]), get_middle(tmp_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
@@ -294,12 +334,15 @@ if __name__ == "__main__":
     stage_list = ["Precancer", "Primary"]
 
     output_data["Stage"] = list(map(lambda x: "Primary" if (x == "Primary") else "Precancer", output_data["Stage"]))
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (Gbp)")
         figures.append(f"Joint_Precancer_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -307,7 +350,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Loss"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (Gbp)")
         figures.append(f"Joint_Precancer-Loss_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -315,19 +361,25 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Gain"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", hue="Stage", hue_order=stage_list, palette=step00.precancer_color_code, height=18, ratio=5, kind="scatter")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (Gbp)")
         figures.append(f"Joint_Precancer-Gain_{MSP}.pdf")
         g.savefig(figures[-1])
         matplotlib.pyplot.close(g.fig)
 
     output_data = output_data.loc[(output_data["Stage"] == "Precancer")]
-    for MSP in tqdm.tqdm(step00.sharing_columns):
+    for MSP in tqdm.tqdm(step00.sharing_columns[:2]):
         output_data[MSP] = list(map(lambda x: clinical_data.loc[x, MSP], output_data["Patient"]))
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region", color=step00.precancer_color_code["Precancer"], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV region (Gbp)")
         figures.append(f"Joint_PrecancerOnly_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -336,7 +388,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=output_data, x=MSP, y="Region", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV region (Gbp)")
@@ -348,7 +404,10 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Loss"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Loss", color=step00.precancer_color_code["Precancer"], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Loss region (Gbp)")
         figures.append(f"Joint_PrecancerOnly-Loss_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -357,7 +416,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=output_data, x=MSP, y="Region-Loss", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Loss"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Loss region (Gbp)")
@@ -369,7 +432,11 @@ if __name__ == "__main__":
 
         r, p = scipy.stats.spearmanr(output_data[MSP], output_data["Region-Gain"])
         g = seaborn.jointplot(data=output_data, x=MSP, y="Region-Gain", color=step00.precancer_color_code["Precancer"], height=18, ratio=5, kind="reg")
-        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
         g.set_axis_labels(MSP, "Number of somatic CNV-Gain region (Gbp)")
         figures.append(f"Joint_PrecancerOnly-Gain_{MSP}.pdf")
         g.savefig(figures[-1])
@@ -378,7 +445,11 @@ if __name__ == "__main__":
         fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
         seaborn.regplot(data=output_data, x=MSP, y="Region-Gain", fit_reg=True, scatter=True, color=step00.precancer_color_code["Precancer"], truncate=False, ax=ax)
-        matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+
+        if p < 1e-3:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+        else:
+            matplotlib.pyplot.text(get_middle(output_data[MSP]), get_middle(output_data["Region-Gain"]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
         matplotlib.pyplot.xlabel("PSM")
         matplotlib.pyplot.ylabel("Number of somatic CNV-Gain region (Gbp)")
