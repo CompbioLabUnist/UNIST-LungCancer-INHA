@@ -32,7 +32,10 @@ def joint(stage: str, signature: str, column: str) -> str:
     r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
     g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=18, ratio=6, color=step00.stage_color_code[stage])
-    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    if p < 1e-3:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    else:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.set_axis_labels(column, f"{signature} in {stage}")
 
     fig_name = f"Joint-{stage}-{column}-{signature}.pdf"
@@ -55,7 +58,10 @@ def reg(stage: str, signature: str, column: str) -> str:
 
     matplotlib.pyplot.xlabel("PSM")
     matplotlib.pyplot.ylabel(f"{signature} in {stage}")
-    matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    if p < 1e-3:
+        matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    else:
+        matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"Scatter-{stage}-{column}-{signature}.pdf"
@@ -73,7 +79,10 @@ def joint_precancer(signature: str, column: str) -> str:
     r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
     g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=18, ratio=6, color=step00.precancer_color_code["Precancer"])
-    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    if p < 1e-3:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    else:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels(column, f"{signature} in Precancer")
 
@@ -97,7 +106,10 @@ def reg_precancer(signature: str, column: str) -> str:
 
     matplotlib.pyplot.xlabel("PSM")
     matplotlib.pyplot.ylabel(f"{signature} in Precancer")
-    matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    if p < 1e-3:
+        matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    else:
+        matplotlib.pyplot.text(get_middle(tmp_data[column]), get_middle(tmp_data[signature]), f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"Scatter-Precancer-{column}-{signature}.pdf"
@@ -115,7 +127,10 @@ def joint_all(signature: str, column: str) -> str:
     r, p = scipy.stats.pearsonr(tmp_data[column], tmp_data[signature])
 
     g = seaborn.jointplot(data=tmp_data, x=column, y=signature, kind="reg", height=18, ratio=6, color="tab:blue")
-    g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    if p < 1e-3:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    else:
+        g.fig.text(0.5, 0.5, f"r={r:.3f}, p={p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
     g.plot_marginals(seaborn.histplot, kde=True, stat="probability", multiple="stack")
     g.set_axis_labels(column, f"{signature}")
 
@@ -225,7 +240,7 @@ if __name__ == "__main__":
     patients &= set(signature_data["Patient"])
 
     signature_data = signature_data.loc[signature_data["Patient"].isin(patients)]
-    for column in tqdm.tqdm(step00.sharing_columns):
+    for column in tqdm.tqdm(step00.sharing_columns[:2]):
         signature_data[column] = list(map(lambda x: clinical_data.loc[step00.get_patient(x), column], list(signature_data.index)))
     print(signature_data)
 
@@ -236,13 +251,13 @@ if __name__ == "__main__":
     figures = list()
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures += pool.starmap(joint, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns))
-        figures += pool.starmap(reg, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns))
-        figures += pool.starmap(joint_precancer, itertools.product(signature_list, step00.sharing_columns))
-        figures += pool.starmap(reg_precancer, itertools.product(signature_list, step00.sharing_columns))
-        figures += pool.starmap(joint_all, itertools.product(signature_list, step00.sharing_columns))
-        figures += pool.starmap(reg_all, itertools.product(signature_list, step00.sharing_columns))
-        figures += pool.starmap(lm, itertools.product(signature_list, step00.sharing_columns))
+        figures += pool.starmap(joint, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(reg, itertools.product(step00.long_sample_type_list, signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(joint_precancer, itertools.product(signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(reg_precancer, itertools.product(signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(joint_all, itertools.product(signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(reg_all, itertools.product(signature_list, step00.sharing_columns[:2]))
+        figures += pool.starmap(lm, itertools.product(signature_list, step00.sharing_columns[:2]))
 
     figures = list(filter(None, figures))
 
