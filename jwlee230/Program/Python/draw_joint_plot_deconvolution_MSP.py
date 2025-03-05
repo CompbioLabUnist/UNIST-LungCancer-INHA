@@ -41,7 +41,7 @@ def reg(stage, MSP, cell):
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
     r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
-    if (numpy.isnan(p)) or (p >= 0.05):
+    if (numpy.isnan(p)):
         return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
@@ -80,7 +80,7 @@ def joint(stage, MSP, cell):
     slope, intercept, r, p, *_ = scipy.stats.linregress(drawing_data[MSP], drawing_data[cell])
     r, p = scipy.stats.spearmanr(drawing_data[MSP], drawing_data[cell])
 
-    if (numpy.isnan(p)) or (p >= 0.05):
+    if (numpy.isnan(p)):
         return ""
 
     g = seaborn.jointplot(data=drawing_data, x=MSP, y=cell, color=color, kind="reg", height=24, ratio=5)
@@ -148,8 +148,8 @@ if __name__ == "__main__":
     print(input_data)
 
     with multiprocessing.Pool(args.cpus) as pool:
-        figures = list(pool.starmap(reg, list(itertools.product(step00.long_sample_type_list + ["Precancer", "All"], step00.sharing_columns, cells))))
-        figures += list(pool.starmap(joint, list(itertools.product(step00.long_sample_type_list + ["Precancer", "All"], step00.sharing_columns, cells))))
+        figures = list(pool.starmap(reg, list(itertools.product(step00.long_sample_type_list + ["Precancer", "All"], step00.sharing_columns[1:2], cells))))
+        figures += list(pool.starmap(joint, list(itertools.product(step00.long_sample_type_list + ["Precancer", "All"], step00.sharing_columns[1:2], cells))))
 
     figures = list(filter(None, figures))
 

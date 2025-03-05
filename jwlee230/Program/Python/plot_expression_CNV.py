@@ -82,18 +82,16 @@ def run_reg(sharing_and_gene: typing.Tuple[str, str]) -> str:
 
     primary_p = scipy.stats.spearmanr(primary_data["CNV"], primary_data["MSP"])[1]
 
-    if (precancer_p >= 0.05) or (primary_p < 0.05):
-        pass
-        # return ""
+    if (precancer_p >= 0.05) or (precancer_r < 0.0) or (primary_p < 0.05):
+        return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
     seaborn.regplot(data=precancer_data, x="MSP", y="CNV", scatter=True, fit_reg=True, color=step00.precancer_color_code["Precancer"], ax=ax)
-    matplotlib.pyplot.text(get_middle(precancer_data["MSP"]), get_middle(precancer_data["CNV"]), f"r={precancer_r:.3f}, p={precancer_p:.3f}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
+    matplotlib.pyplot.text(get_middle(precancer_data["MSP"]), get_middle(precancer_data["CNV"]), f"r={precancer_r:.3f}, p={precancer_p:.1e}", color="k", fontsize="small", horizontalalignment="center", verticalalignment="center", bbox={"alpha": 0.3, "color": "white"})
 
-    matplotlib.pyplot.xlabel(sharing)
-    matplotlib.pyplot.ylabel(watching)
-    matplotlib.pyplot.title(gene)
+    matplotlib.pyplot.xlabel("PSM")
+    matplotlib.pyplot.ylabel(f"{gene} ({watching})")
     matplotlib.pyplot.tight_layout()
 
     fig_name = f"reg-{sharing}-{gene}.pdf"
@@ -122,8 +120,7 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
     p4 = scipy.stats.mannwhitneyu(output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Precancer"), "CNV"], output_data.loc[(output_data["MSP"] == "MSP-H") & (output_data["PRE/PRI"] == "Primary"), "CNV"])[1]
 
     if (p1 >= 0.05) or (p2 >= 0.05) or (p3 < 0.05) or (p4 < 0.05):
-        pass
-        # return ""
+        return ""
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
 
@@ -132,7 +129,6 @@ def run_precancer(sharing_and_gene: typing.Tuple[str, str]) -> str:
 
     matplotlib.pyplot.xlabel("")
     matplotlib.pyplot.ylabel(f"{gene} ({watching})")
-    matplotlib.pyplot.title(gene)
     matplotlib.pyplot.legend(loc="upper left")
     matplotlib.pyplot.tight_layout()
 
@@ -205,11 +201,14 @@ if __name__ == "__main__":
 
     cgc_data = pandas.read_csv(args.cgc, index_col=0)
     cgc_data = cgc_data.loc[~(cgc_data["Tumour Types(Somatic)"].isna())]
-    cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung", case=False))]
+    # cgc_data = cgc_data.loc[(cgc_data["Tumour Types(Somatic)"].str.contains("lung", case=False))]
+    cgc_data = cgc_data.loc[(cgc_data["Chr Band"].str.startswith("2p")) | (cgc_data["Chr Band"].str.startswith("3q"))]
+    cgc_data = cgc_data.loc[(cgc_data["Role in Cancer"].str.contains("oncogene")) & (cgc_data["Mutation Types"].str.contains("A"))]
     print(cgc_data)
+    print(list(cgc_data.columns))
 
-    gene_list = ["CCL5", "CD4", "RRM2", "STMN1", "TIMMDC1"]
-    # gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
+    # gene_list = ["CCL5", "CD4", "RRM2", "STMN1", "TIMMDC1"]
+    gene_list = sorted(set(cgc_data.index) & set(gene_data["gene_id"]))
     # gene_list = sorted(set(gene_data["gene_id"]))
     print("Gene:", len(gene_list))
 
