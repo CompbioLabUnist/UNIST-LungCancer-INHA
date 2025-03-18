@@ -1330,7 +1330,7 @@ Output/RSEM/Plots/Volcano/%.MSP.tar: Python/draw_volcano_plot_MSP.py Output/RSEM
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Plots/Volcano/%.MSP-spearman.tar: Python/draw_volcano_plot_MSP.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Plots/Volcano build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
 
 Output/RSEM/Plots/Volcano/%.correlation.MSP.tar: Python/draw_regression_plot_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | build.log Output/RSEM/Plots/Volcano
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC 1> $@.stdout 2> $@.stderr
@@ -1365,8 +1365,11 @@ Output/RSEM/Plots/Violin/%.ADC.Smoking-Detail.violin.tar: Python/draw_violin_plo
 Output/RSEM/Plots/Violin/%.SQC.Smoking-Detail.violin.tar: Python/draw_violin_plots_clinical.py Output/RSEM/DEG/%.tsv $(CLINICAL_DATA_CSV) $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --compare "Smoking-Detail" "Never" "Ex" "Current" 1> $@.stdout 2> $@.stderr
 
+Output/RSEM/Plots/Violin/%.SQC.MSP.violin.tar: Python/draw_violin_plots_MSP-2.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv | Output/RSEM/Plots/Violin build.log
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC
+
 Output/RSEM/Plots/Violin/%.SQC.MSP-Median.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --median
 
 Output/RSEM/Plots/Violin/%.SQC.MSP-Mean.violin.tar: Python/draw_violin_plots_MSP.py Output/RSEM/DEG/%.tsv Output/MutationSharedProportion/BWA.tsv $(GENE_CENCUS_BOTH_CSV) | Output/RSEM/Plots/Violin build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) --SQC --mean 1> $@.stdout 2> $@.stderr
@@ -1504,7 +1507,7 @@ Output/RSEM/Enrichment/%.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.Spearman.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human"
 
 Output/RSEM/Enrichment/%.MSigDB.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
@@ -6321,7 +6324,7 @@ Output/Gene_CNV:
 	mkdir -p $@
 
 Output/Gene_CNV/Sequenza.SQC.MSP.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --cpus $(CPUS)
 
 Output/Gene_CNV/Sequenza.SQC.MSP.33.tar: Python/plot_expression_CNV.py Output/Sequenza/BWA.segment.tsv Output/RSEM/DEG/STAR.TPM.tsv Output/MutationSharedProportion/BWA.tsv $(KNOWN_GENE_GTF) $(GENE_CENCUS_BOTH_CSV) | Output/Gene_CNV build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --SQC --watching "CNt" --percentage "0.33" --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
@@ -6510,3 +6513,6 @@ Output/IHC:
 
 Output/IHC/check.tar: Python/draw_IHC.py Output/IHC/IHC.csv | Output/IHC build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@)
+
+step94: Output/IHC/check.tar
+.PHONY: step94
