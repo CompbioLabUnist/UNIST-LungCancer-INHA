@@ -1507,7 +1507,7 @@ Output/RSEM/Enrichment/%.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.Spearman.Pre-only.KEGG.tar: Python/get_enrichment_enrichr_MSP_2.py Output/RSEM/DEG/%.DEG.MSP-spearman.tsv | Output/RSEM/Enrichment build.log
-	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human"
+	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "KEGG_2021_Human" 1> $@.stdout 2> $@.stderr
 
 Output/RSEM/Enrichment/%.MSigDB.tar: Python/get_enrichment_enrichr_MSP.py Output/RSEM/DEG/%.DEG.MSP.tsv | Output/RSEM/Enrichment build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --DB "MSigDB_Oncogenic_Signatures" 1> $@.stdout 2> $@.stderr
