@@ -51,7 +51,7 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
     else:
         enrichment_data = pandas.DataFrame(columns=step00.pathway_wanted_columns)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(18, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18 * 2, 18))
 
     if (enrichment_data.empty) or (len(enrichment_data) < 1):
         matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize="xx-large", color="k", horizontalalignment="center", verticalalignment="center")
@@ -62,7 +62,7 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
         matplotlib.pyplot.axvline(x=-numpy.log10(0.05), color="black", linestyle="--")
 
         matplotlib.pyplot.grid(True)
-        matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="xx-small")
+        matplotlib.pyplot.yticks(enrichment_data["Rank"], enrichment_data["Term name"], fontsize="x-small")
         matplotlib.pyplot.xlabel("-log10(Padj)")
         matplotlib.pyplot.ylabel(f"{enrichment_data.shape[0]} pathways")
         matplotlib.pyplot.legend(loc="lower right")
@@ -73,7 +73,7 @@ def run(file_name: str, genes: typing.List[str], color: str) -> typing.List[str]
     fig.savefig(tmp_files[-1])
     matplotlib.pyplot.close(fig)
 
-    fig, ax = matplotlib.pyplot.subplots(figsize=(32, 18))
+    fig, ax = matplotlib.pyplot.subplots(figsize=(18 * 2, 18))
 
     if (enrichment_data.empty) or (len(enrichment_data) < 1):
         matplotlib.pyplot.text(0.5, 0.5, "Nothing to show...", fontsize="xx-large", color="k", horizontalalignment="center", verticalalignment="center")
