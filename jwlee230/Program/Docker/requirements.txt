@@ -145,7 +145,7 @@ reportlab==4.0.4
 requests==2.32.4
 retrying==1.3.4
 rpds-py==0.8.10
-s3transfer==0.10.4
+s3transfer==0.13.0
 scikit-bio==0.5.9
 scikit-image==0.18.3
 scikit-learn==1.5.0
@@ -169,14 +169,14 @@ threadpoolctl==3.1.0
 tifffile==2024.8.30
 toolz==1.0.0
 torch==2.7.1
-torchvision==0.20.1
+torchvision==0.22.1
 tornado==6.5.1
 tqdm==4.66.4
 traitlets==5.9.0
 triton==3.3.1
 typing_extensions==4.12.2
 UpSetPlot==0.6.1
-urllib3==2.5.0
+urllib3==1.26.20
 venn==0.1.3
 visdom==0.2.4
 wcwidth==0.2.6
