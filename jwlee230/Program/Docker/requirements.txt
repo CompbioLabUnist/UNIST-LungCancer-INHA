@@ -131,7 +131,7 @@ pure-eval==0.2.2
 pyfaidx==0.7.2.1
 Pygments==2.15.1
 pyparsing==3.0.9
-pyPdf==1.13
+pyPdf==6.0.0
 PyPDF2==2.12.1
 pysam==0.21.0
 python-bioformats==4.1.0
