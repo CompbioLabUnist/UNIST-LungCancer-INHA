@@ -1,10 +1,10 @@
 # Variables
 DATE := $(shell date "+%Y%m%d")
 RANDOM := $(shell bash -c 'echo $$RANDOM')
-IMAGE_NAME = lungcancer:latest
+IMAGE_NAME = unist-lungcancer-inha:20250709
 SHELL := /bin/bash
-CPUS = 100
-MEMS = 200
+CPUS = 10
+MEMS = 100
 PARALLEL = 10
 PWD := $(shell pwd)
 TOOLS =
@@ -218,8 +218,8 @@ build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
 	rm -f $@
 	docker images | grep $(IMAGE_NAME) && docker rmi $(IMAGE_NAME) || true
 	docker build --rm --tag $(IMAGE_NAME) $(dir $(word 1,$^)) | tee $@
-	docker build --rm --tag fumire/unist-lungcancer-inha:$(DATE) $(dir $(word 1,$^))
-	docker push fumire/unist-lungcancer-inha:$(DATE)
+	# docker build --rm --tag fumire/unist-lungcancer-inha:$(DATE) $(dir $(word 1,$^))
+	# docker push fumire/unist-lungcancer-inha:$(DATE)
 
 build: build.log
 .PHONY: build
@@ -250,7 +250,7 @@ run: | log Output build.log
 .PHONY: run
 
 # Actual
-latest: step07 step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81
+latest: step08 step09 step10 step11 step12 step13 step14 step15 step16 step17 step18 step19 step20 step21 step23 step24 step25 step26 step27 step28 step29 step30 step31 step32 step33 step34 step35 step36 step37 step38 step39 step40 step42 step43 step44 step45 step46 step47 step48 step49 step50 step51 step52 step53 step54 step55 step56 step57 step58 step59 step60 step61 step62 step64 step66 step67 step68 step69 step70 step71 step72 step73 step74 step75 step76 step77 step78 step79 step80 step81
 .PHONY: latest
 
 # Step 01 (FastQC for WES)
@@ -368,7 +368,8 @@ Output/PanelOfNormal/BWA/%.PASS.vcf.idx: Output/PanelOfNormal/BWA/%.PASS.vcf | b
 Output/PanelOfNormal/Bowtie2/%.PASS.vcf.idx: Output/PanelOfNormal/Bowtie2/%.PASS.vcf | build.log
 	$(DOCKER) $(GATK) IndexFeatureFile --input $(addprefix /,$^) --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID)))
+step08: $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/BWA/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID)))
+step08-Bowtie2: $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .filter.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf,$(WES_NORMAL_ID))) $(addprefix Output/PanelOfNormal/Bowtie2/,$(addsuffix .PASS.vcf.idx,$(WES_NORMAL_ID)))
 .PHONY: step08
 
 # Step 09 (Panel of Normal: Aggregate VCF files)
@@ -386,7 +387,8 @@ Output/PanelOfNormal/PON.BWA.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNormal/BWA
 Output/PanelOfNormal/PON.Bowtie2.vcf.gz: $(REFERENCE_FASTA) Output/PanelOfNormal/Bowtie2.genomicsdb/callset.json | build.log
 	$(DOCKER) $(GATK) CreateSomaticPanelOfNormals --reference $(addprefix /,$(filter %.fasta,$^)) --variant "gendb://$(addprefix /,$(dir $(filter %.json,$^)))" --output $(addprefix /,$@) 1> $@.stdout 2> $@.stderr
 
-step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json Output/PanelOfNormal/PON.BWA.vcf.gz Output/PanelOfNormal/Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.Bowtie2.vcf.gz
+step09: Output/PanelOfNormal/BWA.genomicsdb/callset.json Output/PanelOfNormal/PON.BWA.vcf.gz
+step09-Bowtie2: Output/PanelOfNormal/Bowtie2.genomicsdb/callset.json Output/PanelOfNormal/PON.Bowtie2.vcf.gz
 .PHONY: step09
 
 # Step 10 (WES - samtools depth)
@@ -402,7 +404,8 @@ Output/WESDepth/BWA.pdf: Python/analysis_depth.py $(addprefix Output/WESDepth/,$
 Output/WESDepth/Bowtie2.pdf: Python/analysis_depth.py $(addprefix Output/WESDepth/,$(addsuffix .Bowtie2.tsv,$(WES_ID))) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --cpus $(CPUS) 1> $@.stdout 2> $@.stderr
 
-step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.pdf $(addprefix Output/WESDepth/,$(addsuffix .Bowtie2.tsv,$(WES_ID))) Output/WESDepth/Bowtie2.pdf
+step10: $(addprefix Output/WESDepth/,$(addsuffix .BWA.tsv,$(WES_ID))) Output/WESDepth/BWA.pdf
+step10-Bowtie2: $(addprefix Output/WESDepth/,$(addsuffix .Bowtie2.tsv,$(WES_ID))) Output/WESDepth/Bowtie2.pdf
 .PHONY: step10
 
 # Step 11 (Sequenza: Make reference)
@@ -438,7 +441,8 @@ Output/Sequenza/BWA/%.seqz.gz.tbi: Output/Sequenza/BWA/%.seqz.gz | build.log
 Output/Sequenza/Bowtie2/%.seqz.gz.tbi: Output/Sequenza/Bowtie2/%.seqz.gz | build.log
 	$(DOCKER) tabix --force --sequence 1 --begin 2 --end 2 --skip-lines 1 $(addprefix /,$<) 1> $@.stdout 2> $@.stderr
 
-step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz.tbi,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .seqz.gz.tbi,$(WES_TUMOR_ID)))
+step12: $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/BWA/,$(addsuffix .seqz.gz.tbi,$(WES_TUMOR_ID)))
+step12-Bowtie2: $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .seqz.gz,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix .seqz.gz.tbi,$(WES_TUMOR_ID)))
 .PHONY: step12
 
 # Step 13 (Sequenza: Draw the plots)
@@ -570,16 +574,16 @@ Output/Sequenza/%-precancer-SQC.tar: Python/aggregate_CNV_precancer.py Output/Se
 Output/Sequenza/%-precancer-ADC.tar: Python/aggregate_CNV_precancer.py Output/Sequenza/%.segment.tsv $(CLINICAL_DATA_CSV) $(REFERENCE_SIZE_TSV) | build.log
 	$(DOCKER) $(PYTHON) $(addprefix /,$^ $@) --watching "depth.ratio" --cpus $(CPUS) --ADC 1> $@.stdout 2> $@.stderr
 
-step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) $(addprefix Output/Sequenza/Bowtie2/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID))) Output/Sequenza/BWA.sample.tsv Output/Sequenza/Bowtie2.sample.tsv
-step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-sequenza-ADC.pdf Output/Sequenza/Bowtie2-sequenza-SQC.pdf Output/Sequenza/Bowtie2-sequenza-ADC.pdf Output/Sequenza/BWA-stage-SQC.pdf Output/Sequenza/BWA-stage-ADC.pdf Output/Sequenza/Bowtie2-stage-SQC.pdf Output/Sequenza/Bowtie2-stage-ADC.pdf
-step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/Bowtie2-genome-SQC.pdf Output/Sequenza/Bowtie2-genome-ADC.pdf Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.patient.pdf
-step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/Bowtie2-simple-SQC.pdf Output/Sequenza/Bowtie2-simple-ADC.pdf Output/Sequenza/BWA-precancer-SQC.tar Output/Sequenza/BWA-precancer-ADC.tar Output/Sequenza/Bowtie2-precancer-SQC.tar Output/Sequenza/Bowtie2-precancer-ADC.tar
-step13-genome-Clinical: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Recurrence.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-SQC.Smoking.patient.pdf Output/Sequenza/Bowtie2-genome-ADC.Smoking.patient.pdf
-step13-simple-Clinical: Output/Sequenza/BWA-simple-SQC.Recurrence.pdf Output/Sequenza/BWA-simple-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-simple-ADC.Recurrence.pdf Output/Sequenza/BWA-simple-SQC.Smoking.pdf Output/Sequenza/BWA-simple-ADC.Smoking.pdf Output/Sequenza/Bowtie2-simple-SQC.Smoking.pdf Output/Sequenza/Bowtie2-simple-ADC.Smoking.pdf
-step13-violin: Output/Sequenza/BWA-violin-SQC.pdf Output/Sequenza/BWA-violin-ADC.pdf Output/Sequenza/Bowtie2-violin-SQC.pdf Output/Sequenza/Bowtie2-violin-ADC.pdf
-step13-violin-Clinical: Output/Sequenza/BWA-violin-SQC.Recurrence.pdf Output/Sequenza/BWA-violin-ADC.Recurrence.pdf Output/Sequenza/Bowtie2-violin-SQC.Recurrence.pdf Output/Sequenza/Bowtie2-violin-ADC.Recurrence.pdf Output/Sequenza/BWA-violin-SQC.Smoking.pdf Output/Sequenza/BWA-violin-ADC.Smoking.pdf Output/Sequenza/Bowtie2-violin-SQC.Smoking.pdf Output/Sequenza/Bowtie2-violin-ADC.Smoking.pdf
-step13-gene: Output/Sequenza/BWA-gene-SQC.tar Output/Sequenza/BWA-gene-ADC.tar Output/Sequenza/Bowtie2-gene-SQC.tar Output/Sequenza/Bowtie2-gene-ADC.tar
-step313-gene-clinical: Output/Sequenza/BWA-gene-SQC.Recurrence.tar Output/Sequenza/BWA-gene-ADC.Recurrence.tar Output/Sequenza/Bowtie2-gene-SQC.Recurrence.tar Output/Sequenza/Bowtie2-gene-ADC.Recurrence.tar Output/Sequenza/BWA-gene-SQC.Smoking.tar Output/Sequenza/BWA-gene-ADC.Smoking.tar Output/Sequenza/Bowtie2-gene-SQC.Smoking.tar Output/Sequenza/Bowtie2-gene-ADC.Smoking.tar
+step13-Sequenza: $(addprefix Output/Sequenza/BWA/,$(addsuffix /sample_alternative_solutions.txt,$(WES_TUMOR_ID)))
+step13-default: Output/Sequenza/BWA-sequenza-SQC.pdf Output/Sequenza/BWA-stage-SQC.pdf Output/Sequenza/BWA-stage-ADC.pdf
+step13-genome: Output/Sequenza/BWA-genome-SQC.pdf Output/Sequenza/BWA-genome-ADC.pdf Output/Sequenza/BWA-genome-SQC.patient.pdf Output/Sequenza/BWA-genome-ADC.patient.pdf
+step13-simple: Output/Sequenza/BWA-simple-SQC.pdf Output/Sequenza/BWA-simple-ADC.pdf Output/Sequenza/BWA-precancer-ADC.tar
+step13-genome-Clinical: Output/Sequenza/BWA-genome-SQC.Recurrence.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.pdf Output/Sequenza/BWA-genome-SQC.Smoking.pdf Output/Sequenza/BWA-genome-ADC.Smoking.pdf Output/Sequenza/BWA-genome-SQC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-ADC.Recurrence.patient.pdf Output/Sequenza/BWA-genome-SQC.Smoking.patient.pdf Output/Sequenza/BWA-genome-ADC.Smoking.patient.pdf
+step13-simple-Clinical: Output/Sequenza/BWA-simple-SQC.Recurrence.pdf Output/Sequenza/BWA-simple-ADC.Recurrence.pdf Output/Sequenza/BWA-simple-SQC.Smoking.pdf Output/Sequenza/BWA-simple-ADC.Smoking.pdf
+step13-violin: Output/Sequenza/BWA-violin-SQC.pdf Output/Sequenza/BWA-violin-ADC.pdf
+step13-violin-Clinical: Output/Sequenza/BWA-violin-SQC.Recurrence.pdf Output/Sequenza/BWA-violin-ADC.Recurrence.pdf Output/Sequenza/BWA-violin-SQC.Smoking.pdf Output/Sequenza/BWA-violin-ADC.Smoking.pdf
+step13-gene: Output/Sequenza/BWA-gene-SQC.tar Output/Sequenza/BWA-gene-ADC.tar
+step313-gene-clinical: Output/Sequenza/BWA-gene-SQC.Recurrence.tar Output/Sequenza/BWA-gene-ADC.Recurrence.tar Output/Sequenza/BWA-gene-SQC.Smoking.tar Output/Sequenza/BWA-gene-ADC.Smoking.tar
 step13: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical step13-gene step313-gene-clinical
 .PHONY: step13-Sequenza step13-default step13-genome step13-simple step13-genome-Clinical step13-simple-Clinical step13-violin step13-violin-Clinical step13-gene step313-gene-clinical step13
 
