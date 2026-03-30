@@ -129,7 +129,7 @@ psutil==5.9.5
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pyfaidx==0.7.2.1
-Pygments==2.15.1
+Pygments==2.20.0
 pyparsing==3.0.9
 pyPdf==1.13
 PyPDF2==2.12.1
