@@ -215,11 +215,10 @@ TOOLS += Docker/Tools/BeadArrayFiles.tar.gz
 
 # Docker
 build.log: Docker/Dockerfile Docker/requirements.txt $(TOOLS) | log Output
-	rm -f $@
 	docker images | grep $(IMAGE_NAME) && docker rmi $(IMAGE_NAME) || true
-	docker build --rm --tag $(IMAGE_NAME) $(dir $(word 1,$^)) | tee $@
-	# docker build --rm --tag fumire/unist-lungcancer-inha:$(DATE) $(dir $(word 1,$^))
-	# docker push fumire/unist-lungcancer-inha:$(DATE)
+	docker build --progress=plain --rm --tag $(IMAGE_NAME) $(dir $(word 1,$^)) 2>&1 | tee $@.txt
+	docker build --rm --tag fumire/unist-lungcancer-inha:$(DATE) $(dir $(word 1,$^))
+	docker push fumire/unist-lungcancer-inha:$(DATE)
 
 build: build.log
 .PHONY: build

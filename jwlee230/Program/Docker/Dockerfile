@@ -58,8 +58,45 @@ RUN cd /Tools && unzip Bowtie2.zip
 ENV PATH=/Tools/bowtie2-2.4.2-linux-x86_64:$PATH BOWTIE2_INDEXES=/Data/hg38
 
 # R packages
-ADD GitHub.pat /root/.Renviron
-RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars && Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'R.utils'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('renozao/xbioc@1354168bd7e64be4ee1f9f74e971a61556d75003')" && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" && Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/sequenza/sequenza_3.0.0.tar.gz', repos = NULL, type='source')" && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" && Rscript -e "remotes::install_github(c('xuranw/MuSiC@fc0ca72792dfc65003e10162a3619c02fd8742d1', 'meichendong/SCDC@2b0b2abcf5d06361003961bdec4f56223ce7bde2'))" && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" && Rscript -e "remotes::install_github(c('caravagn/ctree@df8dc8395725f396e9f7cefa3a9e46d3b7b113ec', 'caravagn/mtree@8459f273264f425e60d8694258d94465c05217dd', 'caravagnalab/revolver@7ee825ae419d38ceb2b1613bb19cb409952ab00b'))" && Rscript -e "install.packages('remotes')" && Rscript -e "remotes::install_github('ShixiangWang/copynumber@b3de1b00165b112bdcbc44be61e236a88a634c9a')" && Rscript -e "remotes::install_github('Subhayan18/CRUST@105a60f211b411f9d00a6ab8e17c947f4a521227')" && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'BSgenome.Hsapiens.UCSC.hg19', 'BSgenome.Hsapiens.UCSC.hg38'))" && Rscript -e "install.packages(c('BisqueRNA', 'Seurat', 'deconstructSigs'))" && Rscript -e "BiocManager::install(c('affy', 'oligo', 'pd.clariom.d.human', 'affycoretools', 'clariomdhumantranscriptcluster.db'))"
+ADD GitHub.pat /root/GitHub.pat
+RUN mkdir -p $HOME/.R && echo "MAKEFLAGS = -j" > $HOME/.R/Makevars \
+ && if [ -s /root/GitHub.pat ]; then \
+      GITHUB_PAT="$(tr -d '\r' < /root/GitHub.pat | head -n 1 | tr -d '[:space:]')"; \
+      if echo "${GITHUB_PAT}" | grep -q '^GITHUB_PAT='; then \
+        GITHUB_PAT="${GITHUB_PAT#GITHUB_PAT=}"; \
+      fi; \
+      if [ -z "${GITHUB_PAT}" ]; then \
+        echo "Error: GitHub token file is empty; cannot continue."; \
+        exit 1; \
+      fi; \
+      if echo "${GITHUB_PAT}" | grep -Eq '^(ghp_[A-Za-z0-9_]{35,}$|github_pat_[A-Za-z0-9_]{82,}$)'; then \
+        echo "GITHUB_PAT=${GITHUB_PAT}" > /root/.Renviron; \
+        export GITHUB_PAT; \
+        echo "GitHub token loaded (masked), length=${#GITHUB_PAT}."; \
+      else \
+        echo "Error: GitHub token format invalid. Use a token string starting with ghp_ or github_pat_."; \
+        exit 1; \
+      fi; \
+    else \
+      echo "Error: /root/GitHub.pat file is missing; GitHub install may fail."; \
+      exit 1; \
+    fi
+RUN Rscript -e "install.packages(c('optparse', 'BiocManager', 'data.table', 'e1071', 'colorRamps', 'R.utils'))" \
+ && Rscript -e "install.packages('remotes')" \
+ && Rscript -e "remotes::install_github('renozao/xbioc@1354168bd7e64be4ee1f9f74e971a61556d75003', auth_token = Sys.getenv('GITHUB_PAT'))" \
+ && Rscript -e "BiocManager::install(c('copynumber', 'DESeq2', 'MesKit', 'preprocessCore', 'Biobase'))" \
+ && Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/sequenza/sequenza_3.0.0.tar.gz', repos = NULL, type='source')" \
+ && Rscript -e "install.packages('Rserve', repos='http://www.rforge.net/')" \
+ && Rscript -e "remotes::install_github(c('xuranw/MuSiC@fc0ca72792dfc65003e10162a3619c02fd8742d1', 'meichendong/SCDC@2b0b2abcf5d06361003961bdec4f56223ce7bde2'), auth_token = Sys.getenv('GITHUB_PAT'))" \
+ && Rscript -e "install.packages(c('igraph', 'tidygraph', 'ggraph'))" \
+ && Rscript -e "remotes::install_github(c('caravagn/ctree@df8dc8395725f396e9f7cefa3a9e46d3b7b113ec', 'caravagn/mtree@8459f273264f425e60d8694258d94465c05217dd', 'caravagnalab/revolver@7ee825ae419d38ceb2b1613bb19cb409952ab00b'), auth_token = Sys.getenv('GITHUB_PAT'))" \
+ && Rscript -e "install.packages('remotes')" \
+ && Rscript -e "remotes::install_github('ShixiangWang/copynumber@b3de1b00165b112bdcbc44be61e236a88a634c9a', auth_token = Sys.getenv('GITHUB_PAT'))" \
+ && Rscript -e "remotes::install_github('Subhayan18/CRUST@105a60f211b411f9d00a6ab8e17c947f4a521227', auth_token = Sys.getenv('GITHUB_PAT'))" \
+ && Rscript -e "BiocManager::install(c('roar', 'EBSeq', 'NOISeq', 'PureCN', 'TxDb.Hsapiens.UCSC.hg38.knownGene', 'BSgenome.Hsapiens.UCSC.hg19', 'BSgenome.Hsapiens.UCSC.hg38'))" \
+ && Rscript -e "install.packages(c('BisqueRNA', 'Seurat', 'deconstructSigs'))" \
+ && Rscript -e "BiocManager::install(c('affy', 'oligo', 'pd.clariom.d.human', 'affycoretools', 'clariomdhumantranscriptcluster.db'))" \
+ && rm -f /root/.Renviron /root/GitHub.pat
 ENV R_LIBS=/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library
 
 # VEP
